@@ -5,7 +5,14 @@ export type StyleTarget =
   | "heading4"
   | "heading5"
   | "heading6"
-  | "strong";
+  | "strong"
+  | "blockquote"
+  | "inlineCode"
+  | "mark"
+  | "codeBlock"
+  | "bulletList"
+  | "orderedList"
+  | "taskList";
 
 export interface StyleRule {
   color: string;
@@ -20,8 +27,6 @@ export type StyleProfile = Record<StyleTarget, StyleRule>;
 type PartialStyleProfile = Partial<Record<StyleTarget, Partial<StyleRule>>>;
 
 interface TargetMeta {
-  selector: string;
-  sampleText: string;
   cssSelector: string;
 }
 
@@ -33,6 +38,13 @@ const STYLE_TARGETS: StyleTarget[] = [
   "heading5",
   "heading6",
   "strong",
+  "blockquote",
+  "inlineCode",
+  "mark",
+  "codeBlock",
+  "bulletList",
+  "orderedList",
+  "taskList",
 ];
 
 const EMPTY_RULE = Object.freeze<StyleRule>({
@@ -45,38 +57,24 @@ const EMPTY_RULE = Object.freeze<StyleRule>({
 
 const TARGET_META: Record<StyleTarget, TargetMeta> = {
   heading1: {
-    selector: '[data-type="NodeHeading"].h1',
-    sampleText: "H1 标题",
     cssSelector: '[data-type="NodeHeading"].h1',
   },
   heading2: {
-    selector: '[data-type="NodeHeading"].h2',
-    sampleText: "H2 标题",
     cssSelector: '[data-type="NodeHeading"].h2',
   },
   heading3: {
-    selector: '[data-type="NodeHeading"].h3',
-    sampleText: "H3 标题",
     cssSelector: '[data-type="NodeHeading"].h3',
   },
   heading4: {
-    selector: '[data-type="NodeHeading"].h4',
-    sampleText: "H4 标题",
     cssSelector: '[data-type="NodeHeading"].h4',
   },
   heading5: {
-    selector: '[data-type="NodeHeading"].h5',
-    sampleText: "H5 标题",
     cssSelector: '[data-type="NodeHeading"].h5',
   },
   heading6: {
-    selector: '[data-type="NodeHeading"].h6',
-    sampleText: "H6 标题",
     cssSelector: '[data-type="NodeHeading"].h6',
   },
   strong: {
-    selector: 'strong, span[data-type~="strong"]',
-    sampleText: "加粗文本",
     cssSelector: [
       ".b3-typography strong",
       ".b3-typography span[data-type~=strong]",
@@ -84,67 +82,59 @@ const TARGET_META: Record<StyleTarget, TargetMeta> = {
       ".protyle-wysiwyg span[data-type~=strong]",
     ].join(",\n"),
   },
+  blockquote: {
+    cssSelector: [
+      ".b3-typography blockquote",
+      ".b3-typography .bq",
+      ".protyle-wysiwyg blockquote",
+      ".protyle-wysiwyg .bq",
+    ].join(",\n"),
+  },
+  inlineCode: {
+    cssSelector: [
+      ".b3-typography code",
+      ".b3-typography span[data-type~=code]",
+      ".protyle-wysiwyg code",
+      ".protyle-wysiwyg span[data-type~=code]",
+    ].join(",\n"),
+  },
+  mark: {
+    cssSelector: [
+      ".b3-typography mark",
+      ".b3-typography span[data-type~=mark]",
+      ".protyle-wysiwyg mark",
+      ".protyle-wysiwyg span[data-type~=mark]",
+    ].join(",\n"),
+  },
+  codeBlock: {
+    cssSelector: [
+      ".b3-typography pre",
+      ".protyle-wysiwyg pre",
+      '.protyle-wysiwyg [data-type="NodeCodeBlock"]',
+    ].join(",\n"),
+  },
+  bulletList: {
+    cssSelector: [
+      ".b3-typography ul",
+      ".protyle-wysiwyg ul",
+    ].join(",\n"),
+  },
+  orderedList: {
+    cssSelector: [
+      ".b3-typography ol",
+      ".protyle-wysiwyg ol",
+    ].join(",\n"),
+  },
+  taskList: {
+    cssSelector: [
+      ".b3-typography .protyle-task",
+      ".protyle-wysiwyg .protyle-task",
+    ].join(",\n"),
+  },
 };
 
 function createEmptyRule(): StyleRule {
   return { ...EMPTY_RULE };
-}
-
-function findSampleElement(root: ParentNode, target: StyleTarget): HTMLElement | null {
-  const { selector, sampleText } = TARGET_META[target];
-  const candidates = Array.from(root.querySelectorAll<HTMLElement>(selector));
-  return (
-    candidates.find(candidate => candidate.textContent?.trim() === sampleText)
-    ?? candidates.find(candidate => candidate.textContent?.includes(sampleText))
-    ?? candidates[0]
-    ?? null
-  );
-}
-
-function normalizeTextDecoration(value: string): string {
-  return value === "none" ? "" : value;
-}
-
-function normalizeBackgroundColor(value: string): string {
-  if (value === "transparent" || value === "rgba(0, 0, 0, 0)") {
-    return "";
-  }
-  return value;
-}
-
-function normalizeFontWeight(value: string): string {
-  if (value === "normal" || value === "400") {
-    return "";
-  }
-  return value;
-}
-
-function normalizePropValue(prop: keyof StyleRule, value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return "";
-  }
-  if (prop === "backgroundColor") {
-    return normalizeBackgroundColor(trimmed);
-  }
-  if (prop === "fontWeight") {
-    return normalizeFontWeight(trimmed);
-  }
-  if (prop === "textDecoration") {
-    return normalizeTextDecoration(trimmed);
-  }
-  return trimmed;
-}
-
-function extractRuleFromElement(element: HTMLElement): StyleRule {
-  const computedStyle = window.getComputedStyle(element);
-  return {
-    color: normalizePropValue("color", computedStyle.color),
-    backgroundColor: normalizePropValue("backgroundColor", computedStyle.backgroundColor),
-    fontWeight: normalizePropValue("fontWeight", computedStyle.fontWeight),
-    fontStyle: normalizePropValue("fontStyle", computedStyle.fontStyle),
-    textDecoration: normalizePropValue("textDecoration", computedStyle.textDecorationLine),
-  };
 }
 
 function toCssDeclarations(rule: Partial<StyleRule>): string[] {
@@ -199,18 +189,4 @@ export function buildStyleCss(input?: PartialStyleProfile | null): string {
     }
     return `${TARGET_META[target].cssSelector} {\n  ${declarations.join("\n  ")}\n}`;
   }).join("\n\n");
-}
-
-export function extractStyleProfileFromTemplate(root: ParentNode): StyleProfile {
-  const profile = createDefaultStyleProfile();
-
-  for (const target of STYLE_TARGETS) {
-    const element = findSampleElement(root, target);
-    if (!element) {
-      continue;
-    }
-    profile[target] = extractRuleFromElement(element);
-  }
-
-  return profile;
 }

@@ -2,80 +2,19 @@
   <div class="style-editor-shell">
     <section class="style-card style-card--hero">
       <p class="style-editor-shell__eyebrow">
-        Document Style Workshop
+        Live Document Styling
       </p>
       <h1 class="style-editor-shell__title">
         文档样式编辑器
       </h1>
       <p class="style-editor-shell__lead">
-        先打开样例模板文档，再在这里为 H1-H6 与加粗文本选色。颜色一旦落下，模板页就是实时预览，所有文档也会同步套用。
+        直接在面板里选择目标和颜色。每一次点击都会立刻更新当前思源界面的文档显示，不再依赖模板文档读取。
       </p>
       <div class="style-editor-shell__status">
-        <span
-          class="status-pill"
-          :class="{ 'status-pill--live': runtimeState.isTemplateActive }"
-        >
-          {{ runtimeState.isTemplateActive ? "模板预览中" : "等待模板激活" }}
-        </span>
+        <span class="status-pill status-pill--live">实时生效</span>
         <span class="style-editor-shell__status-copy">
           {{ selectedTargetMeta.hint }}
         </span>
-      </div>
-    </section>
-
-    <section class="style-card">
-      <div class="section-heading">
-        <div>
-          <p class="section-heading__kicker">
-            Template
-          </p>
-          <h2 class="section-heading__title">
-            当前模板文档
-          </h2>
-        </div>
-        <button
-          class="action-chip"
-          type="button"
-          @click="bindCurrentDocumentAsTemplate"
-        >
-          设为模板
-        </button>
-      </div>
-
-      <dl class="meta-grid">
-        <div class="meta-item">
-          <dt>模板文档</dt>
-          <dd>{{ runtimeState.template.docId || "未绑定" }}</dd>
-        </div>
-        <div class="meta-item">
-          <dt>模板路径</dt>
-          <dd>{{ runtimeState.template.path || "未绑定" }}</dd>
-        </div>
-        <div class="meta-item">
-          <dt>当前文档</dt>
-          <dd>{{ runtimeState.activeDocId || "未检测到活动文档" }}</dd>
-        </div>
-        <div class="meta-item">
-          <dt>当前路径</dt>
-          <dd>{{ runtimeState.activePath || "未检测到活动路径" }}</dd>
-        </div>
-      </dl>
-
-      <div class="action-row">
-        <button
-          class="panel-button panel-button--solid"
-          type="button"
-          @click="bindCurrentDocumentAsTemplate"
-        >
-          将当前文档设为样式模板
-        </button>
-        <button
-          class="panel-button panel-button--ghost"
-          type="button"
-          @click="importStylesFromCurrentTemplate()"
-        >
-          从当前模板读取样式
-        </button>
       </div>
     </section>
 
@@ -94,6 +33,25 @@
         </div>
       </div>
 
+      <div class="channel-row">
+        <button
+          type="button"
+          class="channel-chip"
+          :class="{ 'channel-chip--active': runtimeState.selectedChannel === 'color' }"
+          @click="selectChannel('color')"
+        >
+          前景色
+        </button>
+        <button
+          type="button"
+          class="channel-chip"
+          :class="{ 'channel-chip--active': runtimeState.selectedChannel === 'backgroundColor' }"
+          @click="selectChannel('backgroundColor')"
+        >
+          背景色
+        </button>
+      </div>
+
       <div class="target-grid">
         <button
           v-for="target in STYLE_TARGET_OPTIONS"
@@ -110,11 +68,11 @@
 
       <div class="palette-grid">
         <button
-          v-for="color in COLOR_PALETTE"
+          v-for="color in activePalette"
           :key="color.value"
           type="button"
           class="palette-chip"
-          :class="{ 'palette-chip--active': selectedColor === color.value }"
+          :class="{ 'palette-chip--active': selectedSwatch === color.value }"
           :style="{ '--swatch-color': color.value }"
           @click="applyPaletteColor(color.value)"
         >
@@ -142,7 +100,7 @@
           </h2>
         </div>
         <span class="preview-note">
-          读取模板后会保留模板里的加粗粗细等附加样式
+          面板修改后会立即同步到所有已打开的文档界面
         </span>
       </div>
 
@@ -159,7 +117,8 @@
           <p class="preview-item__content">
             {{ target.label }}
           </p>
-          <code class="preview-item__value">{{ getPreviewValue(target.value) }}</code>
+          <code class="preview-item__value">{{ getPreviewValue(target.value, "color") }}</code>
+          <code class="preview-item__value">{{ getPreviewValue(target.value, "backgroundColor") }}</code>
         </article>
       </div>
     </section>
@@ -171,22 +130,29 @@ import { computed } from "vue";
 
 import {
   applyPaletteColor,
-  bindCurrentDocumentAsTemplate,
+  BACKGROUND_PALETTE,
   clearSelectedTargetColor,
-  COLOR_PALETTE,
-  importStylesFromCurrentTemplate,
+  FOREGROUND_PALETTE,
   runtimeState,
+  selectChannel,
   selectTarget,
   STYLE_TARGET_OPTIONS,
 } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
+import type { PaintChannel } from "@/style-editor-runtime";
 
 const selectedTargetMeta = computed(() => {
   return STYLE_TARGET_OPTIONS.find(target => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0];
 });
 
-const selectedColor = computed(() => {
-  return runtimeState.profile[runtimeState.selectedTarget].color;
+const activePalette = computed(() => {
+  return runtimeState.selectedChannel === "backgroundColor"
+    ? BACKGROUND_PALETTE
+    : FOREGROUND_PALETTE;
+});
+
+const selectedSwatch = computed(() => {
+  return runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel];
 });
 
 function getPreviewStyle(target: StyleTarget) {
@@ -200,8 +166,10 @@ function getPreviewStyle(target: StyleTarget) {
   };
 }
 
-function getPreviewValue(target: StyleTarget) {
-  return runtimeState.profile[target].color || "未设置";
+function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
+  const label = channel === "backgroundColor" ? "底色" : "字色";
+  const value = runtimeState.profile[target][channel] || "未设置";
+  return `${label}: ${value}`;
 }
 </script>
 
@@ -302,8 +270,7 @@ function getPreviewValue(target: StyleTarget) {
 }
 
 .status-pill,
-.target-badge,
-.action-chip {
+.target-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -331,35 +298,7 @@ function getPreviewValue(target: StyleTarget) {
   gap: 12px;
 }
 
-.meta-grid {
-  margin: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.meta-item {
-  display: grid;
-  gap: 4px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.38);
-}
-
-.meta-item dt {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--ink-soft) 62%, #9a7d55 38%);
-}
-
-.meta-item dd {
-  margin: 0;
-  word-break: break-all;
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.action-row,
+.channel-row,
 .target-grid,
 .palette-grid,
 .preview-list {
@@ -367,8 +306,7 @@ function getPreviewValue(target: StyleTarget) {
   gap: 10px;
 }
 
-.panel-button,
-.action-chip,
+.channel-chip,
 .target-chip,
 .palette-chip {
   border: 0;
@@ -379,32 +317,29 @@ function getPreviewValue(target: StyleTarget) {
     background-color 120ms ease;
 }
 
-.panel-button:hover,
-.action-chip:hover,
+.channel-chip:hover,
 .target-chip:hover,
 .palette-chip:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 18px rgba(45, 33, 18, 0.08);
 }
 
-.panel-button {
-  min-height: 42px;
-  border-radius: 14px;
-  padding: 10px 14px;
-  text-align: left;
-  font-size: 13px;
-  font-weight: 600;
+.channel-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.panel-button--solid {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 74%, white 26%), var(--accent));
-  color: white;
-}
-
-.panel-button--ghost,
-.action-chip {
-  background: rgba(255, 255, 255, 0.52);
+.channel-chip {
+  min-height: 38px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
   color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.channel-chip--active {
+  background: color-mix(in srgb, var(--accent) 14%, white 86%);
+  outline: 1px solid color-mix(in srgb, var(--accent) 46%, #d5c4ab 54%);
 }
 
 .target-grid {

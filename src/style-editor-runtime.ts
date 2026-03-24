@@ -1,27 +1,24 @@
-import type {
-  IProtyle,
-  Plugin,
-} from "siyuan";
+import type { Plugin } from "siyuan";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import { reactive } from "vue";
-import { showMessage } from "siyuan";
 
 import {
   createDefaultEditorState,
-  createTemplateRefFromProtyle,
   normalizeEditorState,
+  updateTargetBackgroundColor,
   updateTargetColor,
   type StyleEditorState,
 } from "@/lib/style-editor-state";
 import {
   buildStyleCss,
-  extractStyleProfileFromTemplate,
   normalizeStyleProfile,
 } from "@/lib/style-profile";
 
 const STORAGE_KEY = "style-editor.json";
 const STYLE_ELEMENT_ID = "siyuan-style-editor-style";
+
+export type PaintChannel = "color" | "backgroundColor";
 
 export const STYLE_TARGET_OPTIONS: Array<{
   value: StyleTarget;
@@ -36,9 +33,16 @@ export const STYLE_TARGET_OPTIONS: Array<{
   { value: "heading5", label: "H5 标题", shortLabel: "H5", hint: "用于注释性标题" },
   { value: "heading6", label: "H6 标题", shortLabel: "H6", hint: "用于最细层级标题" },
   { value: "strong", label: "加粗文本", shortLabel: "B", hint: "用于段落重点强调" },
+  { value: "blockquote", label: "引述块", shortLabel: "❝", hint: "用于引用、摘录与提示块" },
+  { value: "inlineCode", label: "行内代码", shortLabel: "</>", hint: "用于命令、变量与代码片段" },
+  { value: "mark", label: "高亮文本", shortLabel: "HL", hint: "用于显式标记重点内容" },
+  { value: "codeBlock", label: "代码块", shortLabel: "{ }", hint: "用于多行代码与配置片段" },
+  { value: "bulletList", label: "无序列表", shortLabel: "•", hint: "用于普通项目列表" },
+  { value: "orderedList", label: "有序列表", shortLabel: "1.", hint: "用于步骤与顺序描述" },
+  { value: "taskList", label: "任务列表", shortLabel: "☑", hint: "用于待办与完成状态列表" },
 ];
 
-export const COLOR_PALETTE: Array<{
+export const FOREGROUND_PALETTE: Array<{
   label: string;
   value: string;
 }> = [
@@ -58,12 +62,30 @@ export const COLOR_PALETTE: Array<{
   { label: "棕", value: "var(--b3-font-color13)" },
 ];
 
+export const BACKGROUND_PALETTE: Array<{
+  label: string;
+  value: string;
+}> = [
+  { label: "纸", value: "var(--b3-theme-surface)" },
+  { label: "杏", value: "var(--b3-font-background1)" },
+  { label: "麦", value: "var(--b3-font-background2)" },
+  { label: "柠", value: "var(--b3-font-background3)" },
+  { label: "桃", value: "var(--b3-font-background4)" },
+  { label: "苔", value: "var(--b3-font-background5)" },
+  { label: "荷", value: "var(--b3-font-background6)" },
+  { label: "湖", value: "var(--b3-font-background7)" },
+  { label: "雾", value: "var(--b3-font-background8)" },
+  { label: "霞", value: "var(--b3-font-background9)" },
+  { label: "砂", value: "var(--b3-font-background10)" },
+  { label: "栗", value: "var(--b3-font-background11)" },
+  { label: "烟", value: "var(--b3-font-background12)" },
+  { label: "墨", value: "var(--b3-font-background13)" },
+];
+
 interface RuntimeState extends StyleEditorState {
   ready: boolean;
   selectedTarget: StyleTarget;
-  activeDocId: string;
-  activePath: string;
-  isTemplateActive: boolean;
+  selectedChannel: PaintChannel;
 }
 
 function createRuntimeState(): RuntimeState {
@@ -71,22 +93,16 @@ function createRuntimeState(): RuntimeState {
     ...createDefaultEditorState(),
     ready: false,
     selectedTarget: "heading1",
-    activeDocId: "",
-    activePath: "",
-    isTemplateActive: false,
+    selectedChannel: "color",
   };
 }
 
 export const runtimeState = reactive<RuntimeState>(createRuntimeState());
 
 let pluginInstance: Plugin | null = null;
-let activeProtyle: IProtyle | null = null;
 let styleElement: HTMLStyleElement | null = null;
 
 function replaceProfile(nextState: StyleEditorState) {
-  runtimeState.template.docId = nextState.template.docId;
-  runtimeState.template.path = nextState.template.path;
-
   const normalizedProfile = normalizeStyleProfile(nextState.profile);
   for (const target of STYLE_TARGET_OPTIONS) {
     runtimeState.profile[target.value] = normalizedProfile[target.value];
@@ -95,10 +111,6 @@ function replaceProfile(nextState: StyleEditorState) {
 
 function snapshotState(): StyleEditorState {
   return {
-    template: {
-      docId: runtimeState.template.docId,
-      path: runtimeState.template.path,
-    },
     profile: normalizeStyleProfile(runtimeState.profile),
   };
 }
@@ -117,11 +129,6 @@ function ensureStyleElement(): HTMLStyleElement {
   return styleElement;
 }
 
-function syncTemplateFlag() {
-  runtimeState.isTemplateActive = !!runtimeState.template.docId
-    && runtimeState.template.docId === runtimeState.activeDocId;
-}
-
 function applyInjectedStyles() {
   const css = buildStyleCss(runtimeState.profile);
   ensureStyleElement().textContent = css;
@@ -134,33 +141,19 @@ async function persistState() {
   await pluginInstance.saveData(STORAGE_KEY, snapshotState());
 }
 
-function getTemplateRoot(protyle: IProtyle): ParentNode | null {
-  return protyle.element.querySelector(".protyle-wysiwyg")
-    ?? protyle.contentElement
-    ?? protyle.element;
-}
-
-function notify(message: string, type: "info" | "error" = "info", timeout = 3000) {
-  showMessage(message, timeout, type);
-}
-
 export async function initializeRuntime(plugin: Plugin) {
   pluginInstance = plugin;
   const savedState = await plugin.loadData(STORAGE_KEY);
   replaceProfile(normalizeEditorState(savedState));
   runtimeState.ready = true;
   applyInjectedStyles();
-  syncTemplateFlag();
 }
 
 export function teardownRuntime() {
   pluginInstance = null;
-  activeProtyle = null;
   runtimeState.ready = false;
   runtimeState.selectedTarget = "heading1";
-  runtimeState.activeDocId = "";
-  runtimeState.activePath = "";
-  runtimeState.isTemplateActive = false;
+  runtimeState.selectedChannel = "color";
   replaceProfile(createDefaultEditorState());
 
   if (styleElement) {
@@ -169,71 +162,23 @@ export function teardownRuntime() {
   }
 }
 
-export function setActiveProtyle(protyle: IProtyle) {
-  activeProtyle = protyle;
-  const templateRef = createTemplateRefFromProtyle(protyle);
-  runtimeState.activeDocId = templateRef?.docId ?? "";
-  runtimeState.activePath = templateRef?.path ?? "";
-  syncTemplateFlag();
-}
-
 export function selectTarget(target: StyleTarget) {
   runtimeState.selectedTarget = target;
 }
 
+export function selectChannel(channel: PaintChannel) {
+  runtimeState.selectedChannel = channel;
+}
+
 export async function applyPaletteColor(color: string) {
-  replaceProfile(updateTargetColor(snapshotState(), runtimeState.selectedTarget, color));
+  const nextState = runtimeState.selectedChannel === "backgroundColor"
+    ? updateTargetBackgroundColor(snapshotState(), runtimeState.selectedTarget, color)
+    : updateTargetColor(snapshotState(), runtimeState.selectedTarget, color);
+  replaceProfile(nextState);
   applyInjectedStyles();
   await persistState();
 }
 
 export async function clearSelectedTargetColor() {
   await applyPaletteColor("");
-}
-
-export async function bindCurrentDocumentAsTemplate() {
-  if (!activeProtyle) {
-    notify("请先打开一个文档，再绑定样式模板。", "error", 4000);
-    return;
-  }
-
-  const templateRef = createTemplateRefFromProtyle(activeProtyle);
-  if (!templateRef) {
-    notify("当前编辑器无法识别所属文档。", "error", 4000);
-    return;
-  }
-
-  runtimeState.template.docId = templateRef.docId;
-  runtimeState.template.path = templateRef.path;
-  syncTemplateFlag();
-  await persistState();
-  notify("已将当前文档设为样式模板。");
-  await importStylesFromCurrentTemplate(false);
-}
-
-export async function importStylesFromCurrentTemplate(showFeedback = true) {
-  if (!activeProtyle) {
-    notify("没有可读取的模板文档。", "error", 4000);
-    return;
-  }
-
-  const currentTemplateRef = createTemplateRefFromProtyle(activeProtyle);
-  if (runtimeState.template.docId && currentTemplateRef?.docId !== runtimeState.template.docId) {
-    notify("请先切换到已绑定的模板文档，再读取样式。", "error", 4000);
-    return;
-  }
-
-  const templateRoot = getTemplateRoot(activeProtyle);
-  if (!templateRoot) {
-    notify("当前模板文档还未渲染完成。", "error", 4000);
-    return;
-  }
-
-  runtimeState.profile = extractStyleProfileFromTemplate(templateRoot);
-  applyInjectedStyles();
-  await persistState();
-
-  if (showFeedback) {
-    notify("已从模板文档读取样式。");
-  }
 }
