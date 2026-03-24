@@ -1,0 +1,7 @@
+/* 1-6级标题颜色 - 更柔和的配色方案 */
+[data-type="NodeHeading"][class="h1"] { color: #eb8383 !important; }  /* 淡红色 */
+[data-type="NodeHeading"][class="h5"] { color: #7db5cd !important; }  /* 淡蓝色 */
+[data-type="NodeHeading"][class="h3"] { color: #71a796 !important; }  /* 淡绿色 */
+[data-type="NodeHeading"][class="h4"] { color: #ae9acb !important; }  /* 淡紫色 */
+[data-type="NodeHeading"][class="h2"] { color: #dcbf61 !important; }  /* 淡黄色 */
+[data-type="NodeHeading"][class="h6"] { color: #dda36a !important; }  /* 淡橙色 */

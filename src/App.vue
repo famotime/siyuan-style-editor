@@ -1,0 +1,515 @@
+<template>
+  <div class="style-editor-shell">
+    <section class="style-card style-card--hero">
+      <p class="style-editor-shell__eyebrow">
+        Document Style Workshop
+      </p>
+      <h1 class="style-editor-shell__title">
+        文档样式编辑器
+      </h1>
+      <p class="style-editor-shell__lead">
+        先打开样例模板文档，再在这里为 H1-H6 与加粗文本选色。颜色一旦落下，模板页就是实时预览，所有文档也会同步套用。
+      </p>
+      <div class="style-editor-shell__status">
+        <span
+          class="status-pill"
+          :class="{ 'status-pill--live': runtimeState.isTemplateActive }"
+        >
+          {{ runtimeState.isTemplateActive ? "模板预览中" : "等待模板激活" }}
+        </span>
+        <span class="style-editor-shell__status-copy">
+          {{ selectedTargetMeta.hint }}
+        </span>
+      </div>
+    </section>
+
+    <section class="style-card">
+      <div class="section-heading">
+        <div>
+          <p class="section-heading__kicker">
+            Template
+          </p>
+          <h2 class="section-heading__title">
+            当前模板文档
+          </h2>
+        </div>
+        <button
+          class="action-chip"
+          type="button"
+          @click="bindCurrentDocumentAsTemplate"
+        >
+          设为模板
+        </button>
+      </div>
+
+      <dl class="meta-grid">
+        <div class="meta-item">
+          <dt>模板文档</dt>
+          <dd>{{ runtimeState.template.docId || "未绑定" }}</dd>
+        </div>
+        <div class="meta-item">
+          <dt>模板路径</dt>
+          <dd>{{ runtimeState.template.path || "未绑定" }}</dd>
+        </div>
+        <div class="meta-item">
+          <dt>当前文档</dt>
+          <dd>{{ runtimeState.activeDocId || "未检测到活动文档" }}</dd>
+        </div>
+        <div class="meta-item">
+          <dt>当前路径</dt>
+          <dd>{{ runtimeState.activePath || "未检测到活动路径" }}</dd>
+        </div>
+      </dl>
+
+      <div class="action-row">
+        <button
+          class="panel-button panel-button--solid"
+          type="button"
+          @click="bindCurrentDocumentAsTemplate"
+        >
+          将当前文档设为样式模板
+        </button>
+        <button
+          class="panel-button panel-button--ghost"
+          type="button"
+          @click="importStylesFromCurrentTemplate()"
+        >
+          从当前模板读取样式
+        </button>
+      </div>
+    </section>
+
+    <section class="style-card">
+      <div class="section-heading">
+        <div>
+          <p class="section-heading__kicker">
+            Palette
+          </p>
+          <h2 class="section-heading__title">
+            颜色板
+          </h2>
+        </div>
+        <div class="target-badge">
+          {{ selectedTargetMeta.label }}
+        </div>
+      </div>
+
+      <div class="target-grid">
+        <button
+          v-for="target in STYLE_TARGET_OPTIONS"
+          :key="target.value"
+          type="button"
+          class="target-chip"
+          :class="{ 'target-chip--active': runtimeState.selectedTarget === target.value }"
+          @click="selectTarget(target.value)"
+        >
+          <span class="target-chip__short">{{ target.shortLabel }}</span>
+          <span class="target-chip__label">{{ target.label }}</span>
+        </button>
+      </div>
+
+      <div class="palette-grid">
+        <button
+          v-for="color in COLOR_PALETTE"
+          :key="color.value"
+          type="button"
+          class="palette-chip"
+          :class="{ 'palette-chip--active': selectedColor === color.value }"
+          :style="{ '--swatch-color': color.value }"
+          @click="applyPaletteColor(color.value)"
+        >
+          <span class="palette-chip__dot" />
+          <span>{{ color.label }}</span>
+        </button>
+        <button
+          type="button"
+          class="palette-chip palette-chip--clear"
+          @click="clearSelectedTargetColor"
+        >
+          清除颜色
+        </button>
+      </div>
+    </section>
+
+    <section class="style-card style-card--preview">
+      <div class="section-heading">
+        <div>
+          <p class="section-heading__kicker">
+            Preview
+          </p>
+          <h2 class="section-heading__title">
+            已应用样式
+          </h2>
+        </div>
+        <span class="preview-note">
+          读取模板后会保留模板里的加粗粗细等附加样式
+        </span>
+      </div>
+
+      <div class="preview-list">
+        <article
+          v-for="target in STYLE_TARGET_OPTIONS"
+          :key="target.value"
+          class="preview-item"
+          :style="getPreviewStyle(target.value)"
+        >
+          <p class="preview-item__eyebrow">
+            {{ target.shortLabel }}
+          </p>
+          <p class="preview-item__content">
+            {{ target.label }}
+          </p>
+          <code class="preview-item__value">{{ getPreviewValue(target.value) }}</code>
+        </article>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+import {
+  applyPaletteColor,
+  bindCurrentDocumentAsTemplate,
+  clearSelectedTargetColor,
+  COLOR_PALETTE,
+  importStylesFromCurrentTemplate,
+  runtimeState,
+  selectTarget,
+  STYLE_TARGET_OPTIONS,
+} from "@/style-editor-runtime";
+import type { StyleTarget } from "@/lib/style-profile";
+
+const selectedTargetMeta = computed(() => {
+  return STYLE_TARGET_OPTIONS.find(target => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0];
+});
+
+const selectedColor = computed(() => {
+  return runtimeState.profile[runtimeState.selectedTarget].color;
+});
+
+function getPreviewStyle(target: StyleTarget) {
+  const rule = runtimeState.profile[target];
+  return {
+    color: rule.color || undefined,
+    backgroundColor: rule.backgroundColor || undefined,
+    fontWeight: rule.fontWeight || (target === "strong" ? "700" : undefined),
+    fontStyle: rule.fontStyle || undefined,
+    textDecoration: rule.textDecoration || undefined,
+  };
+}
+
+function getPreviewValue(target: StyleTarget) {
+  return runtimeState.profile[target].color || "未设置";
+}
+</script>
+
+<style scoped lang="scss">
+.style-editor-shell {
+  --paper: color-mix(in srgb, var(--b3-theme-surface) 92%, #f3ead9 8%);
+  --ink-soft: color-mix(in srgb, var(--b3-theme-on-surface) 82%, #5c4931 18%);
+  --accent: color-mix(in srgb, var(--b3-font-color6) 62%, #29536b 38%);
+  min-height: 100%;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  background:
+    radial-gradient(circle at top left, rgba(201, 156, 92, 0.16), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(57, 93, 119, 0.18), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+    color-mix(in srgb, var(--b3-theme-background) 88%, #e9decf 12%);
+  color: var(--ink-soft);
+  box-sizing: border-box;
+  font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.style-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--b3-border-color) 76%, #8a6f4b 24%);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 23px,
+      rgba(128, 100, 67, 0.05) 23px,
+      rgba(128, 100, 67, 0.05) 24px
+    ),
+    var(--paper);
+  box-shadow:
+    0 14px 32px rgba(39, 28, 14, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.style-card::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(124, 92, 53, 0.1);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.style-card--hero {
+  gap: 12px;
+}
+
+.style-card--preview {
+  gap: 16px;
+}
+
+.style-editor-shell__eyebrow,
+.section-heading__kicker,
+.preview-item__eyebrow {
+  margin: 0;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--ink-soft) 62%, #9a7d55 38%);
+}
+
+.style-editor-shell__title,
+.section-heading__title {
+  margin: 0;
+  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: color-mix(in srgb, var(--b3-theme-on-surface) 86%, #402c18 14%);
+}
+
+.style-editor-shell__title {
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.style-editor-shell__lead,
+.style-editor-shell__status-copy,
+.preview-note {
+  margin: 0;
+  line-height: 1.65;
+  font-size: 13px;
+}
+
+.style-editor-shell__status {
+  display: grid;
+  gap: 8px;
+}
+
+.status-pill,
+.target-badge,
+.action-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--b3-border-color) 72%, #8a6f4b 28%);
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pill--live {
+  background: color-mix(in srgb, var(--accent) 14%, white 86%);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, #d5c4ab 55%);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.meta-grid {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.meta-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.meta-item dt {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink-soft) 62%, #9a7d55 38%);
+}
+
+.meta-item dd {
+  margin: 0;
+  word-break: break-all;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.action-row,
+.target-grid,
+.palette-grid,
+.preview-list {
+  display: grid;
+  gap: 10px;
+}
+
+.panel-button,
+.action-chip,
+.target-chip,
+.palette-chip {
+  border: 0;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.panel-button:hover,
+.action-chip:hover,
+.target-chip:hover,
+.palette-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(45, 33, 18, 0.08);
+}
+
+.panel-button {
+  min-height: 42px;
+  border-radius: 14px;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.panel-button--solid {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 74%, white 26%), var(--accent));
+  color: white;
+}
+
+.panel-button--ghost,
+.action-chip {
+  background: rgba(255, 255, 255, 0.52);
+  color: var(--ink-soft);
+}
+
+.target-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.target-chip {
+  min-height: 58px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  text-align: left;
+}
+
+.target-chip--active {
+  background: color-mix(in srgb, var(--accent) 14%, white 86%);
+  outline: 1px solid color-mix(in srgb, var(--accent) 46%, #d5c4ab 54%);
+}
+
+.target-chip__short {
+  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.target-chip__label {
+  font-size: 12px;
+}
+
+.palette-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.palette-chip {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--ink-soft);
+}
+
+.palette-chip--active {
+  outline: 1px solid color-mix(in srgb, var(--accent) 46%, #d5c4ab 54%);
+}
+
+.palette-chip__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  flex: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--swatch-color);
+}
+
+.palette-chip--clear {
+  justify-content: center;
+  background: color-mix(in srgb, var(--b3-theme-surface) 82%, #f1ece2 18%);
+}
+
+.preview-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.preview-item {
+  display: grid;
+  gap: 6px;
+  min-height: 96px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.44);
+}
+
+.preview-item__content {
+  margin: 0;
+  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+.preview-item__value {
+  font-size: 11px;
+  word-break: break-all;
+  color: color-mix(in srgb, var(--ink-soft) 72%, #8e724f 28%);
+}
+
+@media (max-width: 420px) {
+  .style-editor-shell {
+    padding: 12px;
+  }
+
+  .target-grid,
+  .palette-grid,
+  .preview-list {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+</style>

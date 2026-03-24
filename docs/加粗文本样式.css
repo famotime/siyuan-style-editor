@@ -1,0 +1,9 @@
+.b3-typography strong,
+.b3-typography span[data-type~=strong],
+.protyle-wysiwyg strong,
+.protyle-wysiwyg span[data-type~=strong] {
+    color: #6ab04c !important;          /* 绿色 */
+    /* font-weight: 900 !important;       /* 更粗 */
+    /* font-size: 1.1em !important;        稍大字体 */
+    /*font-family: "微软雅黑", sans-serif !important; /* 自定义字体 */
+}

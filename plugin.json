@@ -1,0 +1,38 @@
+{
+  "name": "siyuan-style-editor",
+  "author": "OpenAI Codex",
+  "url": "",
+  "version": "0.0.1",
+  "minAppVersion": "2.10.14",
+  "disabledInPublish": false,
+  "backends": [
+    "all"
+  ],
+  "frontends": [
+    "all"
+  ],
+  "displayName": {
+    "default": "siyuan-style-editor",
+    "en_US": "SiYuan Style Editor",
+    "zh_CN": "文档样式编辑器"
+  },
+  "description": {
+    "default": "Template-driven style editor for headings and bold text",
+    "en_US": "Template-driven style editor for headings and bold text",
+    "zh_CN": "基于模板文档读取与编辑标题、加粗等显示样式"
+  },
+  "readme": {
+    "default": "README.md",
+    "en_US": "README.md",
+    "zh_CN": "README.md"
+  },
+  "funding": {
+    "custom": []
+  },
+  "keywords": [
+    "style",
+    "template",
+    "editor",
+    "theme"
+  ]
+}

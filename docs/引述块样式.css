@@ -1,0 +1,7 @@
+.b3-typography blockquote, .b3-typography .bq, .protyle-wysiwyg blockquote, .protyle-wysiwyg .bq {
+    padding: 4px;
+    color: #4D4D4D;
+    border-left: 0.25em solid #3D9140;
+    background-color: #FFFAFA;
+    margin: 4px 0;
+}
