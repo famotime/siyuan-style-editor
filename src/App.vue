@@ -1,5 +1,8 @@
 <template>
-  <div class="style-editor-shell">
+  <div
+    class="style-editor-shell"
+    :style="panelThemeVars"
+  >
     <section class="style-card style-card--hero">
       <p class="style-editor-shell__eyebrow">
         Live Document Styling
@@ -126,7 +129,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+} from "vue";
 
 import {
   applyPaletteColor,
@@ -138,8 +146,14 @@ import {
   selectTarget,
   STYLE_TARGET_OPTIONS,
 } from "@/style-editor-runtime";
+import {
+  createPanelThemeVars,
+  resolvePanelThemeAppearance,
+} from "@/lib/panel-theme";
 import type { StyleTarget } from "@/lib/style-profile";
 import type { PaintChannel } from "@/style-editor-runtime";
+
+const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false));
 
 const selectedTargetMeta = computed(() => {
   return STYLE_TARGET_OPTIONS.find(target => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0];
@@ -153,6 +167,48 @@ const activePalette = computed(() => {
 
 const selectedSwatch = computed(() => {
   return runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel];
+});
+
+const panelThemeVars = computed(() => {
+  return createPanelThemeVars(themeAppearance.value);
+});
+
+function syncThemeAppearance() {
+  if (typeof document === "undefined" || typeof window === "undefined") {
+    return;
+  }
+
+  const root = document.documentElement;
+  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+  themeAppearance.value = resolvePanelThemeAppearance(root?.getAttribute("data-theme-mode"), prefersDark);
+}
+
+let themeObserver: MutationObserver | null = null;
+let mediaQuery: MediaQueryList | null = null;
+
+onMounted(() => {
+  syncThemeAppearance();
+
+  if (typeof document !== "undefined") {
+    themeObserver = new MutationObserver(syncThemeAppearance);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme-mode"],
+    });
+  }
+
+  if (typeof window !== "undefined" && window.matchMedia) {
+    mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener?.("change", syncThemeAppearance);
+  }
+});
+
+onBeforeUnmount(() => {
+  themeObserver?.disconnect();
+  themeObserver = null;
+
+  mediaQuery?.removeEventListener?.("change", syncThemeAppearance);
+  mediaQuery = null;
 });
 
 function getPreviewStyle(target: StyleTarget) {
@@ -175,19 +231,16 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 
 <style scoped lang="scss">
 .style-editor-shell {
-  --paper: color-mix(in srgb, var(--b3-theme-surface) 92%, #f3ead9 8%);
-  --ink-soft: color-mix(in srgb, var(--b3-theme-on-surface) 82%, #5c4931 18%);
-  --accent: color-mix(in srgb, var(--b3-font-color6) 62%, #29536b 38%);
   min-height: 100%;
   padding: 18px;
   display: grid;
   gap: 14px;
   background:
-    radial-gradient(circle at top left, rgba(201, 156, 92, 0.16), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(57, 93, 119, 0.18), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
-    color-mix(in srgb, var(--b3-theme-background) 88%, #e9decf 12%);
-  color: var(--ink-soft);
+    radial-gradient(circle at top left, var(--panel-glow-a), transparent 30%),
+    radial-gradient(circle at bottom right, var(--panel-glow-b), transparent 26%),
+    linear-gradient(180deg, var(--panel-sheen), transparent 28%),
+    var(--panel-background);
+  color: var(--panel-text-muted);
   box-sizing: border-box;
   font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
@@ -198,28 +251,26 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   display: grid;
   gap: 14px;
   padding: 16px;
-  border: 1px solid color-mix(in srgb, var(--b3-border-color) 76%, #8a6f4b 24%);
+  border: 1px solid var(--panel-card-stroke);
   border-radius: 20px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%),
+    linear-gradient(135deg, var(--panel-glass), transparent 45%),
     repeating-linear-gradient(
       0deg,
       transparent,
       transparent 23px,
-      rgba(128, 100, 67, 0.05) 23px,
-      rgba(128, 100, 67, 0.05) 24px
+      var(--panel-rule-line) 23px,
+      var(--panel-rule-line) 24px
     ),
-    var(--paper);
-  box-shadow:
-    0 14px 32px rgba(39, 28, 14, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    var(--panel-card-bg);
+  box-shadow: var(--panel-shadow);
 }
 
 .style-card::after {
   content: "";
   position: absolute;
   inset: 10px;
-  border: 1px solid rgba(124, 92, 53, 0.1);
+  border: 1px solid var(--panel-card-inner-stroke);
   border-radius: 14px;
   pointer-events: none;
 }
@@ -239,7 +290,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   font-size: 11px;
-  color: color-mix(in srgb, var(--ink-soft) 62%, #9a7d55 38%);
+  color: var(--panel-text-subtle);
 }
 
 .style-editor-shell__title,
@@ -248,7 +299,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: color-mix(in srgb, var(--b3-theme-on-surface) 86%, #402c18 14%);
+  color: var(--panel-text);
 }
 
 .style-editor-shell__title {
@@ -278,17 +329,17 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   min-height: 32px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--b3-border-color) 72%, #8a6f4b 28%);
-  background: rgba(255, 255, 255, 0.42);
-  color: var(--ink-soft);
+  border: 1px solid var(--panel-card-stroke);
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
   font-size: 12px;
   font-weight: 600;
 }
 
 .status-pill--live {
-  background: color-mix(in srgb, var(--accent) 14%, white 86%);
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 45%, #d5c4ab 55%);
+  background: var(--panel-accent-soft);
+  color: var(--panel-accent);
+  border-color: var(--panel-accent-outline);
 }
 
 .section-heading {
@@ -321,7 +372,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 .target-chip:hover,
 .palette-chip:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(45, 33, 18, 0.08);
+  box-shadow: var(--panel-hover-shadow);
 }
 
 .channel-row {
@@ -331,15 +382,15 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 .channel-chip {
   min-height: 38px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
-  color: var(--ink-soft);
+  background: var(--panel-chip-bg);
+  color: var(--panel-text-muted);
   font-size: 12px;
   font-weight: 700;
 }
 
 .channel-chip--active {
-  background: color-mix(in srgb, var(--accent) 14%, white 86%);
-  outline: 1px solid color-mix(in srgb, var(--accent) 46%, #d5c4ab 54%);
+  background: var(--panel-chip-active-bg);
+  outline: 1px solid var(--panel-accent-outline);
 }
 
 .target-grid {
@@ -353,13 +404,14 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   gap: 2px;
   padding: 10px 12px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--panel-chip-bg);
+  color: var(--panel-text-muted);
   text-align: left;
 }
 
 .target-chip--active {
-  background: color-mix(in srgb, var(--accent) 14%, white 86%);
-  outline: 1px solid color-mix(in srgb, var(--accent) 46%, #d5c4ab 54%);
+  background: var(--panel-chip-active-bg);
+  outline: 1px solid var(--panel-accent-outline);
 }
 
 .target-chip__short {
@@ -383,12 +435,12 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   gap: 8px;
   padding: 10px 12px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.42);
-  color: var(--ink-soft);
+  background: var(--panel-chip-bg);
+  color: var(--panel-text-muted);
 }
 
 .palette-chip--active {
-  outline: 1px solid color-mix(in srgb, var(--accent) 46%, #d5c4ab 54%);
+  outline: 1px solid var(--panel-accent-outline);
 }
 
 .palette-chip__dot {
@@ -396,13 +448,13 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   height: 16px;
   border-radius: 999px;
   flex: none;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--panel-dot-border);
   background: var(--swatch-color);
 }
 
 .palette-chip--clear {
   justify-content: center;
-  background: color-mix(in srgb, var(--b3-theme-surface) 82%, #f1ece2 18%);
+  background: var(--panel-clear-bg);
 }
 
 .preview-list {
@@ -415,7 +467,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   min-height: 96px;
   padding: 12px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.44);
+  background: var(--panel-preview-bg);
 }
 
 .preview-item__content {
@@ -428,7 +480,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 .preview-item__value {
   font-size: 11px;
   word-break: break-all;
-  color: color-mix(in srgb, var(--ink-soft) 72%, #8e724f 28%);
+  color: var(--panel-text-subtle);
 }
 
 @media (max-width: 420px) {
