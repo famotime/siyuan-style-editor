@@ -2,22 +2,33 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 describe("app shell layout", () => {
-  it("renders the shell with a command deck header and a compact target studio", () => {
+  it("renders a compact hero header and target studio", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
     expect(appSource).toContain("class=\"workspace-hero\"");
-    expect(appSource).toContain("class=\"workspace-hero__metrics\"");
-    expect(appSource).toContain("class=\"workspace-toolbar\"");
+    expect(appSource).toContain("class=\"workspace-hero__copy\"");
     expect(appSource).toContain("class=\"target-studio\"");
+    expect(appSource).not.toContain("class=\"workspace-toolbar\"");
   });
 
-  it("surfaces selection context and sync feedback in the header instead of a detached side panel", () => {
+  it("keeps the primary actions inside the hero copy in a two-column action row", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
-    expect(appSource).toContain("当前对象");
-    expect(appSource).toContain("当前通道");
-    expect(appSource).toContain("状态");
-    expect(appSource).toContain("{{ statusCopy }}");
+    expect(appSource).toContain("提取样式");
+    expect(appSource).toContain("清除样式");
+    expect(appSource).toContain("@click=\"handleExtractStyles\"");
+    expect(appSource).toContain("@click=\"handleResetAllStyles\"");
+    expect(appSource).toContain("class=\"workspace-hero__actions\"");
+    expect(appSource).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(appSource).not.toContain("当前通道");
+  });
+
+  it("reduces the hero framing by removing the inner tinted card treatment", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain(".workspace-hero {");
+    expect(appSource).toContain("padding: 4px 2px 2px;");
+    expect(appSource).not.toContain("linear-gradient(180deg, var(--panel-preview-bg), transparent 140%)");
   });
 
   it("keeps the palette editor focused with a concise floating heading", () => {
@@ -27,15 +38,27 @@ describe("app shell layout", () => {
     expect(appSource).toContain("即时写入当前对象");
   });
 
-  it("uses denser preview cards with stronger selection affordances", () => {
+  it("removes the selected badge and relies on subtler preview card typography", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
-    expect(appSource).toContain(".target-preview-card {");
-    expect(appSource).toContain("gap: 10px;");
-    expect(appSource).toContain("padding: 10px;");
+    expect(appSource).not.toContain("class=\"target-preview-card__badge\"");
     expect(appSource).toContain(".target-preview-card__surface {");
     expect(appSource).toContain("gap: 6px;");
     expect(appSource).toContain("min-height: 92px;");
     expect(appSource).toContain("padding: 14px;");
+    expect(appSource).toContain(".target-preview-card__title {");
+    expect(appSource).toContain("font-size: 18px;");
+  });
+
+  it("uses tooltip-only color channel controls without visible labels or borders", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain("data-tooltip=\"字色\"");
+    expect(appSource).toContain("data-tooltip=\"底色\"");
+    expect(appSource).not.toContain("<span class=\"channel-orb__label\">字色</span>");
+    expect(appSource).not.toContain("<span class=\"channel-orb__label\">底色</span>");
+    expect(appSource).toContain(".channel-orb {");
+    expect(appSource).toContain("border: 0;");
+    expect(appSource).toContain(".channel-orb::after {");
   });
 });

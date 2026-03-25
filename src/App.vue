@@ -15,63 +15,24 @@
           <p class="workspace-hero__summary">
             以更轻的操作路径调整对象文字色与背景色，提取、清除与即时预览统一在一个编辑台里。
           </p>
-        </div>
-
-        <div class="workspace-hero__metrics">
-          <article class="hero-metric">
-            <p class="hero-metric__label">
-              当前对象
-            </p>
-            <p class="hero-metric__value">
-              {{ selectedTargetMeta.label }}
-            </p>
-          </article>
-          <article class="hero-metric">
-            <p class="hero-metric__label">
-              当前通道
-            </p>
-            <p class="hero-metric__value">
-              {{ selectedChannelLabel }}
-            </p>
-          </article>
-          <article class="hero-metric hero-metric--status">
-            <p class="hero-metric__label">
-              状态
-            </p>
-            <p class="hero-metric__value hero-metric__value--status">
-              {{ statusCopy }}
-            </p>
-          </article>
+          <div class="workspace-hero__actions">
+            <button
+              type="button"
+              class="extract-styles-button"
+              @click="handleExtractStyles"
+            >
+              提取样式
+            </button>
+            <button
+              type="button"
+              class="reset-styles-button"
+              @click="handleResetAllStyles"
+            >
+              清除样式
+            </button>
+          </div>
         </div>
       </header>
-
-      <div class="workspace-toolbar">
-        <div class="workspace-toolbar__copy">
-          <p class="section-heading__kicker">
-            Target Studio
-          </p>
-          <p class="workspace-toolbar__summary">
-            先选对象，再点字色或底色打开浮层。所有变更都会即时写入当前对象。
-          </p>
-        </div>
-
-        <div class="workspace-toolbar__actions">
-          <button
-            type="button"
-            class="extract-styles-button"
-            @click="handleExtractStyles"
-          >
-            提取样式
-          </button>
-          <button
-            type="button"
-            class="reset-styles-button"
-            @click="handleResetAllStyles"
-          >
-            清除样式
-          </button>
-        </div>
-      </div>
 
       <section class="target-studio">
         <div class="target-studio__header">
@@ -84,7 +45,7 @@
             </h2>
           </div>
           <p class="target-studio__note">
-            {{ STYLE_TARGET_OPTIONS.length }} 个对象可直接编辑
+            {{ STYLE_TARGET_OPTIONS.length }} 个对象
           </p>
         </div>
 
@@ -101,17 +62,9 @@
               :style="getTargetPreviewStyle(target.value)"
               @click="selectPreviewTarget(target.value)"
             >
-              <div class="target-preview-card__head">
-                <p class="target-preview-card__eyebrow">
-                  {{ target.shortLabel }}
-                </p>
-                <span
-                  v-if="runtimeState.selectedTarget === target.value"
-                  class="target-preview-card__badge"
-                >
-                  当前
-                </span>
-              </div>
+              <p class="target-preview-card__eyebrow">
+                {{ target.shortLabel }}
+              </p>
               <p class="target-preview-card__title">
                 {{ target.label }}
               </p>
@@ -121,6 +74,8 @@
               <button
                 type="button"
                 class="channel-orb"
+                data-tooltip="字色"
+                aria-label="字色"
                 :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value) }"
                 @click="activateTargetChannel(target.value, 'color', $event)"
               >
@@ -129,12 +84,13 @@
                   :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'color').isEmpty }"
                   :style="{ '--orb-fill': getChannelSwatch(target.value, 'color').background }"
                 />
-                <span class="channel-orb__label">字色</span>
               </button>
 
               <button
                 type="button"
                 class="channel-orb"
+                data-tooltip="底色"
+                aria-label="底色"
                 :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value) }"
                 @click="activateTargetChannel(target.value, 'backgroundColor', $event)"
               >
@@ -143,7 +99,6 @@
                   :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'backgroundColor').isEmpty }"
                   :style="{ '--orb-fill': getChannelSwatch(target.value, 'backgroundColor').background }"
                 />
-                <span class="channel-orb__label">底色</span>
               </button>
             </div>
           </article>
@@ -294,7 +249,6 @@ const {
   selectedSwatch,
   selectedTargetMeta,
   selectPreviewTarget,
-  statusCopy,
   STYLE_TARGET_OPTIONS,
 } = useStyleEditorShell();
 </script>
@@ -346,12 +300,7 @@ const {
   position: relative;
   display: grid;
   gap: 14px;
-  padding: 18px;
-  border-radius: 22px;
-  border: 1px solid var(--panel-card-inner-stroke);
-  background:
-    linear-gradient(135deg, var(--panel-glass), transparent 55%),
-    linear-gradient(180deg, var(--panel-preview-bg), transparent 140%);
+  padding: 4px 2px 2px;
 }
 
 .workspace-hero__copy {
@@ -360,8 +309,14 @@ const {
   max-width: 540px;
 }
 
+.workspace-hero__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .workspace-hero__summary,
-.workspace-toolbar__summary,
 .inline-palette-panel__copy,
 .custom-color-panel__description,
 .target-studio__note {
@@ -371,30 +326,6 @@ const {
   color: var(--panel-text-subtle);
 }
 
-.workspace-hero__metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.hero-metric {
-  display: grid;
-  gap: 6px;
-  min-height: 88px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid var(--panel-divider);
-  background: var(--panel-toolbar-bg);
-  box-shadow: var(--panel-toolbar-shadow);
-}
-
-.hero-metric--status {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--panel-accent-soft) 70%, transparent 30%), transparent 90%),
-    var(--panel-toolbar-bg);
-}
-
-.hero-metric__label,
 .style-editor-shell__eyebrow,
 .section-heading__kicker,
 .target-preview-card__eyebrow {
@@ -403,17 +334,6 @@ const {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--panel-text-subtle);
-}
-
-.hero-metric__value {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.35;
-  color: var(--panel-text);
-}
-
-.hero-metric__value--status {
-  color: var(--panel-accent);
 }
 
 .style-editor-shell__title,
@@ -435,7 +355,6 @@ const {
   line-height: 1.1;
 }
 
-.workspace-toolbar,
 .target-studio {
   display: grid;
   gap: 12px;
@@ -446,17 +365,6 @@ const {
   box-shadow: var(--panel-toolbar-shadow);
 }
 
-.workspace-toolbar {
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-}
-
-.workspace-toolbar__copy {
-  display: grid;
-  gap: 4px;
-}
-
-.workspace-toolbar__actions,
 .target-preview-card__actions {
   display: flex;
   flex-wrap: wrap;
@@ -552,47 +460,75 @@ const {
   background: var(--panel-preview-bg);
 }
 
-.target-preview-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.target-preview-card__badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: var(--panel-chip-active-bg);
-  color: var(--panel-accent);
-  font-size: 11px;
-  font-weight: 700;
-}
-
 .target-preview-card__title {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.18;
 }
 
 .channel-orb {
-  min-height: 40px;
-  padding: 0 12px;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--panel-card-stroke);
+  justify-content: center;
+  border: 0;
   border-radius: 999px;
-  background: var(--panel-pill-bg);
+  background: color-mix(in srgb, var(--panel-pill-bg) 72%, transparent 28%);
   color: var(--panel-text-muted);
   cursor: pointer;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-card-inner-stroke) 64%, transparent 36%);
 }
 
 .channel-orb--active {
-  border-color: var(--panel-accent-outline);
   background: var(--panel-chip-active-bg);
-  color: var(--panel-accent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--panel-accent) 34%, transparent 66%),
+    0 8px 18px color-mix(in srgb, var(--panel-accent-soft) 42%, transparent 58%);
+}
+
+.channel-orb::before,
+.channel-orb::after {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.channel-orb::before {
+  content: "";
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%) translateY(4px);
+  border-width: 5px 5px 0;
+  border-style: solid;
+  border-color: var(--panel-text) transparent transparent;
+}
+
+.channel-orb::after {
+  content: attr(data-tooltip);
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--panel-text);
+  color: var(--panel-card-bg);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.channel-orb:hover::before,
+.channel-orb:hover::after,
+.channel-orb:focus-visible::before,
+.channel-orb:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .channel-orb__swatch,
@@ -603,18 +539,13 @@ const {
 }
 
 .channel-orb__swatch {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background: var(--orb-fill);
 }
 
 .channel-orb__swatch--empty {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-text-subtle) 22%, transparent 78%);
-}
-
-.channel-orb__label {
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .inline-palette-panel {
@@ -810,13 +741,9 @@ const {
 }
 
 @media (max-width: 720px) {
-  .workspace-hero__metrics,
+  .workspace-hero__actions,
   .target-grid,
   .swatch-grid--inline {
-    grid-template-columns: 1fr;
-  }
-
-  .workspace-toolbar {
     grid-template-columns: 1fr;
   }
 }
@@ -827,8 +754,6 @@ const {
   }
 
   .style-card,
-  .workspace-hero,
-  .workspace-toolbar,
   .target-studio,
   .inline-palette-panel--floating {
     padding: 14px;
