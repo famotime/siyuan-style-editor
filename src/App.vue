@@ -69,6 +69,62 @@
         </button>
       </div>
 
+      <div class="custom-color-panel">
+        <div class="custom-color-panel__copy">
+          <p class="section-heading__kicker">
+            Custom Color
+          </p>
+          <p class="custom-color-panel__description">
+            通过调色板自由选择{{ selectedChannelLabel }}，也可以输入十六进制颜色值。
+          </p>
+        </div>
+
+        <div class="custom-color-panel__controls">
+          <label class="color-well">
+            <input
+              type="color"
+              class="color-well__input"
+              :value="colorPickerValue"
+              @input="handleColorPickerInput"
+            >
+            <span
+              class="color-well__swatch"
+              :style="{ '--well-color': colorPickerValue }"
+            />
+            <span class="color-well__label">调色板</span>
+          </label>
+
+          <input
+            v-model="customColorDraft"
+            type="text"
+            class="custom-color-field"
+            :placeholder="customColorPlaceholder"
+            spellcheck="false"
+            @keydown.enter.prevent="applyCustomColorDraft"
+          >
+
+          <button
+            type="button"
+            class="custom-color-apply"
+            :disabled="!isCustomColorDraftValid"
+            @click="applyCustomColorDraft"
+          >
+            应用自定义色
+          </button>
+        </div>
+      </div>
+
+      <div class="preset-section-heading">
+        <div>
+          <p class="section-heading__kicker">
+            Presets
+          </p>
+          <p class="preset-section-heading__copy">
+            当前候选色保留为预置色卡，后续可以继续扩充。
+          </p>
+        </div>
+      </div>
+
       <div class="palette-grid">
         <button
           v-for="color in activePalette"
@@ -134,6 +190,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  watch,
 } from "vue";
 
 import {
@@ -146,6 +203,11 @@ import {
   selectTarget,
   STYLE_TARGET_OPTIONS,
 } from "@/style-editor-runtime";
+import {
+  createDefaultCustomColor,
+  normalizeHexColor,
+  resolveColorPickerValue,
+} from "@/lib/custom-color";
 import {
   createPanelThemeVars,
   resolvePanelThemeAppearance,
@@ -167,6 +229,24 @@ const activePalette = computed(() => {
 
 const selectedSwatch = computed(() => {
   return runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel];
+});
+
+const selectedChannelLabel = computed(() => {
+  return runtimeState.selectedChannel === "backgroundColor" ? "背景色" : "文字颜色";
+});
+
+const customColorDraft = ref(createDefaultCustomColor(runtimeState.selectedChannel));
+
+const colorPickerValue = computed(() => {
+  return resolveColorPickerValue(customColorDraft.value, runtimeState.selectedChannel);
+});
+
+const customColorPlaceholder = computed(() => {
+  return createDefaultCustomColor(runtimeState.selectedChannel);
+});
+
+const isCustomColorDraftValid = computed(() => {
+  return Boolean(normalizeHexColor(customColorDraft.value));
 });
 
 const panelThemeVars = computed(() => {
@@ -210,6 +290,42 @@ onBeforeUnmount(() => {
   mediaQuery?.removeEventListener?.("change", syncThemeAppearance);
   mediaQuery = null;
 });
+
+watch(
+  [() => runtimeState.selectedChannel, selectedSwatch],
+  ([channel, swatch], previousValue) => {
+    const normalizedSelectedColor = normalizeHexColor(swatch);
+    if (normalizedSelectedColor) {
+      customColorDraft.value = normalizedSelectedColor;
+      return;
+    }
+
+    const previousChannel = previousValue?.[0];
+    if (!swatch || channel !== previousChannel) {
+      customColorDraft.value = createDefaultCustomColor(channel);
+    }
+  },
+  { immediate: true },
+);
+
+function handleColorPickerInput(event: Event) {
+  const nextColor = (event.target as HTMLInputElement).value;
+  void applyCustomColorValue(nextColor);
+}
+
+async function applyCustomColorValue(color: string) {
+  const normalizedColor = normalizeHexColor(color);
+  if (!normalizedColor) {
+    return;
+  }
+
+  customColorDraft.value = normalizedColor;
+  await applyPaletteColor(normalizedColor);
+}
+
+async function applyCustomColorDraft() {
+  await applyCustomColorValue(customColorDraft.value);
+}
 
 function getPreviewStyle(target: StyleTarget) {
   const rule = runtimeState.profile[target];
@@ -350,6 +466,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 }
 
 .channel-row,
+.custom-color-panel,
 .target-grid,
 .palette-grid,
 .preview-list {
@@ -377,6 +494,120 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 
 .channel-row {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.custom-color-panel {
+  padding: 14px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, var(--panel-glass), transparent 60%),
+    var(--panel-preview-bg);
+  border: 1px solid var(--panel-card-stroke);
+}
+
+.custom-color-panel__copy,
+.preset-section-heading__copy {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--panel-text-subtle);
+}
+
+.custom-color-panel__controls {
+  display: grid;
+  grid-template-columns: minmax(0, 120px) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.color-well {
+  position: relative;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: var(--panel-chip-bg);
+  color: var(--panel-text-muted);
+  border: 1px solid var(--panel-card-stroke);
+  cursor: pointer;
+}
+
+.color-well__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.color-well__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-dot-border);
+  background: var(--well-color);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.color-well__label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.custom-color-field,
+.custom-color-apply {
+  min-height: 46px;
+  border-radius: 14px;
+  border: 1px solid var(--panel-card-stroke);
+}
+
+.custom-color-field {
+  width: 100%;
+  padding: 0 14px;
+  background: var(--panel-chip-bg);
+  color: var(--panel-text);
+  font-size: 13px;
+}
+
+.custom-color-field::placeholder {
+  color: var(--panel-text-subtle);
+}
+
+.custom-color-field:focus,
+.custom-color-apply:focus,
+.color-well:focus-within {
+  outline: 1px solid var(--panel-accent-outline);
+  outline-offset: 2px;
+}
+
+.custom-color-apply {
+  padding: 0 16px;
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-accent);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease;
+}
+
+.custom-color-apply:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
+}
+
+.custom-color-apply:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.preset-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .channel-chip {
@@ -491,6 +722,10 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   .target-grid,
   .palette-grid,
   .preview-list {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-color-panel__controls {
     grid-template-columns: 1fr;
   }
 
