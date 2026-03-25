@@ -25,177 +25,186 @@
       <div class="section-heading">
         <div>
           <p class="section-heading__kicker">
-            Live Palette
+            Direct Styling
           </p>
           <h2 class="section-heading__title">
-            即选即看
+            对象即预览
           </h2>
         </div>
-        <div class="target-badge">
-          {{ selectedTargetMeta.label }}
+        <div class="section-heading__actions">
+          <div class="target-badge">
+            {{ selectedTargetMeta.label }}
+          </div>
+          <button
+            type="button"
+            class="reset-styles-button"
+            @click="handleResetAllStyles"
+          >
+            清除样式
+          </button>
         </div>
-      </div>
-
-      <div class="channel-row">
-        <button
-          type="button"
-          class="channel-chip"
-          :class="{ 'channel-chip--active': runtimeState.selectedChannel === 'color' }"
-          @click="selectChannel('color')"
-        >
-          前景色
-        </button>
-        <button
-          type="button"
-          class="channel-chip"
-          :class="{ 'channel-chip--active': runtimeState.selectedChannel === 'backgroundColor' }"
-          @click="selectChannel('backgroundColor')"
-        >
-          背景色
-        </button>
       </div>
 
       <div class="target-grid">
-        <button
+        <article
           v-for="target in STYLE_TARGET_OPTIONS"
           :key="target.value"
-          type="button"
-          class="target-chip"
-          :class="{ 'target-chip--active': runtimeState.selectedTarget === target.value }"
-          @click="selectTarget(target.value)"
+          class="target-preview-card"
+          :class="{ 'target-preview-card--selected': runtimeState.selectedTarget === target.value }"
         >
-          <span class="target-chip__short">{{ target.shortLabel }}</span>
-          <span class="target-chip__label">{{ target.label }}</span>
-        </button>
-      </div>
-
-      <div class="custom-color-panel">
-        <div class="custom-color-panel__copy">
-          <p class="section-heading__kicker">
-            Custom Color
-          </p>
-          <p class="custom-color-panel__description">
-            通过调色板自由选择{{ selectedChannelLabel }}，也可以输入十六进制颜色值。
-          </p>
-        </div>
-
-        <div class="custom-color-panel__controls">
-          <label class="color-well">
-            <input
-              type="color"
-              class="color-well__input"
-              :value="colorPickerValue"
-              @input="handleColorPickerInput"
-            >
-            <span
-              class="color-well__swatch"
-              :style="{ '--well-color': colorPickerValue }"
-            />
-            <span class="color-well__label">调色板</span>
-          </label>
-
-          <input
-            v-model="customColorDraft"
-            type="text"
-            class="custom-color-field"
-            :placeholder="customColorPlaceholder"
-            spellcheck="false"
-            @keydown.enter.prevent="applyCustomColorDraft"
-          >
-
           <button
             type="button"
-            class="custom-color-apply"
-            :disabled="!isCustomColorDraftValid"
-            @click="applyCustomColorDraft"
+            class="target-preview-card__surface"
+            :style="getTargetPreviewStyle(target.value)"
+            @click="selectPreviewTarget(target.value)"
           >
-            应用自定义色
+            <p class="target-preview-card__eyebrow">
+              {{ target.shortLabel }}
+            </p>
+            <p class="target-preview-card__title">
+              {{ target.label }}
+            </p>
+            <p class="target-preview-card__hint">
+              {{ target.hint }}
+            </p>
           </button>
-        </div>
 
-        <div class="custom-color-preview">
-          <div class="custom-color-preview__meta">
-            <p class="section-heading__kicker">
-              Live Draft
-            </p>
-            <code class="custom-color-preview__value">{{ customPreviewValue }}</code>
+          <div class="target-preview-card__actions">
+            <button
+              type="button"
+              class="channel-orb"
+              :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value) }"
+              @click="activateTargetChannel(target.value, 'color')"
+            >
+              <span
+                class="channel-orb__swatch"
+                :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'color').isEmpty }"
+                :style="{ '--orb-fill': getChannelSwatch(target.value, 'color').background }"
+              />
+              <span class="channel-orb__label">字</span>
+            </button>
+
+            <button
+              type="button"
+              class="channel-orb"
+              :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value) }"
+              @click="activateTargetChannel(target.value, 'backgroundColor')"
+            >
+              <span
+                class="channel-orb__swatch"
+                :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'backgroundColor').isEmpty }"
+                :style="{ '--orb-fill': getChannelSwatch(target.value, 'backgroundColor').background }"
+              />
+              <span class="channel-orb__label">底</span>
+            </button>
           </div>
 
-          <article
-            class="preview-stage preview-stage--draft"
-            :style="customPreviewStyle"
+          <div
+            v-if="isInlinePaletteOpenForTarget(target.value)"
+            class="inline-palette-panel"
           >
-            <p class="preview-stage__eyebrow">
-              {{ selectedTargetMeta.shortLabel }}
-            </p>
-            <p class="preview-stage__content">
-              {{ selectedTargetMeta.label }}
-            </p>
-          </article>
-        </div>
-      </div>
+            <div class="inline-palette-panel__header">
+              <div>
+                <p class="section-heading__kicker">
+                  Inline Palette
+                </p>
+                <p class="inline-palette-panel__copy">
+                  正在编辑 {{ target.label }} 的{{ selectedChannelLabel }}
+                </p>
+              </div>
 
-      <div class="preset-section-heading">
-        <div>
-          <p class="section-heading__kicker">
-            Presets
-          </p>
-          <p class="preset-section-heading__copy">
-            色卡本身就是当前目标的即时效果预览；当前候选色保留为预置色卡，后续可以继续扩充。
-          </p>
-        </div>
-      </div>
+              <button
+                type="button"
+                class="inline-palette-panel__close"
+                @click="closeInlinePalettePanel"
+              >
+                收起
+              </button>
+            </div>
 
-      <div class="palette-preview-grid">
-        <button
-          v-for="color in activePalette"
-          :key="color.value"
-          type="button"
-          class="palette-preview-card"
-          :class="{ 'palette-preview-card--active': selectedSwatch === color.value }"
-          :style="{ '--swatch-color': color.value }"
-          @click="applyPaletteColor(color.value)"
-        >
-          <div class="palette-preview-card__header">
-            <span class="palette-preview-card__dot" />
-            <span class="palette-preview-card__label">{{ color.label }}</span>
+            <div class="custom-color-panel custom-color-panel--inline">
+              <div class="custom-color-panel__copy">
+                <p class="section-heading__kicker">
+                  Custom Color
+                </p>
+                <p class="custom-color-panel__description">
+                  使用调色板或十六进制颜色，修改会立即反映在当前对象卡片上。
+                </p>
+              </div>
+
+              <div class="custom-color-panel__controls">
+                <label class="color-well">
+                  <input
+                    type="color"
+                    class="color-well__input"
+                    :value="colorPickerValue"
+                    @input="handleColorPickerInput"
+                  >
+                  <span
+                    class="color-well__swatch"
+                    :style="{ '--well-color': colorPickerValue }"
+                  />
+                  <span class="color-well__label">调色板</span>
+                </label>
+
+                <input
+                  v-model="customColorDraft"
+                  type="text"
+                  class="custom-color-field"
+                  :placeholder="customColorPlaceholder"
+                  spellcheck="false"
+                  @keydown.enter.prevent="applyCustomColorDraft"
+                >
+
+                <button
+                  type="button"
+                  class="custom-color-apply"
+                  :disabled="!isCustomColorDraftValid"
+                  @click="applyCustomColorDraft"
+                >
+                  应用自定义色
+                </button>
+              </div>
+            </div>
+
+            <div class="inline-palette-panel__presets">
+              <div class="inline-palette-panel__subhead">
+                <div>
+                  <p class="section-heading__kicker">
+                    Presets
+                  </p>
+                  <p class="inline-palette-panel__copy">
+                    纯色预置直接应用到当前对象。
+                  </p>
+                </div>
+              </div>
+
+              <div class="swatch-grid swatch-grid--inline">
+                <button
+                  v-for="color in activePalette"
+                  :key="color.value"
+                  type="button"
+                  class="swatch-chip"
+                  :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
+                  :style="{ '--swatch-color': color.value }"
+                  @click="applyPaletteColor(color.value)"
+                >
+                  <span class="swatch-chip__dot" />
+                  <span class="swatch-chip__label">{{ color.label }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="swatch-chip swatch-chip--clear"
+                  :class="{ 'swatch-chip--active': !selectedSwatch }"
+                  @click="clearSelectedTargetColor"
+                >
+                  <span class="swatch-chip__dot swatch-chip__dot--clear" />
+                  <span class="swatch-chip__label">默认</span>
+                </button>
+              </div>
+            </div>
           </div>
-          <article
-            class="preview-stage"
-            :style="getCandidateStyle(color.value)"
-          >
-            <p class="preview-stage__eyebrow">
-              {{ selectedTargetMeta.shortLabel }}
-            </p>
-            <p class="preview-stage__content">
-              {{ selectedTargetMeta.label }}
-            </p>
-          </article>
-          <code class="palette-preview-card__value">{{ getCandidateValue(color.value) }}</code>
-        </button>
-        <button
-          type="button"
-          class="palette-preview-card palette-preview-card--clear"
-          :class="{ 'palette-preview-card--active': !selectedSwatch }"
-          @click="clearSelectedTargetColor"
-        >
-          <div class="palette-preview-card__header">
-            <span class="palette-preview-card__dot palette-preview-card__dot--clear" />
-            <span class="palette-preview-card__label">默认</span>
-          </div>
-          <article
-            class="preview-stage preview-stage--clear"
-            :style="getCandidateStyle('')"
-          >
-            <p class="preview-stage__eyebrow">
-              {{ selectedTargetMeta.shortLabel }}
-            </p>
-            <p class="preview-stage__content">
-              {{ selectedTargetMeta.label }}
-            </p>
-          </article>
-          <code class="palette-preview-card__value">{{ getCandidateValue("") }}</code>
-        </button>
+        </article>
       </div>
     </section>
   </div>
@@ -215,6 +224,7 @@ import {
   BACKGROUND_PALETTE,
   clearSelectedTargetColor,
   FOREGROUND_PALETTE,
+  resetAllStyles,
   runtimeState,
   selectChannel,
   selectTarget,
@@ -226,15 +236,23 @@ import {
   resolveColorPickerValue,
 } from "@/lib/custom-color";
 import {
-  buildCandidatePreviewStyle,
-  getCandidatePreviewValue,
-} from "@/lib/palette-preview";
+  closeInlinePalette,
+  isInlinePaletteOpen,
+  toggleInlinePalette,
+} from "@/lib/inline-palette";
 import {
   createPanelThemeVars,
   resolvePanelThemeAppearance,
 } from "@/lib/panel-theme";
+import {
+  buildChannelSwatchStyle,
+  buildTargetPreviewStyle,
+} from "@/lib/target-preview";
+import type { PaintChannel } from "@/style-editor-runtime";
+import type { StyleTarget } from "@/lib/style-profile";
 
 const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false));
+const inlinePaletteState = ref(closeInlinePalette());
 
 const selectedTargetMeta = computed(() => {
   return STYLE_TARGET_OPTIONS.find(target => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0];
@@ -248,10 +266,6 @@ const activePalette = computed(() => {
 
 const selectedSwatch = computed(() => {
   return runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel];
-});
-
-const selectedRule = computed(() => {
-  return runtimeState.profile[runtimeState.selectedTarget];
 });
 
 const selectedChannelLabel = computed(() => {
@@ -270,23 +284,6 @@ const customColorPlaceholder = computed(() => {
 
 const isCustomColorDraftValid = computed(() => {
   return Boolean(normalizeHexColor(customColorDraft.value));
-});
-
-const normalizedCustomColorDraft = computed(() => {
-  return normalizeHexColor(customColorDraft.value);
-});
-
-const customPreviewValue = computed(() => {
-  return getCandidatePreviewValue(runtimeState.selectedChannel, normalizedCustomColorDraft.value);
-});
-
-const customPreviewStyle = computed(() => {
-  return buildCandidatePreviewStyle({
-    candidateValue: normalizedCustomColorDraft.value,
-    channel: runtimeState.selectedChannel,
-    fallbackTextColor: "var(--panel-text)",
-    rule: selectedRule.value,
-  });
 });
 
 const panelThemeVars = computed(() => {
@@ -332,15 +329,15 @@ onBeforeUnmount(() => {
 });
 
 watch(
-  [() => runtimeState.selectedChannel, selectedSwatch],
-  ([channel, swatch], previousValue) => {
+  [() => runtimeState.selectedTarget, () => runtimeState.selectedChannel, selectedSwatch],
+  ([, channel, swatch], previousValue) => {
     const normalizedSelectedColor = normalizeHexColor(swatch);
     if (normalizedSelectedColor) {
       customColorDraft.value = normalizedSelectedColor;
       return;
     }
 
-    const previousChannel = previousValue?.[0];
+    const previousChannel = previousValue?.[1];
     if (!swatch || channel !== previousChannel) {
       customColorDraft.value = createDefaultCustomColor(channel);
     }
@@ -367,17 +364,41 @@ async function applyCustomColorDraft() {
   await applyCustomColorValue(customColorDraft.value);
 }
 
-function getCandidateStyle(candidateValue: string) {
-  return buildCandidatePreviewStyle({
-    candidateValue,
-    channel: runtimeState.selectedChannel,
-    fallbackTextColor: "var(--panel-text)",
-    rule: selectedRule.value,
-  });
+async function handleResetAllStyles() {
+  inlinePaletteState.value = closeInlinePalette();
+  await resetAllStyles();
 }
 
-function getCandidateValue(candidateValue: string) {
-  return getCandidatePreviewValue(runtimeState.selectedChannel, candidateValue);
+function activateTargetChannel(target: StyleTarget, channel: PaintChannel) {
+  selectTarget(target);
+  selectChannel(channel);
+  inlinePaletteState.value = toggleInlinePalette(inlinePaletteState.value, target, channel);
+}
+
+function selectPreviewTarget(target: StyleTarget) {
+  selectTarget(target);
+  inlinePaletteState.value = closeInlinePalette();
+}
+
+function closeInlinePalettePanel() {
+  inlinePaletteState.value = closeInlinePalette();
+}
+
+function isInlinePaletteOpenForTarget(target: StyleTarget) {
+  return isInlinePaletteOpen(inlinePaletteState.value, target);
+}
+
+function getTargetPreviewStyle(target: StyleTarget) {
+  return buildTargetPreviewStyle(target, runtimeState.profile[target], "var(--panel-text)");
+}
+
+function getChannelSwatch(target: StyleTarget, channel: PaintChannel) {
+  const value = runtimeState.profile[target][channel];
+  const fallbackColor = channel === "color"
+    ? "var(--panel-text)"
+    : "linear-gradient(135deg, var(--panel-preview-bg), var(--panel-card-bg))";
+
+  return buildChannelSwatchStyle(value, fallbackColor);
 }
 </script>
 
@@ -433,7 +454,7 @@ function getCandidateValue(candidateValue: string) {
 
 .style-editor-shell__eyebrow,
 .section-heading__kicker,
-.preview-stage__eyebrow {
+.target-preview-card__eyebrow {
   margin: 0;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -489,6 +510,27 @@ function getCandidateValue(candidateValue: string) {
   border-color: var(--panel-accent-outline);
 }
 
+.reset-styles-button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--b3-card-error-color) 40%, var(--panel-card-stroke) 60%);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--b3-card-error-background) 28%, var(--panel-pill-bg) 72%);
+  color: color-mix(in srgb, var(--b3-card-error-color) 78%, var(--panel-text) 22%);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.reset-styles-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
+}
+
 .section-heading {
   display: flex;
   align-items: center;
@@ -496,17 +538,22 @@ function getCandidateValue(candidateValue: string) {
   gap: 12px;
 }
 
-.channel-row,
+.section-heading__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .custom-color-panel,
 .target-grid,
-.palette-preview-grid {
+.swatch-grid {
   display: grid;
   gap: 10px;
 }
 
-.channel-chip,
-.target-chip,
-.palette-preview-card {
+.target-preview-card__surface,
+.channel-orb,
+.swatch-chip {
   border: 0;
   cursor: pointer;
   transition:
@@ -515,15 +562,11 @@ function getCandidateValue(candidateValue: string) {
     background-color 120ms ease;
 }
 
-.channel-chip:hover,
-.target-chip:hover,
-.palette-preview-card:hover {
+.target-preview-card__surface:hover,
+.channel-orb:hover,
+.swatch-chip:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
-}
-
-.channel-row {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .custom-color-panel {
@@ -535,13 +578,19 @@ function getCandidateValue(candidateValue: string) {
   border: 1px solid var(--panel-card-stroke);
 }
 
+.custom-color-panel--inline {
+  background:
+    linear-gradient(135deg, var(--panel-glass), transparent 72%),
+    var(--panel-card-bg);
+}
+
 .custom-color-panel__copy {
   display: grid;
   gap: 4px;
 }
 
 .custom-color-panel__description,
-.preset-section-heading__copy {
+.inline-palette-panel__copy {
   margin: 0;
   font-size: 12px;
   line-height: 1.6;
@@ -639,154 +688,172 @@ function getCandidateValue(candidateValue: string) {
   cursor: not-allowed;
 }
 
-.custom-color-preview {
-  display: grid;
-  gap: 10px;
-}
-
-.custom-color-preview__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.custom-color-preview__value {
-  font-size: 11px;
-  color: var(--panel-text-subtle);
-}
-
-.preset-section-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.channel-chip {
-  min-height: 38px;
-  border-radius: 999px;
-  background: var(--panel-chip-bg);
-  color: var(--panel-text-muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.channel-chip--active {
-  background: var(--panel-chip-active-bg);
-  outline: 1px solid var(--panel-accent-outline);
-}
-
 .target-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.target-chip {
-  min-height: 58px;
-  display: grid;
-  align-content: center;
-  gap: 2px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  background: var(--panel-chip-bg);
-  color: var(--panel-text-muted);
-  text-align: left;
-}
-
-.target-chip--active {
-  background: var(--panel-chip-active-bg);
-  outline: 1px solid var(--panel-accent-outline);
-}
-
-.target-chip__short {
-  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.target-chip__label {
-  font-size: 12px;
-}
-
-.palette-preview-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.palette-preview-card {
-  min-height: 168px;
+.target-preview-card {
   display: grid;
   gap: 10px;
   padding: 12px;
   border-radius: 18px;
   background: var(--panel-chip-bg);
-  color: var(--panel-text-muted);
-  text-align: left;
+  border: 1px solid transparent;
 }
 
-.palette-preview-card--active {
-  outline: 1px solid var(--panel-accent-outline);
+.target-preview-card--selected {
+  border-color: var(--panel-accent-outline);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-accent) 24%, transparent 76%);
 }
 
-.palette-preview-card__header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.palette-preview-card__dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  flex: none;
-  border: 1px solid var(--panel-dot-border);
-  background: var(--swatch-color);
-}
-
-.palette-preview-card__dot--clear {
-  background:
-    linear-gradient(135deg, transparent 0 46%, var(--panel-text-subtle) 46% 54%, transparent 54% 100%),
-    linear-gradient(135deg, var(--panel-preview-bg), var(--panel-card-bg));
-}
-
-.palette-preview-card__label {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.palette-preview-card__value {
-  font-size: 11px;
-  color: var(--panel-text-subtle);
-}
-
-.palette-preview-card--clear {
-  background: var(--panel-clear-bg);
-}
-
-.preview-stage {
+.target-preview-card__surface {
   display: grid;
   gap: 6px;
-  min-height: 96px;
-  padding: 12px;
+  min-height: 120px;
+  padding: 14px;
   border-radius: 16px;
+  text-align: left;
   background: var(--panel-preview-bg);
   border: 1px solid var(--panel-card-inner-stroke);
   align-content: center;
 }
 
-.preview-stage--draft {
-  min-height: 88px;
-}
-
-.preview-stage--clear {
-  background:
-    linear-gradient(135deg, var(--panel-glass), transparent 70%),
-    var(--panel-preview-bg);
-}
-
-.preview-stage__content {
+.target-preview-card__title {
   margin: 0;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   font-size: 19px;
   line-height: 1.25;
+}
+
+.target-preview-card__hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: color-mix(in srgb, currentColor 72%, var(--panel-text-subtle) 28%);
+}
+
+.target-preview-card__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.inline-palette-panel {
+  display: grid;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.inline-palette-panel__header,
+.inline-palette-panel__subhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.inline-palette-panel__close {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--panel-card-stroke);
+  border-radius: 999px;
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.inline-palette-panel__close:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
+}
+
+.channel-orb {
+  min-height: 42px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
+  border: 1px solid var(--panel-card-stroke);
+}
+
+.channel-orb--active {
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-accent);
+  border-color: var(--panel-accent-outline);
+}
+
+.channel-orb__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-dot-border);
+  background: var(--orb-fill);
+}
+
+.channel-orb__swatch--empty {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-text-subtle) 26%, transparent 74%);
+}
+
+.channel-orb__label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.swatch-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.swatch-grid--inline {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.swatch-chip {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 16px;
+  background: var(--panel-chip-bg);
+  color: var(--panel-text-muted);
+  text-align: left;
+}
+
+.swatch-chip--active {
+  background: var(--panel-chip-active-bg);
+  outline: 1px solid var(--panel-accent-outline);
+}
+
+.swatch-chip__dot {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 999px;
+  border: 1px solid var(--panel-dot-border);
+  background: var(--swatch-color);
+}
+
+.swatch-chip__dot--clear {
+  background:
+    linear-gradient(135deg, transparent 0 46%, var(--panel-text-subtle) 46% 54%, transparent 54% 100%),
+    linear-gradient(135deg, var(--panel-preview-bg), var(--panel-card-bg));
+}
+
+.swatch-chip__label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.swatch-chip--clear {
+  background: var(--panel-clear-bg);
 }
 
 @media (max-width: 420px) {
@@ -795,7 +862,7 @@ function getCandidateValue(candidateValue: string) {
   }
 
   .target-grid,
-  .palette-preview-grid {
+  .swatch-grid {
     grid-template-columns: 1fr;
   }
 
@@ -803,9 +870,18 @@ function getCandidateValue(candidateValue: string) {
     grid-template-columns: 1fr;
   }
 
+  .target-preview-card__actions {
+    flex-wrap: wrap;
+  }
+
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .section-heading__actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 </style>

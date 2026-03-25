@@ -58,3 +58,10 @@ export function updateTargetBackgroundColor(
     },
   };
 }
+
+export function resetEditorStyles(state: StyleEditorState): StyleEditorState {
+  return {
+    ...state,
+    profile: createDefaultStyleProfile(),
+  };
+}

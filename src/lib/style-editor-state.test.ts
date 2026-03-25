@@ -1,6 +1,7 @@
 import {
   createDefaultEditorState,
   normalizeEditorState,
+  resetEditorStyles,
   updateTargetBackgroundColor,
   updateTargetColor,
 } from "@/lib/style-editor-state";
@@ -40,5 +41,20 @@ describe("style editor state", () => {
     expect(nextState.profile.mark.backgroundColor).toBe("var(--b3-font-background8)");
     expect(nextState.profile.heading2.backgroundColor).toBe("");
     expect(nextState.profile.blockquote.backgroundColor).toBe("");
+  });
+
+  it("resets all configured styles back to the default state", () => {
+    const stateWithStyles = updateTargetBackgroundColor(
+      updateTargetColor(createDefaultEditorState(), "heading2", "var(--b3-font-color4)"),
+      "mark",
+      "var(--b3-font-background8)",
+    );
+
+    const resetState = resetEditorStyles(stateWithStyles);
+
+    expect(resetState.profile.heading2.color).toBe("");
+    expect(resetState.profile.mark.backgroundColor).toBe("");
+    expect(resetState.profile.heading1.color).toBe("");
+    expect(resetState.profile.codeBlock.backgroundColor).toBe("");
   });
 });

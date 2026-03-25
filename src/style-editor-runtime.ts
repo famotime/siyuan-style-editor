@@ -6,6 +6,7 @@ import { reactive } from "vue";
 import {
   createDefaultEditorState,
   normalizeEditorState,
+  resetEditorStyles,
   updateTargetBackgroundColor,
   updateTargetColor,
   type StyleEditorState,
@@ -181,4 +182,11 @@ export async function applyPaletteColor(color: string) {
 
 export async function clearSelectedTargetColor() {
   await applyPaletteColor("");
+}
+
+export async function resetAllStyles() {
+  const nextState = resetEditorStyles(snapshotState());
+  replaceProfile(nextState);
+  applyInjectedStyles();
+  await persistState();
 }
