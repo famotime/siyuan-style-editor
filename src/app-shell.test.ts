@@ -27,8 +27,24 @@ describe("app shell layout", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
     expect(appSource).toContain(".workspace-hero {");
-    expect(appSource).toContain("padding: 4px 2px 2px;");
+    expect(appSource).toContain("padding: 2px 2px 0;");
     expect(appSource).not.toContain("linear-gradient(180deg, var(--panel-preview-bg), transparent 140%)");
+  });
+
+  it("removes the extra shell inset outline from the panel container", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain(".style-card {");
+    expect(appSource).not.toContain(".style-card::after {");
+  });
+
+  it("packs the shell content toward the top and leaves slack space below", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain(".style-editor-shell {");
+    expect(appSource).toContain("align-content: start;");
+    expect(appSource).toContain(".style-card {");
+    expect(appSource).toContain("padding: 12px 16px 22px;");
   });
 
   it("keeps the palette editor focused with a concise floating heading", () => {
@@ -48,6 +64,15 @@ describe("app shell layout", () => {
     expect(appSource).toContain("padding: 14px;");
     expect(appSource).toContain(".target-preview-card__title {");
     expect(appSource).toContain("font-size: 18px;");
+  });
+
+  it("uses standard-height hero action buttons instead of oversized pills", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain(".extract-styles-button,");
+    expect(appSource).toContain(".reset-styles-button {");
+    expect(appSource).toContain("min-height: 32px;");
+    expect(appSource).toContain("padding: 0 12px;");
   });
 
   it("uses tooltip-only color channel controls without visible labels or borders", () => {

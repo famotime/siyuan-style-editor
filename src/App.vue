@@ -258,6 +258,7 @@ const {
   min-height: 100%;
   padding: 16px;
   display: grid;
+  align-content: start;
   box-sizing: border-box;
   background:
     radial-gradient(circle at top left, var(--panel-glow-a), transparent 34%),
@@ -272,8 +273,9 @@ const {
   position: relative;
   overflow: hidden;
   display: grid;
-  gap: 16px;
-  padding: 16px;
+  align-content: start;
+  gap: 12px;
+  padding: 12px 16px 22px;
   border: 1px solid var(--panel-card-stroke);
   border-radius: 26px;
   background:
@@ -283,29 +285,21 @@ const {
   box-shadow: var(--panel-shadow);
 }
 
-.style-card::after {
-  content: "";
-  position: absolute;
-  inset: 10px;
-  border-radius: 20px;
-  border: 1px solid var(--panel-card-inner-stroke);
-  pointer-events: none;
-}
-
 .style-card--workspace {
-  gap: 14px;
+  gap: 10px;
 }
 
 .workspace-hero {
   position: relative;
   display: grid;
-  gap: 14px;
-  padding: 4px 2px 2px;
+  gap: 8px;
+  padding: 2px 2px 0;
 }
 
 .workspace-hero__copy {
   display: grid;
-  gap: 8px;
+  align-content: start;
+  gap: 6px;
   max-width: 540px;
 }
 
@@ -313,7 +307,7 @@ const {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .workspace-hero__summary,
@@ -346,7 +340,7 @@ const {
 
 .style-editor-shell__title {
   font-size: 28px;
-  line-height: 1.04;
+  line-height: 1.02;
   letter-spacing: 0.03em;
 }
 
@@ -386,7 +380,15 @@ const {
 }
 
 .extract-styles-button,
-.reset-styles-button,
+.reset-styles-button {
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .inline-palette-panel__close {
   min-height: 38px;
   padding: 0 14px;
