@@ -11,6 +11,7 @@ import {
   updateTargetColor,
   type StyleEditorState,
 } from "@/lib/style-editor-state";
+import { extractStyleProfileFromDocument } from "@/lib/style-extractor";
 import {
   buildStyleCss,
   normalizeStyleProfile,
@@ -189,4 +190,32 @@ export async function resetAllStyles() {
   replaceProfile(nextState);
   applyInjectedStyles();
   await persistState();
+}
+
+export async function extractCurrentStyles() {
+  if (typeof document === "undefined") {
+    return {
+      extractedTargetCount: 0,
+      matchedTargetCount: 0,
+    };
+  }
+
+  const result = extractStyleProfileFromDocument(document);
+  if (result.matchedTargetCount === 0) {
+    return {
+      extractedTargetCount: 0,
+      matchedTargetCount: 0,
+    };
+  }
+
+  replaceProfile({
+    profile: result.profile,
+  });
+  applyInjectedStyles();
+  await persistState();
+
+  return {
+    extractedTargetCount: result.extractedTargetCount,
+    matchedTargetCount: result.matchedTargetCount,
+  };
 }

@@ -16,7 +16,7 @@
       <div class="style-editor-shell__status">
         <span class="status-pill status-pill--live">实时生效</span>
         <span class="style-editor-shell__status-copy">
-          {{ selectedTargetMeta.hint }}
+          {{ statusCopy }}
         </span>
       </div>
     </section>
@@ -35,6 +35,13 @@
           <div class="target-badge">
             {{ selectedTargetMeta.label }}
           </div>
+          <button
+            type="button"
+            class="extract-styles-button"
+            @click="handleExtractStyles"
+          >
+            提取样式
+          </button>
           <button
             type="button"
             class="reset-styles-button"
@@ -223,6 +230,7 @@ import {
   applyPaletteColor,
   BACKGROUND_PALETTE,
   clearSelectedTargetColor,
+  extractCurrentStyles,
   FOREGROUND_PALETTE,
   resetAllStyles,
   runtimeState,
@@ -253,9 +261,14 @@ import type { StyleTarget } from "@/lib/style-profile";
 
 const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false));
 const inlinePaletteState = ref(closeInlinePalette());
+const actionMessage = ref("");
 
 const selectedTargetMeta = computed(() => {
   return STYLE_TARGET_OPTIONS.find(target => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0];
+});
+
+const statusCopy = computed(() => {
+  return actionMessage.value || selectedTargetMeta.value.hint;
 });
 
 const activePalette = computed(() => {
@@ -364,9 +377,27 @@ async function applyCustomColorDraft() {
   await applyCustomColorValue(customColorDraft.value);
 }
 
+async function handleExtractStyles() {
+  inlinePaletteState.value = closeInlinePalette();
+  const result = await extractCurrentStyles();
+
+  if (result.matchedTargetCount === 0) {
+    actionMessage.value = "未找到可提取的文档对象，请先打开包含标题或文本内容的文档。";
+    return;
+  }
+
+  if (result.extractedTargetCount === 0) {
+    actionMessage.value = `已扫描 ${result.matchedTargetCount} 类对象，但没有检测到可回填的显式颜色。`;
+    return;
+  }
+
+  actionMessage.value = `已提取 ${result.extractedTargetCount} 类对象的当前颜色，并同步到面板预览。`;
+}
+
 async function handleResetAllStyles() {
   inlinePaletteState.value = closeInlinePalette();
   await resetAllStyles();
+  actionMessage.value = "已清除全部样式，恢复到初始状态。";
 }
 
 function activateTargetChannel(target: StyleTarget, channel: PaintChannel) {
@@ -527,6 +558,27 @@ function getChannelSwatch(target: StyleTarget, channel: PaintChannel) {
 }
 
 .reset-styles-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
+}
+
+.extract-styles-button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--panel-accent-outline);
+  border-radius: 999px;
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-accent);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.extract-styles-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
 }

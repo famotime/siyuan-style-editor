@@ -30,7 +30,7 @@ interface TargetMeta {
   cssSelector: string;
 }
 
-const STYLE_TARGETS: StyleTarget[] = [
+export const STYLE_TARGETS: StyleTarget[] = [
   "heading1",
   "heading2",
   "heading3",
@@ -132,6 +132,10 @@ const TARGET_META: Record<StyleTarget, TargetMeta> = {
     ].join(",\n"),
   },
 };
+
+export function getStyleTargetSelector(target: StyleTarget): string {
+  return TARGET_META[target].cssSelector;
+}
 
 function createEmptyRule(): StyleRule {
   return { ...EMPTY_RULE };
