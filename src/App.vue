@@ -143,21 +143,37 @@
               </p>
             </div>
 
-            <div class="custom-color-panel__controls">
-              <label class="color-well">
-                <input
-                  type="color"
-                  class="color-well__input"
-                  :value="colorPickerValue"
-                  @input="handleColorPickerInput"
-                >
+            <div class="inline-color-picker">
+              <div
+                ref="inlineColorFieldRef"
+                class="inline-color-picker__field"
+                :style="inlineColorFieldStyle"
+                @pointerdown="handleInlineColorFieldPointerDown"
+              >
                 <span
-                  class="color-well__swatch"
-                  :style="{ '--well-color': colorPickerValue }"
+                  class="inline-color-picker__thumb"
+                  :style="inlineColorThumbStyle"
                 />
-                <span class="color-well__label">调色板</span>
-              </label>
+              </div>
 
+              <label class="inline-color-picker__hue">
+                <span
+                  class="inline-color-picker__preview"
+                  :style="{ '--inline-picker-preview': colorPickerValue }"
+                />
+                <input
+                  type="range"
+                  class="inline-color-picker__hue-slider"
+                  min="0"
+                  max="360"
+                  step="1"
+                  :value="inlineHue"
+                  @input="handleInlineHueInput"
+                >
+              </label>
+            </div>
+
+            <div class="custom-color-panel__controls">
               <input
                 v-model="customColorDraft"
                 type="text"
@@ -196,21 +212,21 @@
                 :key="color.value"
                 type="button"
                 class="swatch-chip"
+                :aria-label="color.label"
                 :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
                 :style="{ '--swatch-color': color.value }"
                 @click="handlePresetColorSelection(color.value)"
               >
                 <span class="swatch-chip__dot" />
-                <span class="swatch-chip__label">{{ color.label }}</span>
               </button>
               <button
                 type="button"
                 class="swatch-chip swatch-chip--clear"
+                aria-label="恢复默认颜色"
                 :class="{ 'swatch-chip--active': !selectedSwatch }"
                 @click="handleClearSelectedTargetColor"
               >
                 <span class="swatch-chip__dot swatch-chip__dot--clear" />
-                <span class="swatch-chip__label">默认</span>
               </button>
             </div>
           </div>
@@ -236,10 +252,15 @@ const {
   getChannelSwatch,
   getTargetPreviewStyle,
   handleClearSelectedTargetColor,
-  handleColorPickerInput,
   handleExtractStyles,
+  handleInlineColorFieldPointerDown,
+  handleInlineHueInput,
   handlePresetColorSelection,
   handleResetAllStyles,
+  inlineColorFieldRef,
+  inlineColorFieldStyle,
+  inlineColorThumbStyle,
+  inlineHue,
   isCustomColorDraftValid,
   isInlinePaletteOpenForTarget,
   isInlinePaletteVisible,
@@ -534,7 +555,6 @@ const {
 }
 
 .channel-orb__swatch,
-.color-well__swatch,
 .swatch-chip__dot {
   border-radius: 999px;
   border: 1px solid var(--panel-dot-border);
@@ -600,45 +620,104 @@ const {
 
 .custom-color-panel__controls {
   display: grid;
-  grid-template-columns: minmax(0, 116px) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
 }
 
-.color-well {
+.inline-color-picker {
+  display: grid;
+  gap: 8px;
+}
+
+.inline-color-picker__field {
   position: relative;
-  min-height: 46px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 14px;
-  border-radius: 14px;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
   border: 1px solid var(--panel-card-stroke);
-  background: var(--panel-chip-bg);
-  color: var(--panel-text-muted);
-  cursor: pointer;
+  overflow: hidden;
+  cursor: crosshair;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, white 10%, transparent 90%);
 }
 
-.color-well__input {
+.inline-color-picker__thumb {
   position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.22),
+    0 4px 12px rgba(15, 23, 42, 0.2);
+  transform: translate(-50%, -50%);
 }
 
-.color-well__swatch,
+.inline-color-picker__hue {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.inline-color-picker__preview {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-card-stroke);
+  background: var(--inline-picker-preview);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, white 14%, transparent 86%);
+}
+
+.inline-color-picker__hue-slider {
+  appearance: none;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-card-stroke);
+  background: linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ffff00 17%,
+    #00ff00 33%,
+    #00ffff 50%,
+    #0000ff 67%,
+    #ff00ff 83%,
+    #ff0000 100%
+  );
+}
+
+.inline-color-picker__hue-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  background: var(--panel-card-bg);
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.2);
+  cursor: ew-resize;
+}
+
+.inline-color-picker__hue-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  background: var(--panel-card-bg);
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.2);
+  cursor: ew-resize;
+}
+
+.inline-color-picker__hue-slider::-moz-range-track {
+  height: 14px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+}
+
 .swatch-chip__dot {
   width: 18px;
   height: 18px;
-}
-
-.color-well__swatch {
-  background: var(--well-color);
-}
-
-.color-well__label {
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .custom-color-field,
@@ -662,7 +741,7 @@ const {
 
 .custom-color-field:focus,
 .custom-color-apply:focus,
-.color-well:focus-within {
+.inline-color-picker__hue-slider:focus-visible {
   outline: 1px solid var(--panel-accent-outline);
   outline-offset: 2px;
 }
@@ -683,25 +762,25 @@ const {
 
 .swatch-grid {
   display: grid;
-  gap: 10px;
 }
 
 .swatch-grid--inline {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .swatch-chip {
-  min-height: 58px;
+  min-height: 40px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 14px;
+  justify-content: center;
+  padding: 0;
   border: 1px solid transparent;
-  border-radius: 16px;
+  border-radius: 12px;
   background: var(--panel-chip-bg);
   color: var(--panel-text-muted);
-  text-align: left;
   cursor: pointer;
+  aspect-ratio: 1;
 }
 
 .swatch-chip--active {
@@ -711,6 +790,8 @@ const {
 
 .swatch-chip__dot {
   flex: none;
+  width: 20px;
+  height: 20px;
   background: var(--swatch-color);
 }
 
@@ -718,11 +799,6 @@ const {
   background:
     linear-gradient(135deg, transparent 0 46%, var(--panel-text-subtle) 46% 54%, transparent 54% 100%),
     linear-gradient(135deg, var(--panel-preview-bg), var(--panel-card-bg));
-}
-
-.swatch-chip__label {
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .swatch-chip--clear {
@@ -744,8 +820,7 @@ const {
 
 @media (max-width: 720px) {
   .workspace-hero__actions,
-  .target-grid,
-  .swatch-grid--inline {
+  .target-grid {
     grid-template-columns: 1fr;
   }
 }

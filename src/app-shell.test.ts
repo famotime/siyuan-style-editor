@@ -86,4 +86,35 @@ describe("app shell layout", () => {
     expect(appSource).toContain("border: 0;");
     expect(appSource).toContain(".channel-orb::after {");
   });
+
+  it("renders preset swatches as dense dot-only chips without visible text", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).not.toContain("class=\"swatch-chip__label\"");
+    expect(appSource).toContain(":aria-label=\"color.label\"");
+    expect(appSource).toContain("aria-label=\"恢复默认颜色\"");
+    expect(appSource).toContain(".swatch-grid--inline {");
+    expect(appSource).toContain("grid-template-columns: repeat(6, minmax(0, 1fr));");
+    expect(appSource).toContain("gap: 6px;");
+    expect(appSource).toContain(".swatch-chip {");
+    expect(appSource).toContain("min-height: 40px;");
+    expect(appSource).toContain("padding: 0;");
+    expect(appSource).toContain("justify-content: center;");
+  });
+
+  it("renders an inline color board above the preset swatches inside the same floating palette", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain("class=\"inline-color-picker\"");
+    expect(appSource).toContain("class=\"inline-color-picker__field\"");
+    expect(appSource).toContain("class=\"inline-color-picker__hue\"");
+    expect(appSource).toContain("class=\"inline-color-picker__thumb\"");
+    expect(appSource).toContain("@pointerdown=\"handleInlineColorFieldPointerDown\"");
+    expect(appSource).toContain("@input=\"handleInlineHueInput\"");
+    expect(appSource).toContain(".inline-color-picker {");
+    expect(appSource).toContain(".inline-color-picker__field {");
+    expect(appSource).toContain(".inline-color-picker__hue {");
+    expect(appSource.indexOf("class=\"inline-color-picker\"")).toBeLessThan(appSource.indexOf("class=\"inline-palette-panel__presets\""));
+    expect(appSource).not.toContain("type=\"color\"");
+  });
 });

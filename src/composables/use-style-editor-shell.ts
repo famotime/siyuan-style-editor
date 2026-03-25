@@ -28,6 +28,11 @@ import {
 } from "@/lib/custom-color";
 import { resolveFloatingPalettePosition } from "@/lib/floating-palette";
 import {
+  buildInlineColorFieldBackground,
+  hexToHsvColor,
+  hsvToHexColor,
+} from "@/lib/inline-color-picker";
+import {
   closeInlinePalette,
   isInlinePaletteOpen,
   toggleInlinePalette,
@@ -51,6 +56,7 @@ import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
 export function useStyleEditorShell() {
   const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false));
   const inlinePaletteState = ref(closeInlinePalette());
+  const inlineColorFieldRef = ref<HTMLElement | null>(null);
   const floatingPaletteRef = ref<HTMLElement | null>(null);
   const floatingPaletteStyle = ref<Record<string, string>>({});
   const inlinePaletteAnchorRect = ref<{
@@ -88,6 +94,9 @@ export function useStyleEditorShell() {
   });
 
   const customColorDraft = ref(createDefaultCustomColor(runtimeState.selectedChannel));
+  const inlineHue = ref(0);
+  const inlineSaturation = ref(0);
+  const inlineValue = ref(0);
 
   const colorPickerValue = computed(() => {
     return resolveColorPickerValue(customColorDraft.value, runtimeState.selectedChannel);
@@ -103,6 +112,20 @@ export function useStyleEditorShell() {
 
   const panelThemeVars = computed(() => {
     return createPanelThemeVars(themeAppearance.value);
+  });
+
+  const inlineColorFieldStyle = computed(() => {
+    return {
+      background: buildInlineColorFieldBackground(inlineHue.value),
+    };
+  });
+
+  const inlineColorThumbStyle = computed(() => {
+    return {
+      background: colorPickerValue.value,
+      left: `${inlineSaturation.value * 100}%`,
+      top: `${(1 - inlineValue.value) * 100}%`,
+    };
   });
 
   function syncThemeAppearance() {
@@ -222,21 +245,16 @@ export function useStyleEditorShell() {
       window.removeEventListener("scroll", handleViewportScroll, true);
       window.removeEventListener("keydown", handleEscapeKey);
     }
+
+    stopInlineColorFieldTracking();
   });
 
   watch(
     [() => runtimeState.selectedTarget, () => runtimeState.selectedChannel, selectedSwatch],
-    ([, channel, swatch], previousValue) => {
-      const normalizedSelectedColor = normalizeHexColor(swatch);
-      if (normalizedSelectedColor) {
-        customColorDraft.value = normalizedSelectedColor;
-        return;
-      }
-
-      const previousChannel = previousValue?.[1];
-      if (!swatch || channel !== previousChannel) {
-        customColorDraft.value = createDefaultCustomColor(channel);
-      }
+    ([, channel, swatch]) => {
+      const nextDraft = normalizeHexColor(swatch) || createDefaultCustomColor(channel);
+      customColorDraft.value = nextDraft;
+      syncInlineColorPicker(nextDraft);
     },
     { immediate: true },
   );
@@ -266,9 +284,107 @@ export function useStyleEditorShell() {
     customColorDraft.value = appliedColor;
   }
 
-  function handleColorPickerInput(event: Event) {
-    const nextColor = (event.target as HTMLInputElement).value;
-    void applyCustomColorValue(nextColor);
+  function syncInlineColorPicker(color: string) {
+    const hsvColor = hexToHsvColor(color);
+    inlineHue.value = hsvColor.h;
+    inlineSaturation.value = hsvColor.s;
+    inlineValue.value = hsvColor.v;
+  }
+
+  let pendingInlineColor = "";
+  let isApplyingInlineColor = false;
+  let stopInlineColorFieldTrackingListener: (() => void) | null = null;
+
+  function queueInlineColorApply(color: string) {
+    pendingInlineColor = normalizeHexColor(color);
+    if (!pendingInlineColor || isApplyingInlineColor) {
+      return;
+    }
+
+    isApplyingInlineColor = true;
+    void (async () => {
+      while (pendingInlineColor) {
+        const nextColor = pendingInlineColor;
+        pendingInlineColor = "";
+        await applyPaletteColor(nextColor);
+      }
+
+      isApplyingInlineColor = false;
+      if (pendingInlineColor) {
+        queueInlineColorApply(pendingInlineColor);
+      }
+    })();
+  }
+
+  function updateInlineColorFromPoint(clientX: number, clientY: number) {
+    if (!inlineColorFieldRef.value) {
+      return;
+    }
+
+    const rect = inlineColorFieldRef.value.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      return;
+    }
+
+    const saturation = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    const value = 1 - Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
+    const nextColor = hsvToHexColor({
+      h: inlineHue.value,
+      s: saturation,
+      v: value,
+    });
+
+    inlineSaturation.value = saturation;
+    inlineValue.value = value;
+    customColorDraft.value = nextColor;
+    queueInlineColorApply(nextColor);
+  }
+
+  function stopInlineColorFieldTracking() {
+    stopInlineColorFieldTrackingListener?.();
+    stopInlineColorFieldTrackingListener = null;
+  }
+
+  function handleInlineColorFieldPointerDown(event: PointerEvent) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    updateInlineColorFromPoint(event.clientX, event.clientY);
+    stopInlineColorFieldTracking();
+
+    const handlePointerMove = (pointerEvent: PointerEvent) => {
+      updateInlineColorFromPoint(pointerEvent.clientX, pointerEvent.clientY);
+    };
+
+    const handlePointerUp = () => {
+      stopInlineColorFieldTracking();
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp, { once: true });
+      window.addEventListener("pointercancel", handlePointerUp, { once: true });
+      stopInlineColorFieldTrackingListener = () => {
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+        window.removeEventListener("pointercancel", handlePointerUp);
+      };
+    }
+  }
+
+  function handleInlineHueInput(event: Event) {
+    const nextHue = Number((event.target as HTMLInputElement).value);
+    const nextColor = hsvToHexColor({
+      h: nextHue,
+      s: inlineSaturation.value,
+      v: inlineValue.value,
+    });
+
+    inlineHue.value = nextHue;
+    customColorDraft.value = nextColor;
+    queueInlineColorApply(nextColor);
   }
 
   async function applyCustomColorDraft() {
@@ -288,6 +404,7 @@ export function useStyleEditorShell() {
   }
 
   function activateTargetChannel(target: StyleTarget, channel: PaintChannel, event: MouseEvent) {
+    stopInlineColorFieldTracking();
     selectTarget(target);
     selectChannel(channel);
     const nextInlinePaletteState = toggleInlinePalette(inlinePaletteState.value, target, channel);
@@ -374,10 +491,15 @@ export function useStyleEditorShell() {
     getChannelSwatch,
     getTargetPreviewStyle,
     handleClearSelectedTargetColor,
-    handleColorPickerInput,
     handleExtractStyles,
+    handleInlineColorFieldPointerDown,
+    handleInlineHueInput,
     handlePresetColorSelection,
     handleResetAllStyles,
+    inlineColorFieldRef,
+    inlineColorFieldStyle,
+    inlineColorThumbStyle,
+    inlineHue,
     isCustomColorDraftValid,
     isInlinePaletteOpenForTarget,
     isInlinePaletteVisible,
