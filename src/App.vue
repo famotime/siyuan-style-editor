@@ -4,89 +4,151 @@
     :style="panelThemeVars"
   >
     <section class="style-card style-card--workspace">
-      <div class="workspace-intro">
-        <div class="workspace-intro__copy">
+      <header class="workspace-hero">
+        <div class="workspace-hero__copy">
           <p class="style-editor-shell__eyebrow">
             Live Document Styling
           </p>
           <h1 class="style-editor-shell__title">
             文档样式编辑器
           </h1>
-          <p class="workspace-intro__summary">
-            直接在对象预览上调整文字色与背景色，提取与清空操作也集中在这里。
+          <p class="workspace-hero__summary">
+            以更轻的操作路径调整对象文字色与背景色，提取、清除与即时预览统一在一个编辑台里。
           </p>
-          <div class="workspace-intro__actions">
-            <button
-              type="button"
-              class="extract-styles-button"
-              @click="handleExtractStyles"
-            >
-              提取样式
-            </button>
-            <button
-              type="button"
-              class="reset-styles-button"
-              @click="handleResetAllStyles"
-            >
-              清除样式
-            </button>
-          </div>
+        </div>
+
+        <div class="workspace-hero__metrics">
+          <article class="hero-metric">
+            <p class="hero-metric__label">
+              当前对象
+            </p>
+            <p class="hero-metric__value">
+              {{ selectedTargetMeta.label }}
+            </p>
+          </article>
+          <article class="hero-metric">
+            <p class="hero-metric__label">
+              当前通道
+            </p>
+            <p class="hero-metric__value">
+              {{ selectedChannelLabel }}
+            </p>
+          </article>
+          <article class="hero-metric hero-metric--status">
+            <p class="hero-metric__label">
+              状态
+            </p>
+            <p class="hero-metric__value hero-metric__value--status">
+              {{ statusCopy }}
+            </p>
+          </article>
+        </div>
+      </header>
+
+      <div class="workspace-toolbar">
+        <div class="workspace-toolbar__copy">
+          <p class="section-heading__kicker">
+            Target Studio
+          </p>
+          <p class="workspace-toolbar__summary">
+            先选对象，再点字色或底色打开浮层。所有变更都会即时写入当前对象。
+          </p>
+        </div>
+
+        <div class="workspace-toolbar__actions">
+          <button
+            type="button"
+            class="extract-styles-button"
+            @click="handleExtractStyles"
+          >
+            提取样式
+          </button>
+          <button
+            type="button"
+            class="reset-styles-button"
+            @click="handleResetAllStyles"
+          >
+            清除样式
+          </button>
         </div>
       </div>
 
-      <div class="target-grid">
-        <article
-          v-for="target in STYLE_TARGET_OPTIONS"
-          :key="target.value"
-          class="target-preview-card"
-          :class="{ 'target-preview-card--selected': runtimeState.selectedTarget === target.value }"
-        >
-          <button
-            type="button"
-            class="target-preview-card__surface"
-            :style="getTargetPreviewStyle(target.value)"
-            @click="selectPreviewTarget(target.value)"
-          >
-            <p class="target-preview-card__eyebrow">
-              {{ target.shortLabel }}
+      <section class="target-studio">
+        <div class="target-studio__header">
+          <div>
+            <p class="section-heading__kicker">
+              Editable Targets
             </p>
-            <p class="target-preview-card__title">
-              {{ target.label }}
-            </p>
-          </button>
-
-          <div class="target-preview-card__actions">
-            <button
-              type="button"
-              class="channel-orb"
-              :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value) }"
-              @click="activateTargetChannel(target.value, 'color', $event)"
-            >
-              <span
-                class="channel-orb__swatch"
-                :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'color').isEmpty }"
-                :style="{ '--orb-fill': getChannelSwatch(target.value, 'color').background }"
-              />
-              <span class="channel-orb__label">字</span>
-            </button>
-
-            <button
-              type="button"
-              class="channel-orb"
-              :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value) }"
-              @click="activateTargetChannel(target.value, 'backgroundColor', $event)"
-            >
-              <span
-                class="channel-orb__swatch"
-                :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'backgroundColor').isEmpty }"
-                :style="{ '--orb-fill': getChannelSwatch(target.value, 'backgroundColor').background }"
-              />
-              <span class="channel-orb__label">底</span>
-            </button>
+            <h2 class="section-heading__title">
+              对象工作区
+            </h2>
           </div>
+          <p class="target-studio__note">
+            {{ STYLE_TARGET_OPTIONS.length }} 个对象可直接编辑
+          </p>
+        </div>
 
-        </article>
-      </div>
+        <div class="target-grid">
+          <article
+            v-for="target in STYLE_TARGET_OPTIONS"
+            :key="target.value"
+            class="target-preview-card"
+            :class="{ 'target-preview-card--selected': runtimeState.selectedTarget === target.value }"
+          >
+            <button
+              type="button"
+              class="target-preview-card__surface"
+              :style="getTargetPreviewStyle(target.value)"
+              @click="selectPreviewTarget(target.value)"
+            >
+              <div class="target-preview-card__head">
+                <p class="target-preview-card__eyebrow">
+                  {{ target.shortLabel }}
+                </p>
+                <span
+                  v-if="runtimeState.selectedTarget === target.value"
+                  class="target-preview-card__badge"
+                >
+                  当前
+                </span>
+              </div>
+              <p class="target-preview-card__title">
+                {{ target.label }}
+              </p>
+            </button>
+
+            <div class="target-preview-card__actions">
+              <button
+                type="button"
+                class="channel-orb"
+                :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value) }"
+                @click="activateTargetChannel(target.value, 'color', $event)"
+              >
+                <span
+                  class="channel-orb__swatch"
+                  :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'color').isEmpty }"
+                  :style="{ '--orb-fill': getChannelSwatch(target.value, 'color').background }"
+                />
+                <span class="channel-orb__label">字色</span>
+              </button>
+
+              <button
+                type="button"
+                class="channel-orb"
+                :class="{ 'channel-orb--active': runtimeState.selectedTarget === target.value && runtimeState.selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value) }"
+                @click="activateTargetChannel(target.value, 'backgroundColor', $event)"
+              >
+                <span
+                  class="channel-orb__swatch"
+                  :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'backgroundColor').isEmpty }"
+                  :style="{ '--orb-fill': getChannelSwatch(target.value, 'backgroundColor').background }"
+                />
+                <span class="channel-orb__label">底色</span>
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
     </section>
 
     <teleport to="body">
@@ -100,7 +162,7 @@
           <div class="inline-palette-panel__header">
             <div>
               <p class="section-heading__kicker">
-                Floating Palette
+                Palette Console
               </p>
               <p class="inline-palette-panel__copy">
                 正在编辑 {{ selectedTargetMeta.label }} 的{{ selectedChannelLabel }}
@@ -122,7 +184,7 @@
                 Custom Color
               </p>
               <p class="custom-color-panel__description">
-                使用调色板或十六进制颜色，修改会立即反映到当前对象。
+                使用调色板或十六进制颜色，即时写入当前对象。
               </p>
             </div>
 
@@ -156,7 +218,7 @@
                 :disabled="!isCustomColorDraftValid"
                 @click="applyCustomColorDraft"
               >
-                应用自定义色
+                应用颜色
               </button>
             </div>
           </div>
@@ -168,7 +230,7 @@
                   Presets
                 </p>
                 <p class="inline-palette-panel__copy">
-                  纯色预置直接应用到当前对象。
+                  快速应用纯色，未设置时回到默认。
                 </p>
               </div>
             </div>
@@ -210,6 +272,7 @@ const {
   activePalette,
   activateTargetChannel,
   applyCustomColorDraft,
+  closeInlinePalettePanel,
   colorPickerValue,
   customColorDraft,
   customColorPlaceholder,
@@ -231,6 +294,7 @@ const {
   selectedSwatch,
   selectedTargetMeta,
   selectPreviewTarget,
+  statusCopy,
   STYLE_TARGET_OPTIONS,
 } = useStyleEditorShell();
 </script>
@@ -238,16 +302,15 @@ const {
 <style scoped lang="scss">
 .style-editor-shell {
   min-height: 100%;
-  padding: 14px;
+  padding: 16px;
   display: grid;
-  gap: 10px;
-  background:
-    radial-gradient(circle at top left, var(--panel-glow-a), transparent 30%),
-    radial-gradient(circle at bottom right, var(--panel-glow-b), transparent 26%),
-    linear-gradient(180deg, var(--panel-sheen), transparent 28%),
-    var(--panel-background);
-  color: var(--panel-text-muted);
   box-sizing: border-box;
+  background:
+    radial-gradient(circle at top left, var(--panel-glow-a), transparent 34%),
+    radial-gradient(circle at bottom right, var(--panel-glow-b), transparent 30%),
+    linear-gradient(180deg, var(--panel-shell-overlay), transparent 38%),
+    var(--panel-shell-backdrop);
+  color: var(--panel-text-muted);
   font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
@@ -255,19 +318,13 @@ const {
   position: relative;
   overflow: hidden;
   display: grid;
-  gap: 10px;
-  padding: 14px;
+  gap: 16px;
+  padding: 16px;
   border: 1px solid var(--panel-card-stroke);
-  border-radius: 20px;
+  border-radius: 26px;
   background:
-    linear-gradient(135deg, var(--panel-glass), transparent 45%),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 23px,
-      var(--panel-rule-line) 23px,
-      var(--panel-rule-line) 24px
-    ),
+    linear-gradient(135deg, var(--panel-glass), transparent 48%),
+    linear-gradient(180deg, var(--panel-card-highlight), transparent 34%),
     var(--panel-card-bg);
   box-shadow: var(--panel-shadow);
 }
@@ -276,156 +333,331 @@ const {
   content: "";
   position: absolute;
   inset: 10px;
+  border-radius: 20px;
   border: 1px solid var(--panel-card-inner-stroke);
-  border-radius: 14px;
   pointer-events: none;
 }
 
 .style-card--workspace {
-  gap: 8px;
+  gap: 14px;
 }
 
-.workspace-intro {
-  display: block;
-}
-
-.workspace-intro__copy {
+.workspace-hero {
   position: relative;
   display: grid;
-  gap: 7px;
-  padding: 12px 12px 10px;
-  border-radius: 18px;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid var(--panel-card-inner-stroke);
   background:
     linear-gradient(135deg, var(--panel-glass), transparent 55%),
-    color-mix(in srgb, var(--panel-preview-bg) 68%, transparent 32%);
-  border: 1px solid var(--panel-card-inner-stroke);
+    linear-gradient(180deg, var(--panel-preview-bg), transparent 140%);
 }
 
-.workspace-intro__summary {
+.workspace-hero__copy {
+  display: grid;
+  gap: 8px;
+  max-width: 540px;
+}
+
+.workspace-hero__summary,
+.workspace-toolbar__summary,
+.inline-palette-panel__copy,
+.custom-color-panel__description,
+.target-studio__note {
   margin: 0;
   font-size: 12px;
-  line-height: 1.55;
+  line-height: 1.65;
   color: var(--panel-text-subtle);
 }
 
-.workspace-intro__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 2px;
+.workspace-hero__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
+.hero-metric {
+  display: grid;
+  gap: 6px;
+  min-height: 88px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--panel-divider);
+  background: var(--panel-toolbar-bg);
+  box-shadow: var(--panel-toolbar-shadow);
+}
+
+.hero-metric--status {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--panel-accent-soft) 70%, transparent 30%), transparent 90%),
+    var(--panel-toolbar-bg);
+}
+
+.hero-metric__label,
 .style-editor-shell__eyebrow,
-.section-heading__kicker {
-  margin: 0;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  font-size: 11px;
-  color: var(--panel-text-subtle);
-}
-
+.section-heading__kicker,
 .target-preview-card__eyebrow {
   margin: 0;
-  letter-spacing: 0.22em;
+  font-size: 10px;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  font-size: 9px;
   color: var(--panel-text-subtle);
+}
+
+.hero-metric__value {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--panel-text);
+}
+
+.hero-metric__value--status {
+  color: var(--panel-accent);
 }
 
 .style-editor-shell__title,
-.section-heading__title {
+.section-heading__title,
+.target-preview-card__title {
   margin: 0;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
-  font-weight: 600;
-  letter-spacing: 0.03em;
   color: var(--panel-text);
 }
 
 .style-editor-shell__title {
-  font-size: 22px;
+  font-size: 28px;
+  line-height: 1.04;
+  letter-spacing: 0.03em;
+}
+
+.section-heading__title {
+  font-size: 18px;
   line-height: 1.1;
 }
 
-.reset-styles-button {
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--b3-card-error-color) 40%, var(--panel-card-stroke) 60%);
+.workspace-toolbar,
+.target-studio {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid var(--panel-divider);
+  background: var(--panel-toolbar-bg);
+  box-shadow: var(--panel-toolbar-shadow);
+}
+
+.workspace-toolbar {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.workspace-toolbar__copy {
+  display: grid;
+  gap: 4px;
+}
+
+.workspace-toolbar__actions,
+.target-preview-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.extract-styles-button,
+.reset-styles-button,
+.inline-palette-panel__close,
+.custom-color-apply,
+.channel-orb,
+.swatch-chip,
+.target-preview-card__surface {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.extract-styles-button,
+.reset-styles-button,
+.inline-palette-panel__close {
+  min-height: 38px;
+  padding: 0 14px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--b3-card-error-background) 28%, var(--panel-pill-bg) 72%);
-  color: color-mix(in srgb, var(--b3-card-error-color) 78%, var(--panel-text) 22%);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    background-color 120ms ease;
-}
-
-.reset-styles-button:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--panel-hover-shadow);
 }
 
 .extract-styles-button {
-  min-height: 32px;
-  padding: 0 12px;
   border: 1px solid var(--panel-accent-outline);
-  border-radius: 999px;
   background: var(--panel-chip-active-bg);
   color: var(--panel-accent);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    background-color 120ms ease;
 }
 
-.extract-styles-button:hover {
+.reset-styles-button {
+  border: 1px solid color-mix(in srgb, var(--b3-card-error-color) 38%, var(--panel-card-stroke) 62%);
+  background: color-mix(in srgb, var(--b3-card-error-background) 30%, var(--panel-pill-bg) 70%);
+  color: color-mix(in srgb, var(--b3-card-error-color) 78%, var(--panel-text) 22%);
+}
+
+.extract-styles-button:hover,
+.reset-styles-button:hover,
+.inline-palette-panel__close:hover,
+.custom-color-apply:hover:not(:disabled),
+.channel-orb:hover,
+.swatch-chip:hover,
+.target-preview-card__surface:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
 }
 
-.custom-color-panel,
-.target-grid,
-.swatch-grid {
-  display: grid;
+.target-studio__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 10px;
 }
 
-.target-preview-card__surface,
-.channel-orb,
-.swatch-chip {
-  border: 0;
-  cursor: pointer;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    background-color 120ms ease;
+.target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.target-preview-card__surface:hover,
-.channel-orb:hover,
-.swatch-chip:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--panel-hover-shadow);
+.target-preview-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid var(--panel-divider);
+  background: var(--panel-card-strong);
+}
+
+.target-preview-card--selected {
+  border-color: var(--panel-accent-outline);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--panel-accent) 18%, transparent 82%),
+    0 16px 28px color-mix(in srgb, var(--panel-accent-soft) 28%, transparent 72%);
+}
+
+.target-preview-card__surface {
+  display: grid;
+  gap: 6px;
+  min-height: 92px;
+  padding: 14px;
+  border: 1px solid var(--panel-card-inner-stroke);
+  border-radius: 18px;
+  text-align: left;
+  cursor: pointer;
+  background: var(--panel-preview-bg);
+}
+
+.target-preview-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.target-preview-card__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.target-preview-card__title {
+  font-size: 20px;
+  line-height: 1.18;
+}
+
+.channel-orb {
+  min-height: 40px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--panel-card-stroke);
+  border-radius: 999px;
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
+  cursor: pointer;
+}
+
+.channel-orb--active {
+  border-color: var(--panel-accent-outline);
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-accent);
+}
+
+.channel-orb__swatch,
+.color-well__swatch,
+.swatch-chip__dot {
+  border-radius: 999px;
+  border: 1px solid var(--panel-dot-border);
+}
+
+.channel-orb__swatch {
+  width: 16px;
+  height: 16px;
+  background: var(--orb-fill);
+}
+
+.channel-orb__swatch--empty {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-text-subtle) 22%, transparent 78%);
+}
+
+.channel-orb__label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.inline-palette-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.inline-palette-panel--floating {
+  position: fixed;
+  z-index: 999;
+  width: min(320px, calc(100vw - 24px));
+  padding: 16px;
+  border-radius: 24px;
+  border: 1px solid var(--panel-card-stroke);
+  background:
+    linear-gradient(135deg, var(--panel-glass), transparent 50%),
+    linear-gradient(180deg, var(--panel-card-highlight), transparent 34%),
+    var(--panel-card-bg);
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.24), var(--panel-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.inline-palette-panel__header,
+.inline-palette-panel__subhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inline-palette-panel__close {
+  border: 1px solid var(--panel-card-stroke);
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
 }
 
 .custom-color-panel {
+  display: grid;
+  gap: 12px;
   padding: 14px;
   border-radius: 18px;
-  background:
-    linear-gradient(135deg, var(--panel-glass), transparent 60%),
-    var(--panel-preview-bg);
-  border: 1px solid var(--panel-card-stroke);
-}
-
-.custom-color-panel--inline {
-  background:
-    linear-gradient(135deg, var(--panel-glass), transparent 72%),
-    var(--panel-card-bg);
+  border: 1px solid var(--panel-divider);
+  background: var(--panel-toolbar-bg);
 }
 
 .custom-color-panel__copy {
@@ -433,17 +665,9 @@ const {
   gap: 4px;
 }
 
-.custom-color-panel__description,
-.inline-palette-panel__copy {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--panel-text-subtle);
-}
-
 .custom-color-panel__controls {
   display: grid;
-  grid-template-columns: minmax(0, 120px) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 116px) minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
 }
@@ -456,9 +680,9 @@ const {
   gap: 10px;
   padding: 0 14px;
   border-radius: 14px;
+  border: 1px solid var(--panel-card-stroke);
   background: var(--panel-chip-bg);
   color: var(--panel-text-muted);
-  border: 1px solid var(--panel-card-stroke);
   cursor: pointer;
 }
 
@@ -469,13 +693,14 @@ const {
   cursor: pointer;
 }
 
-.color-well__swatch {
+.color-well__swatch,
+.swatch-chip__dot {
   width: 18px;
   height: 18px;
-  border-radius: 999px;
-  border: 1px solid var(--panel-dot-border);
+}
+
+.color-well__swatch {
   background: var(--well-color);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .color-well__label {
@@ -513,18 +738,9 @@ const {
   padding: 0 16px;
   background: var(--panel-chip-active-bg);
   color: var(--panel-accent);
+  cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  cursor: pointer;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    opacity 120ms ease;
-}
-
-.custom-color-apply:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--panel-hover-shadow);
 }
 
 .custom-color-apply:disabled {
@@ -532,134 +748,9 @@ const {
   cursor: not-allowed;
 }
 
-.target-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.target-preview-card {
-  display: grid;
-  gap: 4px;
-  padding: 6px;
-  border-radius: 16px;
-  background: var(--panel-chip-bg);
-  border: 1px solid transparent;
-}
-
-.target-preview-card--selected {
-  border-color: var(--panel-accent-outline);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-accent) 24%, transparent 76%);
-}
-
-.target-preview-card__surface {
-  display: grid;
-  gap: 3px;
-  min-height: 68px;
-  padding: 8px;
-  border-radius: 16px;
-  text-align: left;
-  background: var(--panel-preview-bg);
-  border: 1px solid var(--panel-card-inner-stroke);
-  align-content: center;
-}
-
-.target-preview-card__title {
-  margin: 0;
-  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
-  font-size: 17px;
-  line-height: 1.25;
-}
-
-.target-preview-card__actions {
-  display: flex;
-  gap: 4px;
-}
-
-.inline-palette-panel {
-  display: grid;
-  gap: 12px;
-}
-
-.inline-palette-panel--floating {
-  position: fixed;
-  z-index: 999;
-  width: min(296px, calc(100vw - 24px));
-  padding: 14px;
-  border-radius: 20px;
-  border: 1px solid var(--panel-card-stroke);
-  background:
-    linear-gradient(135deg, var(--panel-glass), transparent 45%),
-    var(--panel-card-bg);
-  box-shadow: 0 24px 40px rgba(15, 23, 42, 0.22), var(--panel-shadow);
-  backdrop-filter: blur(18px);
-}
-
-.inline-palette-panel__header,
-.inline-palette-panel__subhead {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.inline-palette-panel__close {
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--panel-card-stroke);
-  border-radius: 999px;
-  background: var(--panel-pill-bg);
-  color: var(--panel-text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    background-color 120ms ease;
-}
-
-.inline-palette-panel__close:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--panel-hover-shadow);
-}
-
-.channel-orb {
-  min-height: 38px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border-radius: 999px;
-  background: var(--panel-pill-bg);
-  color: var(--panel-text-muted);
-  border: 1px solid var(--panel-card-stroke);
-}
-
-.channel-orb--active {
-  background: var(--panel-chip-active-bg);
-  color: var(--panel-accent);
-  border-color: var(--panel-accent-outline);
-}
-
-.channel-orb__swatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  border: 1px solid var(--panel-dot-border);
-  background: var(--orb-fill);
-}
-
-.channel-orb__swatch--empty {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-text-subtle) 26%, transparent 74%);
-}
-
-.channel-orb__label {
-  font-size: 10px;
-  font-weight: 700;
-}
-
 .swatch-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: grid;
+  gap: 10px;
 }
 
 .swatch-grid--inline {
@@ -667,28 +758,26 @@ const {
 }
 
 .swatch-chip {
-  min-height: 56px;
+  min-height: 58px;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 14px;
+  border: 1px solid transparent;
   border-radius: 16px;
   background: var(--panel-chip-bg);
   color: var(--panel-text-muted);
   text-align: left;
+  cursor: pointer;
 }
 
 .swatch-chip--active {
+  border-color: var(--panel-accent-outline);
   background: var(--panel-chip-active-bg);
-  outline: 1px solid var(--panel-accent-outline);
 }
 
 .swatch-chip__dot {
-  width: 18px;
-  height: 18px;
   flex: none;
-  border-radius: 999px;
-  border: 1px solid var(--panel-dot-border);
   background: var(--swatch-color);
 }
 
@@ -710,32 +799,50 @@ const {
 .floating-palette-enter-active,
 .floating-palette-leave-active {
   transition:
-    opacity 160ms ease,
-    transform 180ms ease;
+    opacity 180ms ease,
+    transform 200ms ease;
 }
 
 .floating-palette-enter-from,
 .floating-palette-leave-to {
   opacity: 0;
-  transform: translateY(-6px) scale(0.94);
+  transform: translateY(-8px) scale(0.96);
 }
 
-@media (max-width: 420px) {
+@media (max-width: 720px) {
+  .workspace-hero__metrics,
+  .target-grid,
+  .swatch-grid--inline {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
   .style-editor-shell {
     padding: 12px;
   }
 
-  .target-grid,
-  .swatch-grid {
-    grid-template-columns: 1fr;
+  .style-card,
+  .workspace-hero,
+  .workspace-toolbar,
+  .target-studio,
+  .inline-palette-panel--floating {
+    padding: 14px;
   }
 
   .custom-color-panel__controls {
     grid-template-columns: 1fr;
   }
 
-  .target-preview-card__actions {
-    flex-wrap: wrap;
+  .target-studio__header,
+  .inline-palette-panel__header,
+  .inline-palette-panel__subhead {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 </style>

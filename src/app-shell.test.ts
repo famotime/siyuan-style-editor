@@ -2,37 +2,40 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 describe("app shell layout", () => {
-  it("renders the shell as a unified workspace card instead of split hero and preview cards", () => {
+  it("renders the shell with a command deck header and a compact target studio", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
-    expect(appSource).toContain("class=\"style-card style-card--workspace\"");
-    expect(appSource).not.toContain("class=\"style-card style-card--hero\"");
-    expect(appSource).not.toContain("<section class=\"style-card\">");
+    expect(appSource).toContain("class=\"workspace-hero\"");
+    expect(appSource).toContain("class=\"workspace-hero__metrics\"");
+    expect(appSource).toContain("class=\"workspace-toolbar\"");
+    expect(appSource).toContain("class=\"target-studio\"");
   });
 
-  it("keeps the top controls in the left intro block without a separate status side panel", () => {
+  it("surfaces selection context and sync feedback in the header instead of a detached side panel", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
-    expect(appSource).not.toContain("class=\"workspace-intro__aside\"");
-    expect(appSource).not.toContain("Sync Status");
-    expect(appSource).toContain("class=\"workspace-intro__actions\"");
+    expect(appSource).toContain("当前对象");
+    expect(appSource).toContain("当前通道");
+    expect(appSource).toContain("状态");
+    expect(appSource).toContain("{{ statusCopy }}");
   });
 
-  it("does not show the selected target badge in the section header", () => {
+  it("keeps the palette editor focused with a concise floating heading", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
-    expect(appSource).not.toContain("class=\"target-badge\"");
+    expect(appSource).toContain("Palette Console");
+    expect(appSource).toContain("即时写入当前对象");
   });
 
-  it("uses a compact height for target preview cards", () => {
+  it("uses denser preview cards with stronger selection affordances", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
     expect(appSource).toContain(".target-preview-card {");
-    expect(appSource).toContain("gap: 4px;");
-    expect(appSource).toContain("padding: 6px;");
+    expect(appSource).toContain("gap: 10px;");
+    expect(appSource).toContain("padding: 10px;");
     expect(appSource).toContain(".target-preview-card__surface {");
-    expect(appSource).toContain("gap: 3px;");
-    expect(appSource).toContain("min-height: 68px;");
-    expect(appSource).toContain("padding: 8px;");
+    expect(appSource).toContain("gap: 6px;");
+    expect(appSource).toContain("min-height: 92px;");
+    expect(appSource).toContain("padding: 14px;");
   });
 });

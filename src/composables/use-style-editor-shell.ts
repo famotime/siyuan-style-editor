@@ -365,6 +365,7 @@ export function useStyleEditorShell() {
     activePalette,
     activateTargetChannel,
     applyCustomColorDraft,
+    closeInlinePalettePanel,
     colorPickerValue,
     customColorDraft,
     customColorPlaceholder,
