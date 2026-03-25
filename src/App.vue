@@ -25,10 +25,10 @@
       <div class="section-heading">
         <div>
           <p class="section-heading__kicker">
-            Palette
+            Live Palette
           </p>
           <h2 class="section-heading__title">
-            颜色板
+            即选即看
           </h2>
         </div>
         <div class="target-badge">
@@ -112,6 +112,27 @@
             应用自定义色
           </button>
         </div>
+
+        <div class="custom-color-preview">
+          <div class="custom-color-preview__meta">
+            <p class="section-heading__kicker">
+              Live Draft
+            </p>
+            <code class="custom-color-preview__value">{{ customPreviewValue }}</code>
+          </div>
+
+          <article
+            class="preview-stage preview-stage--draft"
+            :style="customPreviewStyle"
+          >
+            <p class="preview-stage__eyebrow">
+              {{ selectedTargetMeta.shortLabel }}
+            </p>
+            <p class="preview-stage__content">
+              {{ selectedTargetMeta.label }}
+            </p>
+          </article>
+        </div>
       </div>
 
       <div class="preset-section-heading">
@@ -120,65 +141,61 @@
             Presets
           </p>
           <p class="preset-section-heading__copy">
-            当前候选色保留为预置色卡，后续可以继续扩充。
+            色卡本身就是当前目标的即时效果预览；当前候选色保留为预置色卡，后续可以继续扩充。
           </p>
         </div>
       </div>
 
-      <div class="palette-grid">
+      <div class="palette-preview-grid">
         <button
           v-for="color in activePalette"
           :key="color.value"
           type="button"
-          class="palette-chip"
-          :class="{ 'palette-chip--active': selectedSwatch === color.value }"
+          class="palette-preview-card"
+          :class="{ 'palette-preview-card--active': selectedSwatch === color.value }"
           :style="{ '--swatch-color': color.value }"
           @click="applyPaletteColor(color.value)"
         >
-          <span class="palette-chip__dot" />
-          <span>{{ color.label }}</span>
+          <div class="palette-preview-card__header">
+            <span class="palette-preview-card__dot" />
+            <span class="palette-preview-card__label">{{ color.label }}</span>
+          </div>
+          <article
+            class="preview-stage"
+            :style="getCandidateStyle(color.value)"
+          >
+            <p class="preview-stage__eyebrow">
+              {{ selectedTargetMeta.shortLabel }}
+            </p>
+            <p class="preview-stage__content">
+              {{ selectedTargetMeta.label }}
+            </p>
+          </article>
+          <code class="palette-preview-card__value">{{ getCandidateValue(color.value) }}</code>
         </button>
         <button
           type="button"
-          class="palette-chip palette-chip--clear"
+          class="palette-preview-card palette-preview-card--clear"
+          :class="{ 'palette-preview-card--active': !selectedSwatch }"
           @click="clearSelectedTargetColor"
         >
-          清除颜色
+          <div class="palette-preview-card__header">
+            <span class="palette-preview-card__dot palette-preview-card__dot--clear" />
+            <span class="palette-preview-card__label">默认</span>
+          </div>
+          <article
+            class="preview-stage preview-stage--clear"
+            :style="getCandidateStyle('')"
+          >
+            <p class="preview-stage__eyebrow">
+              {{ selectedTargetMeta.shortLabel }}
+            </p>
+            <p class="preview-stage__content">
+              {{ selectedTargetMeta.label }}
+            </p>
+          </article>
+          <code class="palette-preview-card__value">{{ getCandidateValue("") }}</code>
         </button>
-      </div>
-    </section>
-
-    <section class="style-card style-card--preview">
-      <div class="section-heading">
-        <div>
-          <p class="section-heading__kicker">
-            Preview
-          </p>
-          <h2 class="section-heading__title">
-            已应用样式
-          </h2>
-        </div>
-        <span class="preview-note">
-          面板修改后会立即同步到所有已打开的文档界面
-        </span>
-      </div>
-
-      <div class="preview-list">
-        <article
-          v-for="target in STYLE_TARGET_OPTIONS"
-          :key="target.value"
-          class="preview-item"
-          :style="getPreviewStyle(target.value)"
-        >
-          <p class="preview-item__eyebrow">
-            {{ target.shortLabel }}
-          </p>
-          <p class="preview-item__content">
-            {{ target.label }}
-          </p>
-          <code class="preview-item__value">{{ getPreviewValue(target.value, "color") }}</code>
-          <code class="preview-item__value">{{ getPreviewValue(target.value, "backgroundColor") }}</code>
-        </article>
       </div>
     </section>
   </div>
@@ -209,11 +226,13 @@ import {
   resolveColorPickerValue,
 } from "@/lib/custom-color";
 import {
+  buildCandidatePreviewStyle,
+  getCandidatePreviewValue,
+} from "@/lib/palette-preview";
+import {
   createPanelThemeVars,
   resolvePanelThemeAppearance,
 } from "@/lib/panel-theme";
-import type { StyleTarget } from "@/lib/style-profile";
-import type { PaintChannel } from "@/style-editor-runtime";
 
 const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false));
 
@@ -229,6 +248,10 @@ const activePalette = computed(() => {
 
 const selectedSwatch = computed(() => {
   return runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel];
+});
+
+const selectedRule = computed(() => {
+  return runtimeState.profile[runtimeState.selectedTarget];
 });
 
 const selectedChannelLabel = computed(() => {
@@ -247,6 +270,23 @@ const customColorPlaceholder = computed(() => {
 
 const isCustomColorDraftValid = computed(() => {
   return Boolean(normalizeHexColor(customColorDraft.value));
+});
+
+const normalizedCustomColorDraft = computed(() => {
+  return normalizeHexColor(customColorDraft.value);
+});
+
+const customPreviewValue = computed(() => {
+  return getCandidatePreviewValue(runtimeState.selectedChannel, normalizedCustomColorDraft.value);
+});
+
+const customPreviewStyle = computed(() => {
+  return buildCandidatePreviewStyle({
+    candidateValue: normalizedCustomColorDraft.value,
+    channel: runtimeState.selectedChannel,
+    fallbackTextColor: "var(--panel-text)",
+    rule: selectedRule.value,
+  });
 });
 
 const panelThemeVars = computed(() => {
@@ -327,21 +367,17 @@ async function applyCustomColorDraft() {
   await applyCustomColorValue(customColorDraft.value);
 }
 
-function getPreviewStyle(target: StyleTarget) {
-  const rule = runtimeState.profile[target];
-  return {
-    color: rule.color || undefined,
-    backgroundColor: rule.backgroundColor || undefined,
-    fontWeight: rule.fontWeight || (target === "strong" ? "700" : undefined),
-    fontStyle: rule.fontStyle || undefined,
-    textDecoration: rule.textDecoration || undefined,
-  };
+function getCandidateStyle(candidateValue: string) {
+  return buildCandidatePreviewStyle({
+    candidateValue,
+    channel: runtimeState.selectedChannel,
+    fallbackTextColor: "var(--panel-text)",
+    rule: selectedRule.value,
+  });
 }
 
-function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
-  const label = channel === "backgroundColor" ? "底色" : "字色";
-  const value = runtimeState.profile[target][channel] || "未设置";
-  return `${label}: ${value}`;
+function getCandidateValue(candidateValue: string) {
+  return getCandidatePreviewValue(runtimeState.selectedChannel, candidateValue);
 }
 </script>
 
@@ -395,13 +431,9 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   gap: 12px;
 }
 
-.style-card--preview {
-  gap: 16px;
-}
-
 .style-editor-shell__eyebrow,
 .section-heading__kicker,
-.preview-item__eyebrow {
+.preview-stage__eyebrow {
   margin: 0;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -424,8 +456,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 }
 
 .style-editor-shell__lead,
-.style-editor-shell__status-copy,
-.preview-note {
+.style-editor-shell__status-copy {
   margin: 0;
   line-height: 1.65;
   font-size: 13px;
@@ -468,15 +499,14 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 .channel-row,
 .custom-color-panel,
 .target-grid,
-.palette-grid,
-.preview-list {
+.palette-preview-grid {
   display: grid;
   gap: 10px;
 }
 
 .channel-chip,
 .target-chip,
-.palette-chip {
+.palette-preview-card {
   border: 0;
   cursor: pointer;
   transition:
@@ -487,7 +517,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
 
 .channel-chip:hover,
 .target-chip:hover,
-.palette-chip:hover {
+.palette-preview-card:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
 }
@@ -505,7 +535,12 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   border: 1px solid var(--panel-card-stroke);
 }
 
-.custom-color-panel__copy,
+.custom-color-panel__copy {
+  display: grid;
+  gap: 4px;
+}
+
+.custom-color-panel__description,
 .preset-section-heading__copy {
   margin: 0;
   font-size: 12px;
@@ -604,6 +639,23 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   cursor: not-allowed;
 }
 
+.custom-color-preview {
+  display: grid;
+  gap: 10px;
+}
+
+.custom-color-preview__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.custom-color-preview__value {
+  font-size: 11px;
+  color: var(--panel-text-subtle);
+}
+
 .preset-section-heading {
   display: flex;
   align-items: flex-start;
@@ -655,26 +707,32 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   font-size: 12px;
 }
 
-.palette-grid {
+.palette-preview-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.palette-chip {
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 14px;
+.palette-preview-card {
+  min-height: 168px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
   background: var(--panel-chip-bg);
   color: var(--panel-text-muted);
+  text-align: left;
 }
 
-.palette-chip--active {
+.palette-preview-card--active {
   outline: 1px solid var(--panel-accent-outline);
 }
 
-.palette-chip__dot {
+.palette-preview-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.palette-preview-card__dot {
   width: 16px;
   height: 16px;
   border-radius: 999px;
@@ -683,35 +741,52 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   background: var(--swatch-color);
 }
 
-.palette-chip--clear {
-  justify-content: center;
+.palette-preview-card__dot--clear {
+  background:
+    linear-gradient(135deg, transparent 0 46%, var(--panel-text-subtle) 46% 54%, transparent 54% 100%),
+    linear-gradient(135deg, var(--panel-preview-bg), var(--panel-card-bg));
+}
+
+.palette-preview-card__label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.palette-preview-card__value {
+  font-size: 11px;
+  color: var(--panel-text-subtle);
+}
+
+.palette-preview-card--clear {
   background: var(--panel-clear-bg);
 }
 
-.preview-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.preview-item {
+.preview-stage {
   display: grid;
   gap: 6px;
   min-height: 96px;
   padding: 12px;
   border-radius: 16px;
   background: var(--panel-preview-bg);
+  border: 1px solid var(--panel-card-inner-stroke);
+  align-content: center;
 }
 
-.preview-item__content {
+.preview-stage--draft {
+  min-height: 88px;
+}
+
+.preview-stage--clear {
+  background:
+    linear-gradient(135deg, var(--panel-glass), transparent 70%),
+    var(--panel-preview-bg);
+}
+
+.preview-stage__content {
   margin: 0;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   font-size: 19px;
   line-height: 1.25;
-}
-
-.preview-item__value {
-  font-size: 11px;
-  word-break: break-all;
-  color: var(--panel-text-subtle);
 }
 
 @media (max-width: 420px) {
@@ -720,8 +795,7 @@ function getPreviewValue(target: StyleTarget, channel: PaintChannel) {
   }
 
   .target-grid,
-  .palette-grid,
-  .preview-list {
+  .palette-preview-grid {
     grid-template-columns: 1fr;
   }
 
