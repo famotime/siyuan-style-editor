@@ -4,6 +4,8 @@ import {
   extractCurrentStyles,
   importStyles,
   initializeRuntime,
+  persistCurrentStyles,
+  previewPaletteColor,
   resetAllStyles,
   runtimeState,
   selectChannel,
@@ -68,6 +70,51 @@ describe("style editor runtime", () => {
     expect(runtimeState.profile.mark.backgroundColor).toBe("");
     expect(plugin.saveData).toHaveBeenCalledTimes(2);
     expect(styleElement?.textContent).toBe("");
+  });
+
+  it("previews palette colors without persisting until they are explicitly applied", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await previewPaletteColor("#f6d365");
+
+    expect(runtimeState.profile.mark.backgroundColor).toBe("#f6d365");
+    expect(plugin.saveData).not.toHaveBeenCalled();
+
+    const styleElement = document.getElementById("siyuan-style-editor-style");
+    expect(styleElement?.textContent).toContain("background-color: #f6d365 !important;");
+
+    await persistCurrentStyles();
+
+    expect(plugin.saveData).toHaveBeenCalledOnce();
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      profile: expect.objectContaining({
+        mark: expect.objectContaining({
+          backgroundColor: "#f6d365",
+        }),
+      }),
+    });
+  });
+
+  it("can roll previewed palette colors back to the last committed value without persisting", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+    vi.clearAllMocks();
+
+    await previewPaletteColor("#f6d365");
+    await previewPaletteColor("#fff2a8");
+
+    expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8");
+    expect(plugin.saveData).not.toHaveBeenCalled();
+
+    const styleElement = document.getElementById("siyuan-style-editor-style");
+    expect(styleElement?.textContent).toContain("background-color: #fff2a8 !important;");
   });
 
   it("extracts styles from the current document and persists the extracted profile", async () => {

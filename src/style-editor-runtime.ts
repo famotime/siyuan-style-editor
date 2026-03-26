@@ -116,6 +116,23 @@ async function persistState() {
   await savePersistedEditorState(pluginInstance, STORAGE_KEY, snapshotState().profile);
 }
 
+async function updateSelectedPaletteColor(
+  color: string,
+  options: {
+    persist?: boolean;
+  } = {},
+) {
+  const nextState = runtimeState.selectedChannel === "backgroundColor"
+    ? updateTargetBackgroundColor(snapshotState(), runtimeState.selectedTarget, color)
+    : updateTargetColor(snapshotState(), runtimeState.selectedTarget, color);
+  replaceProfile(nextState);
+  applyInjectedStyles();
+
+  if (options.persist ?? true) {
+    await persistState();
+  }
+}
+
 export async function initializeRuntime(plugin: Plugin) {
   pluginInstance = plugin;
   const savedState = await loadPersistedEditorState(plugin, STORAGE_KEY);
@@ -142,11 +159,16 @@ export function selectChannel(channel: PaintChannel) {
 }
 
 export async function applyPaletteColor(color: string) {
-  const nextState = runtimeState.selectedChannel === "backgroundColor"
-    ? updateTargetBackgroundColor(snapshotState(), runtimeState.selectedTarget, color)
-    : updateTargetColor(snapshotState(), runtimeState.selectedTarget, color);
-  replaceProfile(nextState);
-  applyInjectedStyles();
+  await updateSelectedPaletteColor(color);
+}
+
+export async function previewPaletteColor(color: string) {
+  await updateSelectedPaletteColor(color, {
+    persist: false,
+  });
+}
+
+export async function persistCurrentStyles() {
   await persistState();
 }
 

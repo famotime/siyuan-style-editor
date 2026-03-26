@@ -134,124 +134,130 @@
       <transition name="floating-palette">
         <div
           v-if="isInlinePaletteVisible"
-          ref="floatingPaletteRef"
-          class="inline-palette-panel inline-palette-panel--floating"
-          :style="floatingPaletteStyle"
+          class="inline-palette-backdrop"
+          @pointerdown="cancelInlinePalettePanel"
         >
-          <div class="inline-palette-panel__header">
-            <div>
-              <p class="section-heading__kicker">
-                Palette Console
-              </p>
-              <p class="inline-palette-panel__copy">
-                正在编辑 {{ selectedTargetMeta.label }} 的{{ selectedChannelLabel }}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              class="inline-palette-panel__close"
-              @click="closeInlinePalettePanel"
-            >
-              收起
-            </button>
-          </div>
-
-          <div class="custom-color-panel custom-color-panel--inline">
-            <div class="custom-color-panel__copy">
-              <p class="section-heading__kicker">
-                Custom Color
-              </p>
-              <p class="custom-color-panel__description">
-                使用调色板或十六进制颜色，即时写入当前对象。
-              </p>
-            </div>
-
-            <div class="inline-color-picker">
-              <div
-                ref="inlineColorFieldRef"
-                class="inline-color-picker__field"
-                :style="inlineColorFieldStyle"
-                @pointerdown="handleInlineColorFieldPointerDown"
-              >
-                <span
-                  class="inline-color-picker__thumb"
-                  :style="inlineColorThumbStyle"
-                />
-              </div>
-
-              <label class="inline-color-picker__hue">
-                <span
-                  class="inline-color-picker__preview"
-                  :style="{ '--inline-picker-preview': colorPickerValue }"
-                />
-                <input
-                  type="range"
-                  class="inline-color-picker__hue-slider"
-                  min="0"
-                  max="360"
-                  step="1"
-                  :value="inlineHue"
-                  @input="handleInlineHueInput"
-                >
-              </label>
-            </div>
-
-            <div class="custom-color-panel__controls">
-              <input
-                v-model="customColorDraft"
-                type="text"
-                class="custom-color-field"
-                :placeholder="customColorPlaceholder"
-                spellcheck="false"
-                @keydown.enter.prevent="applyCustomColorDraft"
-              >
-
-              <button
-                type="button"
-                class="custom-color-apply"
-                :disabled="!isCustomColorDraftValid"
-                @click="applyCustomColorDraft"
-              >
-                应用颜色
-              </button>
-            </div>
-          </div>
-
-          <div class="inline-palette-panel__presets">
-            <div class="inline-palette-panel__subhead">
+          <div
+            ref="floatingPaletteRef"
+            class="inline-palette-panel inline-palette-panel--floating"
+            :style="floatingPaletteStyle"
+            @pointerdown.stop
+          >
+            <div class="inline-palette-panel__header">
               <div>
                 <p class="section-heading__kicker">
-                  Presets
+                  Palette Console
                 </p>
                 <p class="inline-palette-panel__copy">
-                  快速应用纯色，未设置时回到默认。
+                  正在编辑 {{ selectedTargetMeta.label }} 的{{ selectedChannelLabel }}
                 </p>
+              </div>
+
+              <button
+                type="button"
+                class="inline-palette-panel__close"
+                @click="cancelInlinePalettePanel"
+              >
+                收起
+              </button>
+            </div>
+
+            <div class="custom-color-panel custom-color-panel--inline">
+              <div class="custom-color-panel__copy">
+                <p class="section-heading__kicker">
+                  Custom Color
+                </p>
+                <p class="custom-color-panel__description">
+                  使用调色板或十六进制颜色，即时预览，点击应用颜色后保存。
+                </p>
+              </div>
+
+              <div class="inline-color-picker">
+                <div
+                  ref="inlineColorFieldRef"
+                  class="inline-color-picker__field"
+                  :style="inlineColorFieldStyle"
+                  @pointerdown="handleInlineColorFieldPointerDown"
+                >
+                  <span
+                    class="inline-color-picker__thumb"
+                    :style="inlineColorThumbStyle"
+                  />
+                </div>
+
+                <label class="inline-color-picker__hue">
+                  <span
+                    class="inline-color-picker__preview"
+                    :style="{ '--inline-picker-preview': colorPickerValue }"
+                  />
+                  <input
+                    type="range"
+                    class="inline-color-picker__hue-slider"
+                    min="0"
+                    max="360"
+                    step="1"
+                    :value="inlineHue"
+                    @input="handleInlineHueInput"
+                  >
+                </label>
+              </div>
+
+              <div class="custom-color-panel__controls">
+                <input
+                  v-model="customColorDraft"
+                  type="text"
+                  class="custom-color-field"
+                  :placeholder="customColorPlaceholder"
+                  spellcheck="false"
+                  @keydown.enter.prevent="applyCustomColorDraft"
+                >
+
+                <button
+                  type="button"
+                  class="custom-color-apply"
+                  :disabled="!isCustomColorDraftValid"
+                  @click="applyCustomColorDraft"
+                >
+                  应用颜色
+                </button>
               </div>
             </div>
 
-            <div class="swatch-grid swatch-grid--inline">
-              <button
-                v-for="color in activePalette"
-                :key="color.value"
-                type="button"
-                class="swatch-chip"
-                :aria-label="color.label"
-                :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
-                :style="{ '--swatch-color': color.value }"
-                @click="handlePresetColorSelection(color.value)"
-              >
-                <span class="swatch-chip__dot" />
-              </button>
-              <button
-                type="button"
-                class="swatch-chip swatch-chip--clear"
-                aria-label="恢复默认颜色"
-                :class="{ 'swatch-chip--active': !selectedSwatch }"
-                @click="handleClearSelectedTargetColor"
-              >
-                <span class="swatch-chip__dot swatch-chip__dot--clear" />
-              </button>
+            <div class="inline-palette-panel__presets">
+              <div class="inline-palette-panel__subhead">
+                <div>
+                  <p class="section-heading__kicker">
+                    Presets
+                  </p>
+                  <p class="inline-palette-panel__copy">
+                    快速预览纯色，未设置时回到默认。
+                  </p>
+                </div>
+              </div>
+
+              <div class="swatch-grid swatch-grid--inline">
+                <button
+                  v-for="color in activePalette"
+                  :key="color.value"
+                  type="button"
+                  class="swatch-chip"
+                  :aria-label="color.label"
+                  :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
+                  :style="{ '--swatch-color': color.value }"
+                  @click="handlePresetColorSelection(color.value)"
+                >
+                  <span class="swatch-chip__dot" />
+                </button>
+                <button
+                  type="button"
+                  class="swatch-chip swatch-chip--clear"
+                  aria-label="恢复默认颜色"
+                  :class="{ 'swatch-chip--active': !selectedSwatch }"
+                  @click="handleClearSelectedTargetColor"
+                >
+                  <span class="swatch-chip__dot swatch-chip__dot--clear" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -267,7 +273,7 @@ const {
   activePalette,
   activateTargetChannel,
   applyCustomColorDraft,
-  closeInlinePalettePanel,
+  cancelInlinePalettePanel,
   colorPickerValue,
   customColorDraft,
   customColorPlaceholder,
@@ -633,6 +639,12 @@ const {
   gap: 14px;
 }
 
+.inline-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
 .inline-palette-panel--floating {
   position: fixed;
   z-index: 0;
@@ -644,7 +656,10 @@ const {
     linear-gradient(135deg, var(--panel-glass), transparent 50%),
     linear-gradient(180deg, var(--panel-card-highlight), transparent 34%),
     var(--panel-card-bg);
-  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.24), var(--panel-shadow);
+  box-shadow:
+    inset 0 0 0 1px var(--panel-floating-outline),
+    0 24px 48px rgba(15, 23, 42, 0.24),
+    var(--panel-shadow);
   backdrop-filter: blur(18px);
 }
 
@@ -788,9 +803,11 @@ const {
 .custom-color-field {
   width: 100%;
   padding: 0 14px;
-  background: var(--panel-chip-bg);
+  border-color: var(--panel-control-border);
+  background: var(--panel-control-bg);
   color: var(--panel-text);
   font-size: 13px;
+  box-shadow: var(--panel-control-shadow);
 }
 
 .custom-color-field::placeholder {
@@ -805,17 +822,31 @@ const {
 }
 
 .custom-color-apply {
+  min-height: 48px;
   padding: 0 16px;
-  background: var(--panel-chip-active-bg);
-  color: var(--panel-accent);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--panel-primary-button-border);
+  background: var(--panel-primary-button-bg);
+  color: var(--panel-primary-button-text);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--panel-primary-button-shadow);
+}
+
+.custom-color-apply:hover:not(:disabled) {
+  box-shadow:
+    var(--panel-primary-button-shadow-hover),
+    var(--panel-hover-shadow);
 }
 
 .custom-color-apply:disabled {
-  opacity: 0.45;
+  opacity: 0.58;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .swatch-grid {

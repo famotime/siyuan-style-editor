@@ -64,7 +64,7 @@ describe("app shell layout", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
     expect(appSource).toContain("Palette Console");
-    expect(appSource).toContain("即时写入当前对象");
+    expect(appSource).toContain("即时预览，点击应用颜色后保存");
   });
 
   it("removes the selected badge and relies on subtler preview card typography", () => {
@@ -166,12 +166,44 @@ describe("app shell layout", () => {
     expect(appSource).not.toContain("type=\"color\"");
   });
 
+  it("dismisses the floating palette through a backdrop and routes close actions through cancel semantics", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain("class=\"inline-palette-backdrop\"");
+    expect(appSource).toContain("@pointerdown=\"cancelInlinePalettePanel\"");
+    expect(appSource).toContain("@click=\"cancelInlinePalettePanel\"");
+  });
+
+  it("emphasizes the apply button as the primary action inside the custom color panel", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const applyButtonBlock = getStyleBlock(appSource, ".custom-color-apply");
+
+    expect(applyButtonBlock).toContain("min-height: 48px;");
+    expect(applyButtonBlock).toContain("border-width: 2px;");
+    expect(applyButtonBlock).toContain("border-color: var(--panel-primary-button-border);");
+    expect(applyButtonBlock).toContain("background: var(--panel-primary-button-bg);");
+    expect(applyButtonBlock).toContain("color: var(--panel-primary-button-text);");
+    expect(applyButtonBlock).toContain("font-size: 13px;");
+    expect(applyButtonBlock).toContain("letter-spacing: 0.04em;");
+    expect(applyButtonBlock).toContain("box-shadow: var(--panel-primary-button-shadow);");
+  });
+
+  it("gives the custom color input its own filled surface and visible border", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const inputBlock = getStyleBlock(appSource, ".custom-color-field");
+
+    expect(inputBlock).toContain("background: var(--panel-control-bg);");
+    expect(inputBlock).toContain("border-color: var(--panel-control-border);");
+    expect(inputBlock).toContain("box-shadow:");
+  });
+
   it("keeps the floating palette below host menus instead of pinning it to the topmost layer", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
     expect(appSource).toContain(".inline-palette-panel--floating {");
     expect(appSource).toContain("position: fixed;");
     expect(appSource).toContain("z-index: 0;");
+    expect(appSource).toContain("inset 0 0 0 1px var(--panel-floating-outline)");
     expect(appSource).not.toContain("z-index: 999;");
   });
 });

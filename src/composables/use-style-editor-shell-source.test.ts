@@ -9,7 +9,9 @@ describe("style editor shell composable source", () => {
     expect(composableSource).toContain("const inlineHue = ref(0);");
     expect(composableSource).toContain("function handleInlineColorFieldPointerDown(event: PointerEvent)");
     expect(composableSource).toContain("function handleInlineHueInput(event: Event)");
-    expect(composableSource).toContain("queueInlineColorApply");
+    expect(composableSource).toContain("previewPaletteColor");
+    expect(composableSource).toContain("persistCurrentStyles");
+    expect(composableSource).toContain("function cancelInlinePalettePanel()");
   });
 
   it("wires export and local import handlers through a hidden file input", () => {
