@@ -103,9 +103,12 @@ export function useStyleEditorShell() {
   const inlineHue = ref(0);
   const inlineSaturation = ref(0);
   const inlineValue = ref(0);
+  const colorResolutionScope = computed(() => {
+    return floatingPaletteRef.value ?? inlineColorFieldRef.value;
+  });
 
   const colorPickerValue = computed(() => {
-    return resolveColorPickerValue(customColorDraft.value, runtimeState.selectedChannel);
+    return resolveColorPickerValue(customColorDraft.value, runtimeState.selectedChannel, colorResolutionScope.value);
   });
 
   const customColorPlaceholder = computed(() => {
@@ -178,8 +181,9 @@ export function useStyleEditorShell() {
   }
 
   function syncCustomColorDraft(color: string, channel: PaintChannel) {
-    customColorDraft.value = color;
-    syncInlineColorPicker(resolveColorPickerValue(color, channel));
+    const resolvedColor = resolveColorPickerValue(color, channel, colorResolutionScope.value);
+    customColorDraft.value = resolvedColor;
+    syncInlineColorPicker(resolvedColor);
   }
 
   function startInlinePaletteSession(target: StyleTarget, channel: PaintChannel) {
@@ -541,7 +545,7 @@ export function useStyleEditorShell() {
   }
 
   async function handlePresetColorSelection(color: string) {
-    customColorDraft.value = color;
+    customColorDraft.value = resolveColorPickerValue(color, runtimeState.selectedChannel, colorResolutionScope.value);
     await previewInlinePaletteColor(color);
   }
 

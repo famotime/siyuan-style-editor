@@ -694,8 +694,8 @@ const {
 .custom-color-panel__controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
+  gap: 12px;
+  align-items: stretch;
 }
 
 .inline-color-picker {
@@ -795,19 +795,26 @@ const {
 
 .custom-color-field,
 .custom-color-apply {
-  min-height: 46px;
+  min-height: 42px;
   border-radius: 14px;
   border: 1px solid var(--panel-card-stroke);
 }
 
 .custom-color-field {
+  min-width: 0;
   width: 100%;
-  padding: 0 14px;
+  box-sizing: border-box;
+  appearance: none;
+  padding: 0 12px;
+  border-width: 1.5px;
+  border-style: solid;
   border-color: var(--panel-control-border);
   background: var(--panel-control-bg);
   color: var(--panel-text);
   font-size: 13px;
-  box-shadow: var(--panel-control-shadow);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--panel-control-border) 64%, transparent 36%),
+    var(--panel-control-shadow);
 }
 
 .custom-color-field::placeholder {
@@ -822,8 +829,9 @@ const {
 }
 
 .custom-color-apply {
-  min-height: 48px;
-  padding: 0 16px;
+  min-height: 44px;
+  padding: 0 14px;
+  white-space: nowrap;
   border-width: 2px;
   border-style: solid;
   border-color: var(--panel-primary-button-border);

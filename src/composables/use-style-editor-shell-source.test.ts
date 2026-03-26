@@ -22,4 +22,12 @@ describe("style editor shell composable source", () => {
     expect(composableSource).toContain("function openImportStylesPicker()");
     expect(composableSource).toContain("async function handleImportStylesChange(event: Event)");
   });
+
+  it("maps preset palette selections into standard color codes for the input field", () => {
+    const composableSource = readFileSync(resolve(process.cwd(), "src/composables/use-style-editor-shell.ts"), "utf8");
+
+    expect(composableSource).toContain("function handlePresetColorSelection(color: string)");
+    expect(composableSource).toContain("const colorResolutionScope = computed(() => {");
+    expect(composableSource).toContain("customColorDraft.value = resolveColorPickerValue(color, runtimeState.selectedChannel, colorResolutionScope.value);");
+  });
 });

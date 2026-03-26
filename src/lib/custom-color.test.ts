@@ -25,4 +25,26 @@ describe("custom color helpers", () => {
     expect(resolveColorPickerValue("var(--b3-font-color6)", "color")).toBe(createDefaultCustomColor("color"));
     expect(resolveColorPickerValue("", "backgroundColor")).toBe(createDefaultCustomColor("backgroundColor"));
   });
+
+  it("resolves palette variables into standard hex codes for display", () => {
+    document.documentElement.style.setProperty("--b3-font-color8", "rgb(90, 180, 214)");
+    document.documentElement.style.setProperty("--b3-font-background9", "#ffb347");
+
+    expect(resolveColorPickerValue("var(--b3-font-color8)", "color")).toBe("#5ab4d6");
+    expect(resolveColorPickerValue("var(--b3-font-background9)", "backgroundColor")).toBe("#ffb347");
+  });
+
+  it("resolves inherited palette variables from the document body for display", () => {
+    document.body.style.setProperty("--b3-theme-on-surface", "rgb(248, 249, 250)");
+
+    expect(resolveColorPickerValue("var(--b3-theme-on-surface)", "color")).toBe("#f8f9fa");
+  });
+
+  it("resolves palette variables from the active panel scope", () => {
+    const scope = document.createElement("div");
+    scope.style.setProperty("--b3-theme-on-surface", "rgb(242, 243, 245)");
+    document.body.append(scope);
+
+    expect(resolveColorPickerValue("var(--b3-theme-on-surface)", "color", scope)).toBe("#f2f3f5");
+  });
 });

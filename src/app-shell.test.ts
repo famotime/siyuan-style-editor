@@ -178,7 +178,9 @@ describe("app shell layout", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
     const applyButtonBlock = getStyleBlock(appSource, ".custom-color-apply");
 
-    expect(applyButtonBlock).toContain("min-height: 48px;");
+    expect(appSource).toContain(".custom-color-field,");
+    expect(appSource).toContain("min-height: 42px;");
+    expect(applyButtonBlock).toContain("min-height: 44px;");
     expect(applyButtonBlock).toContain("border-width: 2px;");
     expect(applyButtonBlock).toContain("border-color: var(--panel-primary-button-border);");
     expect(applyButtonBlock).toContain("background: var(--panel-primary-button-bg);");
@@ -192,7 +194,10 @@ describe("app shell layout", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
     const inputBlock = getStyleBlock(appSource, ".custom-color-field");
 
+    expect(inputBlock).toContain("min-width: 0;");
+    expect(inputBlock).toContain("box-sizing: border-box;");
     expect(inputBlock).toContain("background: var(--panel-control-bg);");
+    expect(inputBlock).toContain("border-width: 1.5px;");
     expect(inputBlock).toContain("border-color: var(--panel-control-border);");
     expect(inputBlock).toContain("box-shadow:");
   });
