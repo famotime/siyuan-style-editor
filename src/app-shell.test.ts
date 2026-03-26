@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+function getStyleBlock(source: string, selector: string) {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const matches = [...source.matchAll(new RegExp(`${escapedSelector}\\s*\\{[^}]*\\}`, "gm"))];
+  expect(matches.length).toBeGreaterThan(0);
+  return matches.at(-1)![0];
+}
+
 describe("app shell layout", () => {
   it("renders a compact hero header and target studio", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
@@ -72,6 +79,23 @@ describe("app shell layout", () => {
     expect(appSource).toContain("font-size: 18px;");
   });
 
+  it("uses a smaller target card title size for object labels like H1 标题", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const titleBlock = getStyleBlock(appSource, ".target-preview-card__title");
+
+    expect(titleBlock).toContain("font-size: 16px;");
+    expect(titleBlock).not.toContain("font-size: 18px;");
+  });
+
+  it("lets target card labels inherit the selected preview text color", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const titleBlock = getStyleBlock(appSource, ".target-preview-card__title");
+    const eyebrowBlock = getStyleBlock(appSource, ".target-preview-card__eyebrow");
+
+    expect(titleBlock).toContain("color: inherit;");
+    expect(eyebrowBlock).toContain("color: inherit;");
+  });
+
   it("uses standard-height hero action buttons instead of oversized pills", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
@@ -102,6 +126,13 @@ describe("app shell layout", () => {
     expect(appSource).toContain(".channel-orb {");
     expect(appSource).toContain("border: 0;");
     expect(appSource).toContain(".channel-orb::after {");
+  });
+
+  it("centers the two color channel buttons within each target card", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const actionsBlock = getStyleBlock(appSource, ".target-preview-card__actions");
+
+    expect(actionsBlock).toContain("justify-content: center;");
   });
 
   it("renders preset swatches as dense dot-only chips without visible text", () => {

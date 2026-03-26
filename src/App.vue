@@ -372,8 +372,7 @@ const {
 }
 
 .style-editor-shell__eyebrow,
-.section-heading__kicker,
-.target-preview-card__eyebrow {
+.section-heading__kicker {
   margin: 0;
   font-size: 10px;
   letter-spacing: 0.24em;
@@ -382,8 +381,7 @@ const {
 }
 
 .style-editor-shell__title,
-.section-heading__title,
-.target-preview-card__title {
+.section-heading__title {
   margin: 0;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   color: var(--panel-text);
@@ -414,6 +412,7 @@ const {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: center;
 }
 
 .extract-styles-button,
@@ -536,8 +535,15 @@ const {
 }
 
 .target-preview-card__title {
-  font-size: 18px;
+  color: inherit;
+  font-size: 16px;
   line-height: 1.18;
+}
+
+.target-preview-card__eyebrow {
+  margin: 0;
+  color: inherit;
+  opacity: 0.72;
 }
 
 .channel-orb {
