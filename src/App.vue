@@ -30,7 +30,31 @@
             >
               清除样式
             </button>
+            <button
+              type="button"
+              class="export-styles-button"
+              @click="handleExportStyles"
+            >
+              导出样式
+            </button>
+            <button
+              type="button"
+              class="import-styles-button"
+              @click="openImportStylesPicker"
+            >
+              导入样式
+            </button>
           </div>
+          <p class="workspace-hero__status">
+            {{ statusCopy }}
+          </p>
+          <input
+            ref="importFileInputRef"
+            type="file"
+            accept=".json,application/json"
+            class="workspace-hero__file-input"
+            @change="handleImportStylesChange"
+          >
         </div>
       </header>
 
@@ -252,11 +276,14 @@ const {
   getChannelSwatch,
   getTargetPreviewStyle,
   handleClearSelectedTargetColor,
+  handleExportStyles,
   handleExtractStyles,
+  handleImportStylesChange,
   handleInlineColorFieldPointerDown,
   handleInlineHueInput,
   handlePresetColorSelection,
   handleResetAllStyles,
+  importFileInputRef,
   inlineColorFieldRef,
   inlineColorFieldStyle,
   inlineColorThumbStyle,
@@ -270,6 +297,8 @@ const {
   selectedSwatch,
   selectedTargetMeta,
   selectPreviewTarget,
+  openImportStylesPicker,
+  statusCopy,
   STYLE_TARGET_OPTIONS,
 } = useStyleEditorShell();
 </script>
@@ -332,6 +361,7 @@ const {
 }
 
 .workspace-hero__summary,
+.workspace-hero__status,
 .inline-palette-panel__copy,
 .custom-color-panel__description,
 .target-studio__note {
@@ -387,6 +417,8 @@ const {
 }
 
 .extract-styles-button,
+.export-styles-button,
+.import-styles-button,
 .reset-styles-button,
 .inline-palette-panel__close,
 .custom-color-apply,
@@ -401,6 +433,8 @@ const {
 }
 
 .extract-styles-button,
+.export-styles-button,
+.import-styles-button,
 .reset-styles-button {
   min-height: 32px;
   padding: 0 12px;
@@ -425,6 +459,18 @@ const {
   color: var(--panel-accent);
 }
 
+.export-styles-button {
+  border: 1px solid color-mix(in srgb, var(--panel-text) 18%, var(--panel-card-stroke) 82%);
+  background: color-mix(in srgb, var(--panel-card-bg) 68%, var(--panel-glass) 32%);
+  color: var(--panel-text);
+}
+
+.import-styles-button {
+  border: 1px solid color-mix(in srgb, var(--panel-accent) 18%, var(--panel-card-stroke) 82%);
+  background: color-mix(in srgb, var(--panel-toolbar-bg) 82%, var(--panel-glass) 18%);
+  color: color-mix(in srgb, var(--panel-accent) 70%, var(--panel-text) 30%);
+}
+
 .reset-styles-button {
   border: 1px solid color-mix(in srgb, var(--b3-card-error-color) 38%, var(--panel-card-stroke) 62%);
   background: color-mix(in srgb, var(--b3-card-error-background) 30%, var(--panel-pill-bg) 70%);
@@ -432,6 +478,8 @@ const {
 }
 
 .extract-styles-button:hover,
+.export-styles-button:hover,
+.import-styles-button:hover,
 .reset-styles-button:hover,
 .inline-palette-panel__close:hover,
 .custom-color-apply:hover:not(:disabled),
@@ -440,6 +488,10 @@ const {
 .target-preview-card__surface:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
+}
+
+.workspace-hero__file-input {
+  display: none;
 }
 
 .target-studio__header {

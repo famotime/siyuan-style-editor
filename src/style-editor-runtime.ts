@@ -21,6 +21,11 @@ import {
   normalizeStyleProfile,
 } from "@/lib/style-profile";
 import {
+  countStyledTargets,
+  parseImportedStyleProfile,
+  serializeStyleProfileTransfer,
+} from "@/lib/style-transfer";
+import {
   STYLE_TARGETS,
 } from "@/lib/style-target-catalog";
 
@@ -181,5 +186,23 @@ export async function extractCurrentStyles() {
   return {
     extractedTargetCount: result.extractedTargetCount,
     matchedTargetCount: result.matchedTargetCount,
+  };
+}
+
+export function exportCurrentStyles(): string {
+  return serializeStyleProfileTransfer(snapshotState().profile);
+}
+
+export async function importStyles(raw: string) {
+  const importedProfile = parseImportedStyleProfile(raw);
+
+  replaceProfile({
+    profile: importedProfile,
+  });
+  applyInjectedStyles();
+  await persistState();
+
+  return {
+    styledTargetCount: countStyledTargets(importedProfile),
   };
 }

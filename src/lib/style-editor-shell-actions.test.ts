@@ -1,8 +1,10 @@
 import {
   applyCustomColorSelection,
   clearPaletteSelection,
+  resolveExportStylesMessage,
   RESET_ALL_STYLES_MESSAGE,
   resolveExtractStylesMessage,
+  resolveImportStylesMessage,
 } from "@/lib/style-editor-shell-actions";
 
 describe("style editor shell actions", () => {
@@ -71,5 +73,17 @@ describe("style editor shell actions", () => {
 
   it("exposes the reset-all feedback copy as a constant", () => {
     expect(RESET_ALL_STYLES_MESSAGE).toBe("已清除全部样式，恢复到初始状态。");
+  });
+
+  it("returns the export success feedback with the styled target count", () => {
+    expect(resolveExportStylesMessage({
+      styledTargetCount: 4,
+    })).toBe("已导出当前配置，包含 4 类对象的显式样式。");
+  });
+
+  it("returns the import success feedback with the styled target count", () => {
+    expect(resolveImportStylesMessage({
+      styledTargetCount: 2,
+    })).toBe("已导入本地配置，当前 2 类对象带有显式样式。");
   });
 });

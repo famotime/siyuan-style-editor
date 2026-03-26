@@ -1,6 +1,8 @@
 import {
   applyPaletteColor,
+  exportCurrentStyles,
   extractCurrentStyles,
+  importStyles,
   initializeRuntime,
   resetAllStyles,
   runtimeState,
@@ -94,6 +96,64 @@ describe("style editor runtime", () => {
         }),
         mark: expect.objectContaining({
           backgroundColor: "rgb(255, 240, 180)",
+        }),
+      }),
+    });
+  });
+
+  it("exports the current profile as a portable style document", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#f6d365");
+
+    const exported = exportCurrentStyles();
+    const payload = JSON.parse(exported);
+
+    expect(payload).toMatchObject({
+      type: "siyuan-style-editor-profile",
+      version: 1,
+      profile: expect.objectContaining({
+        mark: expect.objectContaining({
+          backgroundColor: "#f6d365",
+        }),
+      }),
+    });
+    expect(typeof payload.exportedAt).toBe("string");
+  });
+
+  it("imports a local style document, updates runtime state, and persists it", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    const result = await importStyles(JSON.stringify({
+      type: "siyuan-style-editor-profile",
+      version: 1,
+      exportedAt: "2026-03-26T00:00:00.000Z",
+      profile: {
+        heading2: {
+          color: "#3355aa",
+        },
+        mark: {
+          backgroundColor: "#fff2a8",
+        },
+      },
+    }));
+
+    expect(result).toEqual({
+      styledTargetCount: 2,
+    });
+    expect(runtimeState.profile.heading2.color).toBe("#3355aa");
+    expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8");
+    expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", {
+      profile: expect.objectContaining({
+        heading2: expect.objectContaining({
+          color: "#3355aa",
+        }),
+        mark: expect.objectContaining({
+          backgroundColor: "#fff2a8",
         }),
       }),
     });

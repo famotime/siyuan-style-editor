@@ -11,4 +11,13 @@ describe("style editor shell composable source", () => {
     expect(composableSource).toContain("function handleInlineHueInput(event: Event)");
     expect(composableSource).toContain("queueInlineColorApply");
   });
+
+  it("wires export and local import handlers through a hidden file input", () => {
+    const composableSource = readFileSync(resolve(process.cwd(), "src/composables/use-style-editor-shell.ts"), "utf8");
+
+    expect(composableSource).toContain("const importFileInputRef = ref<HTMLInputElement | null>(null);");
+    expect(composableSource).toContain("async function handleExportStyles()");
+    expect(composableSource).toContain("function openImportStylesPicker()");
+    expect(composableSource).toContain("async function handleImportStylesChange(event: Event)");
+  });
 });

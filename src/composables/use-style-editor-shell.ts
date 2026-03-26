@@ -14,8 +14,10 @@ import {
   applyPaletteColor,
   BACKGROUND_PALETTE,
   clearSelectedTargetColor,
+  exportCurrentStyles,
   extractCurrentStyles,
   FOREGROUND_PALETTE,
+  importStyles,
   resetAllStyles,
   runtimeState,
   selectChannel,
@@ -45,8 +47,11 @@ import {
   RESET_ALL_STYLES_MESSAGE,
   applyCustomColorSelection,
   clearPaletteSelection,
+  resolveExportStylesMessage,
   resolveExtractStylesMessage,
+  resolveImportStylesMessage,
 } from "@/lib/style-editor-shell-actions";
+import { countStyledTargets } from "@/lib/style-transfer";
 import {
   buildChannelSwatchStyle,
   buildTargetPreviewStyle,
@@ -56,6 +61,7 @@ import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
 export function useStyleEditorShell() {
   const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false));
   const inlinePaletteState = ref(closeInlinePalette());
+  const importFileInputRef = ref<HTMLInputElement | null>(null);
   const inlineColorFieldRef = ref<HTMLElement | null>(null);
   const floatingPaletteRef = ref<HTMLElement | null>(null);
   const floatingPaletteStyle = ref<Record<string, string>>({});
@@ -403,6 +409,60 @@ export function useStyleEditorShell() {
     actionMessage.value = RESET_ALL_STYLES_MESSAGE;
   }
 
+  async function handleExportStyles() {
+    closeInlinePalettePanel();
+
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const exportedContent = exportCurrentStyles();
+    const exportUrl = URL.createObjectURL(new Blob([exportedContent], {
+      type: "application/json;charset=utf-8",
+    }));
+    const downloadLink = document.createElement("a");
+    downloadLink.href = exportUrl;
+    downloadLink.download = `siyuan-style-editor-styles-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.json`;
+    document.body.append(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+    URL.revokeObjectURL(exportUrl);
+
+    actionMessage.value = resolveExportStylesMessage({
+      styledTargetCount: countStyledTargets(runtimeState.profile),
+    });
+  }
+
+  function openImportStylesPicker() {
+    importFileInputRef.value?.click();
+  }
+
+  async function handleImportStylesChange(event: Event) {
+    closeInlinePalettePanel();
+
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const importedContent = await file.text();
+      const result = await importStyles(importedContent);
+      actionMessage.value = resolveImportStylesMessage(result);
+    }
+    catch (error) {
+      actionMessage.value = error instanceof Error
+        ? error.message
+        : "导入样式失败，请检查本地配置文件。";
+    }
+    finally {
+      if (input) {
+        input.value = "";
+      }
+    }
+  }
+
   function activateTargetChannel(target: StyleTarget, channel: PaintChannel, event: MouseEvent) {
     stopInlineColorFieldTracking();
     selectTarget(target);
@@ -491,11 +551,14 @@ export function useStyleEditorShell() {
     getChannelSwatch,
     getTargetPreviewStyle,
     handleClearSelectedTargetColor,
+    handleExportStyles,
     handleExtractStyles,
+    handleImportStylesChange,
     handleInlineColorFieldPointerDown,
     handleInlineHueInput,
     handlePresetColorSelection,
     handleResetAllStyles,
+    importFileInputRef,
     inlineColorFieldRef,
     inlineColorFieldStyle,
     inlineColorThumbStyle,
@@ -509,6 +572,7 @@ export function useStyleEditorShell() {
     selectedSwatch,
     selectedTargetMeta,
     selectPreviewTarget,
+    openImportStylesPicker,
     statusCopy,
     STYLE_TARGET_OPTIONS,
   };

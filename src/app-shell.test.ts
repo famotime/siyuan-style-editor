@@ -16,10 +16,16 @@ describe("app shell layout", () => {
 
     expect(appSource).toContain("提取样式");
     expect(appSource).toContain("清除样式");
+    expect(appSource).toContain("导出样式");
+    expect(appSource).toContain("导入样式");
     expect(appSource).toContain("@click=\"handleExtractStyles\"");
     expect(appSource).toContain("@click=\"handleResetAllStyles\"");
+    expect(appSource).toContain("@click=\"handleExportStyles\"");
+    expect(appSource).toContain("@click=\"openImportStylesPicker\"");
     expect(appSource).toContain("class=\"workspace-hero__actions\"");
     expect(appSource).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(appSource.indexOf("清除样式")).toBeLessThan(appSource.indexOf("导出样式"));
+    expect(appSource.indexOf("导出样式")).toBeLessThan(appSource.indexOf("导入样式"));
     expect(appSource).not.toContain("当前通道");
   });
 
@@ -70,9 +76,20 @@ describe("app shell layout", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 
     expect(appSource).toContain(".extract-styles-button,");
+    expect(appSource).toContain(".export-styles-button,");
+    expect(appSource).toContain(".import-styles-button,");
     expect(appSource).toContain(".reset-styles-button {");
     expect(appSource).toContain("min-height: 32px;");
     expect(appSource).toContain("padding: 0 12px;");
+  });
+
+  it("includes a hidden local json picker for batch style imports", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain("ref=\"importFileInputRef\"");
+    expect(appSource).toContain("type=\"file\"");
+    expect(appSource).toContain("accept=\".json,application/json\"");
+    expect(appSource).toContain("@change=\"handleImportStylesChange\"");
   });
 
   it("uses tooltip-only color channel controls without visible labels or borders", () => {

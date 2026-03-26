@@ -1,4 +1,5 @@
 import { normalizeHexColor } from "@/lib/custom-color";
+import type { StyleTransferSummary } from "@/lib/style-transfer";
 
 export interface ExtractStylesResult {
   extractedTargetCount: number;
@@ -27,6 +28,14 @@ export function resolveExtractStylesMessage(result: ExtractStylesResult): string
   }
 
   return `已提取 ${result.extractedTargetCount} 类对象的当前颜色，并同步到面板预览。`;
+}
+
+export function resolveExportStylesMessage(result: StyleTransferSummary): string {
+  return `已导出当前配置，包含 ${result.styledTargetCount} 类对象的显式样式。`;
+}
+
+export function resolveImportStylesMessage(result: StyleTransferSummary): string {
+  return `已导入本地配置，当前 ${result.styledTargetCount} 类对象带有显式样式。`;
 }
 
 export async function applyCustomColorSelection(
