@@ -1,72 +1,92 @@
-# 重构计划
+# Refactor Plan
 
-## 1. 项目快照
+## 1. Project Snapshot
 
-- 生成日期：2026-03-25
-- 范围：`D:\MyCodingProjects\siyuan-style-editor`
-- 目标：在不改变插件行为的前提下，降低 UI 壳层与运行时的耦合，补齐高风险区域测试，并清理模板遗留代码
-- 文档刷新目标：`docs/project-structure.md`、`README.md`
-- 当前基线：
-  - `npm test`：pass（9 个测试文件，30 个测试全部通过）
-  - 现有测试组织：测试与源码并置在 `src/`，暂无独立 `tests/` 目录
+- Generated on: 2026-03-26
+- Scope: `siyuan-style-editor`
+- Goal: Continue refactoring after the recent feature expansion, with focus on reducing shell-layer coupling, replacing brittle source-string tests with behavior-oriented tests, and tightening runtime/UI boundaries without changing plugin behavior.
+- Baseline:
+  - `npm test`: pass (`15` test files, `86` tests)
+  - Current repository state: clean working tree
+- Plan note: This plan supersedes the completed 2026-03-25 plan and reflects the codebase after the latest `git pull`.
 
-## 2. 架构与模块分析
+## 2. Architecture and Module Analysis
 
-| 模块 | 关键文件 | 当前职责 | 主要痛点 | 测试覆盖情况 |
+| Module | Key Files | Current Responsibility | Main Pain Points | Test Coverage Status |
 | --- | --- | --- | --- | --- |
-| 插件入口与挂载 | `src/index.ts`、`src/main.ts` | 插件生命周期、Dock 注册、Vue 应用挂载/卸载 | 生命周期逻辑简单，但依赖运行时全局单例；缺少入口级行为测试 | 无直接测试 |
-| 运行时与持久化 | `src/style-editor-runtime.ts` | 持久化读写、注入 `<style>`、全局响应式状态、颜色应用与提取动作 | 运行时状态、UI 元数据、DOM 注入和存储逻辑混在一个文件；当前无专门运行时测试 | 无直接测试 |
-| UI 壳层 | `src/App.vue` | 面板布局、交互事件、浮层定位、主题同步、消息文案 | 文件约 966 行，模板/交互/样式/生命周期集中，职责过重，回归风险最高 | 仅有 `src/app-shell.test.ts` 做静态源码断言 |
-| 样式领域模型 | `src/lib/style-profile.ts`、`src/lib/style-editor-state.ts` | 样式目标定义、默认值、CSS 生成、状态更新 | `StyleTarget` 元数据分散在多个文件，未来新增目标时容易漏改 | 覆盖较好 |
-| DOM 提取与预览辅助 | `src/lib/style-extractor.ts`、`src/lib/target-preview.ts`、`src/lib/custom-color.ts`、`src/lib/floating-palette.ts`、`src/lib/inline-palette.ts`、`src/lib/panel-theme.ts` | 解析文档样式、预览卡片样式、颜色输入、浮层定位、主题 token | 模块都较小，但部分能力与 `App.vue`/runtime 的边界仍偏模糊 | 覆盖较好 |
-| 类型与模板遗留 | `src/api.ts`、`src/types/api.d.ts`、`src/components/SiyuanTheme/*` | SiYuan 模板 API 封装、旧主题组件 | 当前主流程未引用，维护成本高，容易误导后续开发者；若删除需确认没有隐式依赖 | 无测试 |
-| 文档 | `README.md`、`docs/` | 用户说明、示例样式与预览文档 | 缺少 `docs/project-structure.md`，README 未反映当前测试与模块结构 | 无 |
+| Plugin entry and lifecycle | `src/index.ts`, `src/main.ts` | Plugin bootstrap, runtime init/teardown, dock mount/unmount | Logic is compact but mostly untested; mount/unmount behavior relies on mutable module singletons | No direct automated tests |
+| Shell view | `src/App.vue` | Panel template, scoped styles, interaction wiring | File is `1053` lines again; template and scoped style surface are both large; tests assert raw source strings instead of rendered behavior | Covered by `src/app-shell.test.ts`, but coverage is brittle and source-structure-dependent |
+| Shell controller | `src/composables/use-style-editor-shell.ts` | Theme sync, floating palette positioning, pointer tracking, preview/apply/cancel flow, file import/export wiring, status copy | `636` lines; multiple concerns mixed into one composable; behavior-heavy logic is only lightly protected by source assertions | `src/composables/use-style-editor-shell-source.test.ts` checks source presence, not controller behavior |
+| Runtime orchestration | `src/style-editor-runtime.ts` | Runtime state, persistence integration, stylesheet injection, extract/import/export entry points, preset palette data exposure | Runtime owns both core state transitions and some UI-facing constants, which weakens dependency boundaries | Good direct coverage in `src/style-editor-runtime.test.ts` |
+| Domain helpers | `src/lib/style-profile.ts`, `src/lib/style-target-catalog.ts`, `src/lib/style-transfer.ts`, `src/lib/style-editor-state.ts` | Style schema, target catalog, transfer serialization, pure state transitions | Mostly healthy; remaining issue is responsibility placement rather than local complexity | Good focused coverage |
+| UI support helpers | `src/lib/custom-color.ts`, `src/lib/inline-color-picker.ts`, `src/lib/floating-palette.ts`, `src/lib/panel-theme.ts`, `src/lib/target-preview.ts` | Color normalization, HSV conversion, palette positioning, theme vars, preview styles | Small modules with clear seams; should stay stable and be reused by shell refactors | Good focused coverage |
 
-## 3. 按优先级排序的重构待办
+## 3. Prioritized Refactor Backlog
 
-| ID | 优先级 | 模块/场景 | 涉及文件 | 重构目标 | 风险等级 | 重构前测试清单 | 文档影响 | 状态 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| RF-001 | P0 | 拆分 `App.vue` 的 UI 壳层与交互编排 | `src/App.vue`、`src/composables/use-style-editor-shell.ts`、`src/lib/style-editor-shell-actions.ts` | 将浮层状态、主题同步、颜色应用交互、展示组件分层，降低单文件复杂度并保持现有 UI/行为不变 | 高 | - [x] 复用 `src/lib/inline-palette.test.ts` 覆盖内联调色板打开/关闭与目标切换；- [x] 新增 `src/lib/style-editor-shell-actions.test.ts` 覆盖自定义颜色输入与清空动作；- [x] 新增 `src/lib/style-editor-shell-actions.test.ts` 覆盖“提取样式 / 清除样式”反馈文案；- [x] 保留 `src/app-shell.test.ts` 布局断言 | `docs/project-structure.md` 需新增 UI/组合逻辑分层；`README.md` 需更新架构说明 | done |
-| RF-002 | P1 | 拆分运行时状态、存储与样式注入 | `src/style-editor-runtime.ts`、`src/lib/style-editor-persistence.ts`、`src/lib/style-editor-stylesheet.ts` | 将 UI 选项常量、持久化、DOM style 注入、状态快照等职责拆分，减少全局模块副作用 | 中 | - [x] 新增 `src/style-editor-runtime.test.ts`，为 `initializeRuntime` / `teardownRuntime` 增加基于 DOM 与插件 stub 的测试；- [x] 新增 `src/style-editor-runtime.test.ts`，为 `applyPaletteColor`、`resetAllStyles`、`extractCurrentStyles` 增加行为测试；- [x] 验证样式节点创建与清理 | `docs/project-structure.md` 需更新 runtime 模块图；`README.md` 需更新开发说明 | done |
-| RF-003 | P1 | 消除样式目标元数据的重复定义 | `src/style-editor-runtime.ts`、`src/lib/style-profile.ts`、`src/lib/style-target-catalog.ts` | 收敛 `StyleTarget`、选择器、标签、提示文案等定义为单一来源，降低新增/修改目标时的漏改风险 | 中 | - [x] 新增 `src/lib/style-target-catalog.test.ts`，验证目标目录完整性；- [x] 保留并通过现有 CSS 生成与状态测试；- [x] 通过 `src/lib/style-target-catalog.test.ts` 验证目标顺序未变化 | `docs/project-structure.md` 需说明共享目录模块；`README.md` 需补充支持的样式目标来源 | done |
-| RF-004 | P2 | 清理未接入主流程的模板遗留代码 | `src/api.ts`、`src/types/api.d.ts`、`src/components/SiyuanTheme/*` | 在确认无隐式依赖后删除或迁移到明确的 legacy 区域，减少维护噪音 | 中 | - [x] 通过 `rg` 复核引用关系；- [x] 运行 `npm test`；- [x] 运行 `npm run build` 验证删改后产物仍可构建 | `docs/project-structure.md` 已标注 legacy 已移除；`README.md` 已更新当前项目边界 | done |
+| ID | Priority | Module/Scenario | Files in Scope | Refactor Objective | Risk Level | Pre-Refactor Test Checklist | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| RF-101 | P0 | Decompose shell controller responsibilities | `src/composables/use-style-editor-shell.ts`, new focused composables and/or helpers under `src/composables/` or `src/lib/` | Split inline palette session state, viewport/theme listeners, and file transfer actions into explicit seams so the shell controller stops acting as a monolith | High | - [x] Add behavior tests for preview vs commit vs cancel flows; - [x] Add tests for escape/backdrop/outside-scroll dismissal and inside-palette scroll preservation; - [x] Add tests for import input reset and preset palette tab/collapse behavior | done |
+| RF-102 | P0 | Break `App.vue` into presentational view units and modernize test strategy | `src/App.vue`, `src/app-shell.test.ts`, new view components under `src/components/` | Move hero actions, target grid/cards, and floating palette panel into presentational subcomponents, while replacing source-string assertions with render-level assertions that survive internal file moves | High | - [x] Add render-focused tests covering hero actions, hidden import input, target cards, and floating palette sections; - [x] Preserve current visible copy, action order, and interaction wiring; - [x] Keep layout-critical class hooks covered where still required | done |
+| RF-103 | P1 | Separate UI-only assets and browser side effects from runtime state | `src/style-editor-runtime.ts`, `src/composables/use-style-editor-shell.ts`, `src/lib/style-transfer.ts`, new helper modules as needed | Move preset palette catalog and browser download/input helpers out of runtime-facing modules so runtime owns state/persistence/styling only | Medium | - [x] Add tests proving preset palette data and order remain unchanged; - [x] Add tests for export payload schema and download filename format; - [x] Add tests for import error handling parity | done |
+| RF-104 | P2 | Harden plugin lifecycle seams with direct tests | `src/index.ts`, `src/main.ts`, targeted new tests | Add explicit lifecycle coverage for repeated mount, remount, and destroy paths before any future bootstrap cleanup | Medium | - [x] Add tests for `mountDock` idempotence on the same element; - [x] Add tests for remounting on a different element; - [x] Add tests for `destroy` clearing the app container and runtime side effects | done |
 
-优先级说明：
-- `P0`：价值和风险都最高，优先执行
-- `P1`：价值或风险中等，放在 `P0` 之后
-- `P2`：低风险清理项，最后执行
+Priority definition:
+- `P0`: highest value and risk, execute first
+- `P1`: medium value or risk, execute after P0
+- `P2`: low-risk cleanup, execute last
 
-状态说明：
+Status definition:
 - `pending`
 - `in_progress`
 - `done`
 - `blocked`
 
-## 4. 执行日志
+## 4. Expected Behavior Invariants
 
-| ID | 开始日期 | 结束日期 | 验证命令 | 结果 | 已刷新文档 | 备注 |
-| --- | --- | --- | --- | --- | --- | --- |
-| BASELINE | 2026-03-25 | 2026-03-25 | `npm test` | pass | 未开始 | 9 个测试文件、30 个测试通过，适合作为后续重构基线 |
-| RF-001 | 2026-03-25 | 2026-03-25 | `npx vitest run src/lib/style-editor-shell-actions.test.ts src/lib/inline-palette.test.ts src/app-shell.test.ts`；`npm test`；`npm run build` | pass | 待最终刷新 | `App.vue` 交互编排迁移到 `src/composables/use-style-editor-shell.ts`，新增 `src/lib/style-editor-shell-actions.ts`，`App.vue` 从 966 行降至 694 行 |
-| RF-002 | 2026-03-25 | 2026-03-25 | `npx vitest run src/style-editor-runtime.test.ts src/lib/style-editor-state.test.ts src/lib/style-extractor.test.ts`；`npm test`；`npm run build` | pass | 待最终刷新 | 运行时持久化拆到 `src/lib/style-editor-persistence.ts`，样式节点管理拆到 `src/lib/style-editor-stylesheet.ts`，新增 `src/style-editor-runtime.test.ts` |
-| RF-003 | 2026-03-25 | 2026-03-25 | `npx vitest run src/lib/style-target-catalog.test.ts src/lib/style-profile.test.ts src/style-editor-runtime.test.ts`；`npm test`；`npm run build` | pass | `docs/project-structure.md`、`README.md` | 新增 `src/lib/style-target-catalog.ts` 作为 selector 与 UI 元数据单一来源，`src/lib/style-profile.ts` 降至 77 行 |
-| RF-004 | 2026-03-25 | 2026-03-25 | `rg -n '@/api|\"@/api|fetchSyncPost|IWebSocketData|IReslsNotebooks|SiyuanTheme|SyButton|SyCheckbox|SyIcon|SyInput|SySelect|SyTextarea' src`；`npm test`；`npm run build` | pass | `docs/project-structure.md`、`README.md` | 删除 `src/api.ts`、`src/types/api.d.ts` 与 `src/components/SiyuanTheme/*`，引用扫描为空 |
+### RF-101
 
-## 5. 决策与确认
+- Previewing a color must update the live stylesheet immediately but must not persist until an explicit commit path runs.
+- Cancelling the floating palette must restore the last committed color when a preview is in progress.
+- Scroll events from inside the floating palette must not close it; escape, backdrop, and outside scroll must still close it.
+- Existing status copy for extract/reset/export/import flows must remain unchanged.
 
-- 用户批准的条目：`RF-001`、`RF-002`、`RF-003`、`RF-004`（2026-03-25）
-- 延后的条目：
-- 阻塞条目及原因：
-- 建议执行顺序：`RF-001` -> `RF-002` -> `RF-003` -> `RF-004`
+### RF-102
 
-## 6. 文档刷新
+- The hero area must still expose the same four actions in the same order: extract, reset, export, import.
+- The hidden local JSON file input must remain wired through the import action.
+- The target grid must still show all `STYLE_TARGET_OPTIONS`, selected target state, and both channel controls per card.
+- The floating palette must still contain the inline color board, preset palette tabs, collapse toggle, and clear/apply actions.
 
-- `docs/project-structure.md`：已新建，反映当前模块结构、测试布局与已移除的 legacy 边界
-- `README.md`：已补充项目结构、测试维护方式与当前仓库边界
-- 最终同步检查：已完成，文档内容与当前仓库结构一致
+### RF-103
 
-## 7. 下一步
+- `exportCurrentStyles()` and `importStyles()` must keep the same portable document schema and compatibility with persisted config payloads.
+- Preset palette collection IDs, labels, color values, and ordering must remain unchanged.
+- Exported filenames must remain timestamped and continue using the `siyuan-style-editor-styles-...json` pattern.
 
-1. 后续若新增样式目标，只需在 `src/lib/style-target-catalog.ts` 中维护单一目录。
-2. 若扩展运行时能力，优先在 `src/style-editor-runtime.test.ts` 中补充行为测试。
-3. 保持 `docs/project-structure.md` 与 `README.md` 随结构变化同步更新。
+### RF-104
+
+- Plugin load must still initialize runtime before dock usage.
+- Re-mounting the same dock element must remain a no-op.
+- Destroy must still unmount Vue, clear the mount element, and tear down the runtime stylesheet/state.
+
+## 5. Execution Log
+
+| ID | Start Date | End Date | Test Commands | Result | Notes |
+| --- | --- | --- | --- | --- | --- |
+| BASELINE | 2026-03-26 | 2026-03-26 | `npm test` | pass | `15` test files and `86` tests passed before any new refactor work |
+| RF-101 | 2026-03-27 | 2026-03-27 | `npx vitest run src/composables/use-style-editor-shell.test.ts`; `npx vitest run src/composables/use-style-editor-shell.test.ts src/app-shell.test.ts src/lib/style-editor-shell-actions.test.ts`; `npm test` | pass | Extracted `use-panel-theme-vars.ts`, `use-inline-palette-session.ts`, and `use-style-transfer-actions.ts`; replaced brittle shell source assertions with behavior tests and removed `src/composables/use-style-editor-shell-source.test.ts` |
+| RF-102 | 2026-03-27 | 2026-03-27 | `npx vitest run src/app-shell.test.ts`; `npx vitest run src/app-shell.test.ts src/composables/use-style-editor-shell.test.ts`; `npm test` | pass | Replaced `src/app-shell.test.ts` source assertions with render tests, added Vue SFC support in `vitest.config.ts`, split `src/App.vue` into `WorkspaceHero.vue`, `TargetStudio.vue`, and `FloatingPalettePanel.vue` |
+| RF-103 | 2026-03-27 | 2026-03-27 | `npx vitest run src/lib/preset-palette-catalog.test.ts src/lib/style-transfer-download.test.ts src/composables/use-style-editor-shell.test.ts src/style-editor-runtime.test.ts`; `npm test` | pass | Moved preset palette data to `src/lib/preset-palette-catalog.ts`, moved filename/download logic to `src/lib/style-transfer-download.ts`, and removed UI-only catalog data from `src/style-editor-runtime.ts` |
+| RF-104 | 2026-03-27 | 2026-03-27 | `npx vitest run src/main.test.ts`; `npm test` | pass | Added direct lifecycle coverage for `init`, same-element mount reuse, remount cleanup, and `destroy`; `src/main.ts` now removes stale dock classes when remounting or tearing down |
+
+## 6. Decision and Confirmation
+
+- User approved items: `RF-101`, `RF-102`, `RF-103`, `RF-104` (2026-03-27)
+- Deferred items:
+- Blocked items and reasons:
+
+## 7. Next Actions
+
+1. All approved items are complete.
+2. Keep `docs/project-structure.md` and `README.md` aligned with the new component and helper boundaries if the architecture changes again.
+3. If lifecycle behavior expands further, extend `src/main.test.ts` before modifying `src/main.ts`.

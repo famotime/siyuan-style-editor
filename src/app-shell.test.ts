@@ -1,245 +1,263 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+  createApp,
+  nextTick,
+  reactive,
+  ref,
+} from "vue";
 
-function getStyleBlock(source: string, selector: string) {
-  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const matches = [...source.matchAll(new RegExp(`${escapedSelector}\\s*\\{[^}]*\\}`, "gm"))];
-  expect(matches.length).toBeGreaterThan(0);
-  return matches.at(-1)![0];
+const mockUseStyleEditorShell = vi.hoisted(() => vi.fn());
+
+vi.mock("@/composables/use-style-editor-shell", () => ({
+  useStyleEditorShell: () => mockUseStyleEditorShell(),
+}));
+
+import App from "@/App.vue";
+
+function createShellState(options: {
+  isInlinePaletteVisible?: boolean;
+  isPresetPaletteSectionExpanded?: boolean;
+} = {}) {
+  const runtimeState = reactive({
+    profile: {
+      heading1: {
+        backgroundColor: "",
+        color: "#224488",
+      },
+      mark: {
+        backgroundColor: "#fff2a8",
+        color: "",
+      },
+    },
+    selectedChannel: "color",
+    selectedTarget: "heading1",
+  });
+
+  return {
+    STYLE_TARGET_OPTIONS: [
+      {
+        hint: "用于文章总标题与大章节入口",
+        label: "H1 标题",
+        shortLabel: "H1",
+        value: "heading1",
+      },
+      {
+        hint: "用于显式标记重点内容",
+        label: "高亮文本",
+        shortLabel: "HL",
+        value: "mark",
+      },
+    ],
+    activePresetPalette: ref({
+      colors: [
+        { label: "#5B8DEF", value: "#5B8DEF" },
+        { label: "#F6D365", value: "#F6D365" },
+      ],
+      id: "cool-blue",
+      label: "Cool Blue",
+    }),
+    activePresetPaletteId: ref("cool-blue"),
+    activateTargetChannel: vi.fn(),
+    applyCustomColorDraft: vi.fn(),
+    cancelInlinePalettePanel: vi.fn(),
+    colorPickerValue: ref("#5b8def"),
+    customColorDraft: ref("#5b8def"),
+    customColorPlaceholder: ref("#5b8def"),
+    floatingPaletteRef: ref<HTMLElement | null>(null),
+    floatingPaletteStyle: ref({
+      left: "12px",
+      top: "24px",
+      transformOrigin: "top left",
+    }),
+    getChannelSwatch: vi.fn((target: string, channel: string) => ({
+      background: channel === "color"
+        ? runtimeState.profile[target as "heading1" | "mark"].color || "var(--panel-text)"
+        : runtimeState.profile[target as "heading1" | "mark"].backgroundColor || "linear-gradient(135deg, #fff, #eee)",
+      isEmpty: false,
+    })),
+    getTargetPreviewStyle: vi.fn((target: string) => ({
+      color: runtimeState.profile[target as "heading1" | "mark"].color || "var(--panel-text)",
+    })),
+    handleClearSelectedTargetColor: vi.fn(),
+    handleExportStyles: vi.fn(),
+    handleExtractStyles: vi.fn(),
+    handleImportStylesChange: vi.fn(),
+    handleInlineColorFieldPointerDown: vi.fn(),
+    handleInlineHueInput: vi.fn(),
+    handlePresetColorSelection: vi.fn(),
+    handleResetAllStyles: vi.fn(),
+    importFileInputRef: ref<HTMLInputElement | null>(null),
+    inlineColorFieldRef: ref<HTMLElement | null>(null),
+    inlineColorFieldStyle: ref({
+      background: "linear-gradient(180deg, #fff, #000)",
+    }),
+    inlineColorThumbStyle: ref({
+      background: "#5b8def",
+      left: "50%",
+      top: "40%",
+    }),
+    inlineHue: ref(218),
+    isCustomColorDraftValid: ref(true),
+    isInlinePaletteOpenForTarget: vi.fn((target: string) => target === "heading1"),
+    isInlinePaletteVisible: ref(options.isInlinePaletteVisible ?? false),
+    isPresetPaletteSectionExpanded: ref(options.isPresetPaletteSectionExpanded ?? true),
+    openImportStylesPicker: vi.fn(),
+    panelThemeVars: ref({
+      "--panel-text": "#111111",
+    }),
+    presetPaletteCollections: [
+      {
+        colors: [{ label: "#5B8DEF", value: "#5B8DEF" }],
+        id: "cool-blue",
+        label: "Cool Blue",
+      },
+      {
+        colors: [{ label: "#F6D365", value: "#F6D365" }],
+        id: "warm-sand",
+        label: "Warm Sand",
+      },
+    ],
+    runtimeState,
+    selectPresetPaletteTab: vi.fn(),
+    selectedChannelLabel: ref("文字颜色"),
+    selectedSwatch: ref("#5B8DEF"),
+    selectedTargetMeta: ref({
+      hint: "用于文章总标题与大章节入口",
+      label: "H1 标题",
+      shortLabel: "H1",
+      value: "heading1",
+    }),
+    selectPreviewTarget: vi.fn(),
+    statusCopy: ref("当前正在编辑标题颜色"),
+    togglePresetPaletteSection: vi.fn(),
+  };
 }
 
-describe("app shell layout", () => {
-  it("renders a compact hero header and target studio", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+async function mountApp(shellState: ReturnType<typeof createShellState>) {
+  mockUseStyleEditorShell.mockReturnValue(shellState);
 
-    expect(appSource).toContain("class=\"workspace-hero\"");
-    expect(appSource).toContain("class=\"workspace-hero__copy\"");
-    expect(appSource).toContain("class=\"target-studio\"");
-    expect(appSource).not.toContain("class=\"workspace-toolbar\"");
+  const container = document.createElement("div");
+  document.body.append(container);
+
+  const app = createApp(App);
+  app.mount(container);
+  await nextTick();
+
+  return {
+    container,
+    unmount() {
+      app.unmount();
+      container.remove();
+    },
+  };
+}
+
+function click(element: Element | null) {
+  expect(element).not.toBeNull();
+  element!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+}
+
+describe("app shell", () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+    vi.clearAllMocks();
   });
 
-  it("keeps the primary actions inside the hero copy in a two-column action row", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+  it("renders the hero actions in order and wires the import input", async () => {
+    const shellState = createShellState();
+    const { container, unmount } = await mountApp(shellState);
 
-    expect(appSource).toContain("提取样式");
-    expect(appSource).toContain("清除样式");
-    expect(appSource).toContain("导出样式");
-    expect(appSource).toContain("导入样式");
-    expect(appSource).toContain("@click=\"handleExtractStyles\"");
-    expect(appSource).toContain("@click=\"handleResetAllStyles\"");
-    expect(appSource).toContain("@click=\"handleExportStyles\"");
-    expect(appSource).toContain("@click=\"openImportStylesPicker\"");
-    expect(appSource).toContain("class=\"workspace-hero__actions\"");
-    expect(appSource).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
-    expect(appSource.indexOf("清除样式")).toBeLessThan(appSource.indexOf("导出样式"));
-    expect(appSource.indexOf("导出样式")).toBeLessThan(appSource.indexOf("导入样式"));
-    expect(appSource).not.toContain("当前通道");
+    const heroButtons = [...container.querySelectorAll(".workspace-hero__actions button")];
+    expect(heroButtons.map(button => button.textContent?.trim())).toEqual([
+      "提取样式",
+      "清除样式",
+      "导出样式",
+      "导入样式",
+    ]);
+
+    click(heroButtons[0]);
+    click(heroButtons[1]);
+    click(heroButtons[2]);
+    click(heroButtons[3]);
+
+    expect(shellState.handleExtractStyles).toHaveBeenCalledOnce();
+    expect(shellState.handleResetAllStyles).toHaveBeenCalledOnce();
+    expect(shellState.handleExportStyles).toHaveBeenCalledOnce();
+    expect(shellState.openImportStylesPicker).toHaveBeenCalledOnce();
+
+    const input = container.querySelector(".workspace-hero__file-input");
+    expect(input?.getAttribute("type")).toBe("file");
+    expect(input?.getAttribute("accept")).toBe(".json,application/json");
+    expect(shellState.importFileInputRef.value).toBe(input);
+    input?.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(shellState.handleImportStylesChange).toHaveBeenCalledOnce();
+
+    expect(container.querySelector(".inline-palette-panel")).toBeNull();
+
+    unmount();
   });
 
-  it("reduces the hero framing by removing the inner tinted card treatment", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+  it("renders target cards from the style target catalog and wires card actions", async () => {
+    const shellState = createShellState();
+    const { container, unmount } = await mountApp(shellState);
 
-    expect(appSource).toContain(".workspace-hero {");
-    expect(appSource).toContain("padding: 2px 2px 0;");
-    expect(appSource).not.toContain("linear-gradient(180deg, var(--panel-preview-bg), transparent 140%)");
+    const cards = [...container.querySelectorAll(".target-preview-card")];
+    expect(cards).toHaveLength(2);
+    expect(cards[0]?.classList.contains("target-preview-card--selected")).toBe(true);
+    expect(cards[1]?.classList.contains("target-preview-card--selected")).toBe(false);
+
+    click(cards[1]?.querySelector(".target-preview-card__surface") ?? null);
+    expect(shellState.selectPreviewTarget).toHaveBeenCalledWith("mark");
+
+    const secondCardButtons = cards[1]?.querySelectorAll(".channel-orb") ?? [];
+    click(secondCardButtons[0] ?? null);
+    click(secondCardButtons[1] ?? null);
+
+    expect(shellState.activateTargetChannel).toHaveBeenNthCalledWith(1, "mark", "color", expect.any(MouseEvent));
+    expect(shellState.activateTargetChannel).toHaveBeenNthCalledWith(2, "mark", "backgroundColor", expect.any(MouseEvent));
+
+    unmount();
   });
 
-  it("removes the extra shell inset outline from the panel container", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+  it("renders the floating palette with the expected controls and interaction wiring", async () => {
+    const shellState = createShellState({
+      isInlinePaletteVisible: true,
+      isPresetPaletteSectionExpanded: true,
+    });
+    const { container, unmount } = await mountApp(shellState);
 
-    expect(appSource).toContain(".style-card {");
-    expect(appSource).not.toContain(".style-card::after {");
-  });
+    expect(document.body.querySelector(".inline-palette-panel")).not.toBeNull();
+    expect(document.body.textContent).toContain("正在编辑 H1 标题 的文字颜色");
 
-  it("packs the shell content toward the top and leaves slack space below", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const customColorField = document.body.querySelector(".custom-color-field") as HTMLInputElement | null;
+    expect(customColorField?.value).toBe("#5b8def");
+    expect(customColorField?.placeholder).toBe("#5b8def");
+    expect(shellState.floatingPaletteRef.value).toBe(document.body.querySelector(".inline-palette-panel--floating"));
+    expect(shellState.inlineColorFieldRef.value).toBe(document.body.querySelector(".inline-color-picker__field"));
 
-    expect(appSource).toContain(".style-editor-shell {");
-    expect(appSource).toContain("align-content: start;");
-    expect(appSource).toContain(".style-card {");
-    expect(appSource).toContain("padding: 12px 16px 22px;");
-  });
+    const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")];
+    expect(presetTabs).toHaveLength(2);
+    click(presetTabs[1] ?? null);
+    expect(shellState.selectPresetPaletteTab).toHaveBeenCalledWith("warm-sand");
 
-  it("keeps the palette editor focused with a concise floating heading", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    click(document.body.querySelector(".inline-palette-panel__toggle"));
+    expect(shellState.togglePresetPaletteSection).toHaveBeenCalledOnce();
 
-    expect(appSource).toContain("Palette Console");
-    expect(appSource).toContain("即时预览，点击应用颜色后保存");
-  });
+    click(document.body.querySelector(".custom-color-apply"));
+    expect(shellState.applyCustomColorDraft).toHaveBeenCalledOnce();
 
-  it("removes the selected badge and relies on subtler preview card typography", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const swatchButtons = [...document.body.querySelectorAll(".swatch-chip")];
+    expect(swatchButtons).toHaveLength(3);
+    click(swatchButtons[0] ?? null);
+    expect(shellState.handlePresetColorSelection).toHaveBeenCalledWith("#5B8DEF");
 
-    expect(appSource).not.toContain("class=\"target-preview-card__badge\"");
-    expect(appSource).toContain(".target-preview-card__surface {");
-    expect(appSource).toContain("gap: 6px;");
-    expect(appSource).toContain("min-height: 92px;");
-    expect(appSource).toContain("padding: 14px;");
-    expect(appSource).toContain(".target-preview-card__title {");
-    expect(appSource).toContain("font-size: 18px;");
-  });
+    click(swatchButtons.at(-1) ?? null);
+    expect(shellState.handleClearSelectedTargetColor).toHaveBeenCalledOnce();
 
-  it("uses a smaller target card title size for object labels like H1 标题", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-    const titleBlock = getStyleBlock(appSource, ".target-preview-card__title");
+    click(document.body.querySelector(".inline-palette-panel__close"));
+    expect(shellState.cancelInlinePalettePanel).toHaveBeenCalledOnce();
 
-    expect(titleBlock).toContain("font-size: 16px;");
-    expect(titleBlock).not.toContain("font-size: 18px;");
-  });
+    expect(container.querySelector(".style-editor-shell")).not.toBeNull();
 
-  it("lets target card labels inherit the selected preview text color", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-    const titleBlock = getStyleBlock(appSource, ".target-preview-card__title");
-    const eyebrowBlock = getStyleBlock(appSource, ".target-preview-card__eyebrow");
-
-    expect(titleBlock).toContain("color: inherit;");
-    expect(eyebrowBlock).toContain("color: inherit;");
-  });
-
-  it("uses standard-height hero action buttons instead of oversized pills", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain(".extract-styles-button,");
-    expect(appSource).toContain(".export-styles-button,");
-    expect(appSource).toContain(".import-styles-button,");
-    expect(appSource).toContain(".reset-styles-button {");
-    expect(appSource).toContain("min-height: 32px;");
-    expect(appSource).toContain("padding: 0 12px;");
-  });
-
-  it("includes a hidden local json picker for batch style imports", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain("ref=\"importFileInputRef\"");
-    expect(appSource).toContain("type=\"file\"");
-    expect(appSource).toContain("accept=\".json,application/json\"");
-    expect(appSource).toContain("@change=\"handleImportStylesChange\"");
-  });
-
-  it("uses tooltip-only color channel controls without visible labels or borders", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain("data-tooltip=\"字色\"");
-    expect(appSource).toContain("data-tooltip=\"底色\"");
-    expect(appSource).not.toContain("<span class=\"channel-orb__label\">字色</span>");
-    expect(appSource).not.toContain("<span class=\"channel-orb__label\">底色</span>");
-    expect(appSource).toContain(".channel-orb {");
-    expect(appSource).toContain("border: 0;");
-    expect(appSource).toContain(".channel-orb::after {");
-  });
-
-  it("centers the two color channel buttons within each target card", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-    const actionsBlock = getStyleBlock(appSource, ".target-preview-card__actions");
-
-    expect(actionsBlock).toContain("justify-content: center;");
-  });
-
-  it("renders preset swatches as dense dot-only chips without visible text", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).not.toContain("class=\"swatch-chip__label\"");
-    expect(appSource).toContain(":aria-label=\"color.label\"");
-    expect(appSource).toContain("aria-label=\"恢复默认颜色\"");
-    expect(appSource).toContain(".swatch-grid--inline {");
-    expect(appSource).toContain("grid-template-columns: repeat(6, minmax(0, 1fr));");
-    expect(appSource).toContain("gap: 6px;");
-    expect(appSource).toContain(".swatch-chip {");
-    expect(appSource).toContain("min-height: 40px;");
-    expect(appSource).toContain("padding: 0;");
-    expect(appSource).toContain("justify-content: center;");
-  });
-
-  it("switches between preset swatch collections through a tab strip", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain("class=\"preset-palette-tabs\"");
-    expect(appSource).toContain("role=\"tablist\"");
-    expect(appSource).toContain("v-for=\"palette in presetPaletteCollections\"");
-    expect(appSource).toContain("class=\"preset-palette-tab\"");
-    expect(appSource).toContain("@click=\"selectPresetPaletteTab(palette.id)\"");
-    expect(appSource).toContain("activePresetPalette.colors");
-  });
-
-  it("renders the preset tab strip as a vertical list instead of a horizontal scroller", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-    const tabsBlock = getStyleBlock(appSource, ".preset-palette-tabs");
-
-    expect(tabsBlock).toContain("flex-direction: column;");
-    expect(tabsBlock).toContain("overflow-y: auto;");
-    expect(tabsBlock).not.toContain("overflow-x: auto;");
-    expect(tabsBlock).toContain("overscroll-behavior: contain;");
-  });
-
-  it("lets the entire preset palette area collapse behind its own toggle", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain("class=\"inline-palette-panel__toggle\"");
-    expect(appSource).toContain("@click=\"togglePresetPaletteSection\"");
-    expect(appSource).toContain("v-if=\"isPresetPaletteSectionExpanded\"");
-    expect(appSource).toContain(":aria-expanded=\"isPresetPaletteSectionExpanded\"");
-    expect(appSource).toContain("class=\"inline-palette-panel__presets-body\"");
-  });
-
-  it("renders an inline color board above the preset swatches inside the same floating palette", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain("class=\"inline-color-picker\"");
-    expect(appSource).toContain("class=\"inline-color-picker__field\"");
-    expect(appSource).toContain("class=\"inline-color-picker__hue\"");
-    expect(appSource).toContain("class=\"inline-color-picker__thumb\"");
-    expect(appSource).toContain("@pointerdown=\"handleInlineColorFieldPointerDown\"");
-    expect(appSource).toContain("@input=\"handleInlineHueInput\"");
-    expect(appSource).toContain(".inline-color-picker {");
-    expect(appSource).toContain(".inline-color-picker__field {");
-    expect(appSource).toContain(".inline-color-picker__hue {");
-    expect(appSource.indexOf("class=\"inline-color-picker\"")).toBeLessThan(appSource.indexOf("class=\"inline-palette-panel__presets\""));
-    expect(appSource).not.toContain("type=\"color\"");
-  });
-
-  it("dismisses the floating palette through a backdrop and routes close actions through cancel semantics", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain("class=\"inline-palette-backdrop\"");
-    expect(appSource).toContain("@pointerdown=\"cancelInlinePalettePanel\"");
-    expect(appSource).toContain("@click=\"cancelInlinePalettePanel\"");
-  });
-
-  it("emphasizes the apply button as the primary action inside the custom color panel", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-    const applyButtonBlock = getStyleBlock(appSource, ".custom-color-apply");
-
-    expect(appSource).toContain(".custom-color-field,");
-    expect(appSource).toContain("min-height: 42px;");
-    expect(applyButtonBlock).toContain("min-height: 44px;");
-    expect(applyButtonBlock).toContain("border-width: 2px;");
-    expect(applyButtonBlock).toContain("border-color: var(--panel-primary-button-border);");
-    expect(applyButtonBlock).toContain("background: var(--panel-primary-button-bg);");
-    expect(applyButtonBlock).toContain("color: var(--panel-primary-button-text);");
-    expect(applyButtonBlock).toContain("font-size: 13px;");
-    expect(applyButtonBlock).toContain("letter-spacing: 0.04em;");
-    expect(applyButtonBlock).toContain("box-shadow: var(--panel-primary-button-shadow);");
-  });
-
-  it("gives the custom color input its own filled surface and visible border", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-    const inputBlock = getStyleBlock(appSource, ".custom-color-field");
-
-    expect(inputBlock).toContain("min-width: 0;");
-    expect(inputBlock).toContain("box-sizing: border-box;");
-    expect(inputBlock).toContain("background: var(--panel-control-bg);");
-    expect(inputBlock).toContain("border-width: 1.5px;");
-    expect(inputBlock).toContain("border-color: var(--panel-control-border);");
-    expect(inputBlock).toContain("box-shadow:");
-  });
-
-  it("keeps the floating palette below host menus instead of pinning it to the topmost layer", () => {
-    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
-
-    expect(appSource).toContain(".inline-palette-panel--floating {");
-    expect(appSource).toContain("position: fixed;");
-    expect(appSource).toContain("z-index: 0;");
-    expect(appSource).toContain("inset 0 0 0 1px var(--panel-floating-outline)");
-    expect(appSource).not.toContain("z-index: 999;");
+    unmount();
   });
 });
