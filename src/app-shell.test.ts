@@ -165,4 +165,13 @@ describe("app shell layout", () => {
     expect(appSource.indexOf("class=\"inline-color-picker\"")).toBeLessThan(appSource.indexOf("class=\"inline-palette-panel__presets\""));
     expect(appSource).not.toContain("type=\"color\"");
   });
+
+  it("keeps the floating palette below host menus instead of pinning it to the topmost layer", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain(".inline-palette-panel--floating {");
+    expect(appSource).toContain("position: fixed;");
+    expect(appSource).toContain("z-index: 0;");
+    expect(appSource).not.toContain("z-index: 999;");
+  });
 });

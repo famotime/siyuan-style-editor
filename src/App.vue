@@ -635,7 +635,7 @@ const {
 
 .inline-palette-panel--floating {
   position: fixed;
-  z-index: 999;
+  z-index: 0;
   width: min(320px, calc(100vw - 24px));
   padding: 16px;
   border-radius: 24px;
