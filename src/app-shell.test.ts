@@ -150,6 +150,37 @@ describe("app shell layout", () => {
     expect(appSource).toContain("justify-content: center;");
   });
 
+  it("switches between preset swatch collections through a tab strip", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain("class=\"preset-palette-tabs\"");
+    expect(appSource).toContain("role=\"tablist\"");
+    expect(appSource).toContain("v-for=\"palette in presetPaletteCollections\"");
+    expect(appSource).toContain("class=\"preset-palette-tab\"");
+    expect(appSource).toContain("@click=\"selectPresetPaletteTab(palette.id)\"");
+    expect(appSource).toContain("activePresetPalette.colors");
+  });
+
+  it("renders the preset tab strip as a vertical list instead of a horizontal scroller", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+    const tabsBlock = getStyleBlock(appSource, ".preset-palette-tabs");
+
+    expect(tabsBlock).toContain("flex-direction: column;");
+    expect(tabsBlock).toContain("overflow-y: auto;");
+    expect(tabsBlock).not.toContain("overflow-x: auto;");
+    expect(tabsBlock).toContain("overscroll-behavior: contain;");
+  });
+
+  it("lets the entire preset palette area collapse behind its own toggle", () => {
+    const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
+
+    expect(appSource).toContain("class=\"inline-palette-panel__toggle\"");
+    expect(appSource).toContain("@click=\"togglePresetPaletteSection\"");
+    expect(appSource).toContain("v-if=\"isPresetPaletteSectionExpanded\"");
+    expect(appSource).toContain(":aria-expanded=\"isPresetPaletteSectionExpanded\"");
+    expect(appSource).toContain("class=\"inline-palette-panel__presets-body\"");
+  });
+
   it("renders an inline color board above the preset swatches inside the same floating palette", () => {
     const appSource = readFileSync(resolve(process.cwd(), "src/App.vue"), "utf8");
 

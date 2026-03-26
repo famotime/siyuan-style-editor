@@ -230,33 +230,67 @@
                     Presets
                   </p>
                   <p class="inline-palette-panel__copy">
-                    快速预览纯色，未设置时回到默认。
+                    从 10 组高区隔配色里切换主题，点击色卡即可即时预览。
                   </p>
                 </div>
+                <button
+                  type="button"
+                  class="inline-palette-panel__toggle"
+                  :aria-expanded="isPresetPaletteSectionExpanded"
+                  @click="togglePresetPaletteSection"
+                >
+                  {{ isPresetPaletteSectionExpanded ? "折叠" : "展开" }}
+                </button>
               </div>
 
-              <div class="swatch-grid swatch-grid--inline">
-                <button
-                  v-for="color in activePalette"
-                  :key="color.value"
-                  type="button"
-                  class="swatch-chip"
-                  :aria-label="color.label"
-                  :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
-                  :style="{ '--swatch-color': color.value }"
-                  @click="handlePresetColorSelection(color.value)"
+              <div
+                v-if="isPresetPaletteSectionExpanded"
+                class="inline-palette-panel__presets-body"
+              >
+                <div
+                  class="preset-palette-tabs"
+                  role="tablist"
+                  aria-label="预设配色方案"
                 >
-                  <span class="swatch-chip__dot" />
-                </button>
-                <button
-                  type="button"
-                  class="swatch-chip swatch-chip--clear"
-                  aria-label="恢复默认颜色"
-                  :class="{ 'swatch-chip--active': !selectedSwatch }"
-                  @click="handleClearSelectedTargetColor"
-                >
-                  <span class="swatch-chip__dot swatch-chip__dot--clear" />
-                </button>
+                  <button
+                    v-for="palette in presetPaletteCollections"
+                    :key="palette.id"
+                    type="button"
+                    class="preset-palette-tab"
+                    :class="{ 'preset-palette-tab--active': activePresetPaletteId === palette.id }"
+                    role="tab"
+                    :aria-selected="activePresetPaletteId === palette.id"
+                    :tabindex="activePresetPaletteId === palette.id ? 0 : -1"
+                    @click="selectPresetPaletteTab(palette.id)"
+                  >
+                    <span class="preset-palette-tab__name">{{ palette.label }}</span>
+                    <span class="preset-palette-tab__count">{{ palette.colors.length }} 色</span>
+                  </button>
+                </div>
+
+                <div class="swatch-grid swatch-grid--inline">
+                  <button
+                    v-for="color in activePresetPalette.colors"
+                    :key="color.value"
+                    type="button"
+                    class="swatch-chip"
+                    :aria-label="color.label"
+                    :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
+                    :style="{ '--swatch-color': color.value }"
+                    @click="handlePresetColorSelection(color.value)"
+                  >
+                    <span class="swatch-chip__dot" />
+                  </button>
+                  <button
+                    type="button"
+                    class="swatch-chip swatch-chip--clear"
+                    aria-label="恢复默认颜色"
+                    :class="{ 'swatch-chip--active': !selectedSwatch }"
+                    @click="handleClearSelectedTargetColor"
+                  >
+                    <span class="swatch-chip__dot swatch-chip__dot--clear" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -270,7 +304,8 @@
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell";
 
 const {
-  activePalette,
+  activePresetPalette,
+  activePresetPaletteId,
   activateTargetChannel,
   applyCustomColorDraft,
   cancelInlinePalettePanel,
@@ -297,8 +332,12 @@ const {
   isCustomColorDraftValid,
   isInlinePaletteOpenForTarget,
   isInlinePaletteVisible,
+  isPresetPaletteSectionExpanded,
   panelThemeVars,
+  presetPaletteCollections,
   runtimeState,
+  selectPresetPaletteTab,
+  togglePresetPaletteSection,
   selectedChannelLabel,
   selectedSwatch,
   selectedTargetMeta,
@@ -639,6 +678,16 @@ const {
   gap: 14px;
 }
 
+.inline-palette-panel__presets {
+  display: grid;
+  gap: 10px;
+}
+
+.inline-palette-panel__presets-body {
+  display: grid;
+  gap: 10px;
+}
+
 .inline-palette-backdrop {
   position: fixed;
   inset: 0;
@@ -675,6 +724,63 @@ const {
   border: 1px solid var(--panel-card-stroke);
   background: var(--panel-pill-bg);
   color: var(--panel-text-muted);
+}
+
+.inline-palette-panel__toggle {
+  border: 1px solid var(--panel-card-stroke);
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
+}
+
+.preset-palette-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 184px;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.preset-palette-tab {
+  width: 100%;
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--panel-card-stroke);
+  border-radius: 14px;
+  background: var(--panel-pill-bg);
+  color: var(--panel-text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.preset-palette-tab:hover {
+  transform: translateY(-1px);
+  color: var(--panel-text);
+}
+
+.preset-palette-tab--active {
+  border-color: var(--panel-accent-outline);
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-text);
+}
+
+.preset-palette-tab__name {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.preset-palette-tab__count {
+  font-size: 11px;
+  color: var(--panel-text-subtle);
 }
 
 .custom-color-panel {

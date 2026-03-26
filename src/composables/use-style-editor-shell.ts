@@ -11,10 +11,9 @@ import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import {
-  BACKGROUND_PALETTE,
   exportCurrentStyles,
   extractCurrentStyles,
-  FOREGROUND_PALETTE,
+  PRESET_PALETTE_COLLECTIONS,
   importStyles,
   persistCurrentStyles,
   previewPaletteColor,
@@ -70,6 +69,9 @@ export function useStyleEditorShell() {
     width: number;
   } | null>(null);
   const actionMessage = ref("");
+  const activePresetPaletteId = ref(PRESET_PALETTE_COLLECTIONS[0]?.id ?? "");
+  const isPresetPaletteSectionExpanded = ref(true);
+  const presetPaletteCollections = PRESET_PALETTE_COLLECTIONS;
 
   const selectedTargetMeta = computed(() => {
     return STYLE_TARGET_OPTIONS.find(target => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0];
@@ -79,10 +81,8 @@ export function useStyleEditorShell() {
     return actionMessage.value || selectedTargetMeta.value.hint;
   });
 
-  const activePalette = computed(() => {
-    return runtimeState.selectedChannel === "backgroundColor"
-      ? BACKGROUND_PALETTE
-      : FOREGROUND_PALETTE;
+  const activePresetPalette = computed(() => {
+    return PRESET_PALETTE_COLLECTIONS.find(palette => palette.id === activePresetPaletteId.value) ?? PRESET_PALETTE_COLLECTIONS[0];
   });
 
   const selectedSwatch = computed(() => {
@@ -236,8 +236,13 @@ export function useStyleEditorShell() {
     void syncFloatingPalettePosition();
   }
 
-  function handleViewportScroll() {
+  function handleViewportScroll(event: Event) {
     if (!isInlinePaletteVisible.value) {
+      return;
+    }
+
+    const eventTarget = event.target;
+    if (eventTarget instanceof Node && floatingPaletteRef.value?.contains(eventTarget)) {
       return;
     }
 
@@ -549,6 +554,19 @@ export function useStyleEditorShell() {
     await previewInlinePaletteColor(color);
   }
 
+  function selectPresetPaletteTab(paletteId: string) {
+    if (!PRESET_PALETTE_COLLECTIONS.some(palette => palette.id === paletteId)) {
+      return;
+    }
+
+    activePresetPaletteId.value = paletteId;
+  }
+
+  function togglePresetPaletteSection() {
+    isPresetPaletteSectionExpanded.value = !isPresetPaletteSectionExpanded.value;
+    void syncFloatingPalettePosition();
+  }
+
   async function handleClearSelectedTargetColor() {
     customColorDraft.value = "";
     await previewInlinePaletteColor("");
@@ -572,7 +590,8 @@ export function useStyleEditorShell() {
   }
 
   return {
-    activePalette,
+    activePresetPalette,
+    activePresetPaletteId,
     activateTargetChannel,
     applyCustomColorDraft,
     cancelInlinePalettePanel,
@@ -600,8 +619,12 @@ export function useStyleEditorShell() {
     isCustomColorDraftValid,
     isInlinePaletteOpenForTarget,
     isInlinePaletteVisible,
+    isPresetPaletteSectionExpanded,
     panelThemeVars,
+    presetPaletteCollections,
     runtimeState,
+    selectPresetPaletteTab,
+    togglePresetPaletteSection,
     selectedChannelLabel,
     selectedSwatch,
     selectedTargetMeta,

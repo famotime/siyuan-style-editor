@@ -4,6 +4,7 @@ import {
   extractCurrentStyles,
   importStyles,
   initializeRuntime,
+  PRESET_PALETTE_COLLECTIONS,
   persistCurrentStyles,
   previewPaletteColor,
   resetAllStyles,
@@ -25,6 +26,38 @@ describe("style editor runtime", () => {
     teardownRuntime();
     document.head.innerHTML = "";
     document.body.innerHTML = "";
+  });
+
+  it("exposes ten coolors preset palette collections with concrete hex swatches", () => {
+    expect(PRESET_PALETTE_COLLECTIONS).toHaveLength(10);
+    expect(PRESET_PALETTE_COLLECTIONS.map(palette => palette.label)).toEqual([
+      "Fiery Ocean",
+      "Olive Garden Feast",
+      "Sunny Beach Day",
+      "Dark Sunset",
+      "Summer Dream",
+      "Vibrant Color Fiesta",
+      "Summer Ocean Breeze",
+      "Refreshing Summer Fun",
+      "Fiery Palette",
+      "Watermelon Sorbet",
+    ]);
+
+    for (const palette of PRESET_PALETTE_COLLECTIONS) {
+      expect(palette.colors.length).toBeGreaterThanOrEqual(5);
+      expect(new Set(palette.colors.map(color => color.value)).size).toBe(palette.colors.length);
+      for (const color of palette.colors) {
+        expect(color.value).toMatch(/^#[0-9A-F]{6}$/);
+      }
+    }
+
+    expect(PRESET_PALETTE_COLLECTIONS[0].colors.map(color => color.value)).toEqual([
+      "#780000",
+      "#C1121F",
+      "#FDF0D5",
+      "#003049",
+      "#669BBC",
+    ]);
   });
 
   it("initializes from persisted state and injects the stylesheet", async () => {
