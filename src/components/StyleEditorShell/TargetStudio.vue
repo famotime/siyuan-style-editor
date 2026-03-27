@@ -232,15 +232,16 @@ function submitSaveForm() {
 
 .target-studio__save {
   position: relative;
-  width: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 12px;
+  border-radius: 0;
   background: transparent;
   color: var(--panel-text-muted);
   font-size: 12px;
@@ -248,7 +249,6 @@ function submitSaveForm() {
   cursor: pointer;
   transition:
     transform 160ms ease,
-    box-shadow 160ms ease,
     background-color 160ms ease,
     border-color 160ms ease;
 }
@@ -288,9 +288,7 @@ function submitSaveForm() {
 }
 
 .target-studio__save:hover {
-  transform: translateY(-1px);
   color: var(--panel-text);
-  box-shadow: var(--panel-hover-shadow);
 }
 
 .target-studio__save:hover::before,
@@ -303,8 +301,8 @@ function submitSaveForm() {
 
 .target-studio__save-icon {
   position: relative;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   display: inline-block;
 }
 
