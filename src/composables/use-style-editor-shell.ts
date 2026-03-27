@@ -13,6 +13,7 @@ export function useStyleEditorShell() {
   const inlinePaletteSession = useInlinePaletteSession();
   const {
     actionMessage,
+    handleDeletePresetPalette: removeCustomPresetPalette,
     handleExportStyles,
     handleExtractStyles,
     handleImportStylesChange,
@@ -32,14 +33,19 @@ export function useStyleEditorShell() {
     return actionMessage.value || selectedTargetMeta.value.hint;
   });
 
-  async function handleSavePresetPalette() {
-    const savedPalette = await persistCustomPresetPalette();
+  async function handleSavePresetPalette(name: string) {
+    const savedPalette = await persistCustomPresetPalette(name);
     if (savedPalette) {
       inlinePaletteSession.selectPresetPaletteTab(savedPalette.id);
     }
   }
 
+  async function handleDeletePresetPalette(paletteId: string) {
+    await removeCustomPresetPalette(paletteId);
+  }
+
   return {
+    handleDeletePresetPalette,
     handleExportStyles,
     handleExtractStyles,
     handleImportStylesChange,

@@ -13,13 +13,45 @@
         <p class="target-studio__note">
           {{ styleTargetOptions.length }} 个对象
         </p>
-        <button
-          type="button"
-          class="target-studio__save"
-          @click="emit('save-preset-palette')"
-        >
-          保存
-        </button>
+        <div class="target-studio__save-wrap">
+          <button
+            v-if="!isSaveFormVisible"
+            type="button"
+            class="target-studio__save"
+            @click="openSaveForm"
+          >
+            保存
+          </button>
+          <form
+            v-else
+            class="target-studio__save-form"
+            @submit.prevent="submitSaveForm"
+          >
+            <input
+              ref="saveInputRef"
+              v-model="savePaletteName"
+              type="text"
+              class="target-studio__save-input"
+              maxlength="40"
+              placeholder="输入色卡名称"
+              @keydown.esc.prevent="closeSaveForm"
+            >
+            <button
+              type="submit"
+              class="target-studio__save-confirm"
+              :disabled="!savePaletteName.trim()"
+            >
+              确认
+            </button>
+            <button
+              type="button"
+              class="target-studio__save-cancel"
+              @click="closeSaveForm"
+            >
+              取消
+            </button>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -84,6 +116,11 @@
 import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
+import {
+  nextTick,
+  ref,
+} from "vue";
+
 interface StyleTargetOption {
   hint: string;
   label: string;
@@ -107,9 +144,34 @@ defineProps<{
 
 const emit = defineEmits<{
   "activate-channel": [payload: { channel: PaintChannel; event: MouseEvent; target: StyleTarget }];
-  "save-preset-palette": [];
+  "save-preset-palette": [name: string];
   "select-target": [target: StyleTarget];
 }>();
+
+const isSaveFormVisible = ref(false);
+const saveInputRef = ref<HTMLInputElement | null>(null);
+const savePaletteName = ref("");
+
+async function openSaveForm() {
+  isSaveFormVisible.value = true;
+  await nextTick();
+  saveInputRef.value?.focus();
+}
+
+function closeSaveForm() {
+  isSaveFormVisible.value = false;
+  savePaletteName.value = "";
+}
+
+function submitSaveForm() {
+  const trimmedName = savePaletteName.value.trim();
+  if (!trimmedName) {
+    return;
+  }
+
+  emit("save-preset-palette", trimmedName);
+  closeSaveForm();
+}
 </script>
 
 <style scoped lang="scss">
@@ -134,6 +196,11 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.target-studio__save-wrap {
+  display: flex;
+  align-items: center;
 }
 
 .section-heading__kicker {
@@ -179,6 +246,68 @@ const emit = defineEmits<{
 .target-studio__save:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
+}
+
+.target-studio__save-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.target-studio__save-input {
+  width: 140px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--panel-card-stroke);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel-card-bg) 82%, white 18%);
+  color: var(--panel-text);
+  font: inherit;
+}
+
+.target-studio__save-input::placeholder {
+  color: var(--panel-text-subtle);
+}
+
+.target-studio__save-confirm,
+.target-studio__save-cancel {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.target-studio__save-confirm {
+  border: 1px solid var(--panel-accent-outline);
+  background: var(--panel-chip-active-bg);
+  color: var(--panel-accent);
+}
+
+.target-studio__save-cancel {
+  border: 1px solid var(--panel-card-stroke);
+  background: color-mix(in srgb, var(--panel-pill-bg) 76%, transparent 24%);
+  color: var(--panel-text);
+}
+
+.target-studio__save-confirm:hover,
+.target-studio__save-cancel:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
+}
+
+.target-studio__save-confirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
 }
 
 .target-grid {
@@ -347,6 +476,26 @@ const emit = defineEmits<{
   .target-studio__header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .target-studio__header-actions,
+  .target-studio__save-form {
+    width: 100%;
+  }
+
+  .target-studio__save-wrap {
+    width: 100%;
+  }
+
+  .target-studio__save,
+  .target-studio__save-input,
+  .target-studio__save-confirm,
+  .target-studio__save-cancel {
+    width: 100%;
+  }
+
+  .target-studio__save-form {
+    flex-wrap: wrap;
   }
 }
 </style>

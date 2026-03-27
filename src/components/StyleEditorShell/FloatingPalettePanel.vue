@@ -122,21 +122,64 @@
                 role="tablist"
                 aria-label="预设配色方案"
               >
-                <button
+                <div
                   v-for="palette in presetPaletteCollections"
                   :key="palette.id"
-                  type="button"
-                  class="preset-palette-tab"
-                  :class="{ 'preset-palette-tab--active': activePresetPaletteId === palette.id }"
-                  :style="getPresetPaletteTabStyle(palette)"
-                  role="tab"
-                  :aria-selected="activePresetPaletteId === palette.id"
-                  :tabindex="activePresetPaletteId === palette.id ? 0 : -1"
-                  @click="emit('select-preset-palette-tab', palette.id)"
+                  class="preset-palette-tab-frame"
+                  :class="{ 'preset-palette-tab-frame--custom': isCustomPresetPalette(palette) }"
                 >
-                  <span class="preset-palette-tab__name">{{ palette.label }}</span>
-                  <span class="preset-palette-tab__count">{{ palette.colors.length }} 色</span>
-                </button>
+                  <button
+                    type="button"
+                    class="preset-palette-tab"
+                    :class="{ 'preset-palette-tab--active': activePresetPaletteId === palette.id }"
+                    :style="getPresetPaletteTabStyle(palette)"
+                    role="tab"
+                    :aria-selected="activePresetPaletteId === palette.id"
+                    :tabindex="activePresetPaletteId === palette.id ? 0 : -1"
+                    @click="emit('select-preset-palette-tab', palette.id)"
+                  >
+                    <span class="preset-palette-tab__name">{{ palette.label }}</span>
+                    <span class="preset-palette-tab__count">{{ palette.colors.length }} 色</span>
+                  </button>
+
+                  <div
+                    v-if="isCustomPresetPalette(palette)"
+                    class="preset-palette-tab__actions"
+                  >
+                    <button
+                      v-if="pendingDeletePaletteId !== palette.id"
+                      type="button"
+                      class="preset-palette-tab__delete"
+                      :aria-label="`删除色卡 ${palette.label}`"
+                      title="删除色卡"
+                      @click.stop="requestDeletePalette(palette.id)"
+                    >
+                      <span class="preset-palette-tab__delete-icon" aria-hidden="true">
+                        <span class="preset-palette-tab__delete-lid" />
+                        <span class="preset-palette-tab__delete-body" />
+                      </span>
+                    </button>
+                    <div
+                      v-else
+                      class="preset-palette-tab__delete-confirmation"
+                    >
+                      <button
+                        type="button"
+                        class="preset-palette-tab__delete-confirm"
+                        @click.stop="confirmDeletePalette(palette.id)"
+                      >
+                        确认
+                      </button>
+                      <button
+                        type="button"
+                        class="preset-palette-tab__delete-cancel"
+                        @click.stop="cancelDeletePalette"
+                      >
+                        取消
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div class="swatch-grid swatch-grid--inline">
@@ -174,7 +217,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import {
+  computed,
+  ref,
+  watch,
+} from "vue";
 
 import { buildPresetPaletteCardBackground } from "@/lib/preset-palette-catalog";
 
@@ -216,6 +263,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   "apply-custom-color": [];
   "clear-selected-target-color": [];
+  "delete-preset-palette": [paletteId: string];
   "inline-color-field-pointerdown": [event: PointerEvent];
   "select-preset-color": [color: string];
   "select-preset-palette-tab": [paletteId: string];
@@ -224,6 +272,8 @@ const emit = defineEmits<{
   "hue-input": [event: Event];
   cancel: [];
 }>();
+
+const pendingDeletePaletteId = ref("");
 
 const customColorDraftModel = computed({
   get: () => props.customColorDraft,
@@ -246,6 +296,34 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
     "--preset-palette-gradient": buildPresetPaletteCardBackground(palette.colors),
   };
 }
+
+function isCustomPresetPalette(palette: PaletteCollection) {
+  return palette.id.startsWith("custom-palette-");
+}
+
+function requestDeletePalette(paletteId: string) {
+  pendingDeletePaletteId.value = paletteId;
+}
+
+function cancelDeletePalette() {
+  pendingDeletePaletteId.value = "";
+}
+
+function confirmDeletePalette(paletteId: string) {
+  emit("delete-preset-palette", paletteId);
+  if (pendingDeletePaletteId.value === paletteId) {
+    pendingDeletePaletteId.value = "";
+  }
+}
+
+watch(
+  () => props.presetPaletteCollections.map(palette => palette.id),
+  (paletteIds) => {
+    if (!paletteIds.includes(pendingDeletePaletteId.value)) {
+      pendingDeletePaletteId.value = "";
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">
@@ -361,6 +439,10 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
   scrollbar-width: thin;
 }
 
+.preset-palette-tab-frame {
+  position: relative;
+}
+
 .preset-palette-tab {
   width: 100%;
   display: grid;
@@ -402,6 +484,10 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
     0 16px 28px rgba(15, 23, 42, 0.22);
 }
 
+.preset-palette-tab-frame--custom .preset-palette-tab {
+  padding-right: 56px;
+}
+
 .preset-palette-tab__name {
   font-size: 12px;
   font-weight: 700;
@@ -419,6 +505,117 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
   background: rgba(9, 12, 18, 0.18);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(6px);
+}
+
+.preset-palette-tab__actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.preset-palette-tab__delete,
+.preset-palette-tab__delete-confirm,
+.preset-palette-tab__delete-cancel {
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(9, 12, 18, 0.28);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+  backdrop-filter: blur(8px);
+}
+
+.preset-palette-tab__delete {
+  width: 24px;
+  padding: 0;
+  justify-content: center;
+}
+
+.preset-palette-tab__delete-icon {
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 13px;
+}
+
+.preset-palette-tab__delete-lid,
+.preset-palette-tab__delete-body {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.preset-palette-tab__delete-lid {
+  top: 1px;
+  width: 10px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.preset-palette-tab__delete-lid::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translateX(-50%);
+}
+
+.preset-palette-tab__delete-body {
+  top: 4px;
+  width: 9px;
+  height: 8px;
+  border: 1.5px solid currentColor;
+  border-top-width: 2px;
+  border-radius: 0 0 3px 3px;
+  box-sizing: border-box;
+}
+
+.preset-palette-tab__delete-body::before,
+.preset-palette-tab__delete-body::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 1px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.9;
+}
+
+.preset-palette-tab__delete-body::before {
+  left: 2px;
+}
+
+.preset-palette-tab__delete-body::after {
+  right: 2px;
+}
+
+.preset-palette-tab__delete-confirmation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preset-palette-tab__delete:hover,
+.preset-palette-tab__delete-confirm:hover,
+.preset-palette-tab__delete-cancel:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
 }
 
 .custom-color-panel {

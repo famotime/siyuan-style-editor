@@ -49,13 +49,14 @@ function createShellState(options: {
     ],
     activePresetPalette: ref({
       colors: [
+        { label: "#224488", value: "#224488" },
         { label: "#5B8DEF", value: "#5B8DEF" },
         { label: "#F6D365", value: "#F6D365" },
       ],
-      id: "cool-blue",
-      label: "Cool Blue",
+      id: "custom-palette-1",
+      label: "My Favorite",
     }),
-    activePresetPaletteId: ref("cool-blue"),
+    activePresetPaletteId: ref("custom-palette-1"),
     activateTargetChannel: vi.fn(),
     applyCustomColorDraft: vi.fn(),
     cancelInlinePalettePanel: vi.fn(),
@@ -83,6 +84,7 @@ function createShellState(options: {
     handleImportStylesChange: vi.fn(),
     handleInlineColorFieldPointerDown: vi.fn(),
     handleInlineHueInput: vi.fn(),
+    handleDeletePresetPalette: vi.fn(),
     handlePresetColorSelection: vi.fn(),
     handleResetAllStyles: vi.fn(),
     handleSavePresetPalette: vi.fn(),
@@ -106,6 +108,15 @@ function createShellState(options: {
       "--panel-text": "#111111",
     }),
     presetPaletteCollections: [
+      {
+        colors: [
+          { label: "#224488", value: "#224488" },
+          { label: "#5B8DEF", value: "#5B8DEF" },
+          { label: "#F6D365", value: "#F6D365" },
+        ],
+        id: "custom-palette-1",
+        label: "My Favorite",
+      },
       {
         colors: [
           { label: "#5B8DEF", value: "#5B8DEF" },
@@ -213,8 +224,24 @@ describe("app shell", () => {
     expect(cards).toHaveLength(2);
     expect(cards[0]?.classList.contains("target-preview-card--selected")).toBe(true);
     expect(cards[1]?.classList.contains("target-preview-card--selected")).toBe(false);
+
     click(container.querySelector(".target-studio__save"));
+    await nextTick();
+    expect(shellState.handleSavePresetPalette).not.toHaveBeenCalled();
+    expect(container.querySelector(".target-studio__save-form")).not.toBeNull();
+
+    const saveInput = container.querySelector(".target-studio__save-input") as HTMLInputElement | null;
+    expect(saveInput).not.toBeNull();
+    expect(saveInput?.value).toBe("");
+    expect(container.querySelector(".target-studio__save-confirm")).not.toBeNull();
+
+    saveInput!.value = "My Favorite";
+    saveInput!.dispatchEvent(new Event("input", { bubbles: true }));
+    container.querySelector(".target-studio__save-form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    await nextTick();
     expect(shellState.handleSavePresetPalette).toHaveBeenCalledOnce();
+    expect(shellState.handleSavePresetPalette).toHaveBeenCalledWith("My Favorite");
+    expect(container.querySelector(".target-studio__save-form")).toBeNull();
 
     click(cards[1]?.querySelector(".target-preview-card__surface") ?? null);
     expect(shellState.selectPreviewTarget).toHaveBeenCalledWith("mark");
@@ -245,13 +272,27 @@ describe("app shell", () => {
     expect(shellState.floatingPaletteRef.value).toBe(document.body.querySelector(".inline-palette-panel--floating"));
     expect(shellState.inlineColorFieldRef.value).toBe(document.body.querySelector(".inline-color-picker__field"));
 
+    const presetTabFrames = [...document.body.querySelectorAll(".preset-palette-tab-frame")];
     const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")];
-    expect(presetTabs).toHaveLength(2);
+    expect(presetTabs).toHaveLength(3);
     expect(presetTabs[0]?.getAttribute("style")).toContain("linear-gradient(");
+    expect(presetTabs[0]?.textContent).toContain("My Favorite");
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete")).not.toBeNull();
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete")?.textContent?.trim()).toBe("");
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-icon")).not.toBeNull();
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-lid")).not.toBeNull();
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-body")).not.toBeNull();
     expect(presetTabs[0]?.getAttribute("style")).toContain("#5B8DEF");
     expect(presetTabs[0]?.getAttribute("style")).toContain("#F6D365");
-    click(presetTabs[1] ?? null);
+    expect(presetTabFrames[1]?.querySelector(".preset-palette-tab__delete")).toBeNull();
+    click(presetTabs[2] ?? null);
     expect(shellState.selectPresetPaletteTab).toHaveBeenCalledWith("warm-sand");
+
+    click(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete") ?? null);
+    await nextTick();
+    expect(document.body.querySelector(".preset-palette-tab__delete-confirm")).not.toBeNull();
+    click(document.body.querySelector(".preset-palette-tab__delete-confirm"));
+    expect(shellState.handleDeletePresetPalette).toHaveBeenCalledWith("custom-palette-1");
 
     click(document.body.querySelector(".inline-palette-panel__toggle"));
     expect(shellState.togglePresetPaletteSection).toHaveBeenCalledOnce();
@@ -260,9 +301,9 @@ describe("app shell", () => {
     expect(shellState.applyCustomColorDraft).toHaveBeenCalledOnce();
 
     const swatchButtons = [...document.body.querySelectorAll(".swatch-chip")];
-    expect(swatchButtons).toHaveLength(3);
+    expect(swatchButtons).toHaveLength(4);
     click(swatchButtons[0] ?? null);
-    expect(shellState.handlePresetColorSelection).toHaveBeenCalledWith("#5B8DEF");
+    expect(shellState.handlePresetColorSelection).toHaveBeenCalledWith("#224488");
 
     click(swatchButtons.at(-1) ?? null);
     expect(shellState.handleClearSelectedTargetColor).toHaveBeenCalledOnce();

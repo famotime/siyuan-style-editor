@@ -1,6 +1,7 @@
 import { ref } from "vue";
 
 import {
+  deleteCustomPresetPalette,
   exportCurrentStyles,
   extractCurrentStyles,
   importStyles,
@@ -52,21 +53,12 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     });
   }
 
-  async function handleSavePresetPalette() {
+  async function handleSavePresetPalette(name: string) {
     await options.cancelInlinePalettePanel();
 
-    if (typeof window === "undefined" || typeof window.prompt !== "function") {
-      return null;
-    }
-
-    const rawName = window.prompt("输入预置色卡名称", "");
-    if (rawName === null) {
-      return null;
-    }
-
     try {
-      const result = await saveCurrentProfileAsPresetPalette(rawName);
-      actionMessage.value = `已保存预置色卡「${result.label}」，收录 ${result.colorCount} 种颜色。`;
+      const result = await saveCurrentProfileAsPresetPalette(name);
+      actionMessage.value = `当前颜色配置已经保存为色卡「${result.label}」，供后续选色使用。`;
       return result.palette;
     }
     catch (error) {
@@ -107,8 +99,23 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     }
   }
 
+  async function handleDeletePresetPalette(paletteId: string) {
+    try {
+      const result = await deleteCustomPresetPalette(paletteId);
+      actionMessage.value = `已删除色卡「${result.label}」。`;
+      return result;
+    }
+    catch (error) {
+      actionMessage.value = error instanceof Error
+        ? error.message
+        : "删除色卡失败，请稍后重试。";
+      return null;
+    }
+  }
+
   return {
     actionMessage,
+    handleDeletePresetPalette,
     handleExportStyles,
     handleExtractStyles,
     handleImportStylesChange,

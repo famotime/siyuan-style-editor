@@ -274,6 +274,21 @@ export function useInlinePaletteSession() {
     },
   );
 
+  watch(
+    () => presetPaletteCollections.value.map(palette => palette.id),
+    (paletteIds) => {
+      if (paletteIds.length === 0) {
+        activePresetPaletteId.value = "";
+        return;
+      }
+
+      if (!paletteIds.includes(activePresetPaletteId.value)) {
+        activePresetPaletteId.value = paletteIds[0];
+      }
+    },
+    { immediate: true },
+  );
+
   async function previewInlinePaletteColor(color: string) {
     if (!isInlinePaletteVisible.value) {
       return;

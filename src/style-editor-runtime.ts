@@ -251,3 +251,20 @@ export async function saveCurrentProfileAsPresetPalette(name: string) {
     palette: nextPalette,
   };
 }
+
+export async function deleteCustomPresetPalette(paletteId: string) {
+  const paletteToDelete = runtimeState.customPresetPalettes.find(palette => palette.id === paletteId);
+  if (!paletteToDelete) {
+    throw new Error("未找到要删除的自定义色卡。");
+  }
+
+  runtimeState.customPresetPalettes = runtimeState.customPresetPalettes.filter(
+    palette => palette.id !== paletteId,
+  );
+  await persistState();
+
+  return {
+    id: paletteToDelete.id,
+    label: paletteToDelete.label,
+  };
+}

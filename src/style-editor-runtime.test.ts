@@ -1,5 +1,6 @@
 import {
   applyPaletteColor,
+  deleteCustomPresetPalette,
   exportCurrentStyles,
   extractCurrentStyles,
   importStyles,
@@ -256,6 +257,34 @@ describe("style editor runtime", () => {
           label: "My Favorite",
         }),
       ],
+    });
+  });
+
+  it("deletes a saved custom preset palette and persists the remaining palette list", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("heading1");
+    selectChannel("color");
+    await applyPaletteColor("#3355aa");
+
+    const savedPalette = await saveCurrentProfileAsPresetPalette("My Favorite");
+    vi.clearAllMocks();
+
+    const result = await deleteCustomPresetPalette(savedPalette.palette.id);
+
+    expect(result).toEqual({
+      id: savedPalette.palette.id,
+      label: "My Favorite",
+    });
+    expect(runtimeState.customPresetPalettes).toEqual([]);
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      profile: expect.objectContaining({
+        heading1: expect.objectContaining({
+          color: "#3355aa",
+        }),
+      }),
+      customPresetPalettes: [],
     });
   });
 

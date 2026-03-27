@@ -50,6 +50,7 @@
       @inline-color-field-pointerdown="handleInlineColorFieldPointerDown"
       @hue-input="handleInlineHueInput"
       @apply-custom-color="applyCustomColorDraft"
+      @delete-preset-palette="handleDeletePresetPalette"
       @toggle-preset-palette-section="togglePresetPaletteSection"
       @select-preset-palette-tab="selectPresetPaletteTab"
       @select-preset-color="handlePresetColorSelection"
@@ -81,6 +82,7 @@ const {
   getChannelSwatch,
   getTargetPreviewStyle,
   handleClearSelectedTargetColor,
+  handleDeletePresetPalette,
   handleExportStyles,
   handleExtractStyles,
   handleImportStylesChange,
