@@ -54,10 +54,25 @@ describe("style profile utilities", () => {
     expect(css).toContain("span[data-type~=code]");
     expect(css).toContain("mark");
     expect(css).toContain(".b3-typography pre");
-    expect(css).toContain(".b3-typography ul");
-    expect(css).toContain(".b3-typography ol");
-    expect(css).toContain(".protyle-wysiwyg .protyle-task");
+    expect(css).toContain('[data-type="NodeList"][data-subtype="u"]');
+    expect(css).toContain('[data-type="NodeList"][data-subtype="o"]');
+    expect(css).toContain('[data-type="NodeList"][data-subtype="t"]');
     expect(css).not.toContain('[data-type="NodeHeading"].h2');
+  });
+
+  it("builds list css against SiYuan NodeList DOM selectors", () => {
+    const css = buildStyleCss({
+      bulletList: { color: "#223344" },
+      orderedList: { color: "#334455" },
+      taskList: { color: "#445566" },
+    });
+
+    expect(css).toContain('.protyle-wysiwyg [data-type="NodeList"][data-subtype="u"]');
+    expect(css).toContain('.protyle-wysiwyg [data-type="NodeList"][data-subtype="o"]');
+    expect(css).toContain('.protyle-wysiwyg [data-type="NodeList"][data-subtype="t"]');
+    expect(css).toContain("color: #223344 !important;");
+    expect(css).toContain("color: #334455 !important;");
+    expect(css).toContain("color: #445566 !important;");
   });
 
 });

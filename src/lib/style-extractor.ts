@@ -1,9 +1,9 @@
 import {
   createDefaultStyleProfile,
-  getStyleTargetSelector,
   STYLE_TARGETS,
   type StyleProfile,
 } from "@/lib/style-profile";
+import { getStyleTargetExtractSelector } from "@/lib/style-target-catalog";
 
 const TRANSPARENT_VALUES = new Set(["rgba(0, 0, 0, 0)", "transparent"]);
 
@@ -48,7 +48,7 @@ export function extractStyleProfileFromDocument(documentRef: Document): Extracte
   let extractedTargetCount = 0;
 
   for (const target of STYLE_TARGETS) {
-    const element = documentRef.querySelector(getStyleTargetSelector(target));
+    const element = documentRef.querySelector(getStyleTargetExtractSelector(target));
     if (!element) {
       continue;
     }

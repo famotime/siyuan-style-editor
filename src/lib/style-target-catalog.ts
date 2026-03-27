@@ -17,15 +17,31 @@ export type StyleTarget =
 export interface StyleTargetMeta {
   value: StyleTarget;
   cssSelector: string;
+  extractSelector: string;
   label: string;
   shortLabel: string;
   hint: string;
+}
+
+function createListSelectors(subtype: "o" | "t" | "u", typographySelector: string) {
+  const listSelector = `[data-type="NodeList"][data-subtype="${subtype}"]`;
+  const listItemSelector = `[data-type="NodeListItem"][data-subtype="${subtype}"]`;
+
+  return {
+    cssSelector: [
+      `.b3-typography ${typographySelector}`,
+      `.protyle-wysiwyg ${listSelector}`,
+      `.protyle-wysiwyg ${listSelector} > ${listItemSelector} > :not([data-type="NodeList"])`,
+    ].join(",\n"),
+    extractSelector: `.protyle-wysiwyg ${listSelector}`,
+  };
 }
 
 const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "heading1",
     cssSelector: '[data-type="NodeHeading"].h1',
+    extractSelector: '[data-type="NodeHeading"].h1',
     label: "H1 标题",
     shortLabel: "H1",
     hint: "用于文章总标题与大章节入口",
@@ -33,6 +49,7 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "heading2",
     cssSelector: '[data-type="NodeHeading"].h2',
+    extractSelector: '[data-type="NodeHeading"].h2',
     label: "H2 标题",
     shortLabel: "H2",
     hint: "用于主章节分隔",
@@ -40,6 +57,7 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "heading3",
     cssSelector: '[data-type="NodeHeading"].h3',
+    extractSelector: '[data-type="NodeHeading"].h3',
     label: "H3 标题",
     shortLabel: "H3",
     hint: "用于二级小节",
@@ -47,6 +65,7 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "heading4",
     cssSelector: '[data-type="NodeHeading"].h4',
+    extractSelector: '[data-type="NodeHeading"].h4',
     label: "H4 标题",
     shortLabel: "H4",
     hint: "用于次级说明",
@@ -54,6 +73,7 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "heading5",
     cssSelector: '[data-type="NodeHeading"].h5',
+    extractSelector: '[data-type="NodeHeading"].h5',
     label: "H5 标题",
     shortLabel: "H5",
     hint: "用于注释性标题",
@@ -61,6 +81,7 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "heading6",
     cssSelector: '[data-type="NodeHeading"].h6',
+    extractSelector: '[data-type="NodeHeading"].h6',
     label: "H6 标题",
     shortLabel: "H6",
     hint: "用于最细层级标题",
@@ -68,6 +89,12 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "strong",
     cssSelector: [
+      ".b3-typography strong",
+      ".b3-typography span[data-type~=strong]",
+      ".protyle-wysiwyg strong",
+      ".protyle-wysiwyg span[data-type~=strong]",
+    ].join(",\n"),
+    extractSelector: [
       ".b3-typography strong",
       ".b3-typography span[data-type~=strong]",
       ".protyle-wysiwyg strong",
@@ -85,6 +112,12 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
       ".protyle-wysiwyg blockquote",
       ".protyle-wysiwyg .bq",
     ].join(",\n"),
+    extractSelector: [
+      ".b3-typography blockquote",
+      ".b3-typography .bq",
+      ".protyle-wysiwyg blockquote",
+      ".protyle-wysiwyg .bq",
+    ].join(",\n"),
     label: "引述块",
     shortLabel: "❝",
     hint: "用于引用、摘录与提示块",
@@ -92,6 +125,12 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
   {
     value: "inlineCode",
     cssSelector: [
+      ".b3-typography code",
+      ".b3-typography span[data-type~=code]",
+      ".protyle-wysiwyg code",
+      ".protyle-wysiwyg span[data-type~=code]",
+    ].join(",\n"),
+    extractSelector: [
       ".b3-typography code",
       ".b3-typography span[data-type~=code]",
       ".protyle-wysiwyg code",
@@ -109,6 +148,12 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
       ".protyle-wysiwyg mark",
       ".protyle-wysiwyg span[data-type~=mark]",
     ].join(",\n"),
+    extractSelector: [
+      ".b3-typography mark",
+      ".b3-typography span[data-type~=mark]",
+      ".protyle-wysiwyg mark",
+      ".protyle-wysiwyg span[data-type~=mark]",
+    ].join(",\n"),
     label: "高亮文本",
     shortLabel: "HL",
     hint: "用于显式标记重点内容",
@@ -120,36 +165,32 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
       ".protyle-wysiwyg pre",
       '.protyle-wysiwyg [data-type="NodeCodeBlock"]',
     ].join(",\n"),
+    extractSelector: [
+      ".b3-typography pre",
+      ".protyle-wysiwyg pre",
+      '.protyle-wysiwyg [data-type="NodeCodeBlock"]',
+    ].join(",\n"),
     label: "代码块",
     shortLabel: "{ }",
     hint: "用于多行代码与配置片段",
   },
   {
     value: "bulletList",
-    cssSelector: [
-      ".b3-typography ul",
-      ".protyle-wysiwyg ul",
-    ].join(",\n"),
+    ...createListSelectors("u", "ul"),
     label: "无序列表",
     shortLabel: "•",
     hint: "用于普通项目列表",
   },
   {
     value: "orderedList",
-    cssSelector: [
-      ".b3-typography ol",
-      ".protyle-wysiwyg ol",
-    ].join(",\n"),
+    ...createListSelectors("o", "ol"),
     label: "有序列表",
     shortLabel: "1.",
     hint: "用于步骤与顺序描述",
   },
   {
     value: "taskList",
-    cssSelector: [
-      ".b3-typography .protyle-task",
-      ".protyle-wysiwyg .protyle-task",
-    ].join(",\n"),
+    ...createListSelectors("t", ".protyle-task"),
     label: "任务列表",
     shortLabel: "☑",
     hint: "用于待办与完成状态列表",
@@ -181,4 +222,8 @@ export function getStyleTargetMeta(target: StyleTarget): StyleTargetMeta {
 
 export function getStyleTargetSelector(target: StyleTarget): string {
   return getStyleTargetMeta(target).cssSelector;
+}
+
+export function getStyleTargetExtractSelector(target: StyleTarget): string {
+  return getStyleTargetMeta(target).extractSelector;
 }

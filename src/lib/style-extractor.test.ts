@@ -31,4 +31,35 @@ describe("style extractor", () => {
     expect(result.profile.heading1.color).toBe("");
     expect(result.profile.mark.backgroundColor).toBe("");
   });
+
+  it("extracts list colors from SiYuan NodeList containers", () => {
+    document.body.innerHTML = `
+      <div class="protyle-wysiwyg" style="color: rgb(34, 34, 34);">
+        <div data-type="NodeList" data-subtype="u" style="color: rgb(51, 51, 51);">
+          <div data-type="NodeListItem" data-subtype="u">
+            <div data-type="NodeParagraph">Bullet</div>
+          </div>
+        </div>
+        <div data-type="NodeList" data-subtype="o" style="color: rgb(68, 68, 68);">
+          <div data-type="NodeListItem" data-subtype="o">
+            <div data-type="NodeParagraph">Ordered</div>
+          </div>
+        </div>
+        <div data-type="NodeList" data-subtype="t" style="color: rgb(85, 85, 85);">
+          <div data-type="NodeListItem" data-subtype="t">
+            <div class="protyle-task"></div>
+            <div data-type="NodeParagraph">Task</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const result = extractStyleProfileFromDocument(document);
+
+    expect(result.profile.bulletList.color).toBe("rgb(51, 51, 51)");
+    expect(result.profile.orderedList.color).toBe("rgb(68, 68, 68)");
+    expect(result.profile.taskList.color).toBe("rgb(85, 85, 85)");
+    expect(result.extractedTargetCount).toBeGreaterThanOrEqual(3);
+    expect(result.matchedTargetCount).toBeGreaterThanOrEqual(3);
+  });
 });

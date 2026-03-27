@@ -1,4 +1,5 @@
 import {
+  getStyleTargetExtractSelector,
   getStyleTargetMeta,
   getStyleTargetSelector,
   STYLE_TARGETS,
@@ -33,6 +34,7 @@ describe("style target catalog", () => {
       expect(meta.shortLabel.length).toBeGreaterThan(0);
       expect(meta.hint.length).toBeGreaterThan(0);
       expect(getStyleTargetSelector(target).length).toBeGreaterThan(0);
+      expect(getStyleTargetExtractSelector(target).length).toBeGreaterThan(0);
     }
   });
 });
