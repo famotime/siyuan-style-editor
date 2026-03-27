@@ -10,17 +10,21 @@
         </h2>
       </div>
       <div class="target-studio__header-actions">
-        <p class="target-studio__note">
-          {{ styleTargetOptions.length }} 个对象
-        </p>
         <div class="target-studio__save-wrap">
           <button
             v-if="!isSaveFormVisible"
             type="button"
             class="target-studio__save"
+            aria-label="保存当前配色为色卡"
+            data-tooltip="保存当前配色"
+            title="保存当前配色为色卡"
             @click="openSaveForm"
           >
-            保存
+            <span class="target-studio__save-icon" aria-hidden="true">
+              <span class="target-studio__save-icon-body" />
+              <span class="target-studio__save-icon-notch" />
+              <span class="target-studio__save-icon-label" />
+            </span>
           </button>
           <form
             v-else
@@ -227,12 +231,18 @@ function submitSaveForm() {
 }
 
 .target-studio__save {
+  position: relative;
+  width: 36px;
+  min-width: 36px;
   min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid var(--panel-card-stroke);
-  border-radius: 999px;
-  background: var(--panel-pill-bg);
-  color: var(--panel-text);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--panel-text-muted);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -243,9 +253,93 @@ function submitSaveForm() {
     border-color 160ms ease;
 }
 
+.target-studio__save::before,
+.target-studio__save::after {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.target-studio__save::before {
+  content: "";
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%) translateY(4px);
+  border-width: 5px 5px 0;
+  border-style: solid;
+  border-color: var(--panel-text) transparent transparent;
+}
+
+.target-studio__save::after {
+  content: attr(data-tooltip);
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--panel-text);
+  color: var(--panel-card-bg);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .target-studio__save:hover {
   transform: translateY(-1px);
+  color: var(--panel-text);
   box-shadow: var(--panel-hover-shadow);
+}
+
+.target-studio__save:hover::before,
+.target-studio__save:hover::after,
+.target-studio__save:focus-visible::before,
+.target-studio__save:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.target-studio__save-icon {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
+
+.target-studio__save-icon-body,
+.target-studio__save-icon-notch,
+.target-studio__save-icon-label {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.target-studio__save-icon-body {
+  inset: 1px;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  background: color-mix(in srgb, currentColor 10%, transparent 90%);
+}
+
+.target-studio__save-icon-notch {
+  top: 3px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.target-studio__save-icon-label {
+  left: 50%;
+  bottom: 3px;
+  width: 8px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 1px;
+  border: 1.5px solid currentColor;
+  background: transparent;
 }
 
 .target-studio__save-form {
@@ -483,11 +577,6 @@ function submitSaveForm() {
     width: 100%;
   }
 
-  .target-studio__save-wrap {
-    width: 100%;
-  }
-
-  .target-studio__save,
   .target-studio__save-input,
   .target-studio__save-confirm,
   .target-studio__save-cancel {

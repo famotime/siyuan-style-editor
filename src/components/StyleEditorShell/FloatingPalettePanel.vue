@@ -106,10 +106,18 @@
               <button
                 type="button"
                 class="inline-palette-panel__toggle"
+                :aria-label="presetPaletteToggleLabel"
                 :aria-expanded="isPresetPaletteSectionExpanded"
                 @click="emit('toggle-preset-palette-section')"
               >
-                {{ isPresetPaletteSectionExpanded ? "折叠" : "展开" }}
+                <span
+                  class="inline-palette-panel__toggle-icon"
+                  :class="{ 'inline-palette-panel__toggle-icon--collapsed': !isPresetPaletteSectionExpanded }"
+                  aria-hidden="true"
+                >
+                  <span class="inline-palette-panel__toggle-bar inline-palette-panel__toggle-bar--top" />
+                  <span class="inline-palette-panel__toggle-bar inline-palette-panel__toggle-bar--bottom" />
+                </span>
               </button>
             </div>
 
@@ -190,19 +198,20 @@
                   class="swatch-chip"
                   :aria-label="color.label"
                   :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
-                  :style="{ '--swatch-color': color.value }"
+                  :style="{ '--swatch-color': color.value, borderWidth: '0' }"
                   @click="emit('select-preset-color', color.value)"
                 >
-                  <span class="swatch-chip__dot" />
+                  <span class="swatch-chip__dot" :style="{ borderWidth: '1px' }" />
                 </button>
                 <button
                   type="button"
                   class="swatch-chip swatch-chip--clear"
                   aria-label="恢复默认颜色"
                   :class="{ 'swatch-chip--active': !selectedSwatch }"
+                  :style="{ borderWidth: '0' }"
                   @click="emit('clear-selected-target-color')"
                 >
-                  <span class="swatch-chip__dot swatch-chip__dot--clear">
+                  <span class="swatch-chip__dot swatch-chip__dot--clear" :style="{ borderWidth: '1px' }">
                     <span class="swatch-chip__dot-clear-surface" />
                     <span class="swatch-chip__dot-clear-slash" />
                   </span>
@@ -251,6 +260,7 @@ const props = defineProps<{
   inlineHue: number;
   isCustomColorDraftValid: boolean;
   isPresetPaletteSectionExpanded: boolean;
+  panelThemeVars: Record<string, string>;
   presetPaletteCollections: PaletteCollection[];
   selectedChannelLabel: string;
   selectedSwatch: string;
@@ -287,13 +297,22 @@ const inlinePaletteBackdropStyle = computed(() => ({
 }));
 
 const inlinePalettePanelStyle = computed(() => ({
+  ...props.panelThemeVars,
   ...props.floatingPaletteStyle,
+  borderColor: "var(--panel-accent-outline)",
+  borderStyle: "solid",
+  borderWidth: "1px",
   zIndex: INLINE_PALETTE_PANEL_Z_INDEX,
 }));
+
+const presetPaletteToggleLabel = computed(() => {
+  return props.isPresetPaletteSectionExpanded ? "折叠预设配色" : "展开预设配色";
+});
 
 function getPresetPaletteTabStyle(palette: PaletteCollection) {
   return {
     "--preset-palette-gradient": buildPresetPaletteCardBackground(palette.colors),
+    borderWidth: "0",
   };
 }
 
@@ -368,13 +387,12 @@ watch(
   width: min(320px, calc(100vw - 24px));
   padding: 16px;
   border-radius: 24px;
-  border: 1px solid var(--panel-card-stroke);
   background:
     linear-gradient(135deg, var(--panel-glass), transparent 50%),
     linear-gradient(180deg, var(--panel-card-highlight), transparent 34%),
     var(--panel-card-bg);
   box-shadow:
-    inset 0 0 0 1px var(--panel-floating-outline),
+    inset 0 0 0 1px color-mix(in srgb, var(--panel-accent) 18%, transparent 82%),
     0 24px 48px rgba(15, 23, 42, 0.24),
     var(--panel-shadow);
   backdrop-filter: blur(18px);
@@ -401,24 +419,33 @@ watch(
 
 .inline-palette-panel__close,
 .inline-palette-panel__toggle {
+  position: relative;
   min-height: 38px;
-  padding: 0 14px;
-  border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .inline-palette-panel__close {
+  padding: 0 14px;
+  border-radius: 999px;
   border: 1px solid var(--panel-card-stroke);
   background: var(--panel-pill-bg);
   color: var(--panel-text-muted);
 }
 
 .inline-palette-panel__toggle {
-  border: 1px solid var(--panel-card-stroke);
+  width: 38px;
+  min-width: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--panel-card-stroke) 76%, var(--panel-text-subtle) 24%);
   background: var(--panel-pill-bg);
   color: var(--panel-text-muted);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 20%, transparent 80%);
 }
 
 .inline-palette-panel__close:hover,
@@ -426,6 +453,48 @@ watch(
 .swatch-chip:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);
+}
+
+.inline-palette-panel__toggle:hover,
+.inline-palette-panel__toggle:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
+}
+
+.inline-palette-panel__toggle-icon {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
+
+.inline-palette-panel__toggle-bar {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 1.75px;
+  border-radius: 999px;
+  background: currentColor;
+  transform-origin: center;
+  transition: transform 160ms ease;
+}
+
+.inline-palette-panel__toggle-bar--top {
+  top: 4px;
+  transform: translateX(-50%) rotate(35deg);
+}
+
+.inline-palette-panel__toggle-bar--bottom {
+  top: 8px;
+  transform: translateX(-50%) rotate(-35deg);
+}
+
+.inline-palette-panel__toggle-icon--collapsed .inline-palette-panel__toggle-bar--top {
+  transform: translateX(-50%) rotate(-35deg);
+}
+
+.inline-palette-panel__toggle-icon--collapsed .inline-palette-panel__toggle-bar--bottom {
+  transform: translateX(-50%) rotate(35deg);
 }
 
 .preset-palette-tabs {
@@ -444,11 +513,12 @@ watch(
 }
 
 .preset-palette-tab {
+  appearance: none;
   width: 100%;
   display: grid;
   gap: 6px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, white 22%, var(--panel-card-stroke) 78%);
+  border: 0;
   border-radius: 16px;
   background-image:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(8, 12, 18, 0.18)),
@@ -460,7 +530,6 @@ watch(
     inset 0 1px 0 rgba(255, 255, 255, 0.16),
     0 10px 18px rgba(15, 23, 42, 0.16);
   transition:
-    border-color 140ms ease,
     background 140ms ease,
     color 140ms ease,
     transform 140ms ease,
@@ -476,7 +545,6 @@ watch(
 }
 
 .preset-palette-tab--active {
-  border-color: color-mix(in srgb, white 36%, var(--panel-accent-outline) 64%);
   color: white;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.24),
@@ -803,22 +871,22 @@ watch(
 }
 
 .swatch-chip {
+  appearance: none;
   min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 12px;
-  background: var(--panel-chip-bg);
+  background: transparent;
   color: var(--panel-text-muted);
   cursor: pointer;
   aspect-ratio: 1;
 }
 
 .swatch-chip--active {
-  border-color: var(--panel-accent-outline);
-  background: var(--panel-chip-active-bg);
+  background: color-mix(in srgb, var(--panel-chip-active-bg) 58%, transparent 42%);
 }
 
 .swatch-chip__dot {
@@ -827,30 +895,34 @@ watch(
   width: 20px;
   height: 20px;
   border-radius: 999px;
-  border: 2px solid var(--panel-dot-border);
+  border: 1px solid var(--panel-dot-border);
   background: var(--swatch-color);
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 24%, transparent 76%);
+  box-shadow:
+    0 0 0 1px var(--panel-swatch-dot-ring),
+    0 0 0 2px color-mix(in srgb, var(--panel-card-bg) 72%, transparent 28%),
+    var(--panel-swatch-dot-shadow),
+    0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 24%, transparent 76%);
 }
 
 .swatch-chip__dot--clear {
   border-color: var(--panel-dot-border);
   background: transparent;
   box-shadow:
+    0 0 0 1px var(--panel-swatch-dot-ring),
+    0 0 0 2px color-mix(in srgb, var(--panel-card-bg) 72%, transparent 28%),
+    var(--panel-swatch-dot-shadow),
     0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 30%, transparent 70%),
     0 1px 2px rgba(15, 23, 42, 0.12);
 }
 
 .swatch-chip--clear {
-  border-color: transparent;
   background: transparent;
-  box-shadow: none;
 }
 
 .swatch-chip--clear.swatch-chip--active {
-  border-color: transparent;
-  background: transparent;
+  background: color-mix(in srgb, var(--panel-chip-active-bg) 72%, transparent 28%);
 }
 
 .swatch-chip--clear.swatch-chip--active .swatch-chip__dot--clear {

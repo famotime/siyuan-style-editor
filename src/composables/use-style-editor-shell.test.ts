@@ -249,6 +249,63 @@ describe("useStyleEditorShell", () => {
     unmount();
   });
 
+  it("keeps the floating palette top position stable when collapsing preset palettes", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    const { shell, unmount } = await mountShell();
+    const anchor = document.createElement("button");
+    let floatingPaletteHeight = 320;
+
+    document.body.append(anchor);
+    Object.defineProperty(anchor, "getBoundingClientRect", {
+      value: () => ({
+        bottom: 540,
+        height: 40,
+        left: 180,
+        right: 224,
+        toJSON: () => ({}),
+        top: 500,
+        width: 44,
+        x: 180,
+        y: 500,
+      }),
+    });
+
+    const floatingPalette = document.createElement("div");
+    Object.defineProperty(floatingPalette, "getBoundingClientRect", {
+      value: () => ({
+        bottom: 100 + floatingPaletteHeight,
+        height: floatingPaletteHeight,
+        left: 120,
+        right: 416,
+        toJSON: () => ({}),
+        top: 100,
+        width: 296,
+        x: 120,
+        y: 100,
+      }),
+    });
+    document.body.append(floatingPalette);
+    shell.floatingPaletteRef.value = floatingPalette;
+
+    await shell.activateTargetChannel("mark", "backgroundColor", { currentTarget: anchor } as MouseEvent);
+    await flushShellUpdates();
+
+    expect(shell.floatingPaletteStyle.value.top).toBe("172px");
+
+    floatingPaletteHeight = 120;
+    shell.togglePresetPaletteSection();
+    await flushShellUpdates();
+
+    expect(shell.isPresetPaletteSectionExpanded.value).toBe(false);
+    expect(shell.floatingPaletteStyle.value.top).toBe("172px");
+
+    unmount();
+    floatingPalette.remove();
+    anchor.remove();
+  });
+
   it("deletes a custom preset palette, updates the status copy, and falls back to the first remaining palette", async () => {
     const plugin = createPluginStub();
     await initializeRuntime(plugin as never);

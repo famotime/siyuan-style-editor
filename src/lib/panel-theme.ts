@@ -50,6 +50,9 @@ export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<s
       "--panel-shadow": "0 22px 42px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04)",
       "--panel-hover-shadow": "0 16px 28px rgba(0, 0, 0, 0.24)",
       "--panel-dot-border": "#ffffff",
+      "--panel-swatch-chip-border": "rgba(212, 228, 244, 0.18)",
+      "--panel-swatch-dot-ring": "rgba(212, 228, 244, 0.72)",
+      "--panel-swatch-dot-shadow": "0 0 0 1px rgba(7, 12, 18, 0.42)",
       "--panel-clear-icon": "#ffffff",
       "--panel-clear-surface": "rgba(6, 10, 16, 0.88)",
     };
@@ -92,6 +95,9 @@ export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<s
     "--panel-shadow": "0 20px 38px rgba(58, 40, 18, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.34)",
     "--panel-hover-shadow": "0 14px 24px rgba(57, 40, 19, 0.1)",
     "--panel-dot-border": "#000000",
+    "--panel-swatch-chip-border": "rgba(111, 82, 48, 0.18)",
+    "--panel-swatch-dot-ring": "rgba(111, 82, 48, 0.44)",
+    "--panel-swatch-dot-shadow": "0 0 0 1px rgba(255, 250, 242, 0.9)",
     "--panel-clear-icon": "#000000",
     "--panel-clear-surface": "rgba(255, 250, 242, 0.96)",
   };

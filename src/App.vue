@@ -32,6 +32,7 @@
       :visible="isInlinePaletteVisible"
       :selected-target-label="selectedTargetMeta.label"
       :selected-channel-label="selectedChannelLabel"
+      :panel-theme-vars="panelThemeVars"
       :set-floating-palette-ref="setFloatingPaletteRef"
       :floating-palette-style="floatingPaletteStyle"
       :set-inline-color-field-ref="setInlineColorFieldRef"

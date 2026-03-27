@@ -105,6 +105,11 @@ function createShellState(options: {
     isPresetPaletteSectionExpanded: ref(options.isPresetPaletteSectionExpanded ?? true),
     openImportStylesPicker: vi.fn(),
     panelThemeVars: ref({
+      "--panel-accent-outline": "#7c92a4",
+      "--panel-card-bg": "#fffaf2",
+      "--panel-chip-bg": "rgba(255, 255, 255, 0.54)",
+      "--panel-dot-border": "#000000",
+      "--panel-swatch-dot-ring": "rgba(111, 82, 48, 0.44)",
       "--panel-text": "#111111",
     }),
     presetPaletteCollections: [
@@ -225,7 +230,15 @@ describe("app shell", () => {
     expect(cards[0]?.classList.contains("target-preview-card--selected")).toBe(true);
     expect(cards[1]?.classList.contains("target-preview-card--selected")).toBe(false);
 
-    click(container.querySelector(".target-studio__save"));
+    const saveButton = container.querySelector(".target-studio__save");
+    expect(saveButton?.textContent?.trim()).toBe("");
+    expect(saveButton?.getAttribute("aria-label")).toBe("保存当前配色为色卡");
+    expect(saveButton?.getAttribute("data-tooltip")).toBe("保存当前配色");
+    expect(saveButton?.querySelector(".target-studio__save-icon")).not.toBeNull();
+    expect(saveButton?.querySelector(".target-studio__save-icon-notch")).not.toBeNull();
+    expect(saveButton?.querySelector(".target-studio__save-icon-label")).not.toBeNull();
+
+    click(saveButton);
     await nextTick();
     expect(shellState.handleSavePresetPalette).not.toHaveBeenCalled();
     expect(container.querySelector(".target-studio__save-form")).not.toBeNull();
@@ -294,7 +307,14 @@ describe("app shell", () => {
     click(document.body.querySelector(".preset-palette-tab__delete-confirm"));
     expect(shellState.handleDeletePresetPalette).toHaveBeenCalledWith("custom-palette-1");
 
-    click(document.body.querySelector(".inline-palette-panel__toggle"));
+    const toggleButton = document.body.querySelector(".inline-palette-panel__toggle");
+    expect(toggleButton?.textContent?.trim()).toBe("");
+    expect(toggleButton?.getAttribute("aria-label")).toBe("折叠预设配色");
+    expect(toggleButton?.getAttribute("data-tooltip")).toBeNull();
+    expect(toggleButton?.getAttribute("title")).toBeNull();
+    expect(toggleButton?.querySelector(".inline-palette-panel__toggle-icon")).not.toBeNull();
+
+    click(toggleButton);
     expect(shellState.togglePresetPaletteSection).toHaveBeenCalledOnce();
 
     click(document.body.querySelector(".custom-color-apply"));
@@ -329,6 +349,11 @@ describe("app shell", () => {
     expect(panel).not.toBeNull();
     expect(getComputedStyle(backdrop as Element).zIndex).toBe("10");
     expect(getComputedStyle(panel as Element).zIndex).toBe("11");
+    expect(panel?.getAttribute("style")).toContain("border-width: 1px;");
+    expect(panel?.getAttribute("style")).toContain("border-style: solid;");
+    expect(panel?.getAttribute("style")).toContain("border-color: var(--panel-accent-outline);");
+    expect(panel?.getAttribute("style")).toContain("--panel-dot-border: #000000;");
+    expect(panel?.getAttribute("style")).toContain("--panel-swatch-dot-ring: rgba(111, 82, 48, 0.44);");
 
     unmount();
   });
@@ -347,6 +372,27 @@ describe("app shell", () => {
     expect(clearChip?.textContent?.trim()).toBe("");
     expect(clearChip?.querySelector(".swatch-chip__dot-clear-surface")).not.toBeNull();
     expect(clearChip?.querySelector(".swatch-chip__dot-clear-slash")).not.toBeNull();
+
+    unmount();
+  });
+
+  it("keeps borders only on the bottom circular swatches", async () => {
+    const shellState = createShellState({
+      isInlinePaletteVisible: true,
+      isPresetPaletteSectionExpanded: true,
+    });
+    const { unmount } = await mountApp(shellState);
+
+    const presetTab = document.body.querySelector(".preset-palette-tab") as HTMLElement | null;
+    const swatchChip = document.body.querySelector(".swatch-chip") as HTMLElement | null;
+    const swatchDot = document.body.querySelector(".swatch-chip__dot") as HTMLElement | null;
+
+    expect(presetTab).not.toBeNull();
+    expect(swatchChip).not.toBeNull();
+    expect(swatchDot).not.toBeNull();
+    expect(getComputedStyle(presetTab!).borderTopWidth).toBe("0px");
+    expect(getComputedStyle(swatchChip!).borderTopWidth).toBe("0px");
+    expect(getComputedStyle(swatchDot!).borderTopWidth).toBe("1px");
 
     unmount();
   });

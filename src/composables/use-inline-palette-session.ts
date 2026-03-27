@@ -454,7 +454,6 @@ export function useInlinePaletteSession() {
 
   function togglePresetPaletteSection() {
     isPresetPaletteSectionExpanded.value = !isPresetPaletteSectionExpanded.value;
-    void syncFloatingPalettePosition();
   }
 
   async function handleClearSelectedTargetColor() {
