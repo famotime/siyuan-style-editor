@@ -1,4 +1,7 @@
-import { PRESET_PALETTE_COLLECTIONS } from "@/lib/preset-palette-catalog";
+import {
+  buildPresetPaletteCardBackground,
+  PRESET_PALETTE_COLLECTIONS,
+} from "@/lib/preset-palette-catalog";
 
 describe("preset palette catalog", () => {
   it("keeps the preset palette collections in the expected order with stable ids and labels", () => {
@@ -37,5 +40,11 @@ describe("preset palette catalog", () => {
       "#003049",
       "#669BBC",
     ]);
+  });
+
+  it("builds a smooth multi-stop gradient that includes every palette color", () => {
+    expect(buildPresetPaletteCardBackground(PRESET_PALETTE_COLLECTIONS[0].colors)).toBe(
+      "linear-gradient(135deg, #780000 0%, #C1121F 22%, #FDF0D5 48%, #003049 74%, #669BBC 100%)",
+    );
   });
 });

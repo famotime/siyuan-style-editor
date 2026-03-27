@@ -106,12 +106,20 @@ function createShellState(options: {
     }),
     presetPaletteCollections: [
       {
-        colors: [{ label: "#5B8DEF", value: "#5B8DEF" }],
+        colors: [
+          { label: "#5B8DEF", value: "#5B8DEF" },
+          { label: "#91C8FF", value: "#91C8FF" },
+          { label: "#F6D365", value: "#F6D365" },
+        ],
         id: "cool-blue",
         label: "Cool Blue",
       },
       {
-        colors: [{ label: "#F6D365", value: "#F6D365" }],
+        colors: [
+          { label: "#F6D365", value: "#F6D365" },
+          { label: "#F2A65A", value: "#F2A65A" },
+          { label: "#D97B2D", value: "#D97B2D" },
+        ],
         id: "warm-sand",
         label: "Warm Sand",
       },
@@ -236,6 +244,9 @@ describe("app shell", () => {
 
     const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")];
     expect(presetTabs).toHaveLength(2);
+    expect(presetTabs[0]?.getAttribute("style")).toContain("linear-gradient(");
+    expect(presetTabs[0]?.getAttribute("style")).toContain("#5B8DEF");
+    expect(presetTabs[0]?.getAttribute("style")).toContain("#F6D365");
     click(presetTabs[1] ?? null);
     expect(shellState.selectPresetPaletteTab).toHaveBeenCalledWith("warm-sand");
 
@@ -257,6 +268,41 @@ describe("app shell", () => {
     expect(shellState.cancelInlinePalettePanel).toHaveBeenCalledOnce();
 
     expect(container.querySelector(".style-editor-shell")).not.toBeNull();
+
+    unmount();
+  });
+
+  it("renders the floating palette above the default document layer", async () => {
+    const shellState = createShellState({
+      isInlinePaletteVisible: true,
+    });
+    const { unmount } = await mountApp(shellState);
+
+    const backdrop = document.body.querySelector(".inline-palette-backdrop");
+    const panel = document.body.querySelector(".inline-palette-panel--floating");
+
+    expect(backdrop).not.toBeNull();
+    expect(panel).not.toBeNull();
+    expect(getComputedStyle(backdrop as Element).zIndex).toBe("10");
+    expect(getComputedStyle(panel as Element).zIndex).toBe("11");
+
+    unmount();
+  });
+
+  it("renders the clear swatch as a slashed circular icon without visible text", async () => {
+    const shellState = createShellState({
+      isInlinePaletteVisible: true,
+      isPresetPaletteSectionExpanded: true,
+    });
+    const { unmount } = await mountApp(shellState);
+
+    const clearChip = document.body.querySelector(".swatch-chip--clear");
+
+    expect(clearChip).not.toBeNull();
+    expect(clearChip?.getAttribute("aria-label")).toBe("恢复默认颜色");
+    expect(clearChip?.textContent?.trim()).toBe("");
+    expect(clearChip?.querySelector(".swatch-chip__dot-clear-surface")).not.toBeNull();
+    expect(clearChip?.querySelector(".swatch-chip__dot-clear-slash")).not.toBeNull();
 
     unmount();
   });

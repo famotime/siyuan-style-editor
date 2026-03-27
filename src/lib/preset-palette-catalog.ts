@@ -9,6 +9,33 @@ export interface PresetPaletteCollection {
   label: string;
 }
 
+export function buildPresetPaletteCardBackground(colors: PresetPaletteColor[]): string {
+  if (colors.length === 0) {
+    return "linear-gradient(135deg, transparent 0%, transparent 100%)";
+  }
+
+  if (colors.length === 1) {
+    return `linear-gradient(135deg, ${colors[0].value} 0%, ${colors[0].value} 100%)`;
+  }
+
+  const lastIndex = colors.length - 1;
+  const stops = colors.map((color, index) => {
+    if (index === 0) {
+      return `${color.value} 0%`;
+    }
+
+    if (index === lastIndex) {
+      return `${color.value} 100%`;
+    }
+
+    const baseStop = (index / lastIndex) * 100;
+    const softenedStop = Math.round(baseStop - (lastIndex - index));
+    return `${color.value} ${softenedStop}%`;
+  });
+
+  return `linear-gradient(135deg, ${stops.join(", ")})`;
+}
+
 function createPresetColors(colors: string[]): PresetPaletteColor[] {
   return colors.map(color => ({
     label: color,

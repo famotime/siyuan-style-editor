@@ -4,12 +4,13 @@
       <div
         v-if="visible"
         class="inline-palette-backdrop"
+        :style="inlinePaletteBackdropStyle"
         @pointerdown="emit('cancel')"
       >
         <div
           :ref="setFloatingPaletteRef"
           class="inline-palette-panel inline-palette-panel--floating"
-          :style="floatingPaletteStyle"
+          :style="inlinePalettePanelStyle"
           @pointerdown.stop
         >
           <div class="inline-palette-panel__header">
@@ -127,6 +128,7 @@
                   type="button"
                   class="preset-palette-tab"
                   :class="{ 'preset-palette-tab--active': activePresetPaletteId === palette.id }"
+                  :style="getPresetPaletteTabStyle(palette)"
                   role="tab"
                   :aria-selected="activePresetPaletteId === palette.id"
                   :tabindex="activePresetPaletteId === palette.id ? 0 : -1"
@@ -157,7 +159,10 @@
                   :class="{ 'swatch-chip--active': !selectedSwatch }"
                   @click="emit('clear-selected-target-color')"
                 >
-                  <span class="swatch-chip__dot swatch-chip__dot--clear" />
+                  <span class="swatch-chip__dot swatch-chip__dot--clear">
+                    <span class="swatch-chip__dot-clear-surface" />
+                    <span class="swatch-chip__dot-clear-slash" />
+                  </span>
                 </button>
               </div>
             </div>
@@ -170,6 +175,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+
+import { buildPresetPaletteCardBackground } from "@/lib/preset-palette-catalog";
+
+const INLINE_PALETTE_BACKDROP_Z_INDEX = "10";
+const INLINE_PALETTE_PANEL_Z_INDEX = "11";
 
 interface PaletteColor {
   label: string;
@@ -221,6 +231,21 @@ const customColorDraftModel = computed({
     emit("update:customColorDraft", value);
   },
 });
+
+const inlinePaletteBackdropStyle = computed(() => ({
+  zIndex: INLINE_PALETTE_BACKDROP_Z_INDEX,
+}));
+
+const inlinePalettePanelStyle = computed(() => ({
+  ...props.floatingPaletteStyle,
+  zIndex: INLINE_PALETTE_PANEL_Z_INDEX,
+}));
+
+function getPresetPaletteTabStyle(palette: PaletteCollection) {
+  return {
+    "--preset-palette-gradient": buildPresetPaletteCardBackground(palette.colors),
+  };
+}
 </script>
 
 <style scoped lang="scss">
@@ -258,12 +283,10 @@ const customColorDraftModel = computed({
 .inline-palette-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 0;
 }
 
 .inline-palette-panel--floating {
   position: fixed;
-  z-index: 0;
   width: min(320px, calc(100vw - 24px));
   padding: 16px;
   border-radius: 24px;
@@ -341,41 +364,61 @@ const customColorDraftModel = computed({
 .preset-palette-tab {
   width: 100%;
   display: grid;
-  gap: 3px;
-  padding: 10px 12px;
-  border: 1px solid var(--panel-card-stroke);
-  border-radius: 14px;
-  background: var(--panel-pill-bg);
-  color: var(--panel-text-muted);
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, white 22%, var(--panel-card-stroke) 78%);
+  border-radius: 16px;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(8, 12, 18, 0.18)),
+    var(--preset-palette-gradient);
+  color: rgba(255, 255, 255, 0.94);
   text-align: left;
   cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 10px 18px rgba(15, 23, 42, 0.16);
   transition:
     border-color 140ms ease,
     background 140ms ease,
     color 140ms ease,
-    transform 140ms ease;
+    transform 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .preset-palette-tab:hover {
   transform: translateY(-1px);
-  color: var(--panel-text);
+  color: white;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 14px 24px rgba(15, 23, 42, 0.2);
 }
 
 .preset-palette-tab--active {
-  border-color: var(--panel-accent-outline);
-  background: var(--panel-chip-active-bg);
-  color: var(--panel-text);
+  border-color: color-mix(in srgb, white 36%, var(--panel-accent-outline) 64%);
+  color: white;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 0 0 1px color-mix(in srgb, var(--panel-accent-outline) 58%, transparent 42%),
+    0 16px 28px rgba(15, 23, 42, 0.22);
 }
 
 .preset-palette-tab__name {
   font-size: 12px;
   font-weight: 700;
   line-height: 1.25;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
 }
 
 .preset-palette-tab__count {
+  justify-self: start;
   font-size: 11px;
-  color: var(--panel-text-subtle);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(9, 12, 18, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
 }
 
 .custom-color-panel {
@@ -583,21 +626,71 @@ const customColorDraftModel = computed({
 
 .swatch-chip__dot {
   flex: none;
+  position: relative;
   width: 20px;
   height: 20px;
   border-radius: 999px;
   border: 1px solid var(--panel-dot-border);
   background: var(--swatch-color);
+  overflow: hidden;
 }
 
 .swatch-chip__dot--clear {
-  background:
-    linear-gradient(135deg, transparent 0 46%, var(--panel-text-subtle) 46% 54%, transparent 54% 100%),
-    linear-gradient(135deg, var(--panel-preview-bg), var(--panel-card-bg));
+  border-color: color-mix(in srgb, var(--panel-text-subtle) 18%, var(--panel-dot-border) 82%);
+  background: color-mix(in srgb, var(--panel-preview-bg) 60%, var(--panel-card-bg) 40%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, white 12%, transparent 88%),
+    0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
 .swatch-chip--clear {
-  background: var(--panel-clear-bg);
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.swatch-chip--clear.swatch-chip--active {
+  border-color: transparent;
+  background: transparent;
+}
+
+.swatch-chip--clear.swatch-chip--active .swatch-chip__dot--clear {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, white 16%, transparent 84%),
+    0 0 0 1px var(--panel-accent-outline);
+}
+
+.swatch-chip__dot-clear-surface,
+.swatch-chip__dot-clear-slash {
+  position: absolute;
+  inset: 0;
+}
+
+.swatch-chip__dot-clear-surface {
+  inset: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--panel-card-bg) 78%, white 22%),
+    color-mix(in srgb, var(--panel-preview-bg) 74%, var(--panel-card-bg) 26%)
+  );
+}
+
+.swatch-chip__dot-clear-slash {
+  inset: 1px;
+}
+
+.swatch-chip__dot-clear-slash::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 18px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel-text) 62%, var(--panel-card-bg) 38%);
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 16%, transparent 84%);
 }
 
 .floating-palette-enter-active,
