@@ -85,6 +85,7 @@ function createShellState(options: {
     handleInlineHueInput: vi.fn(),
     handlePresetColorSelection: vi.fn(),
     handleResetAllStyles: vi.fn(),
+    handleSavePresetPalette: vi.fn(),
     importFileInputRef: ref<HTMLInputElement | null>(null),
     inlineColorFieldRef: ref<HTMLElement | null>(null),
     inlineColorFieldStyle: ref({
@@ -212,6 +213,8 @@ describe("app shell", () => {
     expect(cards).toHaveLength(2);
     expect(cards[0]?.classList.contains("target-preview-card--selected")).toBe(true);
     expect(cards[1]?.classList.contains("target-preview-card--selected")).toBe(false);
+    click(container.querySelector(".target-studio__save"));
+    expect(shellState.handleSavePresetPalette).toHaveBeenCalledOnce();
 
     click(cards[1]?.querySelector(".target-preview-card__surface") ?? null);
     expect(shellState.selectPreviewTarget).toHaveBeenCalledWith("mark");

@@ -9,9 +9,18 @@
           对象工作区
         </h2>
       </div>
-      <p class="target-studio__note">
-        {{ styleTargetOptions.length }} 个对象
-      </p>
+      <div class="target-studio__header-actions">
+        <p class="target-studio__note">
+          {{ styleTargetOptions.length }} 个对象
+        </p>
+        <button
+          type="button"
+          class="target-studio__save"
+          @click="emit('save-preset-palette')"
+        >
+          保存
+        </button>
+      </div>
     </div>
 
     <div class="target-grid">
@@ -98,6 +107,7 @@ defineProps<{
 
 const emit = defineEmits<{
   "activate-channel": [payload: { channel: PaintChannel; event: MouseEvent; target: StyleTarget }];
+  "save-preset-palette": [];
   "select-target": [target: StyleTarget];
 }>();
 </script>
@@ -117,6 +127,12 @@ const emit = defineEmits<{
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  gap: 10px;
+}
+
+.target-studio__header-actions {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -141,6 +157,28 @@ const emit = defineEmits<{
   font-size: 12px;
   line-height: 1.65;
   color: var(--panel-text-subtle);
+}
+
+.target-studio__save {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--panel-card-stroke);
+  border-radius: 999px;
+  background: var(--panel-pill-bg);
+  color: var(--panel-text);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.target-studio__save:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--panel-hover-shadow);
 }
 
 .target-grid {

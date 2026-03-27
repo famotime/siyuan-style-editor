@@ -6,6 +6,7 @@ import {
   importStyles,
   resetAllStyles,
   runtimeState,
+  saveCurrentProfileAsPresetPalette,
 } from "@/style-editor-runtime";
 import {
   RESET_ALL_STYLES_MESSAGE,
@@ -51,6 +52,31 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     });
   }
 
+  async function handleSavePresetPalette() {
+    await options.cancelInlinePalettePanel();
+
+    if (typeof window === "undefined" || typeof window.prompt !== "function") {
+      return null;
+    }
+
+    const rawName = window.prompt("输入预置色卡名称", "");
+    if (rawName === null) {
+      return null;
+    }
+
+    try {
+      const result = await saveCurrentProfileAsPresetPalette(rawName);
+      actionMessage.value = `已保存预置色卡「${result.label}」，收录 ${result.colorCount} 种颜色。`;
+      return result.palette;
+    }
+    catch (error) {
+      actionMessage.value = error instanceof Error
+        ? error.message
+        : "保存预置色卡失败，请稍后重试。";
+      return null;
+    }
+  }
+
   function openImportStylesPicker() {
     importFileInputRef.value?.click();
   }
@@ -87,6 +113,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     handleExtractStyles,
     handleImportStylesChange,
     handleResetAllStyles,
+    handleSavePresetPalette,
     importFileInputRef,
     openImportStylesPicker,
   };

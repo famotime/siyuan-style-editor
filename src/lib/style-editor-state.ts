@@ -1,4 +1,8 @@
 import {
+  normalizePresetPaletteCollections,
+  type PresetPaletteCollection,
+} from "@/lib/preset-palette-catalog";
+import {
   createDefaultStyleProfile,
   normalizeStyleProfile,
   type StyleProfile,
@@ -6,21 +10,25 @@ import {
 } from "@/lib/style-profile";
 
 export interface StyleEditorState {
+  customPresetPalettes: PresetPaletteCollection[];
   profile: StyleProfile;
 }
 
 type PartialState = Partial<{
+  customPresetPalettes: unknown;
   profile: Partial<StyleProfile>;
 }>;
 
 export function createDefaultEditorState(): StyleEditorState {
   return {
+    customPresetPalettes: [],
     profile: createDefaultStyleProfile(),
   };
 }
 
 export function normalizeEditorState(input?: PartialState | null): StyleEditorState {
   return {
+    customPresetPalettes: normalizePresetPaletteCollections(input?.customPresetPalettes),
     profile: normalizeStyleProfile(input?.profile),
   };
 }

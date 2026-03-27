@@ -49,7 +49,9 @@ export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<s
       "--panel-glow-b": "rgba(193, 151, 96, 0.12)",
       "--panel-shadow": "0 22px 42px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04)",
       "--panel-hover-shadow": "0 16px 28px rgba(0, 0, 0, 0.24)",
-      "--panel-dot-border": "rgba(255, 255, 255, 0.12)",
+      "--panel-dot-border": "#ffffff",
+      "--panel-clear-icon": "#ffffff",
+      "--panel-clear-surface": "rgba(6, 10, 16, 0.88)",
     };
   }
 
@@ -89,6 +91,8 @@ export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<s
     "--panel-glow-b": "rgba(57, 96, 119, 0.16)",
     "--panel-shadow": "0 20px 38px rgba(58, 40, 18, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.34)",
     "--panel-hover-shadow": "0 14px 24px rgba(57, 40, 19, 0.1)",
-    "--panel-dot-border": "rgba(0, 0, 0, 0.08)",
+    "--panel-dot-border": "#000000",
+    "--panel-clear-icon": "#000000",
+    "--panel-clear-surface": "rgba(255, 250, 242, 0.96)",
   };
 }

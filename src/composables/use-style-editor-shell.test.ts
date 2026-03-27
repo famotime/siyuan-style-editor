@@ -178,7 +178,7 @@ describe("useStyleEditorShell", () => {
     await initializeRuntime(plugin as never);
 
     const { shell, unmount } = await mountShell();
-    const secondPaletteId = shell.presetPaletteCollections[1].id;
+    const secondPaletteId = shell.presetPaletteCollections.value[1].id;
     const importedProfile = JSON.stringify({
       profile: {
         mark: {
@@ -187,7 +187,7 @@ describe("useStyleEditorShell", () => {
       },
     });
 
-    expect(shell.activePresetPaletteId.value).toBe(shell.presetPaletteCollections[0].id);
+    expect(shell.activePresetPaletteId.value).toBe(shell.presetPaletteCollections.value[0].id);
     expect(shell.isPresetPaletteSectionExpanded.value).toBe(true);
 
     shell.selectPresetPaletteTab(secondPaletteId);
@@ -214,6 +214,40 @@ describe("useStyleEditorShell", () => {
     expect(plugin.saveData).toHaveBeenCalledOnce();
     expect(input.value).toBe("");
     expect(shell.statusCopy.value).toContain("已导入本地配置");
+
+    unmount();
+  });
+
+  it("prompts for a name and saves the current colors as a custom preset palette at the front of the list", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("heading1");
+    selectChannel("color");
+    await applyPaletteColor("#3355aa");
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+    vi.clearAllMocks();
+
+    vi.spyOn(window, "prompt").mockReturnValue("My Favorite");
+
+    const { shell, unmount } = await mountShell();
+
+    await shell.handleSavePresetPalette();
+
+    expect(window.prompt).toHaveBeenCalledWith("输入预置色卡名称", "");
+    expect(shell.presetPaletteCollections.value[0]).toEqual(expect.objectContaining({
+      id: expect.stringMatching(/^custom-palette-/),
+      label: "My Favorite",
+    }));
+    expect(shell.presetPaletteCollections.value[0]?.colors).toEqual([
+      { label: "#3355aa", value: "#3355aa" },
+      { label: "#fff2a8", value: "#fff2a8" },
+    ]);
+    expect(shell.activePresetPaletteId.value).toBe(shell.presetPaletteCollections.value[0]?.id);
+    expect(shell.statusCopy.value).toContain("已保存预置色卡");
+    expect(plugin.saveData).toHaveBeenCalledOnce();
 
     unmount();
   });

@@ -10,6 +10,7 @@ describe("style editor state", () => {
   it("creates the expected default state", () => {
     const state = createDefaultEditorState();
 
+    expect(state.customPresetPalettes).toEqual([]);
     expect(state.profile.heading1.color).toBe("");
     expect(state.profile.strong.color).toBe("");
     expect(state.profile.mark.backgroundColor).toBe("");
@@ -18,9 +19,23 @@ describe("style editor state", () => {
 
   it("normalizes persisted state onto the full schema", () => {
     const state = normalizeEditorState({
+      customPresetPalettes: [
+        {
+          colors: [{ label: "#3355aa", value: "#3355aa" }],
+          id: "custom-palette-1",
+          label: "Saved",
+        },
+      ],
       profile: { strong: { color: "rgb(1, 2, 3)" } },
     });
 
+    expect(state.customPresetPalettes).toEqual([
+      {
+        colors: [{ label: "#3355aa", value: "#3355aa" }],
+        id: "custom-palette-1",
+        label: "Saved",
+      },
+    ]);
     expect(state.profile.strong.color).toBe("rgb(1, 2, 3)");
     expect(state.profile.heading3.color).toBe("");
     expect(state.profile.inlineCode.backgroundColor).toBe("");
@@ -28,8 +43,20 @@ describe("style editor state", () => {
   });
 
   it("updates only the chosen target color", () => {
-    const nextState = updateTargetColor(createDefaultEditorState(), "heading2", "var(--b3-font-color4)");
+    const nextState = updateTargetColor({
+      ...createDefaultEditorState(),
+      customPresetPalettes: [{
+        colors: [{ label: "#3355aa", value: "#3355aa" }],
+        id: "custom-palette-1",
+        label: "Saved",
+      }],
+    }, "heading2", "var(--b3-font-color4)");
 
+    expect(nextState.customPresetPalettes).toEqual([{
+      colors: [{ label: "#3355aa", value: "#3355aa" }],
+      id: "custom-palette-1",
+      label: "Saved",
+    }]);
     expect(nextState.profile.heading2.color).toBe("var(--b3-font-color4)");
     expect(nextState.profile.heading1.color).toBe("");
     expect(nextState.profile.strong.color).toBe("");
@@ -52,6 +79,7 @@ describe("style editor state", () => {
 
     const resetState = resetEditorStyles(stateWithStyles);
 
+    expect(resetState.customPresetPalettes).toEqual([]);
     expect(resetState.profile.heading2.color).toBe("");
     expect(resetState.profile.mark.backgroundColor).toBe("");
     expect(resetState.profile.heading1.color).toBe("");

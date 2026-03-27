@@ -17,6 +17,7 @@ export function useStyleEditorShell() {
     handleExtractStyles,
     handleImportStylesChange,
     handleResetAllStyles,
+    handleSavePresetPalette: persistCustomPresetPalette,
     importFileInputRef,
     openImportStylesPicker,
   } = useStyleTransferActions({
@@ -31,11 +32,19 @@ export function useStyleEditorShell() {
     return actionMessage.value || selectedTargetMeta.value.hint;
   });
 
+  async function handleSavePresetPalette() {
+    const savedPalette = await persistCustomPresetPalette();
+    if (savedPalette) {
+      inlinePaletteSession.selectPresetPaletteTab(savedPalette.id);
+    }
+  }
+
   return {
     handleExportStyles,
     handleExtractStyles,
     handleImportStylesChange,
     handleResetAllStyles,
+    handleSavePresetPalette,
     importFileInputRef,
     panelThemeVars,
     runtimeState,

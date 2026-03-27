@@ -52,7 +52,6 @@ export function useInlinePaletteSession() {
   } | null>(null);
   const activePresetPaletteId = ref(PRESET_PALETTE_COLLECTIONS[0]?.id ?? "");
   const isPresetPaletteSectionExpanded = ref(true);
-  const presetPaletteCollections = PRESET_PALETTE_COLLECTIONS;
   const customColorDraft = ref(createDefaultCustomColor(runtimeState.selectedChannel));
   const inlinePaletteCommittedColor = ref("");
   const inlinePaletteDraftColor = ref("");
@@ -60,8 +59,15 @@ export function useInlinePaletteSession() {
   const inlineSaturation = ref(0);
   const inlineValue = ref(0);
 
+  const presetPaletteCollections = computed(() => {
+    return [
+      ...runtimeState.customPresetPalettes,
+      ...PRESET_PALETTE_COLLECTIONS,
+    ];
+  });
+
   const activePresetPalette = computed(() => {
-    return PRESET_PALETTE_COLLECTIONS.find(palette => palette.id === activePresetPaletteId.value) ?? PRESET_PALETTE_COLLECTIONS[0];
+    return presetPaletteCollections.value.find(palette => palette.id === activePresetPaletteId.value) ?? presetPaletteCollections.value[0];
   });
 
   const selectedSwatch = computed(() => {
@@ -424,7 +430,7 @@ export function useInlinePaletteSession() {
   }
 
   function selectPresetPaletteTab(paletteId: string) {
-    if (!PRESET_PALETTE_COLLECTIONS.some(palette => palette.id === paletteId)) {
+    if (!presetPaletteCollections.value.some(palette => palette.id === paletteId)) {
       return;
     }
 

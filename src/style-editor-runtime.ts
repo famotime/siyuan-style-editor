@@ -4,6 +4,10 @@ import type { StyleTarget } from "@/lib/style-profile";
 import { reactive } from "vue";
 
 import {
+  createPresetPaletteColors,
+  type PresetPaletteCollection,
+} from "@/lib/preset-palette-catalog";
+import {
   loadPersistedEditorState,
   savePersistedEditorState,
 } from "@/lib/style-editor-persistence";
@@ -61,8 +65,13 @@ function replaceProfile(nextState: StyleEditorState) {
   }
 }
 
+function replaceCustomPresetPalettes(nextState: StyleEditorState) {
+  runtimeState.customPresetPalettes = [...nextState.customPresetPalettes];
+}
+
 function snapshotState(): StyleEditorState {
   return {
+    customPresetPalettes: [...runtimeState.customPresetPalettes],
     profile: normalizeStyleProfile(runtimeState.profile),
   };
 }
@@ -73,7 +82,29 @@ function applyInjectedStyles() {
 }
 
 async function persistState() {
-  await savePersistedEditorState(pluginInstance, STORAGE_KEY, snapshotState().profile);
+  const state = snapshotState();
+  await savePersistedEditorState(
+    pluginInstance,
+    STORAGE_KEY,
+    state.profile,
+    state.customPresetPalettes,
+  );
+}
+
+function collectActiveProfileColors(): string[] {
+  const colors: string[] = [];
+
+  for (const target of STYLE_TARGETS) {
+    const rule = runtimeState.profile[target];
+    if (rule.color) {
+      colors.push(rule.color);
+    }
+    if (rule.backgroundColor) {
+      colors.push(rule.backgroundColor);
+    }
+  }
+
+  return [...new Set(colors)];
 }
 
 async function updateSelectedPaletteColor(
@@ -97,6 +128,7 @@ export async function initializeRuntime(plugin: Plugin) {
   pluginInstance = plugin;
   const savedState = await loadPersistedEditorState(plugin, STORAGE_KEY);
   replaceProfile(savedState);
+  replaceCustomPresetPalettes(savedState);
   runtimeState.ready = true;
   applyInjectedStyles();
 }
@@ -107,6 +139,7 @@ export function teardownRuntime() {
   runtimeState.selectedTarget = "heading1";
   runtimeState.selectedChannel = "color";
   replaceProfile(createDefaultEditorState());
+  replaceCustomPresetPalettes(createDefaultEditorState());
   stylesheet.remove();
 }
 
@@ -186,5 +219,35 @@ export async function importStyles(raw: string) {
 
   return {
     styledTargetCount: countStyledTargets(importedProfile),
+  };
+}
+
+export async function saveCurrentProfileAsPresetPalette(name: string) {
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    throw new Error("预置色卡名称不能为空。");
+  }
+
+  const colors = createPresetPaletteColors(collectActiveProfileColors());
+  if (colors.length === 0) {
+    throw new Error("当前还没有可保存的颜色。");
+  }
+
+  const nextPalette: PresetPaletteCollection = {
+    colors,
+    id: `custom-palette-${Date.now().toString(36)}`,
+    label: trimmedName,
+  };
+
+  runtimeState.customPresetPalettes = [
+    nextPalette,
+    ...runtimeState.customPresetPalettes,
+  ];
+  await persistState();
+
+  return {
+    colorCount: colors.length,
+    label: nextPalette.label,
+    palette: nextPalette,
   };
 }

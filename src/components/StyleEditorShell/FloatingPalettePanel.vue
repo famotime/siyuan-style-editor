@@ -630,17 +630,19 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
   width: 20px;
   height: 20px;
   border-radius: 999px;
-  border: 1px solid var(--panel-dot-border);
+  border: 2px solid var(--panel-dot-border);
   background: var(--swatch-color);
   overflow: hidden;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 24%, transparent 76%);
 }
 
 .swatch-chip__dot--clear {
-  border-color: color-mix(in srgb, var(--panel-text-subtle) 18%, var(--panel-dot-border) 82%);
-  background: color-mix(in srgb, var(--panel-preview-bg) 60%, var(--panel-card-bg) 40%);
+  border-color: var(--panel-dot-border);
+  background: transparent;
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, white 12%, transparent 88%),
-    0 1px 2px rgba(15, 23, 42, 0.08);
+    0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 30%, transparent 70%),
+    0 1px 2px rgba(15, 23, 42, 0.12);
 }
 
 .swatch-chip--clear {
@@ -656,8 +658,8 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
 
 .swatch-chip--clear.swatch-chip--active .swatch-chip__dot--clear {
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, white 16%, transparent 84%),
-    0 0 0 1px var(--panel-accent-outline);
+    0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 30%, transparent 70%),
+    0 0 0 2px var(--panel-accent-outline);
 }
 
 .swatch-chip__dot-clear-surface,
@@ -667,17 +669,14 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
 }
 
 .swatch-chip__dot-clear-surface {
-  inset: 3px;
+  inset: 2px;
   border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--panel-card-bg) 78%, white 22%),
-    color-mix(in srgb, var(--panel-preview-bg) 74%, var(--panel-card-bg) 26%)
-  );
+  background: var(--panel-clear-surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 18%, transparent 82%);
 }
 
 .swatch-chip__dot-clear-slash {
-  inset: 1px;
+  inset: 0;
 }
 
 .swatch-chip__dot-clear-slash::before {
@@ -686,11 +685,11 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
   top: 50%;
   left: 50%;
   width: 3px;
-  height: 18px;
+  height: 16px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--panel-text) 62%, var(--panel-card-bg) 38%);
+  background: var(--panel-clear-icon);
   transform: translate(-50%, -50%) rotate(45deg);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 16%, transparent 84%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--panel-card-bg) 12%, transparent 88%);
 }
 
 .floating-palette-enter-active,

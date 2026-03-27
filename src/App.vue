@@ -21,6 +21,7 @@
         :get-target-preview-style="getTargetPreviewStyle"
         :get-channel-swatch="getChannelSwatch"
         :is-inline-palette-open-for-target="isInlinePaletteOpenForTarget"
+        @save-preset-palette="handleSavePresetPalette"
         @select-target="selectPreviewTarget"
         @activate-channel="handleTargetChannelActivation"
       />
@@ -87,6 +88,7 @@ const {
   handleInlineHueInput,
   handlePresetColorSelection,
   handleResetAllStyles,
+  handleSavePresetPalette,
   importFileInputRef,
   inlineColorFieldRef,
   inlineColorFieldStyle,

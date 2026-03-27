@@ -4,6 +4,10 @@ import {
   normalizeEditorState,
   type StyleEditorState,
 } from "@/lib/style-editor-state";
+import {
+  normalizePresetPaletteCollections,
+  type PresetPaletteCollection,
+} from "@/lib/preset-palette-catalog";
 import { normalizeStyleProfile, type StyleProfile } from "@/lib/style-profile";
 
 export async function loadPersistedEditorState(
@@ -18,12 +22,14 @@ export async function savePersistedEditorState(
   plugin: Plugin | null,
   storageKey: string,
   profile: StyleProfile,
+  customPresetPalettes: PresetPaletteCollection[],
 ): Promise<void> {
   if (!plugin) {
     return;
   }
 
   await plugin.saveData(storageKey, {
+    customPresetPalettes: normalizePresetPaletteCollections(customPresetPalettes),
     profile: normalizeStyleProfile(profile),
   });
 }

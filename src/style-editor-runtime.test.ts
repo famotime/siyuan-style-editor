@@ -8,6 +8,7 @@ import {
   previewPaletteColor,
   resetAllStyles,
   runtimeState,
+  saveCurrentProfileAsPresetPalette,
   selectChannel,
   selectTarget,
   teardownRuntime,
@@ -55,6 +56,7 @@ describe("style editor runtime", () => {
 
     expect(runtimeState.profile.mark.backgroundColor).toBe("#f6d365");
     expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", {
+      customPresetPalettes: [],
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#f6d365",
@@ -90,6 +92,7 @@ describe("style editor runtime", () => {
 
     expect(plugin.saveData).toHaveBeenCalledOnce();
     expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      customPresetPalettes: [],
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#f6d365",
@@ -137,6 +140,7 @@ describe("style editor runtime", () => {
     expect(runtimeState.profile.heading1.color).toBe("rgb(200, 40, 40)");
     expect(runtimeState.profile.mark.backgroundColor).toBe("rgb(255, 240, 180)");
     expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      customPresetPalettes: [],
       profile: expect.objectContaining({
         heading1: expect.objectContaining({
           color: "rgb(200, 40, 40)",
@@ -203,6 +207,55 @@ describe("style editor runtime", () => {
           backgroundColor: "#fff2a8",
         }),
       }),
+      customPresetPalettes: [],
+    });
+  });
+
+  it("saves the current selected colors as a custom preset palette and persists it to the front of the list", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("heading1");
+    selectChannel("color");
+    await applyPaletteColor("#3355aa");
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+    vi.clearAllMocks();
+
+    const result = await saveCurrentProfileAsPresetPalette("My Favorite");
+
+    expect(result).toEqual(expect.objectContaining({
+      colorCount: 2,
+      label: "My Favorite",
+      palette: expect.objectContaining({
+        id: expect.stringMatching(/^custom-palette-/),
+        label: "My Favorite",
+      }),
+    }));
+    expect(runtimeState.customPresetPalettes[0]).toEqual({
+      colors: [
+        { label: "#3355aa", value: "#3355aa" },
+        { label: "#fff2a8", value: "#fff2a8" },
+      ],
+      id: expect.stringMatching(/^custom-palette-/),
+      label: "My Favorite",
+    });
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      profile: expect.objectContaining({
+        heading1: expect.objectContaining({
+          color: "#3355aa",
+        }),
+        mark: expect.objectContaining({
+          backgroundColor: "#fff2a8",
+        }),
+      }),
+      customPresetPalettes: [
+        expect.objectContaining({
+          id: expect.stringMatching(/^custom-palette-/),
+          label: "My Favorite",
+        }),
+      ],
     });
   });
 
