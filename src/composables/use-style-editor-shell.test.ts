@@ -221,7 +221,7 @@ describe("useStyleEditorShell", () => {
     unmount();
   });
 
-  it("prompts for author and style name before exporting styles", async () => {
+  it("exports styles with the provided author and style name", async () => {
     const plugin = createPluginStub();
     await initializeRuntime(plugin as never);
 
@@ -238,16 +238,11 @@ describe("useStyleEditorShell", () => {
       value: vi.fn(),
     });
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-    const promptSpy = vi.spyOn(window, "prompt")
-      .mockReturnValueOnce("Alice")
-      .mockReturnValueOnce("Paper Glow");
 
     const { shell, unmount } = await mountShell();
 
-    await shell.handleExportStyles();
+    await shell.handleExportStyles("Alice", "Paper Glow");
 
-    expect(promptSpy).toHaveBeenNthCalledWith(1, "输入作者名称", "无名");
-    expect(promptSpy).toHaveBeenNthCalledWith(2, "输入样式名称", "无名样式");
     expect(clickSpy).toHaveBeenCalledOnce();
 
     unmount();

@@ -32,32 +32,9 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
   const actionMessage = ref("");
   const importedStyleSignature = ref("");
 
-  function resolvePromptValue(
-    promptMessage: string,
-    defaultValue: string,
-  ) {
-    if (typeof window === "undefined" || typeof window.prompt !== "function") {
-      return defaultValue;
-    }
-
-    const rawValue = window.prompt(promptMessage, defaultValue);
-    if (rawValue === null) {
-      return null;
-    }
-
-    return rawValue.trim() || defaultValue;
-  }
-
-  function resolveExportMetadata(): StyleTransferMetadata | null {
-    const author = resolvePromptValue("输入作者名称", DEFAULT_STYLE_TRANSFER_AUTHOR);
-    if (author === null) {
-      return null;
-    }
-
-    const styleName = resolvePromptValue("输入样式名称", DEFAULT_STYLE_TRANSFER_NAME);
-    if (styleName === null) {
-      return null;
-    }
+  function resolveExportMetadata(authorValue?: string, styleNameValue?: string): StyleTransferMetadata {
+    const author = authorValue?.trim() || DEFAULT_STYLE_TRANSFER_AUTHOR;
+    const styleName = styleNameValue?.trim() || DEFAULT_STYLE_TRANSFER_NAME;
 
     return {
       author,
@@ -79,18 +56,14 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     actionMessage.value = RESET_ALL_STYLES_MESSAGE;
   }
 
-  async function handleExportStyles() {
+  async function handleExportStyles(authorValue?: string, styleNameValue?: string) {
     await options.cancelInlinePalettePanel();
 
     if (typeof document === "undefined") {
       return;
     }
 
-    const exportMetadata = resolveExportMetadata();
-    if (!exportMetadata) {
-      return;
-    }
-
+    const exportMetadata = resolveExportMetadata(authorValue, styleNameValue);
     const exportedContent = exportCurrentStyles(exportMetadata);
     downloadStyleTransferDocument(exportedContent, exportMetadata);
 

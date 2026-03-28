@@ -14,7 +14,7 @@ export function useStyleEditorShell() {
   const {
     actionMessage,
     handleDeletePresetPalette: removeCustomPresetPalette,
-    handleExportStyles,
+    handleExportStyles: persistExportStyles,
     handleExtractStyles,
     handleImportStylesChange,
     handleResetAllStyles,
@@ -34,6 +34,10 @@ export function useStyleEditorShell() {
     return actionMessage.value || selectedTargetMeta.value.hint;
   });
 
+  async function handleExportStyles(author: string, styleName: string) {
+    await persistExportStyles(author, styleName);
+  }
+
   async function handleSavePresetPalette(name: string) {
     const savedPalette = await persistCustomPresetPalette(name);
     if (savedPalette) {
@@ -47,11 +51,11 @@ export function useStyleEditorShell() {
 
   return {
     handleDeletePresetPalette,
-    handleExportStyles,
     handleExtractStyles,
     handleImportStylesChange,
     handleResetAllStyles,
     handleSavePresetPalette,
+    handleExportStyles,
     importedStyleSignature,
     importFileInputRef,
     panelThemeVars,
