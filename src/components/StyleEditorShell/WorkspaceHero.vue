@@ -281,6 +281,7 @@ function submitExportForm() {
 .workspace-hero__export-field {
   display: grid;
   gap: 6px;
+  min-width: 0;
 }
 
 .workspace-hero__export-label {
@@ -343,6 +344,9 @@ function submitExportForm() {
 }
 
 .workspace-hero__export-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 0 10px;
   border: 1px solid color-mix(in srgb, var(--panel-text) 14%, var(--panel-card-stroke) 86%);
   background: color-mix(in srgb, var(--panel-card-bg) 82%, white 18%);

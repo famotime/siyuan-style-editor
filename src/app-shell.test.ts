@@ -1,9 +1,13 @@
 import {
+  resolve,
+} from "node:path";
+import {
   createApp,
   nextTick,
   reactive,
   ref,
 } from "vue";
+import { readFileSync } from "node:fs";
 
 const mockUseStyleEditorShell = vi.hoisted(() => vi.fn());
 
@@ -198,13 +202,13 @@ describe("app shell", () => {
     expect(heroButtons.map(button => button.textContent?.trim())).toEqual([
       "提取样式",
       "清除样式",
-      "导出样式",
       "导入样式",
+      "导出样式",
     ]);
 
     click(heroButtons[0]);
     click(heroButtons[1]);
-    click(heroButtons[3]);
+    click(heroButtons[2]);
 
     expect(shellState.handleExtractStyles).toHaveBeenCalledOnce();
     expect(shellState.handleResetAllStyles).toHaveBeenCalledOnce();
@@ -220,7 +224,7 @@ describe("app shell", () => {
 
     expect(container.querySelector(".inline-palette-panel")).toBeNull();
 
-    click(heroButtons[2]);
+    click(heroButtons[3]);
     await nextTick();
     expect(shellState.handleExportStyles).not.toHaveBeenCalled();
     expect(container.querySelector(".workspace-hero__actions")?.querySelector(".workspace-hero__export-form")).toBeNull();
@@ -245,6 +249,26 @@ describe("app shell", () => {
     expect(container.querySelector(".workspace-hero__export-panel")).toBeNull();
 
     unmount();
+  });
+
+  it("constrains export signature fields inside the panel grid", () => {
+    const componentSource = readFileSync(
+      resolve(process.cwd(), "src", "components", "StyleEditorShell", "WorkspaceHero.vue"),
+      "utf8",
+    );
+
+    expect(componentSource).toContain([
+      ".workspace-hero__export-field {",
+      "  display: grid;",
+      "  gap: 6px;",
+      "  min-width: 0;",
+    ].join("\n"));
+    expect(componentSource).toContain([
+      ".workspace-hero__export-input {",
+      "  width: 100%;",
+      "  min-width: 0;",
+      "  box-sizing: border-box;",
+    ].join("\n"));
   });
 
   it("renders target cards from the style target catalog and wires card actions", async () => {
