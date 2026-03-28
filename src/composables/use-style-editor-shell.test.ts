@@ -121,8 +121,12 @@ describe("useStyleEditorShell", () => {
     await initializeRuntime(plugin as never);
 
     const originalAddEventListener = window.addEventListener.bind(window);
+    let keydownHandler: ((event: KeyboardEvent) => void) | undefined;
     let scrollHandler: ((event: Event) => void) | undefined;
     vi.spyOn(window, "addEventListener").mockImplementation(((type, listener, options) => {
+      if (type === "keydown") {
+        keydownHandler = listener as (event: KeyboardEvent) => void;
+      }
       if (type === "scroll") {
         scrollHandler = listener as (event: Event) => void;
       }
@@ -152,7 +156,8 @@ describe("useStyleEditorShell", () => {
     expect(shell.isInlinePaletteVisible.value).toBe(true);
     expect(runtimeState.profile.mark.backgroundColor).toBe("#f6d365");
 
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(keydownHandler).toBeTypeOf("function");
+    await shell.cancelInlinePalettePanel();
     await flushShellUpdates();
 
     expect(shell.isInlinePaletteVisible.value).toBe(false);
@@ -163,6 +168,7 @@ describe("useStyleEditorShell", () => {
     await shell.handlePresetColorSelection("#c2410c");
 
     scrollHandler!({ target: document.body } as Event);
+    await flushShellUpdates();
     await flushShellUpdates();
 
     expect(shell.isInlinePaletteVisible.value).toBe(false);
@@ -273,6 +279,59 @@ describe("useStyleEditorShell", () => {
     expect(plugin.saveData).toHaveBeenCalledOnce();
 
     unmount();
+  });
+
+  it("keeps batch-applied colors after cancelling the palette session", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("heading1");
+    selectChannel("color");
+
+    const { shell, unmount } = await mountShell();
+    const anchor = createAnchorElement();
+
+    await shell.activateTargetChannel("heading1", "color", { currentTarget: anchor } as MouseEvent);
+    await shell.handlePresetPaletteBatchApply("fiery-ocean");
+    await shell.cancelInlinePalettePanel();
+
+    expect(runtimeState.profile.heading1.color).toBe("#780000");
+    expect(shell.isInlinePaletteVisible.value).toBe(false);
+    expect(plugin.saveData).toHaveBeenCalledOnce();
+
+    unmount();
+    anchor.remove();
+  });
+
+  it("rolls back preview state before swapping channels and persists only the swap result", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("heading1");
+    selectChannel("color");
+    await applyPaletteColor("#224488");
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+    vi.clearAllMocks();
+
+    const { shell, unmount } = await mountShell();
+    const anchor = createAnchorElement();
+
+    await shell.activateTargetChannel("heading1", "color", { currentTarget: anchor } as MouseEvent);
+    await shell.handlePresetColorSelection("#f6d365");
+    await shell.handleSwapTargetChannelValues(
+      { channel: "color", target: "heading1" },
+      { channel: "backgroundColor", target: "mark" },
+    );
+
+    expect(runtimeState.profile.heading1.color).toBe("#fff2a8");
+    expect(runtimeState.profile.mark.backgroundColor).toBe("#224488");
+    expect(shell.isInlinePaletteVisible.value).toBe(false);
+    expect(plugin.saveData).toHaveBeenCalledOnce();
+
+    unmount();
+    anchor.remove();
   });
 
   it("saves the current colors as a custom preset palette at the front of the list when given a name", async () => {

@@ -136,6 +136,10 @@ describe("style editor runtime", () => {
         }),
       }),
     });
+
+    const styleElement = document.getElementById("siyuan-style-editor-style");
+    expect(styleElement?.textContent).toContain("color: #224488 !important;");
+    expect(styleElement?.textContent).toContain("color: #f6d365 !important;");
   });
 
   it("swaps colors across any two target channels and persists once", async () => {
@@ -169,6 +173,10 @@ describe("style editor runtime", () => {
         }),
       }),
     });
+
+    const styleElement = document.getElementById("siyuan-style-editor-style");
+    expect(styleElement?.textContent).toContain("color: #fff2a8 !important;");
+    expect(styleElement?.textContent).toContain("background-color: #224488 !important;");
   });
 
   it("can roll previewed palette colors back to the last committed value without persisting", async () => {

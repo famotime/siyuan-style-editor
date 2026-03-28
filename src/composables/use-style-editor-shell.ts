@@ -15,8 +15,8 @@ export function useStyleEditorShell() {
   const inlinePaletteSession = useInlinePaletteSession();
   const {
     actionMessage,
-    handleDeletePresetPalette: removeCustomPresetPalette,
-    handleExportStyles: persistExportStyles,
+    handleDeletePresetPalette,
+    handleExportStyles,
     handleExtractStyles,
     handleImportStylesChange,
     handleResetAllStyles,
@@ -36,21 +36,6 @@ export function useStyleEditorShell() {
     return actionMessage.value || selectedTargetMeta.value.hint;
   });
 
-  async function handleExportStyles(author: string, styleName: string) {
-    await persistExportStyles(author, styleName);
-  }
-
-  async function handlePresetPaletteBatchApply(paletteId: string) {
-    await inlinePaletteSession.handlePresetPaletteBatchApply(paletteId);
-  }
-
-  async function handleSwapTargetChannelValues(
-    source: { channel: PaintChannel; target: StyleTarget },
-    target: { channel: PaintChannel; target: StyleTarget },
-  ) {
-    await inlinePaletteSession.handleSwapTargetChannelValues(source, target);
-  }
-
   async function handleSavePresetPalette(name: string) {
     const savedPalette = await persistCustomPresetPalette(name);
     if (savedPalette) {
@@ -58,18 +43,14 @@ export function useStyleEditorShell() {
     }
   }
 
-  async function handleDeletePresetPalette(paletteId: string) {
-    await removeCustomPresetPalette(paletteId);
-  }
-
   return {
     handleDeletePresetPalette,
     handleExtractStyles,
     handleImportStylesChange,
-    handlePresetPaletteBatchApply,
+    handlePresetPaletteBatchApply: inlinePaletteSession.handlePresetPaletteBatchApply,
     handleResetAllStyles,
     handleSavePresetPalette,
-    handleSwapTargetChannelValues,
+    handleSwapTargetChannelValues: inlinePaletteSession.handleSwapTargetChannelValues,
     handleExportStyles,
     importedStyleSignature,
     importFileInputRef,

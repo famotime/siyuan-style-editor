@@ -150,10 +150,11 @@ import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import {
-  onBeforeUnmount,
   nextTick,
   ref,
 } from "vue";
+
+import { useTargetOrbDragSession } from "@/composables/use-target-orb-drag-session";
 
 interface StyleTargetOption {
   hint: string;
@@ -166,22 +167,6 @@ interface ChannelSwatch {
   background: string;
   isEmpty: boolean;
 }
-
-interface DragOrbState {
-  channel: PaintChannel;
-  target: StyleTarget;
-  x: number;
-  y: number;
-}
-
-interface FloatingOrbPreview {
-  background: string;
-  isEmpty: boolean;
-  x: number;
-  y: number;
-}
-
-const DRAG_THRESHOLD = 6;
 
 const props = defineProps<{
   getChannelSwatch: (target: StyleTarget, channel: PaintChannel) => ChannelSwatch;
@@ -205,10 +190,19 @@ const emit = defineEmits<{
 const isSaveFormVisible = ref(false);
 const saveInputRef = ref<HTMLInputElement | null>(null);
 const savePaletteName = ref("");
-const dragOrbState = ref<DragOrbState | null>(null);
-const dragHoverState = ref<{ channel: PaintChannel; target: StyleTarget } | null>(null);
-const floatingOrbPreview = ref<FloatingOrbPreview | null>(null);
-const suppressOrbClickUntil = ref(0);
+const {
+  floatingOrbPreview,
+  handleOrbClick,
+  handleOrbMouseDown,
+  handleOrbMouseEnter,
+  handleOrbMouseLeave,
+  isDragSourceOrb,
+  isDropTargetOrb,
+} = useTargetOrbDragSession({
+  getChannelSwatch: props.getChannelSwatch,
+  onActivateChannel: payload => emit("activate-channel", payload),
+  onSwapChannelValue: (source, target) => emit("swap-channel-value", source, target),
+});
 
 async function openSaveForm() {
   isSaveFormVisible.value = true;
@@ -230,132 +224,6 @@ function submitSaveForm() {
   emit("save-preset-palette", trimmedName);
   closeSaveForm();
 }
-
-function isSameOrb(
-  left: { channel: PaintChannel; target: StyleTarget } | null,
-  right: { channel: PaintChannel; target: StyleTarget } | null,
-) {
-  return left?.target === right?.target && left?.channel === right?.channel;
-}
-
-function clearDragInteraction() {
-  dragOrbState.value = null;
-  dragHoverState.value = null;
-  floatingOrbPreview.value = null;
-}
-
-function handleWindowMouseMove(event: MouseEvent) {
-  if (!dragOrbState.value) {
-    return;
-  }
-
-  const deltaX = event.clientX - dragOrbState.value.x;
-  const deltaY = event.clientY - dragOrbState.value.y;
-  const hasExceededThreshold = Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD;
-
-  if (!floatingOrbPreview.value && !hasExceededThreshold) {
-    return;
-  }
-
-  if (!floatingOrbPreview.value) {
-    const sourceSwatch = props.getChannelSwatch(dragOrbState.value.target, dragOrbState.value.channel);
-    floatingOrbPreview.value = {
-      background: sourceSwatch.background,
-      isEmpty: sourceSwatch.isEmpty,
-      x: event.clientX,
-      y: event.clientY,
-    };
-    return;
-  }
-
-  floatingOrbPreview.value = {
-    ...floatingOrbPreview.value,
-    x: event.clientX,
-    y: event.clientY,
-  };
-}
-
-function handleWindowMouseUp() {
-  if (dragOrbState.value && floatingOrbPreview.value && dragHoverState.value && !isSameOrb(dragOrbState.value, dragHoverState.value)) {
-    emit(
-      "swap-channel-value",
-      {
-        channel: dragOrbState.value.channel,
-        target: dragOrbState.value.target,
-      },
-      dragHoverState.value,
-    );
-    suppressOrbClickUntil.value = Date.now() + 250;
-  }
-
-  window.removeEventListener("mousemove", handleWindowMouseMove);
-  window.removeEventListener("mouseup", handleWindowMouseUp);
-  clearDragInteraction();
-}
-
-function handleOrbMouseDown(target: StyleTarget, channel: PaintChannel, event: MouseEvent) {
-  if (event.button !== 0) {
-    return;
-  }
-
-  event.preventDefault();
-  window.removeEventListener("mousemove", handleWindowMouseMove);
-  window.removeEventListener("mouseup", handleWindowMouseUp);
-  dragOrbState.value = {
-    channel,
-    target,
-    x: event.clientX,
-    y: event.clientY,
-  };
-  dragHoverState.value = null;
-  floatingOrbPreview.value = null;
-  window.addEventListener("mousemove", handleWindowMouseMove);
-  window.addEventListener("mouseup", handleWindowMouseUp);
-}
-
-function handleOrbMouseEnter(target: StyleTarget, channel: PaintChannel) {
-  if (!floatingOrbPreview.value) {
-    return;
-  }
-
-  dragHoverState.value = {
-    channel,
-    target,
-  };
-}
-
-function handleOrbMouseLeave(target: StyleTarget, channel: PaintChannel) {
-  if (isSameOrb(dragHoverState.value, { channel, target })) {
-    dragHoverState.value = null;
-  }
-}
-
-function handleOrbClick(target: StyleTarget, channel: PaintChannel, event: MouseEvent) {
-  if (Date.now() < suppressOrbClickUntil.value) {
-    return;
-  }
-
-  emit("activate-channel", {
-    channel,
-    event,
-    target,
-  });
-}
-
-function isDragSourceOrb(target: StyleTarget, channel: PaintChannel) {
-  return Boolean(floatingOrbPreview.value) && isSameOrb(dragOrbState.value, { channel, target });
-}
-
-function isDropTargetOrb(target: StyleTarget, channel: PaintChannel) {
-  return Boolean(floatingOrbPreview.value)
-    && isSameOrb(dragHoverState.value, { channel, target })
-    && !isSameOrb(dragOrbState.value, { channel, target });
-}
-
-onBeforeUnmount(() => {
-  window.removeEventListener("mousemove", handleWindowMouseMove);
-  window.removeEventListener("mouseup", handleWindowMouseUp);
-});
 </script>
 
 <style scoped lang="scss">

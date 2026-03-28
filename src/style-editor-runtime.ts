@@ -79,6 +79,28 @@ function snapshotState(): StyleEditorState {
   };
 }
 
+function commitState(
+  nextState: StyleEditorState,
+  options: {
+    persist?: boolean;
+    replaceCustomPresetPalettes?: boolean;
+  } = {},
+) {
+  replaceProfile(nextState);
+
+  if (options.replaceCustomPresetPalettes ?? false) {
+    replaceCustomPresetPalettes(nextState);
+  }
+
+  applyInjectedStyles();
+
+  if (options.persist ?? true) {
+    return persistState();
+  }
+
+  return Promise.resolve();
+}
+
 function applyInjectedStyles() {
   const css = buildStyleCss(runtimeState.profile);
   stylesheet.apply(css);
@@ -119,12 +141,9 @@ async function updateSelectedPaletteColor(
   const nextState = runtimeState.selectedChannel === "backgroundColor"
     ? updateTargetBackgroundColor(snapshotState(), runtimeState.selectedTarget, color)
     : updateTargetColor(snapshotState(), runtimeState.selectedTarget, color);
-  replaceProfile(nextState);
-  applyInjectedStyles();
-
-  if (options.persist ?? true) {
-    await persistState();
-  }
+  await commitState(nextState, {
+    persist: options.persist,
+  });
 }
 
 export async function initializeRuntime(plugin: Plugin) {
@@ -163,9 +182,7 @@ export async function swapTargetChannelValues(
   target: StyleTargetChannelRef,
 ) {
   const nextState = swapTargetChannelValuesInState(snapshotState(), source, target);
-  replaceProfile(nextState);
-  applyInjectedStyles();
-  await persistState();
+  await commitState(nextState);
 }
 
 export async function applyPaletteSequenceToTargets(
@@ -184,9 +201,7 @@ export async function applyPaletteSequenceToTargets(
       : updateTargetColor(nextState, target, color);
   }
 
-  replaceProfile(nextState);
-  applyInjectedStyles();
-  await persistState();
+  await commitState(nextState);
 
   return {
     appliedTargetCount,
@@ -209,9 +224,7 @@ export async function clearSelectedTargetColor() {
 
 export async function resetAllStyles() {
   const nextState = resetEditorStyles(snapshotState());
-  replaceProfile(nextState);
-  applyInjectedStyles();
-  await persistState();
+  await commitState(nextState);
 }
 
 export async function extractCurrentStyles() {
@@ -230,11 +243,10 @@ export async function extractCurrentStyles() {
     };
   }
 
-  replaceProfile({
+  await commitState({
+    ...snapshotState(),
     profile: result.profile,
   });
-  applyInjectedStyles();
-  await persistState();
 
   return {
     extractedTargetCount: result.extractedTargetCount,
@@ -250,11 +262,10 @@ export async function importStyles(raw: string) {
   const importedTransfer = parseImportedStyleTransfer(raw);
   const importedProfile = importedTransfer.profile;
 
-  replaceProfile({
+  await commitState({
+    ...snapshotState(),
     profile: importedProfile,
   });
-  applyInjectedStyles();
-  await persistState();
 
   return {
     metadata: importedTransfer.metadata,
@@ -279,11 +290,15 @@ export async function saveCurrentProfileAsPresetPalette(name: string) {
     label: trimmedName,
   };
 
-  runtimeState.customPresetPalettes = [
-    nextPalette,
-    ...runtimeState.customPresetPalettes,
-  ];
-  await persistState();
+  await commitState({
+    ...snapshotState(),
+    customPresetPalettes: [
+      nextPalette,
+      ...runtimeState.customPresetPalettes,
+    ],
+  }, {
+    replaceCustomPresetPalettes: true,
+  });
 
   return {
     colorCount: colors.length,
@@ -298,10 +313,14 @@ export async function deleteCustomPresetPalette(paletteId: string) {
     throw new Error("未找到要删除的自定义色卡。");
   }
 
-  runtimeState.customPresetPalettes = runtimeState.customPresetPalettes.filter(
-    palette => palette.id !== paletteId,
-  );
-  await persistState();
+  await commitState({
+    ...snapshotState(),
+    customPresetPalettes: runtimeState.customPresetPalettes.filter(
+      palette => palette.id !== paletteId,
+    ),
+  }, {
+    replaceCustomPresetPalettes: true,
+  });
 
   return {
     id: paletteToDelete.id,
