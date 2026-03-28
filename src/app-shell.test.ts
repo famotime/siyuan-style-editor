@@ -102,6 +102,7 @@ function createShellState(options: {
     isCustomColorDraftValid: ref(true),
     isInlinePaletteOpenForTarget: vi.fn((target: string) => target === "heading1"),
     isInlinePaletteVisible: ref(options.isInlinePaletteVisible ?? false),
+    importedStyleSignature: ref("Paper Glow from Alice"),
     isPresetPaletteSectionExpanded: ref(options.isPresetPaletteSectionExpanded ?? true),
     openImportStylesPicker: vi.fn(),
     panelThemeVars: ref({
@@ -215,6 +216,7 @@ describe("app shell", () => {
     expect(shellState.importFileInputRef.value).toBe(input);
     input?.dispatchEvent(new Event("change", { bubbles: true }));
     expect(shellState.handleImportStylesChange).toHaveBeenCalledOnce();
+    expect(container.querySelector(".workspace-hero__import-signature")?.textContent).toContain("Paper Glow from Alice");
 
     expect(container.querySelector(".inline-palette-panel")).toBeNull();
 

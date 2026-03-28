@@ -3,10 +3,19 @@ import { STYLE_TARGETS } from "@/lib/style-target-catalog";
 
 const STYLE_TRANSFER_TYPE = "siyuan-style-editor-profile";
 const STYLE_TRANSFER_VERSION = 1;
+export const DEFAULT_STYLE_TRANSFER_AUTHOR = "无名";
+export const DEFAULT_STYLE_TRANSFER_NAME = "无名样式";
+
+export interface StyleTransferMetadata {
+  author: string;
+  styleName: string;
+}
 
 interface StyleTransferDocument {
+  author: string;
   exportedAt: string;
   profile: StyleProfile;
+  styleName: string;
   type: typeof STYLE_TRANSFER_TYPE;
   version: typeof STYLE_TRANSFER_VERSION;
 }
@@ -23,13 +32,26 @@ function hasProfile(value: unknown): value is { profile: Partial<StyleProfile> }
   return isObject(value) && isObject(value.profile);
 }
 
+function normalizeTransferMetadata(input?: Partial<StyleTransferMetadata> | null): StyleTransferMetadata {
+  const author = input?.author?.trim() || DEFAULT_STYLE_TRANSFER_AUTHOR;
+  const styleName = input?.styleName?.trim() || DEFAULT_STYLE_TRANSFER_NAME;
+
+  return {
+    author,
+    styleName,
+  };
+}
+
 function createTransferDocument(
   profile: Partial<StyleProfile>,
+  metadata: StyleTransferMetadata,
   exportedAt: string,
 ): StyleTransferDocument {
   return {
+    author: metadata.author,
     exportedAt,
     profile: normalizeStyleProfile(profile),
+    styleName: metadata.styleName,
     type: STYLE_TRANSFER_TYPE,
     version: STYLE_TRANSFER_VERSION,
   };
@@ -47,12 +69,20 @@ export function countStyledTargets(profile: Partial<StyleProfile>): number {
 
 export function serializeStyleProfileTransfer(
   profile: Partial<StyleProfile>,
+  metadata: StyleTransferMetadata,
   exportedAt = new Date().toISOString(),
 ): string {
-  return JSON.stringify(createTransferDocument(profile, exportedAt), null, 2);
+  return JSON.stringify(
+    createTransferDocument(profile, normalizeTransferMetadata(metadata), exportedAt),
+    null,
+    2,
+  );
 }
 
-export function parseImportedStyleProfile(raw: string): StyleProfile {
+export function parseImportedStyleTransfer(raw: string): {
+  metadata: StyleTransferMetadata;
+  profile: StyleProfile;
+} {
   let parsed: unknown;
 
   try {
@@ -78,5 +108,14 @@ export function parseImportedStyleProfile(raw: string): StyleProfile {
     throw new Error("样式配置文件缺少可导入的 profile 字段。");
   }
 
-  return normalizeStyleProfile(parsed.profile);
+  const metadata = normalizeTransferMetadata(parsed);
+
+  return {
+    metadata,
+    profile: normalizeStyleProfile(parsed.profile),
+  };
+}
+
+export function parseImportedStyleProfile(raw: string): StyleProfile {
+  return parseImportedStyleTransfer(raw).profile;
 }

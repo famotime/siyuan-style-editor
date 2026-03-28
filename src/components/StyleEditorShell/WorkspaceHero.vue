@@ -7,6 +7,12 @@
       <h1 class="style-editor-shell__title">
         文档样式编辑器
       </h1>
+      <p
+        v-if="importedStyleSignature"
+        class="workspace-hero__import-signature"
+      >
+        {{ importedStyleSignature }}
+      </p>
       <p class="workspace-hero__summary">
         以更轻的操作路径调整对象文字色与背景色，提取、清除与即时预览统一在一个编辑台里。
       </p>
@@ -56,6 +62,7 @@
 
 <script setup lang="ts">
 defineProps<{
+  importedStyleSignature: string;
   setImportFileInputRef: (element: Element | null) => void;
   statusCopy: string;
 }>();
@@ -114,6 +121,20 @@ const emit = defineEmits<{
   line-height: 1.02;
   letter-spacing: 0.03em;
   color: var(--panel-text);
+}
+
+.workspace-hero__import-signature {
+  margin: 2px 0 0;
+  font-family: "Snell Roundhand", "STKaiti", "Kaiti SC", "Source Han Serif SC", cursive, serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  color: transparent;
+  text-shadow: 0 8px 24px color-mix(in srgb, var(--panel-accent) 24%, transparent);
+  background: linear-gradient(135deg, #d18a27 0%, #f5d58b 36%, #7f4517 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 .extract-styles-button,

@@ -4,9 +4,13 @@ import {
 } from "@/lib/style-transfer-download";
 
 describe("style transfer download", () => {
-  it("formats exported filenames with the portable json pattern", () => {
-    expect(createStyleTransferFilename(new Date("2026-03-27T01:23:45.000Z"))).toBe(
-      "siyuan-style-editor-styles-2026-03-27-01-23-45.json",
+  it("formats exported filenames with style name, author, and timestamp", () => {
+    expect(createStyleTransferFilename({
+      author: "无名",
+      now: new Date("2026-03-27T01:23:45.000Z"),
+      styleName: "无名样式",
+    })).toBe(
+      "无名样式_from_无名作者_2026-03-27-01-23-45.json",
     );
   });
 
@@ -26,11 +30,18 @@ describe("style transfer download", () => {
     const removeSpy = vi.spyOn(HTMLAnchorElement.prototype, "remove");
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
 
-    downloadStyleTransferDocument("{\"profile\":{}}", new Date("2026-03-27T01:23:45.000Z"));
+    downloadStyleTransferDocument("{\"profile\":{}}", {
+      author: "Alice",
+      now: new Date("2026-03-27T01:23:45.000Z"),
+      styleName: "Paper Glow",
+    });
 
     expect(createObjectURL).toHaveBeenCalledOnce();
     expect(appendSpy).toHaveBeenCalledOnce();
     expect(clickSpy).toHaveBeenCalledOnce();
+    expect((appendSpy.mock.calls[0]?.[0] as HTMLAnchorElement | undefined)?.download).toBe(
+      "Paper Glow_from_Alice作者_2026-03-27-01-23-45.json",
+    );
     expect(removeSpy).toHaveBeenCalledOnce();
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:style-export");
   });

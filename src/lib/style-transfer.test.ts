@@ -1,4 +1,5 @@
 import {
+  parseImportedStyleTransfer,
   parseImportedStyleProfile,
   serializeStyleProfileTransfer,
 } from "@/lib/style-transfer";
@@ -9,15 +10,20 @@ describe("style transfer", () => {
       mark: {
         backgroundColor: "#fff2a8",
       },
+    }, {
+      author: "无名",
+      styleName: "无名样式",
     }, "2026-03-26T00:00:00.000Z");
 
     expect(JSON.parse(serialized)).toEqual({
+      author: "无名",
       exportedAt: "2026-03-26T00:00:00.000Z",
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#fff2a8",
         }),
       }),
+      styleName: "无名样式",
       type: "siyuan-style-editor-profile",
       version: 1,
     });
@@ -50,5 +56,38 @@ describe("style transfer", () => {
     expect(() => parseImportedStyleProfile(JSON.stringify({
       type: "unknown",
     }))).toThrow("样式配置文件格式不受支持。");
+  });
+
+  it("parses imported transfer metadata and falls back to default names", () => {
+    expect(parseImportedStyleTransfer(JSON.stringify({
+      author: "Alice",
+      profile: {
+        heading1: {
+          color: "#224488",
+        },
+      },
+      styleName: "Paper Glow",
+    }))).toEqual(expect.objectContaining({
+      metadata: {
+        author: "Alice",
+        styleName: "Paper Glow",
+      },
+      profile: expect.objectContaining({
+        heading1: expect.objectContaining({
+          color: "#224488",
+        }),
+      }),
+    }));
+
+    expect(parseImportedStyleTransfer(JSON.stringify({
+      profile: {
+        mark: {
+          backgroundColor: "#fff2a8",
+        },
+      },
+    })).metadata).toEqual({
+      author: "无名",
+      styleName: "无名样式",
+    });
   });
 });

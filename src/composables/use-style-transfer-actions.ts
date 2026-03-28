@@ -16,7 +16,12 @@ import {
   resolveImportStylesMessage,
 } from "@/lib/style-editor-shell-actions";
 import { downloadStyleTransferDocument } from "@/lib/style-transfer-download";
-import { countStyledTargets } from "@/lib/style-transfer";
+import {
+  countStyledTargets,
+  DEFAULT_STYLE_TRANSFER_AUTHOR,
+  DEFAULT_STYLE_TRANSFER_NAME,
+  type StyleTransferMetadata,
+} from "@/lib/style-transfer";
 
 interface UseStyleTransferActionsOptions {
   cancelInlinePalettePanel: () => Promise<void>;
@@ -25,16 +30,52 @@ interface UseStyleTransferActionsOptions {
 export function useStyleTransferActions(options: UseStyleTransferActionsOptions) {
   const importFileInputRef = ref<HTMLInputElement | null>(null);
   const actionMessage = ref("");
+  const importedStyleSignature = ref("");
+
+  function resolvePromptValue(
+    promptMessage: string,
+    defaultValue: string,
+  ) {
+    if (typeof window === "undefined" || typeof window.prompt !== "function") {
+      return defaultValue;
+    }
+
+    const rawValue = window.prompt(promptMessage, defaultValue);
+    if (rawValue === null) {
+      return null;
+    }
+
+    return rawValue.trim() || defaultValue;
+  }
+
+  function resolveExportMetadata(): StyleTransferMetadata | null {
+    const author = resolvePromptValue("输入作者名称", DEFAULT_STYLE_TRANSFER_AUTHOR);
+    if (author === null) {
+      return null;
+    }
+
+    const styleName = resolvePromptValue("输入样式名称", DEFAULT_STYLE_TRANSFER_NAME);
+    if (styleName === null) {
+      return null;
+    }
+
+    return {
+      author,
+      styleName,
+    };
+  }
 
   async function handleExtractStyles() {
     await options.cancelInlinePalettePanel();
     const result = await extractCurrentStyles();
+    importedStyleSignature.value = "";
     actionMessage.value = resolveExtractStylesMessage(result);
   }
 
   async function handleResetAllStyles() {
     await options.cancelInlinePalettePanel();
     await resetAllStyles();
+    importedStyleSignature.value = "";
     actionMessage.value = RESET_ALL_STYLES_MESSAGE;
   }
 
@@ -45,8 +86,13 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
       return;
     }
 
-    const exportedContent = exportCurrentStyles();
-    downloadStyleTransferDocument(exportedContent);
+    const exportMetadata = resolveExportMetadata();
+    if (!exportMetadata) {
+      return;
+    }
+
+    const exportedContent = exportCurrentStyles(exportMetadata);
+    downloadStyleTransferDocument(exportedContent, exportMetadata);
 
     actionMessage.value = resolveExportStylesMessage({
       styledTargetCount: countStyledTargets(runtimeState.profile),
@@ -85,6 +131,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     try {
       const importedContent = await file.text();
       const result = await importStyles(importedContent);
+      importedStyleSignature.value = `${result.metadata.styleName} from ${result.metadata.author}`;
       actionMessage.value = resolveImportStylesMessage(result);
     }
     catch (error) {
@@ -121,6 +168,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     handleImportStylesChange,
     handleResetAllStyles,
     handleSavePresetPalette,
+    importedStyleSignature,
     importFileInputRef,
     openImportStylesPicker,
   };

@@ -180,11 +180,13 @@ describe("useStyleEditorShell", () => {
     const { shell, unmount } = await mountShell();
     const secondPaletteId = shell.presetPaletteCollections.value[1].id;
     const importedProfile = JSON.stringify({
+      author: "Alice",
       profile: {
         mark: {
           backgroundColor: "#fff2a8",
         },
       },
+      styleName: "Paper Glow",
     });
 
     expect(shell.activePresetPaletteId.value).toBe(shell.presetPaletteCollections.value[0].id);
@@ -213,7 +215,40 @@ describe("useStyleEditorShell", () => {
     expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8");
     expect(plugin.saveData).toHaveBeenCalledOnce();
     expect(input.value).toBe("");
+    expect(shell.importedStyleSignature.value).toBe("Paper Glow from Alice");
     expect(shell.statusCopy.value).toContain("已导入本地配置");
+
+    unmount();
+  });
+
+  it("prompts for author and style name before exporting styles", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: vi.fn().mockReturnValue("blob:style-export"),
+    });
+    Object.defineProperty(URL, "revokeObjectURL", {
+      configurable: true,
+      value: vi.fn(),
+    });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const promptSpy = vi.spyOn(window, "prompt")
+      .mockReturnValueOnce("Alice")
+      .mockReturnValueOnce("Paper Glow");
+
+    const { shell, unmount } = await mountShell();
+
+    await shell.handleExportStyles();
+
+    expect(promptSpy).toHaveBeenNthCalledWith(1, "输入作者名称", "无名");
+    expect(promptSpy).toHaveBeenNthCalledWith(2, "输入样式名称", "无名样式");
+    expect(clickSpy).toHaveBeenCalledOnce();
 
     unmount();
   });

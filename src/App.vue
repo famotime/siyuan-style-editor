@@ -5,6 +5,7 @@
   >
     <section class="style-card style-card--workspace">
       <WorkspaceHero
+        :imported-style-signature="importedStyleSignature"
         :status-copy="statusCopy"
         :set-import-file-input-ref="setImportFileInputRef"
         @extract="handleExtractStyles"
@@ -92,6 +93,7 @@ const {
   handlePresetColorSelection,
   handleResetAllStyles,
   handleSavePresetPalette,
+  importedStyleSignature,
   importFileInputRef,
   inlineColorFieldRef,
   inlineColorFieldStyle,

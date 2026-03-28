@@ -161,10 +161,15 @@ describe("style editor runtime", () => {
     selectChannel("backgroundColor");
     await applyPaletteColor("#f6d365");
 
-    const exported = exportCurrentStyles();
+    const exported = exportCurrentStyles({
+      author: "Alice",
+      styleName: "Paper Glow",
+    });
     const payload = JSON.parse(exported);
 
     expect(payload).toMatchObject({
+      author: "Alice",
+      styleName: "Paper Glow",
       type: "siyuan-style-editor-profile",
       version: 1,
       profile: expect.objectContaining({
@@ -176,11 +181,12 @@ describe("style editor runtime", () => {
     expect(typeof payload.exportedAt).toBe("string");
   });
 
-  it("imports a local style document, updates runtime state, and persists it", async () => {
+  it("imports a local style document, returns its metadata, and persists it", async () => {
     const plugin = createPluginStub();
     await initializeRuntime(plugin as never);
 
     const result = await importStyles(JSON.stringify({
+      author: "Alice",
       type: "siyuan-style-editor-profile",
       version: 1,
       exportedAt: "2026-03-26T00:00:00.000Z",
@@ -192,9 +198,14 @@ describe("style editor runtime", () => {
           backgroundColor: "#fff2a8",
         },
       },
+      styleName: "Paper Glow",
     }));
 
     expect(result).toEqual({
+      metadata: {
+        author: "Alice",
+        styleName: "Paper Glow",
+      },
       styledTargetCount: 2,
     });
     expect(runtimeState.profile.heading2.color).toBe("#3355aa");

@@ -19,6 +19,7 @@ export function useStyleEditorShell() {
     handleImportStylesChange,
     handleResetAllStyles,
     handleSavePresetPalette: persistCustomPresetPalette,
+    importedStyleSignature,
     importFileInputRef,
     openImportStylesPicker,
   } = useStyleTransferActions({
@@ -51,6 +52,7 @@ export function useStyleEditorShell() {
     handleImportStylesChange,
     handleResetAllStyles,
     handleSavePresetPalette,
+    importedStyleSignature,
     importFileInputRef,
     panelThemeVars,
     runtimeState,
