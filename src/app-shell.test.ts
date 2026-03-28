@@ -221,7 +221,10 @@ describe("app shell", () => {
     click(heroButtons[2]);
     await nextTick();
     expect(shellState.handleExportStyles).not.toHaveBeenCalled();
-    expect(container.querySelector(".workspace-hero__export-form")).not.toBeNull();
+    expect(container.querySelector(".workspace-hero__actions")?.querySelector(".workspace-hero__export-form")).toBeNull();
+    expect(container.querySelector(".workspace-hero__export-panel")).not.toBeNull();
+    expect(container.querySelector(".workspace-hero__export-panel")?.textContent).toContain("作者");
+    expect(container.querySelector(".workspace-hero__export-panel")?.textContent).toContain("样式名称");
 
     const exportAuthorInput = container.querySelector(".workspace-hero__export-input--author") as HTMLInputElement | null;
     const exportStyleInput = container.querySelector(".workspace-hero__export-input--style") as HTMLInputElement | null;
@@ -232,12 +235,12 @@ describe("app shell", () => {
     exportAuthorInput!.dispatchEvent(new Event("input", { bubbles: true }));
     exportStyleInput!.value = "Paper Glow";
     exportStyleInput!.dispatchEvent(new Event("input", { bubbles: true }));
-    container.querySelector(".workspace-hero__export-form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    container.querySelector(".workspace-hero__export-panel")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
     await nextTick();
 
     expect(shellState.handleExportStyles).toHaveBeenCalledOnce();
     expect(shellState.handleExportStyles).toHaveBeenCalledWith("Alice", "Paper Glow");
-    expect(container.querySelector(".workspace-hero__export-form")).toBeNull();
+    expect(container.querySelector(".workspace-hero__export-panel")).toBeNull();
 
     unmount();
   });

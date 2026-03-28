@@ -31,20 +31,40 @@
         >
           清除样式
         </button>
-        <div class="workspace-hero__export-wrap">
-          <button
-            v-if="!isExportFormVisible"
-            type="button"
-            class="export-styles-button"
-            @click="openExportForm"
-          >
-            导出样式
-          </button>
-          <form
-            v-else
-            class="workspace-hero__export-form"
-            @submit.prevent="submitExportForm"
-          >
+        <button
+          type="button"
+          class="export-styles-button"
+          @click="openExportForm"
+        >
+          导出样式
+        </button>
+        <button
+          type="button"
+          class="import-styles-button"
+          @click="emit('open-import')"
+        >
+          导入样式
+        </button>
+      </div>
+      <form
+        v-if="isExportFormVisible"
+        class="workspace-hero__export-panel"
+        @submit.prevent="submitExportForm"
+      >
+        <div class="workspace-hero__export-copy">
+          <p class="workspace-hero__export-kicker">
+            Export Signature
+          </p>
+          <p class="workspace-hero__export-title">
+            为导出样式填写署名信息
+          </p>
+          <p class="workspace-hero__export-description">
+            这两项信息会写入 JSON 文件，并用于默认导出文件名与后续导入展示。
+          </p>
+        </div>
+        <div class="workspace-hero__export-fields">
+          <label class="workspace-hero__export-field">
+            <span class="workspace-hero__export-label">作者</span>
             <input
               ref="exportAuthorInputRef"
               v-model="exportAuthor"
@@ -54,6 +74,9 @@
               placeholder="输入作者名称"
               @keydown.esc.prevent="closeExportForm"
             >
+          </label>
+          <label class="workspace-hero__export-field">
+            <span class="workspace-hero__export-label">样式名称</span>
             <input
               v-model="exportStyleName"
               type="text"
@@ -62,29 +85,24 @@
               placeholder="输入样式名称"
               @keydown.esc.prevent="closeExportForm"
             >
-            <button
-              type="submit"
-              class="workspace-hero__export-confirm"
-            >
-              确认
-            </button>
-            <button
-              type="button"
-              class="workspace-hero__export-cancel"
-              @click="closeExportForm"
-            >
-              取消
-            </button>
-          </form>
+          </label>
         </div>
-        <button
-          type="button"
-          class="import-styles-button"
-          @click="emit('open-import')"
-        >
-          导入样式
-        </button>
-      </div>
+        <div class="workspace-hero__export-actions">
+          <button
+            type="submit"
+            class="workspace-hero__export-confirm"
+          >
+            确认导出
+          </button>
+          <button
+            type="button"
+            class="workspace-hero__export-cancel"
+            @click="closeExportForm"
+          >
+            取消
+          </button>
+        </div>
+      </form>
       <p class="workspace-hero__status">
         {{ statusCopy }}
       </p>
@@ -172,10 +190,6 @@ function submitExportForm() {
   margin-top: 4px;
 }
 
-.workspace-hero__export-wrap {
-  display: flex;
-}
-
 .workspace-hero__summary,
 .workspace-hero__status {
   margin: 0;
@@ -213,6 +227,66 @@ function submitExportForm() {
   background: linear-gradient(135deg, #d18a27 0%, #f5d58b 36%, #7f4517 100%);
   background-clip: text;
   -webkit-background-clip: text;
+}
+
+.workspace-hero__export-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 2px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--panel-accent-outline) 42%, var(--panel-card-stroke) 58%);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--panel-chip-active-bg) 62%, transparent) 0%, transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--panel-card-bg) 88%, white 12%) 0%, var(--panel-card-bg) 100%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
+    0 14px 34px color-mix(in srgb, var(--panel-accent) 10%, transparent);
+}
+
+.workspace-hero__export-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.workspace-hero__export-kicker {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--panel-accent);
+}
+
+.workspace-hero__export-title {
+  margin: 0;
+  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.2;
+  color: var(--panel-text);
+}
+
+.workspace-hero__export-description {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--panel-text-subtle);
+}
+
+.workspace-hero__export-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.workspace-hero__export-field {
+  display: grid;
+  gap: 6px;
+}
+
+.workspace-hero__export-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--panel-text);
 }
 
 .extract-styles-button,
@@ -258,9 +332,6 @@ function submitExportForm() {
 
 .workspace-hero__export-form {
   width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
 }
 
 .workspace-hero__export-input,
@@ -287,6 +358,11 @@ function submitExportForm() {
   padding: 0 12px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.workspace-hero__export-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .workspace-hero__export-confirm {
@@ -327,6 +403,15 @@ function submitExportForm() {
 @media (max-width: 720px) {
   .workspace-hero__actions {
     grid-template-columns: 1fr;
+  }
+
+  .workspace-hero__export-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-hero__export-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }
 </style>
