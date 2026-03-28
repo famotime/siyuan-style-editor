@@ -14,6 +14,11 @@ export interface StyleEditorState {
   profile: StyleProfile;
 }
 
+export interface StyleTargetChannelRef {
+  channel: "backgroundColor" | "color";
+  target: StyleTarget;
+}
+
 type PartialState = Partial<{
   customPresetPalettes: unknown;
   profile: Partial<StyleProfile>;
@@ -62,6 +67,34 @@ export function updateTargetBackgroundColor(
       [target]: {
         ...state.profile[target],
         backgroundColor,
+      },
+    },
+  };
+}
+
+export function swapTargetChannelValues(
+  state: StyleEditorState,
+  source: StyleTargetChannelRef,
+  target: StyleTargetChannelRef,
+): StyleEditorState {
+  if (source.target === target.target && source.channel === target.channel) {
+    return state;
+  }
+
+  const sourceValue = state.profile[source.target][source.channel];
+  const targetValue = state.profile[target.target][target.channel];
+
+  return {
+    ...state,
+    profile: {
+      ...state.profile,
+      [source.target]: {
+        ...state.profile[source.target],
+        [source.channel]: targetValue,
+      },
+      [target.target]: {
+        ...state.profile[target.target],
+        [target.channel]: sourceValue,
       },
     },
   };

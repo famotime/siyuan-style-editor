@@ -1,5 +1,7 @@
 import {
   applyPaletteColor,
+  applyPaletteSequenceToTargets,
+  swapTargetChannelValues,
   deleteCustomPresetPalette,
   exportCurrentStyles,
   extractCurrentStyles,
@@ -97,6 +99,73 @@ describe("style editor runtime", () => {
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#f6d365",
+        }),
+      }),
+    });
+  });
+
+  it("applies a palette sequence to targets in order and persists once", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    await applyPaletteSequenceToTargets(
+      ["heading1", "heading2", "heading3", "heading4"],
+      "color",
+      ["#224488", "#5b8def", "#f6d365"],
+    );
+
+    expect(runtimeState.profile.heading1.color).toBe("#224488");
+    expect(runtimeState.profile.heading2.color).toBe("#5b8def");
+    expect(runtimeState.profile.heading3.color).toBe("#f6d365");
+    expect(runtimeState.profile.heading4.color).toBe("");
+    expect(plugin.saveData).toHaveBeenCalledOnce();
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      customPresetPalettes: [],
+      profile: expect.objectContaining({
+        heading1: expect.objectContaining({
+          color: "#224488",
+        }),
+        heading2: expect.objectContaining({
+          color: "#5b8def",
+        }),
+        heading3: expect.objectContaining({
+          color: "#f6d365",
+        }),
+        heading4: expect.objectContaining({
+          color: "",
+        }),
+      }),
+    });
+  });
+
+  it("swaps colors across any two target channels and persists once", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("heading2");
+    selectChannel("color");
+    await applyPaletteColor("#224488");
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+    vi.clearAllMocks();
+
+    await swapTargetChannelValues(
+      { channel: "color", target: "heading2" },
+      { channel: "backgroundColor", target: "mark" },
+    );
+
+    expect(runtimeState.profile.heading2.color).toBe("#fff2a8");
+    expect(runtimeState.profile.mark.backgroundColor).toBe("#224488");
+    expect(plugin.saveData).toHaveBeenCalledOnce();
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+      customPresetPalettes: [],
+      profile: expect.objectContaining({
+        heading2: expect.objectContaining({
+          color: "#fff2a8",
+        }),
+        mark: expect.objectContaining({
+          backgroundColor: "#224488",
         }),
       }),
     });

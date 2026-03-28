@@ -14,6 +14,8 @@ import {
 import {
   createDefaultEditorState,
   resetEditorStyles,
+  swapTargetChannelValues as swapTargetChannelValuesInState,
+  type StyleTargetChannelRef,
   updateTargetBackgroundColor,
   updateTargetColor,
   type StyleEditorState,
@@ -154,6 +156,41 @@ export function selectChannel(channel: PaintChannel) {
 
 export async function applyPaletteColor(color: string) {
   await updateSelectedPaletteColor(color);
+}
+
+export async function swapTargetChannelValues(
+  source: StyleTargetChannelRef,
+  target: StyleTargetChannelRef,
+) {
+  const nextState = swapTargetChannelValuesInState(snapshotState(), source, target);
+  replaceProfile(nextState);
+  applyInjectedStyles();
+  await persistState();
+}
+
+export async function applyPaletteSequenceToTargets(
+  targets: StyleTarget[],
+  channel: PaintChannel,
+  colors: string[],
+) {
+  const appliedTargetCount = Math.min(targets.length, colors.length);
+  let nextState = snapshotState();
+
+  for (let index = 0; index < appliedTargetCount; index += 1) {
+    const target = targets[index];
+    const color = colors[index];
+    nextState = channel === "backgroundColor"
+      ? updateTargetBackgroundColor(nextState, target, color)
+      : updateTargetColor(nextState, target, color);
+  }
+
+  replaceProfile(nextState);
+  applyInjectedStyles();
+  await persistState();
+
+  return {
+    appliedTargetCount,
+  };
 }
 
 export async function previewPaletteColor(color: string) {

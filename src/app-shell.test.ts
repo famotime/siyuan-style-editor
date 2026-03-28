@@ -85,9 +85,11 @@ function createShellState(options: {
     handleInlineColorFieldPointerDown: vi.fn(),
     handleInlineHueInput: vi.fn(),
     handleDeletePresetPalette: vi.fn(),
+    handlePresetPaletteBatchApply: vi.fn(),
     handlePresetColorSelection: vi.fn(),
     handleResetAllStyles: vi.fn(),
     handleSavePresetPalette: vi.fn(),
+    handleSwapTargetChannelValues: vi.fn(),
     importFileInputRef: ref<HTMLInputElement | null>(null),
     inlineColorFieldRef: ref<HTMLElement | null>(null),
     inlineColorFieldStyle: ref({
@@ -293,6 +295,48 @@ describe("app shell", () => {
     unmount();
   });
 
+  it("swaps channel colors by dragging one orb onto another without triggering click activation", async () => {
+    const shellState = createShellState();
+    const { container, unmount } = await mountApp(shellState);
+
+    const cards = [...container.querySelectorAll(".target-preview-card")];
+    const sourceOrb = cards[0]?.querySelectorAll(".channel-orb")[0] as HTMLElement | null;
+    const targetOrb = cards[1]?.querySelectorAll(".channel-orb")[1] as HTMLElement | null;
+
+    expect(sourceOrb).not.toBeNull();
+    expect(targetOrb).not.toBeNull();
+
+    sourceOrb!.dispatchEvent(new MouseEvent("mousedown", {
+      bubbles: true,
+      clientX: 16,
+      clientY: 16,
+    }));
+    window.dispatchEvent(new MouseEvent("mousemove", {
+      bubbles: true,
+      clientX: 40,
+      clientY: 40,
+    }));
+    targetOrb!.dispatchEvent(new MouseEvent("mouseenter", {
+      bubbles: true,
+      clientX: 40,
+      clientY: 40,
+    }));
+    window.dispatchEvent(new MouseEvent("mouseup", {
+      bubbles: true,
+      clientX: 40,
+      clientY: 40,
+    }));
+    await nextTick();
+
+    expect(shellState.handleSwapTargetChannelValues).toHaveBeenCalledWith(
+      { channel: "color", target: "heading1" },
+      { channel: "backgroundColor", target: "mark" },
+    );
+    expect(shellState.activateTargetChannel).not.toHaveBeenCalled();
+
+    unmount();
+  });
+
   it("renders the floating palette with the expected controls and interaction wiring", async () => {
     const shellState = createShellState({
       isInlinePaletteVisible: true,
@@ -324,6 +368,8 @@ describe("app shell", () => {
     expect(presetTabFrames[1]?.querySelector(".preset-palette-tab__delete")).toBeNull();
     click(presetTabs[2] ?? null);
     expect(shellState.selectPresetPaletteTab).toHaveBeenCalledWith("warm-sand");
+    presetTabs[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
+    expect(shellState.handlePresetPaletteBatchApply).toHaveBeenCalledWith("custom-palette-1");
 
     click(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete") ?? null);
     await nextTick();

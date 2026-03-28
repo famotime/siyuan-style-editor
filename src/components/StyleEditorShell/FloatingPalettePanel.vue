@@ -145,6 +145,7 @@
                     :aria-selected="activePresetPaletteId === palette.id"
                     :tabindex="activePresetPaletteId === palette.id ? 0 : -1"
                     @click="emit('select-preset-palette-tab', palette.id)"
+                    @dblclick.stop="emit('apply-preset-palette-sequence', palette.id)"
                   >
                     <span class="preset-palette-tab__name">{{ palette.label }}</span>
                     <span class="preset-palette-tab__count">{{ palette.colors.length }} 色</span>
@@ -272,6 +273,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   "apply-custom-color": [];
+  "apply-preset-palette-sequence": [paletteId: string];
   "clear-selected-target-color": [];
   "delete-preset-palette": [paletteId: string];
   "inline-color-field-pointerdown": [event: PointerEvent];
@@ -511,6 +513,7 @@ watch(
 .preset-palette-tab-frame {
   position: relative;
 }
+
 
 .preset-palette-tab {
   appearance: none;

@@ -1,6 +1,8 @@
 import {
   runtimeState,
 } from "@/style-editor-runtime";
+import type { PaintChannel } from "@/style-editor-runtime";
+import type { StyleTarget } from "@/lib/style-profile";
 import { computed } from "vue";
 
 import { useInlinePaletteSession } from "@/composables/use-inline-palette-session";
@@ -38,6 +40,17 @@ export function useStyleEditorShell() {
     await persistExportStyles(author, styleName);
   }
 
+  async function handlePresetPaletteBatchApply(paletteId: string) {
+    await inlinePaletteSession.handlePresetPaletteBatchApply(paletteId);
+  }
+
+  async function handleSwapTargetChannelValues(
+    source: { channel: PaintChannel; target: StyleTarget },
+    target: { channel: PaintChannel; target: StyleTarget },
+  ) {
+    await inlinePaletteSession.handleSwapTargetChannelValues(source, target);
+  }
+
   async function handleSavePresetPalette(name: string) {
     const savedPalette = await persistCustomPresetPalette(name);
     if (savedPalette) {
@@ -53,8 +66,10 @@ export function useStyleEditorShell() {
     handleDeletePresetPalette,
     handleExtractStyles,
     handleImportStylesChange,
+    handlePresetPaletteBatchApply,
     handleResetAllStyles,
     handleSavePresetPalette,
+    handleSwapTargetChannelValues,
     handleExportStyles,
     importedStyleSignature,
     importFileInputRef,

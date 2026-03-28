@@ -11,11 +11,13 @@ import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import {
+  applyPaletteSequenceToTargets,
   persistCurrentStyles,
   previewPaletteColor,
   runtimeState,
   selectChannel,
   selectTarget,
+  swapTargetChannelValues,
 } from "@/style-editor-runtime";
 import {
   createDefaultCustomColor,
@@ -34,6 +36,7 @@ import {
   isInlinePaletteOpen,
   toggleInlinePalette,
 } from "@/lib/inline-palette";
+import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
 import {
   buildChannelSwatchStyle,
   buildTargetPreviewStyle,
@@ -444,6 +447,34 @@ export function useInlinePaletteSession() {
     await previewInlinePaletteColor(color);
   }
 
+  async function handlePresetPaletteBatchApply(paletteId: string) {
+    const palette = presetPaletteCollections.value.find(item => item.id === paletteId);
+    if (!palette) {
+      return;
+    }
+
+    activePresetPaletteId.value = paletteId;
+
+    await applyPaletteSequenceToTargets(
+      STYLE_TARGET_OPTIONS.map(target => target.value),
+      runtimeState.selectedChannel,
+      palette.colors.map(color => color.value),
+    );
+
+    const currentColor = runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel];
+    inlinePaletteCommittedColor.value = currentColor;
+    inlinePaletteDraftColor.value = currentColor;
+    syncCustomColorDraft(currentColor, runtimeState.selectedChannel);
+  }
+
+  async function handleSwapTargetChannelValues(
+    source: { channel: PaintChannel; target: StyleTarget },
+    target: { channel: PaintChannel; target: StyleTarget },
+  ) {
+    await cancelInlinePalettePanel();
+    await swapTargetChannelValues(source, target);
+  }
+
   function selectPresetPaletteTab(paletteId: string) {
     if (!presetPaletteCollections.value.some(palette => palette.id === paletteId)) {
       return;
@@ -495,7 +526,9 @@ export function useInlinePaletteSession() {
     handleClearSelectedTargetColor,
     handleInlineColorFieldPointerDown,
     handleInlineHueInput,
+    handlePresetPaletteBatchApply,
     handlePresetColorSelection,
+    handleSwapTargetChannelValues,
     inlineColorFieldRef,
     inlineColorFieldStyle,
     inlineColorThumbStyle,

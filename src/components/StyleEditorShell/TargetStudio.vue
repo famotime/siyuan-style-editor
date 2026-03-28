@@ -86,8 +86,15 @@
             class="channel-orb"
             data-tooltip="字色"
             aria-label="字色"
-            :class="{ 'channel-orb--active': selectedTarget === target.value && selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value) }"
-            @click="emit('activate-channel', { channel: 'color', event: $event, target: target.value })"
+            :class="{
+              'channel-orb--active': selectedTarget === target.value && selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value),
+              'channel-orb--drag-source': isDragSourceOrb(target.value, 'color'),
+              'channel-orb--drop-target': isDropTargetOrb(target.value, 'color'),
+            }"
+            @mousedown="handleOrbMouseDown(target.value, 'color', $event)"
+            @mouseenter="handleOrbMouseEnter(target.value, 'color')"
+            @mouseleave="handleOrbMouseLeave(target.value, 'color')"
+            @click="handleOrbClick(target.value, 'color', $event)"
           >
             <span
               class="channel-orb__swatch"
@@ -101,8 +108,15 @@
             class="channel-orb"
             data-tooltip="底色"
             aria-label="底色"
-            :class="{ 'channel-orb--active': selectedTarget === target.value && selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value) }"
-            @click="emit('activate-channel', { channel: 'backgroundColor', event: $event, target: target.value })"
+            :class="{
+              'channel-orb--active': selectedTarget === target.value && selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value),
+              'channel-orb--drag-source': isDragSourceOrb(target.value, 'backgroundColor'),
+              'channel-orb--drop-target': isDropTargetOrb(target.value, 'backgroundColor'),
+            }"
+            @mousedown="handleOrbMouseDown(target.value, 'backgroundColor', $event)"
+            @mouseenter="handleOrbMouseEnter(target.value, 'backgroundColor')"
+            @mouseleave="handleOrbMouseLeave(target.value, 'backgroundColor')"
+            @click="handleOrbClick(target.value, 'backgroundColor', $event)"
           >
             <span
               class="channel-orb__swatch"
@@ -113,6 +127,21 @@
         </div>
       </article>
     </div>
+
+    <div
+      v-if="floatingOrbPreview"
+      class="target-studio__drag-preview"
+      :style="{
+        left: `${floatingOrbPreview.x}px`,
+        top: `${floatingOrbPreview.y}px`,
+      }"
+    >
+      <span
+        class="target-studio__drag-preview-swatch"
+        :class="{ 'target-studio__drag-preview-swatch--empty': floatingOrbPreview.isEmpty }"
+        :style="{ '--drag-orb-fill': floatingOrbPreview.background }"
+      />
+    </div>
   </section>
 </template>
 
@@ -121,6 +150,7 @@ import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import {
+  onBeforeUnmount,
   nextTick,
   ref,
 } from "vue";
@@ -137,7 +167,23 @@ interface ChannelSwatch {
   isEmpty: boolean;
 }
 
-defineProps<{
+interface DragOrbState {
+  channel: PaintChannel;
+  target: StyleTarget;
+  x: number;
+  y: number;
+}
+
+interface FloatingOrbPreview {
+  background: string;
+  isEmpty: boolean;
+  x: number;
+  y: number;
+}
+
+const DRAG_THRESHOLD = 6;
+
+const props = defineProps<{
   getChannelSwatch: (target: StyleTarget, channel: PaintChannel) => ChannelSwatch;
   getTargetPreviewStyle: (target: StyleTarget) => Record<string, string>;
   isInlinePaletteOpenForTarget: (target: StyleTarget) => boolean;
@@ -150,11 +196,19 @@ const emit = defineEmits<{
   "activate-channel": [payload: { channel: PaintChannel; event: MouseEvent; target: StyleTarget }];
   "save-preset-palette": [name: string];
   "select-target": [target: StyleTarget];
+  "swap-channel-value": [
+    source: { channel: PaintChannel; target: StyleTarget },
+    target: { channel: PaintChannel; target: StyleTarget },
+  ];
 }>();
 
 const isSaveFormVisible = ref(false);
 const saveInputRef = ref<HTMLInputElement | null>(null);
 const savePaletteName = ref("");
+const dragOrbState = ref<DragOrbState | null>(null);
+const dragHoverState = ref<{ channel: PaintChannel; target: StyleTarget } | null>(null);
+const floatingOrbPreview = ref<FloatingOrbPreview | null>(null);
+const suppressOrbClickUntil = ref(0);
 
 async function openSaveForm() {
   isSaveFormVisible.value = true;
@@ -176,6 +230,132 @@ function submitSaveForm() {
   emit("save-preset-palette", trimmedName);
   closeSaveForm();
 }
+
+function isSameOrb(
+  left: { channel: PaintChannel; target: StyleTarget } | null,
+  right: { channel: PaintChannel; target: StyleTarget } | null,
+) {
+  return left?.target === right?.target && left?.channel === right?.channel;
+}
+
+function clearDragInteraction() {
+  dragOrbState.value = null;
+  dragHoverState.value = null;
+  floatingOrbPreview.value = null;
+}
+
+function handleWindowMouseMove(event: MouseEvent) {
+  if (!dragOrbState.value) {
+    return;
+  }
+
+  const deltaX = event.clientX - dragOrbState.value.x;
+  const deltaY = event.clientY - dragOrbState.value.y;
+  const hasExceededThreshold = Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD;
+
+  if (!floatingOrbPreview.value && !hasExceededThreshold) {
+    return;
+  }
+
+  if (!floatingOrbPreview.value) {
+    const sourceSwatch = props.getChannelSwatch(dragOrbState.value.target, dragOrbState.value.channel);
+    floatingOrbPreview.value = {
+      background: sourceSwatch.background,
+      isEmpty: sourceSwatch.isEmpty,
+      x: event.clientX,
+      y: event.clientY,
+    };
+    return;
+  }
+
+  floatingOrbPreview.value = {
+    ...floatingOrbPreview.value,
+    x: event.clientX,
+    y: event.clientY,
+  };
+}
+
+function handleWindowMouseUp() {
+  if (dragOrbState.value && floatingOrbPreview.value && dragHoverState.value && !isSameOrb(dragOrbState.value, dragHoverState.value)) {
+    emit(
+      "swap-channel-value",
+      {
+        channel: dragOrbState.value.channel,
+        target: dragOrbState.value.target,
+      },
+      dragHoverState.value,
+    );
+    suppressOrbClickUntil.value = Date.now() + 250;
+  }
+
+  window.removeEventListener("mousemove", handleWindowMouseMove);
+  window.removeEventListener("mouseup", handleWindowMouseUp);
+  clearDragInteraction();
+}
+
+function handleOrbMouseDown(target: StyleTarget, channel: PaintChannel, event: MouseEvent) {
+  if (event.button !== 0) {
+    return;
+  }
+
+  event.preventDefault();
+  window.removeEventListener("mousemove", handleWindowMouseMove);
+  window.removeEventListener("mouseup", handleWindowMouseUp);
+  dragOrbState.value = {
+    channel,
+    target,
+    x: event.clientX,
+    y: event.clientY,
+  };
+  dragHoverState.value = null;
+  floatingOrbPreview.value = null;
+  window.addEventListener("mousemove", handleWindowMouseMove);
+  window.addEventListener("mouseup", handleWindowMouseUp);
+}
+
+function handleOrbMouseEnter(target: StyleTarget, channel: PaintChannel) {
+  if (!floatingOrbPreview.value) {
+    return;
+  }
+
+  dragHoverState.value = {
+    channel,
+    target,
+  };
+}
+
+function handleOrbMouseLeave(target: StyleTarget, channel: PaintChannel) {
+  if (isSameOrb(dragHoverState.value, { channel, target })) {
+    dragHoverState.value = null;
+  }
+}
+
+function handleOrbClick(target: StyleTarget, channel: PaintChannel, event: MouseEvent) {
+  if (Date.now() < suppressOrbClickUntil.value) {
+    return;
+  }
+
+  emit("activate-channel", {
+    channel,
+    event,
+    target,
+  });
+}
+
+function isDragSourceOrb(target: StyleTarget, channel: PaintChannel) {
+  return Boolean(floatingOrbPreview.value) && isSameOrb(dragOrbState.value, { channel, target });
+}
+
+function isDropTargetOrb(target: StyleTarget, channel: PaintChannel) {
+  return Boolean(floatingOrbPreview.value)
+    && isSameOrb(dragHoverState.value, { channel, target })
+    && !isSameOrb(dragOrbState.value, { channel, target });
+}
+
+onBeforeUnmount(() => {
+  window.removeEventListener("mousemove", handleWindowMouseMove);
+  window.removeEventListener("mouseup", handleWindowMouseUp);
+});
 </script>
 
 <style scoped lang="scss">
@@ -493,11 +673,25 @@ function submitSaveForm() {
   box-shadow: var(--panel-hover-shadow);
 }
 
+.channel-orb--drag-source {
+  opacity: 0.32;
+  transform: scale(0.94);
+}
+
 .channel-orb--active {
   background: var(--panel-chip-active-bg);
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--panel-accent) 34%, transparent 66%),
     0 8px 18px color-mix(in srgb, var(--panel-accent-soft) 42%, transparent 58%);
+}
+
+.channel-orb--drop-target {
+  background: color-mix(in srgb, var(--panel-chip-active-bg) 82%, white 18%);
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--panel-accent) 56%, transparent 44%),
+    0 0 0 4px color-mix(in srgb, var(--panel-accent-soft) 26%, transparent 74%),
+    0 12px 24px color-mix(in srgb, var(--panel-accent-soft) 32%, transparent 68%);
+  transform: scale(1.08);
 }
 
 .channel-orb::before,
@@ -552,6 +746,32 @@ function submitSaveForm() {
 
 .channel-orb__swatch--empty {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--panel-text-subtle) 22%, transparent 78%);
+}
+
+.target-studio__drag-preview {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.target-studio__drag-preview-swatch {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid var(--panel-dot-border);
+  background: var(--drag-orb-fill);
+  box-shadow:
+    0 10px 24px color-mix(in srgb, var(--panel-accent-soft) 24%, transparent 76%),
+    0 0 0 6px color-mix(in srgb, white 22%, transparent 78%);
+}
+
+.target-studio__drag-preview-swatch--empty {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--panel-text-subtle) 22%, transparent 78%),
+    0 10px 24px color-mix(in srgb, var(--panel-accent-soft) 24%, transparent 76%),
+    0 0 0 6px color-mix(in srgb, white 22%, transparent 78%);
 }
 
 @media (max-width: 720px) {

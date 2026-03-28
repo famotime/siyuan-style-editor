@@ -2,6 +2,7 @@ import {
   createDefaultEditorState,
   normalizeEditorState,
   resetEditorStyles,
+  swapTargetChannelValues,
   updateTargetBackgroundColor,
   updateTargetColor,
 } from "@/lib/style-editor-state";
@@ -84,5 +85,22 @@ describe("style editor state", () => {
     expect(resetState.profile.mark.backgroundColor).toBe("");
     expect(resetState.profile.heading1.color).toBe("");
     expect(resetState.profile.codeBlock.backgroundColor).toBe("");
+  });
+
+  it("swaps colors between any two target channels", () => {
+    const state = updateTargetBackgroundColor(
+      updateTargetColor(createDefaultEditorState(), "heading2", "#224488"),
+      "mark",
+      "#fff2a8",
+    );
+
+    const swappedState = swapTargetChannelValues(
+      state,
+      { channel: "color", target: "heading2" },
+      { channel: "backgroundColor", target: "mark" },
+    );
+
+    expect(swappedState.profile.heading2.color).toBe("#fff2a8");
+    expect(swappedState.profile.mark.backgroundColor).toBe("#224488");
   });
 });

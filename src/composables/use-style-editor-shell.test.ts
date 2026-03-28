@@ -14,6 +14,7 @@ import {
   teardownRuntime,
 } from "@/style-editor-runtime";
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell";
+import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
 
 function createPluginStub(savedState?: unknown) {
   return {
@@ -244,6 +245,32 @@ describe("useStyleEditorShell", () => {
     await shell.handleExportStyles("Alice", "Paper Glow");
 
     expect(clickSpy).toHaveBeenCalledOnce();
+
+    unmount();
+  });
+
+  it("applies preset palette colors to targets in catalog order on batch apply", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectChannel("color");
+
+    const { shell, unmount } = await mountShell();
+    const paletteId = shell.presetPaletteCollections.value[0]?.id;
+    const paletteColors = shell.presetPaletteCollections.value[0]?.colors ?? [];
+
+    await shell.handlePresetPaletteBatchApply(paletteId!);
+
+    paletteColors.forEach((color, index) => {
+      const target = STYLE_TARGET_OPTIONS[index]?.value;
+      expect(runtimeState.profile[target].color).toBe(color.value);
+    });
+
+    const nextTarget = STYLE_TARGET_OPTIONS[paletteColors.length]?.value;
+    if (nextTarget) {
+      expect(runtimeState.profile[nextTarget].color).toBe("");
+    }
+    expect(plugin.saveData).toHaveBeenCalledOnce();
 
     unmount();
   });

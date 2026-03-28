@@ -24,6 +24,7 @@
         :is-inline-palette-open-for-target="isInlinePaletteOpenForTarget"
         @save-preset-palette="handleSavePresetPalette"
         @select-target="selectPreviewTarget"
+        @swap-channel-value="handleSwapTargetChannelValues"
         @activate-channel="handleTargetChannelActivation"
       />
     </section>
@@ -54,6 +55,7 @@
       @apply-custom-color="applyCustomColorDraft"
       @delete-preset-palette="handleDeletePresetPalette"
       @toggle-preset-palette-section="togglePresetPaletteSection"
+      @apply-preset-palette-sequence="handlePresetPaletteBatchApply"
       @select-preset-palette-tab="selectPresetPaletteTab"
       @select-preset-color="handlePresetColorSelection"
       @clear-selected-target-color="handleClearSelectedTargetColor"
@@ -90,9 +92,11 @@ const {
   handleImportStylesChange,
   handleInlineColorFieldPointerDown,
   handleInlineHueInput,
+  handlePresetPaletteBatchApply,
   handlePresetColorSelection,
   handleResetAllStyles,
   handleSavePresetPalette,
+  handleSwapTargetChannelValues,
   importedStyleSignature,
   importFileInputRef,
   inlineColorFieldRef,
