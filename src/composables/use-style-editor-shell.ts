@@ -15,6 +15,7 @@ export function useStyleEditorShell() {
   const inlinePaletteSession = useInlinePaletteSession();
   const {
     actionMessage,
+    handleCreateStylePreviewDocument,
     handleDeletePresetPalette,
     handleExportStyles,
     handleExtractStyles,
@@ -44,6 +45,7 @@ export function useStyleEditorShell() {
   }
 
   return {
+    handleCreateStylePreviewDocument,
     handleDeletePresetPalette,
     handleExtractStyles,
     handleImportStylesChange,

@@ -8,6 +8,7 @@
         :imported-style-signature="importedStyleSignature"
         :status-copy="statusCopy"
         :set-import-file-input-ref="setImportFileInputRef"
+        @create-preview-document="handleCreateStylePreviewDocument"
         @extract="handleExtractStyles"
         @reset="handleResetAllStyles"
         @export="handleExportStyles"
@@ -86,6 +87,7 @@ const {
   getChannelSwatch,
   getTargetPreviewStyle,
   handleClearSelectedTargetColor,
+  handleCreateStylePreviewDocument,
   handleDeletePresetPalette,
   handleExportStyles,
   handleExtractStyles,

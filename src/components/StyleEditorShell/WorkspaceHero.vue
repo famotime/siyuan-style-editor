@@ -33,6 +33,13 @@
         </button>
         <button
           type="button"
+          class="import-styles-button"
+          @click="emit('open-import')"
+        >
+          导入样式
+        </button>
+        <button
+          type="button"
           class="export-styles-button"
           @click="openExportForm"
         >
@@ -40,10 +47,10 @@
         </button>
         <button
           type="button"
-          class="import-styles-button"
-          @click="emit('open-import')"
+          class="preview-document-button workspace-hero__preview-button"
+          @click="emit('create-preview-document')"
         >
-          导入样式
+          生成样式效果预览文档
         </button>
       </div>
       <form
@@ -57,9 +64,6 @@
           </p>
           <p class="workspace-hero__export-title">
             为导出样式填写署名信息
-          </p>
-          <p class="workspace-hero__export-description">
-            这两项信息会写入 JSON 文件，并用于默认导出文件名与后续导入展示。
           </p>
         </div>
         <div class="workspace-hero__export-fields">
@@ -92,7 +96,7 @@
             type="submit"
             class="workspace-hero__export-confirm"
           >
-            确认导出
+            确认
           </button>
           <button
             type="button"
@@ -135,6 +139,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
+  "create-preview-document": [];
   "import-change": [event: Event];
   "open-import": [];
   extract: [];
@@ -188,6 +193,10 @@ function submitExportForm() {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-top: 4px;
+}
+
+.workspace-hero__preview-button {
+  grid-column: 1 / -1;
 }
 
 .workspace-hero__summary,
@@ -293,6 +302,7 @@ function submitExportForm() {
 .extract-styles-button,
 .export-styles-button,
 .import-styles-button,
+.preview-document-button,
 .reset-styles-button {
   min-height: 32px;
   padding: 0 12px;
@@ -329,6 +339,13 @@ function submitExportForm() {
   border: 1px solid color-mix(in srgb, var(--b3-card-error-color) 38%, var(--panel-card-stroke) 62%);
   background: color-mix(in srgb, var(--b3-card-error-background) 30%, var(--panel-pill-bg) 70%);
   color: color-mix(in srgb, var(--b3-card-error-color) 78%, var(--panel-text) 22%);
+}
+
+.preview-document-button {
+  border: 1px solid color-mix(in srgb, var(--panel-accent-outline) 38%, var(--panel-card-stroke) 62%);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--panel-chip-active-bg) 54%, white 46%) 0%, color-mix(in srgb, var(--panel-card-bg) 92%, white 8%) 100%);
+  color: color-mix(in srgb, var(--panel-accent) 54%, var(--panel-text) 46%);
 }
 
 .workspace-hero__export-form {
@@ -384,6 +401,7 @@ function submitExportForm() {
 .extract-styles-button:hover,
 .export-styles-button:hover,
 .import-styles-button:hover,
+.preview-document-button:hover,
 .reset-styles-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--panel-hover-shadow);

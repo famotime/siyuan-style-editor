@@ -1,6 +1,10 @@
 import { ref } from "vue";
 
 import {
+  pushErrMsg,
+  pushMsg,
+} from "@/api";
+import {
   deleteCustomPresetPalette,
   exportCurrentStyles,
   extractCurrentStyles,
@@ -22,6 +26,7 @@ import {
   DEFAULT_STYLE_TRANSFER_NAME,
   type StyleTransferMetadata,
 } from "@/lib/style-transfer";
+import { createStylePreviewDocument } from "@/lib/style-preview-document";
 
 interface UseStyleTransferActionsOptions {
   cancelInlinePalettePanel: () => Promise<void>;
@@ -70,6 +75,26 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     actionMessage.value = resolveExportStylesMessage({
       styledTargetCount: countStyledTargets(runtimeState.profile),
     });
+  }
+
+  async function handleCreateStylePreviewDocument() {
+    await options.cancelInlinePalettePanel();
+
+    try {
+      const result = await createStylePreviewDocument();
+      const message = `已生成预览文档「${result.title}」，请到 Daily Notes 目录打开查看样式效果。`;
+      actionMessage.value = message;
+      await pushMsg(message, 5000);
+      return result;
+    }
+    catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : "生成样式效果预览文档失败，请稍后重试。";
+      actionMessage.value = message;
+      await pushErrMsg(message, 5000);
+      return null;
+    }
   }
 
   async function handleSavePresetPalette(name: string) {
@@ -135,6 +160,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
   return {
     actionMessage,
+    handleCreateStylePreviewDocument,
     handleDeletePresetPalette,
     handleExportStyles,
     handleExtractStyles,

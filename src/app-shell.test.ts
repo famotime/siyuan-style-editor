@@ -83,6 +83,7 @@ function createShellState(options: {
       color: runtimeState.profile[target as "heading1" | "mark"].color || "var(--panel-text)",
     })),
     handleClearSelectedTargetColor: vi.fn(),
+    handleCreateStylePreviewDocument: vi.fn(),
     handleExportStyles: vi.fn(),
     handleExtractStyles: vi.fn(),
     handleImportStylesChange: vi.fn(),
@@ -204,15 +205,18 @@ describe("app shell", () => {
       "清除样式",
       "导入样式",
       "导出样式",
+      "生成样式效果预览文档",
     ]);
 
     click(heroButtons[0]);
     click(heroButtons[1]);
     click(heroButtons[2]);
+    click(heroButtons[4]);
 
     expect(shellState.handleExtractStyles).toHaveBeenCalledOnce();
     expect(shellState.handleResetAllStyles).toHaveBeenCalledOnce();
     expect(shellState.openImportStylesPicker).toHaveBeenCalledOnce();
+    expect(shellState.handleCreateStylePreviewDocument).toHaveBeenCalledOnce();
 
     const input = container.querySelector(".workspace-hero__file-input");
     expect(input?.getAttribute("type")).toBe("file");
@@ -255,7 +259,7 @@ describe("app shell", () => {
     const componentSource = readFileSync(
       resolve(process.cwd(), "src", "components", "StyleEditorShell", "WorkspaceHero.vue"),
       "utf8",
-    );
+    ).replace(/\r\n/g, "\n");
 
     expect(componentSource).toContain([
       ".workspace-hero__export-field {",
@@ -268,6 +272,10 @@ describe("app shell", () => {
       "  width: 100%;",
       "  min-width: 0;",
       "  box-sizing: border-box;",
+    ].join("\n"));
+    expect(componentSource).toContain([
+      ".workspace-hero__preview-button {",
+      "  grid-column: 1 / -1;",
     ].join("\n"));
   });
 

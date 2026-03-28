@@ -1,3 +1,18 @@
+const mockCreateStylePreviewDocument = vi.hoisted(() => vi.fn());
+const mockPushErrMsg = vi.hoisted(() => vi.fn());
+const mockPushMsg = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/style-preview-document", () => ({
+  createStylePreviewDocument: mockCreateStylePreviewDocument,
+}));
+
+vi.mock("@/api", () => {
+  return {
+    pushErrMsg: mockPushErrMsg,
+    pushMsg: mockPushMsg,
+  };
+});
+
 import {
   createApp,
   defineComponent,
@@ -77,6 +92,9 @@ describe("useStyleEditorShell", () => {
     teardownRuntime();
     document.head.innerHTML = "";
     document.body.innerHTML = "";
+    mockCreateStylePreviewDocument.mockReset();
+    mockPushErrMsg.mockReset();
+    mockPushMsg.mockReset();
     vi.restoreAllMocks();
   });
 
@@ -251,6 +269,42 @@ describe("useStyleEditorShell", () => {
     await shell.handleExportStyles("Alice", "Paper Glow");
 
     expect(clickSpy).toHaveBeenCalledOnce();
+
+    unmount();
+  });
+
+  it("creates a style preview document and surfaces the generated location", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+    mockCreateStylePreviewDocument.mockResolvedValue({
+      documentId: "20260328123456-preview",
+      notebookId: "box-current",
+      path: "/日记/2026/03/2026-03-28 样式效果预览",
+      title: "2026-03-28 样式效果预览",
+    });
+
+    const { shell, unmount } = await mountShell();
+
+    await shell.handleCreateStylePreviewDocument();
+
+    expect(mockCreateStylePreviewDocument).toHaveBeenCalledOnce();
+    expect(mockPushMsg).toHaveBeenCalledWith("已生成预览文档「2026-03-28 样式效果预览」，请到 Daily Notes 目录打开查看样式效果。", 5000);
+    expect(shell.statusCopy.value).toBe("已生成预览文档「2026-03-28 样式效果预览」，请到 Daily Notes 目录打开查看样式效果。");
+
+    unmount();
+  });
+
+  it("pushes an error notification when preview document creation fails", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+    mockCreateStylePreviewDocument.mockRejectedValue(new Error("Daily Notes 目录未配置。"));
+
+    const { shell, unmount } = await mountShell();
+
+    await shell.handleCreateStylePreviewDocument();
+
+    expect(mockPushErrMsg).toHaveBeenCalledWith("Daily Notes 目录未配置。", 5000);
+    expect(shell.statusCopy.value).toBe("Daily Notes 目录未配置。");
 
     unmount();
   });
