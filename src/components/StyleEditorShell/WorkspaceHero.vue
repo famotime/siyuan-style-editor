@@ -5,7 +5,7 @@
         Live Document Styling
       </p>
       <h1 class="style-editor-shell__title">
-        文档样式编辑器
+        粉刷匠
       </h1>
       <p
         v-if="importedStyleSignature"
@@ -14,7 +14,7 @@
         {{ importedStyleSignature }}
       </p>
       <p class="workspace-hero__summary">
-        以更轻的操作路径调整对象文字色与背景色，提取、清除与即时预览统一在一个编辑台里。
+        拾色、调配、粉刷，定义你的阅读空间。
       </p>
       <div class="workspace-hero__actions">
         <button

@@ -2,7 +2,7 @@
   "name": "siyuan-style-editor",
   "author": "OpenAI Codex",
   "url": "",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "minAppVersion": "2.10.14",
   "disabledInPublish": false,
   "backends": [
@@ -14,7 +14,7 @@
   "displayName": {
     "default": "siyuan-style-editor",
     "en_US": "SiYuan Style Editor",
-    "zh_CN": "文档样式编辑器"
+    "zh_CN": "粉刷匠"
   },
   "description": {
     "default": "Template-driven style editor for headings and bold text",

@@ -33,7 +33,7 @@ export default class SiyuanStyleEditorPlugin extends Plugin {
           height: 0,
         },
         icon: "iconTheme",
-        title: "文档样式编辑器",
+        title: "粉刷匠",
         show: true,
       },
       data: {},
