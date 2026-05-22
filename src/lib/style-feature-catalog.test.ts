@@ -68,10 +68,39 @@ describe("style feature catalog", () => {
     const css = buildFeatureStyleCss(profile);
 
     expect(css).toContain(".protyle-wysiwyg .bq");
-    expect(css).toContain("box-shadow: 0 0 0 2px rgb(235, 235, 235) inset !important;");
-    expect(css).toContain("background-color: rgb(180, 180, 180);");
+    expect(css).toContain("box-shadow: 0 0 0 1px rgb(235, 235, 235) inset !important;");
+    expect(css).toContain("border-left: 0.25em solid rgb(180, 180, 180) !important;");
     expect(css).toContain(".protyle-wysiwyg img:not(.av__gallery-img)");
     expect(css).toContain("border-radius: 9px !important;");
     expect(css).not.toContain("paragraph hover");
+  });
+
+  it("maps the reference blockquote style into configurable css", () => {
+    const profile = normalizeFeatureProfile({
+      blockquoteFrame: {
+        enabled: true,
+        values: {
+          backgroundColor: "#FFFAFA",
+          borderColor: "#3D9140",
+          color: "#4D4D4D",
+          lineColor: "#3D9140",
+          marginY: 4,
+          padding: 4,
+          radius: 0,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".b3-typography blockquote");
+    expect(css).toContain(".b3-typography .bq");
+    expect(css).toContain(".protyle-wysiwyg blockquote");
+    expect(css).toContain(".protyle-wysiwyg .bq");
+    expect(css).toContain("padding: 4px;");
+    expect(css).toContain("color: #4D4D4D !important;");
+    expect(css).toContain("border-left: 0.25em solid #3D9140 !important;");
+    expect(css).toContain("background-color: #FFFAFA !important;");
+    expect(css).toContain("margin: 4px 0;");
   });
 });

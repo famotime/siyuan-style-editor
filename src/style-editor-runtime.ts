@@ -12,6 +12,7 @@ import {
   savePersistedEditorState,
 } from "@/lib/style-editor-persistence";
 import {
+  createDefaultFeatureProfile,
   buildFeatureStyleCss,
   normalizeFeatureProfile,
   type FeatureStyleConfig,
@@ -250,6 +251,23 @@ export async function updateFeatureStyle(
 ) {
   const nextState = updateFeatureConfig(snapshotState(), featureId, config);
   await commitState(nextState);
+}
+
+export function getFeatureConfig(featureId: FeatureStyleId): FeatureStyleConfig {
+  const normalizedProfile = normalizeFeatureProfile(runtimeState.featureProfile);
+  return {
+    enabled: normalizedProfile[featureId].enabled,
+    values: {
+      ...normalizedProfile[featureId].values,
+    },
+  };
+}
+
+export async function resetFeatureStyles() {
+  await commitState({
+    ...snapshotState(),
+    featureProfile: createDefaultFeatureProfile(),
+  });
 }
 
 export async function resetAllStyles() {

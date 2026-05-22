@@ -151,36 +151,35 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
   },
   {
     buildCss: config => `
+.b3-typography blockquote,
+.b3-typography .bq,
+.protyle-wysiwyg blockquote,
 .protyle-wysiwyg .bq {
-  background-color: transparent !important;
-  border-radius: ${px(config.values.radius, 5)};
-  padding: 8px 12px 8px 20px;
-  color: inherit;
-  position: relative;
-}
-
-.protyle-wysiwyg .bq::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 6px;
-  width: 4px;
-  background-color: ${stringValue(config.values.lineColor, "rgb(180, 180, 180)")};
-  border-radius: 2px;
+  padding: ${px(config.values.padding, 4)};
+  color: ${stringValue(config.values.color, "#4D4D4D")} !important;
+  border-left: 0.25em solid ${stringValue(config.values.lineColor, "#3D9140")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "#FFFAFA")} !important;
+  margin: ${px(config.values.marginY, 4)} 0;
+  border-radius: ${px(config.values.radius, 0)};
 }
 
 .protyle-wysiwyg .bq:not(.bq .bq) {
-  box-shadow: 0 0 0 2px ${stringValue(config.values.borderColor, "rgb(235, 235, 235)")} inset !important;
-}
-
-.protyle-wysiwyg .bq .bq {
-  box-shadow: none !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.borderColor, "transparent")} inset !important;
 }`.trim(),
     controls: [
       {
+        key: "backgroundColor",
+        label: "底色",
+        type: "color",
+      },
+      {
+        key: "color",
+        label: "字色",
+        type: "color",
+      },
+      {
         key: "borderColor",
-        label: "边框色",
+        label: "外框色",
         type: "color",
       },
       {
@@ -197,13 +196,35 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
         type: "number",
         unit: "px",
       },
+      {
+        key: "padding",
+        label: "内边距",
+        max: 24,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "marginY",
+        label: "上下间距",
+        max: 24,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
     ],
     defaults: createDefaultConfig({
-      borderColor: "rgb(235, 235, 235)",
-      lineColor: "rgb(180, 180, 180)",
-      radius: 5,
+      backgroundColor: "#FFFAFA",
+      borderColor: "transparent",
+      color: "#4D4D4D",
+      lineColor: "#3D9140",
+      marginY: 4,
+      padding: 4,
+      radius: 0,
     }),
-    hint: "为引述块保留竖线并增加外框层次。",
+    hint: "按参考样式配置引述块的竖线、颜色和间距。",
     label: "引述块边框竖线",
     preview: "引述",
     risk: "正文安全",

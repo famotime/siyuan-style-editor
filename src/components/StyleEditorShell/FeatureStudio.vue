@@ -165,6 +165,11 @@ function getPreviewStyle(featureId: FeatureStyleId) {
   if (featureId === "blockquoteFrame") {
     style.boxShadow = `inset 0 0 0 2px ${values.borderColor}`;
     style.borderLeft = `4px solid ${values.lineColor}`;
+    style.backgroundColor = String(values.backgroundColor);
+    style.borderRadius = `${values.radius}px`;
+    style.color = String(values.color);
+    style.margin = `${values.marginY}px 0`;
+    style.padding = `${values.padding}px`;
   }
   if (featureId === "tableStyle") {
     style.backgroundColor = String(values.headerBackgroundColor);

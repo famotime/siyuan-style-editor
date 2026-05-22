@@ -16,6 +16,8 @@ import {
   selectTarget,
   teardownRuntime,
   updateFeatureStyle,
+  getFeatureConfig,
+  resetFeatureStyles,
 } from "@/style-editor-runtime";
 
 function createPluginStub(savedState?: unknown) {
@@ -218,6 +220,61 @@ describe("style editor runtime", () => {
 
     expect(runtimeState.featureProfile.imageRadius.enabled).toBe(false);
     expect(styleElement?.textContent).toBe("");
+  });
+
+  it("returns normalized feature config snapshots and resets feature styles without clearing target styles", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    selectTarget("mark");
+    selectChannel("backgroundColor");
+    await applyPaletteColor("#fff2a8");
+    await updateFeatureStyle("blockquoteFrame", {
+      enabled: true,
+      values: {
+        backgroundColor: "#FFFAFA",
+        color: "#4D4D4D",
+        lineColor: "#3D9140",
+        padding: 4,
+      },
+    });
+    vi.clearAllMocks();
+
+    const config = getFeatureConfig("blockquoteFrame");
+    expect(config).toEqual(expect.objectContaining({
+      enabled: true,
+      values: expect.objectContaining({
+        backgroundColor: "#FFFAFA",
+        color: "#4D4D4D",
+        lineColor: "#3D9140",
+        padding: 4,
+      }),
+    }));
+    config.values.backgroundColor = "#000000";
+    expect(runtimeState.featureProfile.blockquoteFrame.values.backgroundColor).toBe("#FFFAFA");
+
+    await resetFeatureStyles();
+
+    expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8");
+    expect(runtimeState.featureProfile.blockquoteFrame.enabled).toBe(false);
+    expect(runtimeState.featureProfile.blockquoteFrame.values.backgroundColor).toBe("#FFFAFA");
+    expect(plugin.saveData).toHaveBeenCalledOnce();
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
+      featureProfile: expect.objectContaining({
+        blockquoteFrame: expect.objectContaining({
+          enabled: false,
+        }),
+      }),
+      profile: expect.objectContaining({
+        mark: expect.objectContaining({
+          backgroundColor: "#fff2a8",
+        }),
+      }),
+    }));
+
+    const styleElement = document.getElementById("siyuan-style-editor-style");
+    expect(styleElement?.textContent).toContain("background-color: #fff2a8 !important;");
+    expect(styleElement?.textContent).not.toContain("border-left: 0.25em solid #3D9140");
   });
 
   it("can roll previewed palette colors back to the last committed value without persisting", async () => {
