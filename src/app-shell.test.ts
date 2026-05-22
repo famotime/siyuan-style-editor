@@ -118,6 +118,64 @@ function createShellState(options: {
         value: "linkStyle",
       },
     ],
+    bodySafeFeatureOptions: [
+      {
+        controls: [
+          {
+            key: "backgroundColor",
+            label: "悬停底色",
+            type: "color",
+          },
+          {
+            key: "transitionMs",
+            label: "过渡时间",
+            type: "number",
+          },
+        ],
+        hint: "鼠标经过正文块时提供轻微底色和阴影反馈。",
+        label: "段落悬停高亮",
+        preview: "段落块",
+        risk: "正文安全",
+        value: "paragraphHover",
+      },
+      {
+        controls: [
+          {
+            key: "radius",
+            label: "图片圆角",
+            type: "number",
+          },
+        ],
+        hint: "为编辑区图片增加统一圆角。",
+        label: "圆角图片",
+        preview: "图片",
+        risk: "正文安全",
+        value: "imageRadius",
+      },
+      {
+        controls: [
+          {
+            key: "color",
+            label: "链接字色",
+            type: "color",
+          },
+          {
+            key: "lineStyle",
+            label: "下划线",
+            options: [
+              { label: "虚线", value: "dashed" },
+            ],
+            type: "select",
+          },
+        ],
+        hint: "统一块内超链接的颜色和悬停反馈。",
+        label: "超链接强调",
+        preview: "链接",
+        risk: "正文安全",
+        value: "linkStyle",
+      },
+    ],
+    editorUiFeatureOptions: [],
     STYLE_TARGET_OPTIONS: [
       {
         hint: "用于文章总标题与大章节入口",
@@ -333,6 +391,25 @@ describe("app shell", () => {
     expect(shellState.handleExportStyles).toHaveBeenCalledOnce();
     expect(shellState.handleExportStyles).toHaveBeenCalledWith("Alice", "Paper Glow");
     expect(container.querySelector(".workspace-hero__export-panel")).toBeNull();
+
+    unmount();
+  });
+
+  it("renders feature cards in both FeatureStudio and EditorUiStudio panels", async () => {
+    const shellState = createShellState();
+    const { container, unmount } = await mountApp(shellState);
+
+    const featureStudio = container.querySelector(".feature-studio");
+    const editorUiStudio = container.querySelector(".editor-ui-studio");
+
+    expect(featureStudio).not.toBeNull();
+    expect(editorUiStudio).not.toBeNull();
+
+    const bodySafeCards = featureStudio!.querySelectorAll(".feature-card");
+    const editorUiCards = editorUiStudio!.querySelectorAll(".feature-card");
+
+    expect(bodySafeCards.length).toBe(shellState.bodySafeFeatureOptions.length);
+    expect(editorUiCards.length).toBe(shellState.editorUiFeatureOptions.length);
 
     unmount();
   });

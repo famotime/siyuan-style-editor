@@ -8,7 +8,7 @@ import { computed } from "vue";
 import { useInlinePaletteSession } from "@/composables/use-inline-palette-session";
 import { usePanelThemeVars } from "@/composables/use-panel-theme-vars";
 import { useStyleTransferActions } from "@/composables/use-style-transfer-actions";
-import { FEATURE_STYLE_OPTIONS } from "@/lib/style-feature-catalog";
+import { FEATURE_STYLE_OPTIONS, BODY_SAFE_FEATURE_OPTIONS, EDITOR_UI_FEATURE_OPTIONS } from "@/lib/style-feature-catalog";
 import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
 import {
   updateFeatureStyle,
@@ -66,7 +66,11 @@ export function useStyleEditorShell() {
     selectedTargetMeta,
     openImportStylesPicker,
     statusCopy,
+    bodySafeFeatureOptions: BODY_SAFE_FEATURE_OPTIONS,
+    editorUiFeatureOptions: EDITOR_UI_FEATURE_OPTIONS,
     FEATURE_STYLE_OPTIONS,
+    BODY_SAFE_FEATURE_OPTIONS,
+    EDITOR_UI_FEATURE_OPTIONS,
     STYLE_TARGET_OPTIONS,
     ...inlinePaletteSession,
   };

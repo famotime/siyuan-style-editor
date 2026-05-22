@@ -2051,6 +2051,10 @@ export const FEATURE_STYLE_OPTIONS: FeatureStyleOption[] = FEATURE_DEFINITIONS.m
   ...option
 }) => option);
 
+export const BODY_SAFE_FEATURE_OPTIONS = FEATURE_STYLE_OPTIONS.filter(option => option.risk === "正文安全");
+
+export const EDITOR_UI_FEATURE_OPTIONS = FEATURE_STYLE_OPTIONS.filter(option => option.risk === "编辑器 UI");
+
 function cloneConfig(config: FeatureStyleConfig): FeatureStyleConfig {
   return {
     enabled: config.enabled,

@@ -1,6 +1,8 @@
 import {
+  BODY_SAFE_FEATURE_OPTIONS,
   buildFeatureStyleCss,
   createDefaultFeatureProfile,
+  EDITOR_UI_FEATURE_OPTIONS,
   FEATURE_STYLE_OPTIONS,
   normalizeFeatureProfile,
   type FeatureStyleProfile,
@@ -736,5 +738,30 @@ describe("style feature catalog", () => {
 
     expect(css).toContain('[data-subtype="u"] > .protyle-action');
     expect(css).toContain("color: oklch(75% 0 0);");
+  });
+});
+
+describe("feature option filters", () => {
+  it("splits options into body-safe and editor-UI groups", () => {
+    expect(BODY_SAFE_FEATURE_OPTIONS.length + EDITOR_UI_FEATURE_OPTIONS.length).toBe(FEATURE_STYLE_OPTIONS.length);
+    expect(BODY_SAFE_FEATURE_OPTIONS.every(option => option.risk === "正文安全")).toBe(true);
+    expect(EDITOR_UI_FEATURE_OPTIONS.every(option => option.risk === "编辑器 UI")).toBe(true);
+  });
+
+  it("includes known body-safe features", () => {
+    const values = BODY_SAFE_FEATURE_OPTIONS.map(option => option.value);
+    expect(values).toContain("paragraphHover");
+    expect(values).toContain("imageRadius");
+    expect(values).toContain("tableStyle");
+    expect(values).toContain("linkStyle");
+  });
+
+  it("includes known editor-UI features", () => {
+    const values = EDITOR_UI_FEATURE_OPTIONS.map(option => option.value);
+    expect(values).toContain("editorBackground");
+    expect(values).toContain("headingNumbering");
+    expect(values).toContain("blockGutterAnim");
+    expect(values).toContain("slashMenu");
+    expect(values).toContain("docTreeColorBlocks");
   });
 });

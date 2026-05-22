@@ -30,7 +30,13 @@
       />
 
       <FeatureStudio
-        :feature-style-options="FEATURE_STYLE_OPTIONS"
+        :feature-style-options="bodySafeFeatureOptions"
+        :feature-profile="runtimeState.featureProfile"
+        @update-feature-style="handleUpdateFeatureStyle"
+      />
+
+      <EditorUiStudio
+        :feature-style-options="editorUiFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         @update-feature-style="handleUpdateFeatureStyle"
       />
@@ -76,6 +82,7 @@ import type { StyleTarget } from "@/lib/style-profile";
 
 import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue";
 import FeatureStudio from "@/components/StyleEditorShell/FeatureStudio.vue";
+import EditorUiStudio from "@/components/StyleEditorShell/EditorUiStudio.vue";
 import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue";
 import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue";
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell";
@@ -128,7 +135,8 @@ const {
   selectPreviewTarget,
   openImportStylesPicker,
   statusCopy,
-  FEATURE_STYLE_OPTIONS,
+  bodySafeFeatureOptions,
+  editorUiFeatureOptions,
   STYLE_TARGET_OPTIONS,
 } = useStyleEditorShell();
 

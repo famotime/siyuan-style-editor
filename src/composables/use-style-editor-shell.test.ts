@@ -29,6 +29,10 @@ import {
   teardownRuntime,
 } from "@/style-editor-runtime";
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell";
+import {
+  BODY_SAFE_FEATURE_OPTIONS,
+  EDITOR_UI_FEATURE_OPTIONS,
+} from "@/lib/style-feature-catalog";
 import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
 
 function createPluginStub(savedState?: unknown) {
@@ -242,6 +246,20 @@ describe("useStyleEditorShell", () => {
     expect(input.value).toBe("");
     expect(shell.importedStyleSignature.value).toBe("Paper Glow from Alice");
     expect(shell.statusCopy.value).toContain("已导入本地配置");
+
+    unmount();
+  });
+
+  it("exposes feature option groups using the names consumed by App", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    const { shell, unmount } = await mountShell();
+
+    expect(shell.bodySafeFeatureOptions).toBe(BODY_SAFE_FEATURE_OPTIONS);
+    expect(shell.editorUiFeatureOptions).toBe(EDITOR_UI_FEATURE_OPTIONS);
+    expect(shell.bodySafeFeatureOptions.length).toBeGreaterThan(0);
+    expect(shell.editorUiFeatureOptions.length).toBeGreaterThan(0);
 
     unmount();
   });
