@@ -288,6 +288,54 @@ function getPreviewStyle(featureId: FeatureStyleId) {
     style.top = "0";
     style.backgroundColor = String(values.backgroundColor);
   }
+  if (featureId === "documentTitle") {
+    style.fontSize = `${values.fontSize}px`;
+  }
+  if (featureId === "headImage") {
+    style.borderRadius = `${values.radius}px`;
+    style.width = "100%";
+    style.height = "40px";
+    style.backgroundColor = "var(--panel-card-inner-stroke)";
+  }
+  if (featureId === "docTag") {
+    style.borderRadius = `${values.radius}px`;
+    style.backgroundColor = String(values.secondaryBg);
+    style.color = String(values.secondaryColor);
+    style.padding = "2px 8px";
+    style.fontSize = `${values.fontSize}%`;
+  }
+  if (featureId === "docTreeColorBlocks") {
+    style.backgroundColor = String(values.color1);
+    style.borderRadius = `${values.radius}px`;
+  }
+  if (featureId === "outlineNumber") {
+    style.fontFamily = "serif";
+    style.fontSize = `${values.fontSize}px`;
+    style.color = String(values.h1Color);
+  }
+  if (featureId === "blockGutterAnim") {
+    style.color = String(values.iconColor);
+    style.transition = `all ${values.transitionMs}ms ease-out`;
+  }
+  if (featureId === "toolbarStyle") {
+    style.width = `${values.buttonSize}px`;
+    style.height = `${values.buttonSize}px`;
+    style.borderRadius = `${values.buttonRadius}px`;
+    style.backgroundColor = String(values.hoverBg);
+  }
+  if (featureId === "slashMenu") {
+    style.borderRadius = `${values.radius}px`;
+    style.color = String(values.textColor);
+  }
+  if (featureId === "emojiPanel") {
+    style.width = `${values.itemSize}px`;
+    style.height = `${values.itemSize}px`;
+    style.fontSize = `${values.emojiFontSize}px`;
+  }
+  if (featureId === "searchPanel") {
+    style.lineHeight = String(values.lineHeight);
+    style.borderRadius = `${values.groupRadius}px`;
+  }
 
   return style;
 }

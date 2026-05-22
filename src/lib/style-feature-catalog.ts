@@ -1,9 +1,15 @@
 export type FeatureStyleId =
   | "backlinkSticky"
   | "blockquoteFrame"
+  | "blockGutterAnim"
   | "blockRefStyle"
+  | "docTag"
+  | "docTreeColorBlocks"
+  | "documentTitle"
+  | "emojiPanel"
   | "headingDecoration"
   | "headingNumbering"
+  | "headImage"
   | "hrStyle"
   | "imageRadius"
   | "inlineCodeStyle"
@@ -12,9 +18,13 @@ export type FeatureStyleId =
   | "editorBackground"
   | "markStyle"
   | "orderedListStyle"
+  | "outlineNumber"
   | "paragraphHover"
   | "foldedBlockStyle"
   | "headingSpacing"
+  | "searchPanel"
+  | "slashMenu"
+  | "toolbarStyle"
   | "unorderedListMarkerColor"
   | "referencedBlockCorners"
   | "refcountBadge"
@@ -1522,6 +1532,509 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "待办",
     risk: "正文安全",
     value: "taskListStyle",
+  },
+  {
+    buildCss: config => `
+.protyle-title__input {
+  font-size: ${px(config.values.fontSize, 40)};
+}
+.protyle-title__input:empty:after {
+  color: ${stringValue(config.values.placeholderColor, "oklch(32.89% 0.0107 91.66 / 0.5)")};
+}`.trim(),
+    controls: [
+      {
+        key: "fontSize",
+        label: "标题字号",
+        max: 64,
+        min: 20,
+        step: 2,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "placeholderColor",
+        label: "占位提示色",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      fontSize: 40,
+      placeholderColor: "oklch(32.89% 0.0107 91.66 / 0.5)",
+    }),
+    hint: "调整文档标题字号和空标题占位提示颜色。",
+    label: "文档标题",
+    preview: "标题",
+    risk: "编辑器 UI",
+    value: "documentTitle",
+  },
+  {
+    buildCss: config => `
+.protyle-background .protyle-background__img img {
+  margin: 0 ${px(config.values.marginX, 5)};
+  border-radius: ${px(config.values.radius, 6)};
+  width: calc(100% - ${px(config.values.marginX * 2, 10)});
+}`.trim(),
+    controls: [
+      {
+        key: "radius",
+        label: "图片圆角",
+        max: 24,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "marginX",
+        label: "左右边距",
+        max: 24,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      marginX: 5,
+      radius: 6,
+    }),
+    hint: "调整头图圆角和左右边距。",
+    label: "头图样式",
+    preview: "头图",
+    risk: "编辑器 UI",
+    value: "headImage",
+  },
+  {
+    buildCss: config => `
+.b3-chips__doctag .b3-chip {
+  border-radius: ${px(config.values.radius, 6)};
+  padding: 0 0 1px ${px(config.values.paddingX, 8)};
+  font-size: ${numberValue(config.values.fontSize, 90)}%;
+  font-weight: ${numberValue(config.values.fontWeight, 600)};
+}
+.b3-chips__doctag .b3-chip::before {
+  content: "#";
+}
+.b3-chips__doctag .b3-chip.b3-chip--secondary {
+  background-color: ${stringValue(config.values.secondaryBg, "rgb(85, 85, 85)")};
+  color: ${stringValue(config.values.secondaryColor, "rgb(235, 235, 235)")};
+}`.trim(),
+    controls: [
+      {
+        key: "secondaryBg",
+        label: "标签底色",
+        type: "color",
+      },
+      {
+        key: "secondaryColor",
+        label: "标签字色",
+        type: "color",
+      },
+      {
+        key: "radius",
+        label: "标签圆角",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      fontSize: 90,
+      fontWeight: 600,
+      paddingX: 8,
+      radius: 6,
+      secondaryBg: "rgb(85, 85, 85)",
+      secondaryColor: "rgb(235, 235, 235)",
+    }),
+    hint: "调整头图下方文档标签的圆角、颜色和字号。",
+    label: "文档标签",
+    preview: "标签",
+    risk: "编辑器 UI",
+    value: "docTag",
+  },
+  {
+    buildCss: config => `
+.sy__file .b3-list--background:nth-child(5n-4) {
+  background-color: ${stringValue(config.values.color1, "rgba(120, 90, 69, 0.85)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color1, "rgba(120, 90, 69, 0.85)")} inset;
+  border-radius: ${px(config.values.radius, 6)};
+}
+.sy__file .b3-list--background:nth-child(5n-3) {
+  background-color: ${stringValue(config.values.color2, "rgba(139, 117, 72, 0.85)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color2, "rgba(139, 117, 72, 0.85)")} inset;
+  border-radius: ${px(config.values.radius, 6)};
+}
+.sy__file .b3-list--background:nth-child(5n-2) {
+  background-color: ${stringValue(config.values.color3, "rgba(88, 105, 90, 0.85)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color3, "rgba(88, 105, 90, 0.85)")} inset;
+  border-radius: ${px(config.values.radius, 6)};
+}
+.sy__file .b3-list--background:nth-child(5n-1) {
+  background-color: ${stringValue(config.values.color4, "rgba(75, 88, 96, 0.85)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color4, "rgba(75, 88, 96, 0.85)")} inset;
+  border-radius: ${px(config.values.radius, 6)};
+}
+.sy__file .b3-list--background:nth-child(5n) {
+  background-color: ${stringValue(config.values.color5, "rgba(71, 63, 85, 0.85)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color5, "rgba(71, 63, 85, 0.85)")} inset;
+  border-radius: ${px(config.values.radius, 6)};
+}
+.sy__file .b3-list--background:nth-child(5n-4),
+.sy__file .b3-list--background:nth-child(5n-3),
+.sy__file .b3-list--background:nth-child(5n-2),
+.sy__file .b3-list--background:nth-child(5n-1),
+.sy__file .b3-list--background:nth-child(5n) {
+  margin: ${px(config.values.gapY, 4)} 0;
+}`.trim(),
+    controls: [
+      {
+        key: "color1",
+        label: "分组色 1",
+        type: "color",
+      },
+      {
+        key: "color2",
+        label: "分组色 2",
+        type: "color",
+      },
+      {
+        key: "color3",
+        label: "分组色 3",
+        type: "color",
+      },
+      {
+        key: "radius",
+        label: "圆角",
+        max: 12,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      color1: "rgba(120, 90, 69, 0.85)",
+      color2: "rgba(139, 117, 72, 0.85)",
+      color3: "rgba(88, 105, 90, 0.85)",
+      color4: "rgba(75, 88, 96, 0.85)",
+      color5: "rgba(71, 63, 85, 0.85)",
+      gapY: 4,
+      radius: 6,
+    }),
+    hint: "为文档树条目按五色循环设置彩色分块背景。",
+    label: "文档树彩色分块",
+    preview: "树",
+    risk: "编辑器 UI",
+    value: "docTreeColorBlocks",
+  },
+  {
+    buildCss: config => `
+.sy__outline ul.b3-list.b3-list--background [data-subtype*="h"] > span:first-child::after {
+  visibility: visible !important;
+  position: relative;
+  left: 8px;
+  border-radius: 4px;
+  opacity: 1;
+  font-size: ${px(config.values.fontSize, 10)};
+  pointer-events: none;
+}
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h1"] > span:first-child::after { content: "❶"; color: ${stringValue(config.values.h1Color, "rgba(221, 136, 134, 1)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h2"] > span:first-child::after { content: "❷"; color: ${stringValue(config.values.h2Color, "rgba(171, 155, 199, 1)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h3"] > span:first-child::after { content: "❸"; color: ${stringValue(config.values.h3Color, "rgba(137, 180, 202, 1)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h4"] > span:first-child::after { content: "❹"; color: ${stringValue(config.values.h4Color, "rgba(125, 165, 151, 1)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h5"] > span:first-child::after { content: "❺"; color: ${stringValue(config.values.h5Color, "rgba(215, 192, 111, 1)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h6"] > span:first-child::after { content: "❻"; color: ${stringValue(config.values.h6Color, "rgba(212, 165, 155, 1)")}; }`.trim(),
+    controls: [
+      {
+        key: "h1Color",
+        label: "H1 颜色",
+        type: "color",
+      },
+      {
+        key: "h2Color",
+        label: "H2 颜色",
+        type: "color",
+      },
+      {
+        key: "h3Color",
+        label: "H3 颜色",
+        type: "color",
+      },
+      {
+        key: "fontSize",
+        label: "字号",
+        max: 16,
+        min: 8,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      fontSize: 10,
+      h1Color: "rgba(221, 136, 134, 1)",
+      h2Color: "rgba(171, 155, 199, 1)",
+      h3Color: "rgba(137, 180, 202, 1)",
+      h4Color: "rgba(125, 165, 151, 1)",
+      h5Color: "rgba(215, 192, 111, 1)",
+      h6Color: "rgba(212, 165, 155, 1)",
+    }),
+    hint: "在大纲标题前显示彩色数字标志。",
+    label: "大纲数字标志",
+    preview: "❶",
+    risk: "编辑器 UI",
+    value: "outlineNumber",
+  },
+  {
+    buildCss: config => `
+.protyle-gutters {
+  transition: top ${numberValue(config.values.transitionMs, 150)}ms ease-out;
+}
+.protyle-gutters button svg {
+  color: ${stringValue(config.values.iconColor, "rgb(211, 209, 203)")};
+  border-radius: ${px(config.values.iconRadius, 4)};
+}
+.protyle-gutters button:hover svg {
+  background-color: ${stringValue(config.values.hoverBg, "oklch(60% 0.02 270 / 0.2)")};
+}`.trim(),
+    controls: [
+      {
+        key: "iconColor",
+        label: "图标颜色",
+        type: "color",
+      },
+      {
+        key: "hoverBg",
+        label: "悬停背景",
+        type: "color",
+      },
+      {
+        key: "transitionMs",
+        label: "过渡时间",
+        max: 400,
+        min: 0,
+        step: 50,
+        type: "number",
+        unit: "ms",
+      },
+    ],
+    defaults: createDefaultConfig({
+      hoverBg: "oklch(60% 0.02 270 / 0.2)",
+      iconColor: "rgb(211, 209, 203)",
+      iconRadius: 4,
+      transitionMs: 150,
+    }),
+    hint: "调整块标图标颜色、悬停背景和移动过渡速度。",
+    label: "块标动画",
+    preview: "⋮⋮",
+    risk: "编辑器 UI",
+    value: "blockGutterAnim",
+  },
+  {
+    buildCss: config => `
+.protyle-toolbar {
+  padding: ${px(config.values.padding, 2)};
+}
+.protyle-toolbar .protyle-toolbar__item {
+  height: ${px(config.values.buttonSize, 28)};
+  width: ${px(config.values.buttonSize, 28)};
+  border-radius: ${px(config.values.buttonRadius, 4)};
+}
+.protyle-toolbar .protyle-toolbar__item:hover {
+  background-color: ${stringValue(config.values.hoverBg, "oklch(65% 0.12 250 / 0.2)")};
+}
+.protyle-toolbar .protyle-toolbar__item--current {
+  color: ${stringValue(config.values.currentColor, "oklch(90% 0.18 90)")};
+}`.trim(),
+    controls: [
+      {
+        key: "hoverBg",
+        label: "悬停背景",
+        type: "color",
+      },
+      {
+        key: "currentColor",
+        label: "选中项颜色",
+        type: "color",
+      },
+      {
+        key: "buttonSize",
+        label: "按钮尺寸",
+        max: 40,
+        min: 20,
+        step: 2,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      buttonRadius: 4,
+      buttonSize: 28,
+      currentColor: "oklch(90% 0.18 90)",
+      hoverBg: "oklch(65% 0.12 250 / 0.2)",
+      padding: 2,
+    }),
+    hint: "调整文字工具条的按钮尺寸、悬停背景和选中项颜色。",
+    label: "工具条样式",
+    preview: "工具",
+    risk: "编辑器 UI",
+    value: "toolbarStyle",
+  },
+  {
+    buildCss: config => `
+.hint--menu {
+  border-radius: ${px(config.values.radius, 6)};
+  padding: ${px(config.values.padding, 5)};
+}
+.hint--menu > div {
+  min-width: ${stringValue(config.values.minWidth, "50vw")};
+  column-width: ${px(config.values.columnWidth, 180)};
+}
+.hint--menu .b3-list-item__text {
+  color: ${stringValue(config.values.textColor, "rgb(240, 240, 240)")};
+}`.trim(),
+    controls: [
+      {
+        key: "radius",
+        label: "菜单圆角",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "columnWidth",
+        label: "列宽度",
+        max: 280,
+        min: 120,
+        step: 20,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "textColor",
+        label: "文字颜色",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      columnWidth: 180,
+      minWidth: "50vw",
+      padding: 5,
+      radius: 6,
+      textColor: "rgb(240, 240, 240)",
+    }),
+    hint: "调整斜杠菜单的列宽、圆角和文字颜色。",
+    label: "斜杠菜单",
+    preview: "/",
+    risk: "编辑器 UI",
+    value: "slashMenu",
+  },
+  {
+    buildCss: config => `
+.emojis {
+  width: ${px(config.values.panelWidth, 366)} !important;
+}
+.emojis__item {
+  height: ${px(config.values.itemSize, 32)};
+  width: ${px(config.values.itemSize, 32)};
+  font-size: ${px(config.values.emojiFontSize, 22)};
+}`.trim(),
+    controls: [
+      {
+        key: "panelWidth",
+        label: "面板宽度",
+        max: 480,
+        min: 280,
+        step: 10,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "itemSize",
+        label: "表情尺寸",
+        max: 48,
+        min: 24,
+        step: 2,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "emojiFontSize",
+        label: "字号",
+        max: 36,
+        min: 14,
+        step: 2,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      emojiFontSize: 22,
+      itemSize: 32,
+      panelWidth: 366,
+    }),
+    hint: "调整表情面板宽度和表情项尺寸。",
+    label: "表情面板",
+    preview: "😊",
+    risk: "编辑器 UI",
+    value: "emojiPanel",
+  },
+  {
+    buildCss: config => `
+.fn__flex-column #searchList > .b3-list-item[data-type='search-item'] {
+  padding-bottom: ${px(config.values.itemPaddingBottom, 20)};
+  margin: ${px(config.values.itemMargin, 6)};
+}
+.fn__flex-column #searchList .b3-list-item[data-type='search-item'] > .b3-list-item__text {
+  line-height: ${numberValue(config.values.lineHeight, 1.3)};
+}
+.fn__flex-column #searchList > .b3-list-item:not([data-type='search-item']):not([data-type="search-new"]) {
+  border-radius: ${px(config.values.groupRadius, 4)} ${px(config.values.groupRadius, 4)} 0 0;
+  margin: ${px(config.values.itemMargin, 6)} ${px(config.values.itemMargin, 6)} 0 ${px(config.values.itemMargin, 6)};
+}`.trim(),
+    controls: [
+      {
+        key: "itemMargin",
+        label: "条目间距",
+        max: 16,
+        min: 0,
+        step: 2,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "lineHeight",
+        label: "行高",
+        max: 2,
+        min: 1,
+        step: 0.1,
+        type: "number",
+      },
+      {
+        key: "groupRadius",
+        label: "分组圆角",
+        max: 12,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      groupRadius: 4,
+      itemMargin: 6,
+      itemPaddingBottom: 20,
+      lineHeight: 1.3,
+    }),
+    hint: "调整多行搜索结果的间距、行高和分组圆角。",
+    label: "搜索面板",
+    preview: "搜索",
+    risk: "编辑器 UI",
+    value: "searchPanel",
   },
 ];
 

@@ -36,6 +36,16 @@ describe("style feature catalog", () => {
     expect(profile.orderedListStyle.values.width).toBe(24);
     expect(profile.refSearchMenu.values.itemMinHeight).toBe(45);
     expect(profile.backlinkSticky.values.backgroundColor).toBe("var(--b3-list-hover, #363636)");
+    expect(profile.documentTitle.values.fontSize).toBe(40);
+    expect(profile.headImage.values.radius).toBe(6);
+    expect(profile.docTag.values.secondaryBg).toBe("rgb(85, 85, 85)");
+    expect(profile.docTreeColorBlocks.values.color1).toBe("rgba(120, 90, 69, 0.85)");
+    expect(profile.outlineNumber.values.fontSize).toBe(10);
+    expect(profile.blockGutterAnim.values.transitionMs).toBe(150);
+    expect(profile.toolbarStyle.values.buttonSize).toBe(28);
+    expect(profile.slashMenu.values.columnWidth).toBe(180);
+    expect(profile.emojiPanel.values.panelWidth).toBe(366);
+    expect(profile.searchPanel.values.lineHeight).toBe(1.3);
   });
 
   it("normalizes partial and invalid feature profile input", () => {
@@ -428,6 +438,123 @@ describe("style feature catalog", () => {
     expect(css).toContain(".backlinkList .b3-list-item");
     expect(css).toContain("position: sticky;");
     expect(css).toContain("background-color: #363636;");
+  });
+
+  it("builds configurable css for document title", () => {
+    const profile = normalizeFeatureProfile({
+      documentTitle: {
+        enabled: true,
+        values: {
+          fontSize: 48,
+          placeholderColor: "#999999",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".protyle-title__input");
+    expect(css).toContain("font-size: 48px;");
+    expect(css).toContain(".protyle-title__input:empty:after");
+    expect(css).toContain("color: #999999;");
+  });
+
+  it("builds configurable css for doc tree color blocks", () => {
+    const profile = normalizeFeatureProfile({
+      docTreeColorBlocks: {
+        enabled: true,
+        values: {
+          color1: "rgba(120, 90, 69, 0.85)",
+          radius: 8,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".sy__file .b3-list--background:nth-child(5n-4)");
+    expect(css).toContain("background-color: rgba(120, 90, 69, 0.85) !important;");
+    expect(css).toContain("border-radius: 8px;");
+  });
+
+  it("builds configurable css for outline number markers", () => {
+    const profile = normalizeFeatureProfile({
+      outlineNumber: {
+        enabled: true,
+        values: {
+          fontSize: 12,
+          h1Color: "red",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-subtype="h1"] > span:first-child::after');
+    expect(css).toContain('content: "❶"');
+    expect(css).toContain("color: red;");
+    expect(css).toContain("font-size: 12px;");
+  });
+
+  it("builds configurable css for toolbar style", () => {
+    const profile = normalizeFeatureProfile({
+      toolbarStyle: {
+        enabled: true,
+        values: {
+          buttonSize: 32,
+          currentColor: "gold",
+          hoverBg: "rgba(100, 100, 255, 0.3)",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".protyle-toolbar");
+    expect(css).toContain("height: 32px;");
+    expect(css).toContain("width: 32px;");
+    expect(css).toContain("color: gold;");
+  });
+
+  it("builds configurable css for slash menu", () => {
+    const profile = normalizeFeatureProfile({
+      slashMenu: {
+        enabled: true,
+        values: {
+          columnWidth: 200,
+          radius: 10,
+          textColor: "#eee",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".hint--menu");
+    expect(css).toContain("border-radius: 10px;");
+    expect(css).toContain("column-width: 200px;");
+    expect(css).toContain("color: #eee;");
+  });
+
+  it("builds configurable css for emoji panel", () => {
+    const profile = normalizeFeatureProfile({
+      emojiPanel: {
+        enabled: true,
+        values: {
+          emojiFontSize: 24,
+          itemSize: 36,
+          panelWidth: 400,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".emojis");
+    expect(css).toContain("width: 400px !important;");
+    expect(css).toContain(".emojis__item");
+    expect(css).toContain("height: 36px;");
+    expect(css).toContain("font-size: 24px;");
   });
 
   it("builds css only for enabled features", () => {
