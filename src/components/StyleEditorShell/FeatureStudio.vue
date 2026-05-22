@@ -171,6 +171,22 @@ function getPreviewStyle(featureId: FeatureStyleId) {
     style.margin = `${values.marginY}px 0`;
     style.padding = `${values.padding}px`;
   }
+  if (featureId === "referencedBlockCorners") {
+    style.boxShadow = `
+      inset ${values.strokeWidth}px ${values.strokeWidth}px 0 0 ${values.color},
+      inset -${values.strokeWidth}px -${values.strokeWidth}px 0 0 ${values.color}
+    `;
+    style.padding = `${values.cornerLength}px`;
+  }
+  if (featureId === "refcountBadge") {
+    style.alignItems = "center";
+    style.backgroundColor = String(values.backgroundColor);
+    style.borderRadius = `${values.radius}px`;
+    style.color = String(values.color);
+    style.justifyContent = "center";
+    style.minHeight = `${values.size}px`;
+    style.width = `${values.size}px`;
+  }
   if (featureId === "tableStyle") {
     style.backgroundColor = String(values.headerBackgroundColor);
     style.color = String(values.headerColor);

@@ -3,6 +3,8 @@ export type FeatureStyleId =
   | "imageRadius"
   | "linkStyle"
   | "paragraphHover"
+  | "referencedBlockCorners"
+  | "refcountBadge"
   | "strikethroughStyle"
   | "tableStyle"
   | "taskListStyle"
@@ -229,6 +231,173 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     preview: "引述",
     risk: "正文安全",
     value: "blockquoteFrame",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg [data-node-id][refcount] {
+  position: relative;
+  outline: none;
+}
+
+.protyle-wysiwyg [data-node-id][refcount]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${px(config.values.cornerLength, 12)};
+  height: ${px(config.values.cornerLength, 12)};
+  border-top: ${px(config.values.strokeWidth, 2)} solid ${stringValue(config.values.color, "rgba(255, 165, 0, 0.7)")};
+  border-left: ${px(config.values.strokeWidth, 2)} solid ${stringValue(config.values.color, "rgba(255, 165, 0, 0.7)")};
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.protyle-wysiwyg [data-node-id][refcount]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: ${px(config.values.cornerLength, 12)};
+  height: ${px(config.values.cornerLength, 12)};
+  border-right: ${px(config.values.strokeWidth, 2)} solid ${stringValue(config.values.color, "rgba(255, 165, 0, 0.7)")};
+  border-bottom: ${px(config.values.strokeWidth, 2)} solid ${stringValue(config.values.color, "rgba(255, 165, 0, 0.7)")};
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+[data-type="NodeBlockQueryEmbed"] [data-node-id][refcount]::before,
+[data-type="NodeBlockQueryEmbed"] [data-node-id][refcount]::after {
+  display: none;
+}`.trim(),
+    controls: [
+      {
+        key: "color",
+        label: "角标颜色",
+        type: "color",
+      },
+      {
+        key: "cornerLength",
+        label: "角标长度",
+        max: 32,
+        min: 4,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "strokeWidth",
+        label: "线条粗细",
+        max: 6,
+        min: 1,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      color: "rgba(255, 165, 0, 0.7)",
+      cornerLength: 12,
+      strokeWidth: 2,
+    }),
+    hint: "为有引用计数的正文块增加两角短实线提示。",
+    label: "被引用块角标",
+    preview: "被引用",
+    risk: "正文安全",
+    value: "referencedBlockCorners",
+  },
+  {
+    buildCss: config => `
+.protyle-attr--refcount {
+  height: ${px(config.values.size, 16)};
+  width: ${px(config.values.size, 16)};
+  padding: 0;
+  line-height: ${px(config.values.size, 16)};
+  text-align: center;
+  background-color: ${stringValue(config.values.backgroundColor, "oklch(50% 0.02 250 / 0.3)")};
+  color: ${stringValue(config.values.color, "oklch(75% 0 0)")};
+  border-radius: ${px(config.values.radius, 3)};
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.protyle-attr--refcount:hover {
+  background-color: ${stringValue(config.values.hoverBackgroundColor, "oklch(60% 0.15 250 / 0.95)")};
+  color: ${stringValue(config.values.hoverColor, "white")};
+  transform: scale(${numberValue(config.values.hoverScale, 1.15)});
+  box-shadow: 0 0 ${px(config.values.glowSize, 10)} ${stringValue(config.values.glowColor, "oklch(70% 0.25 250 / 1)")};
+}`.trim(),
+    controls: [
+      {
+        key: "backgroundColor",
+        label: "徽标底色",
+        type: "color",
+      },
+      {
+        key: "color",
+        label: "徽标字色",
+        type: "color",
+      },
+      {
+        key: "hoverBackgroundColor",
+        label: "悬停底色",
+        type: "color",
+      },
+      {
+        key: "glowColor",
+        label: "发光颜色",
+        type: "color",
+      },
+      {
+        key: "size",
+        label: "徽标尺寸",
+        max: 28,
+        min: 12,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "radius",
+        label: "圆角",
+        max: 12,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "hoverScale",
+        label: "悬停放大",
+        max: 1.8,
+        min: 1,
+        step: 0.05,
+        type: "number",
+      },
+      {
+        key: "glowSize",
+        label: "发光强度",
+        max: 24,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "oklch(50% 0.02 250 / 0.3)",
+      color: "oklch(75% 0 0)",
+      glowColor: "oklch(70% 0.25 250 / 1)",
+      glowSize: 10,
+      hoverBackgroundColor: "oklch(60% 0.15 250 / 0.95)",
+      hoverColor: "white",
+      hoverScale: 1.15,
+      radius: 3,
+      size: 16,
+    }),
+    hint: "调整块右上角引用次数徽标的颜色、尺寸和悬停反馈。",
+    label: "引用次数徽标",
+    preview: "3",
+    risk: "正文安全",
+    value: "refcountBadge",
   },
   {
     buildCss: config => `
