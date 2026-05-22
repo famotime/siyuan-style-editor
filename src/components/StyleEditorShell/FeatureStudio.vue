@@ -253,6 +253,41 @@ function getPreviewStyle(featureId: FeatureStyleId) {
       style.height = `${values.height}px`;
     }
   }
+  if (featureId === "headingDecoration") {
+    if (values.mode === "leftBar") {
+      style.borderLeft = `${values.barWidth}px solid ${values.barColor}`;
+      style.paddingLeft = "8px";
+    } else {
+      style.borderBottom = `${values.barWidth}px solid ${values.barColor}`;
+    }
+    style.fontWeight = String(values.fontWeight);
+  }
+  if (featureId === "headingNumbering") {
+    style.textDecoration = "line-through";
+    style.opacity = "0.6";
+  }
+  if (featureId === "listBulletLine") {
+    style.borderLeft = `${values.lineWidth}px solid ${values.lineColor}`;
+    style.borderBottom = `${values.lineWidth}px solid ${values.lineColor}`;
+    style.borderBottomLeftRadius = `${values.radius}px`;
+    style.width = "40px";
+    style.height = "20px";
+  }
+  if (featureId === "orderedListStyle") {
+    style.display = "flex";
+    style.alignItems = "center";
+    style.justifyContent = "center";
+    style.fontFamily = "serif";
+  }
+  if (featureId === "refSearchMenu") {
+    style.borderRadius = `${values.radius}px`;
+    style.minHeight = `${values.itemMinHeight}px`;
+  }
+  if (featureId === "backlinkSticky") {
+    style.position = "sticky";
+    style.top = "0";
+    style.backgroundColor = String(values.backgroundColor);
+  }
 
   return style;
 }

@@ -1,18 +1,24 @@
 export type FeatureStyleId =
+  | "backlinkSticky"
   | "blockquoteFrame"
   | "blockRefStyle"
+  | "headingDecoration"
+  | "headingNumbering"
   | "hrStyle"
   | "imageRadius"
   | "inlineCodeStyle"
   | "linkStyle"
+  | "listBulletLine"
   | "editorBackground"
   | "markStyle"
+  | "orderedListStyle"
   | "paragraphHover"
   | "foldedBlockStyle"
   | "headingSpacing"
   | "unorderedListMarkerColor"
   | "referencedBlockCorners"
   | "refcountBadge"
+  | "refSearchMenu"
   | "strikethroughStyle"
   | "tableStyle"
   | "taskListStyle"
@@ -353,6 +359,139 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "headingSpacing",
   },
   {
+    buildCss: config => {
+      const mode = stringValue(config.values.mode, "leftBar");
+      if (mode === "leftBar") {
+        return `
+.protyle-wysiwyg [data-node-id].h1,
+.protyle-wysiwyg [data-node-id].h2,
+.protyle-wysiwyg [data-node-id].h3,
+.protyle-wysiwyg [data-node-id].h4,
+.protyle-wysiwyg [data-node-id].h5,
+.protyle-wysiwyg [data-node-id].h6 {
+  position: relative;
+  padding-left: ${px(config.values.barOffset, 12)};
+  font-weight: ${numberValue(config.values.fontWeight, 600)};
+}
+.protyle-wysiwyg [data-node-id].h1 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h2 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h3 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h4 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h5 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h6 > [spellcheck]:not(:empty)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: ${px(config.values.barWidth, 3)};
+  height: 1.2em;
+  border-radius: ${px(config.values.barRadius, 2)};
+  background-color: ${stringValue(config.values.barColor, "var(--b3-theme-primary)")};
+}`.trim();
+      }
+      return `
+.protyle-wysiwyg [data-node-id].h1,
+.protyle-wysiwyg [data-node-id].h2,
+.protyle-wysiwyg [data-node-id].h3,
+.protyle-wysiwyg [data-node-id].h4,
+.protyle-wysiwyg [data-node-id].h5,
+.protyle-wysiwyg [data-node-id].h6 {
+  font-weight: ${numberValue(config.values.fontWeight, 600)};
+  position: relative;
+  padding-bottom: 4px;
+}
+.protyle-wysiwyg [data-node-id].h1 > [spellcheck]:not(:empty)::after,
+.protyle-wysiwyg [data-node-id].h2 > [spellcheck]:not(:empty)::after,
+.protyle-wysiwyg [data-node-id].h3 > [spellcheck]:not(:empty)::after,
+.protyle-wysiwyg [data-node-id].h4 > [spellcheck]:not(:empty)::after,
+.protyle-wysiwyg [data-node-id].h5 > [spellcheck]:not(:empty)::after,
+.protyle-wysiwyg [data-node-id].h6 > [spellcheck]:not(:empty)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: ${px(config.values.barWidth, 2)};
+  background: linear-gradient(to right, transparent, ${stringValue(config.values.barColor, "rgba(44, 62, 80, 0.5)")});
+}`.trim();
+    },
+    controls: [
+      {
+        key: "mode",
+        label: "装饰风格",
+        options: [
+          { label: "左竖线", value: "leftBar" },
+          { label: "下划线", value: "underline" },
+        ],
+        type: "select",
+      },
+      {
+        key: "barColor",
+        label: "装饰颜色",
+        type: "color",
+      },
+      {
+        key: "barWidth",
+        label: "线条粗细",
+        max: 8,
+        min: 1,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "fontWeight",
+        label: "字重",
+        max: 900,
+        min: 400,
+        step: 100,
+        type: "number",
+      },
+    ],
+    defaults: createDefaultConfig({
+      barColor: "var(--b3-theme-primary)",
+      barOffset: 12,
+      barRadius: 2,
+      barWidth: 3,
+      fontWeight: 600,
+      mode: "leftBar",
+    }),
+    hint: "为标题增加左竖线或下划线装饰。",
+    label: "标题装饰",
+    preview: "H1",
+    risk: "正文安全",
+    value: "headingDecoration",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg > [data-node-id].h1::before,
+.protyle-wysiwyg > [data-node-id].h2::before,
+.protyle-wysiwyg > [data-node-id].h3::before,
+.protyle-wysiwyg > [data-node-id].h4::before,
+.protyle-wysiwyg > [data-node-id].h5::before,
+.protyle-wysiwyg > [data-node-id].h6::before,
+.b3-typography > h1::before,
+.b3-typography > h2::before,
+.b3-typography > h3::before,
+.b3-typography > h4::before,
+.b3-typography > h5::before,
+.b3-typography > h6::before {
+  content: none !important;
+  display: none !important;
+}`.trim(),
+    controls: [],
+    defaults: {
+      enabled: false,
+      values: {},
+    },
+    hint: "隐藏 H1-H6 标题前的自动编号。",
+    label: "标题编号隐藏",
+    preview: "H·",
+    risk: "编辑器 UI",
+    value: "headingNumbering",
+  },
+  {
     buildCss: config => `
 .protyle-wysiwyg [data-node-id].li[data-subtype="u"] > .protyle-action {
   color: ${stringValue(config.values.markerColor, "oklch(75% 0 0)")};
@@ -372,6 +511,147 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     preview: "•",
     risk: "正文安全",
     value: "unorderedListMarkerColor",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg [data-node-id].li:has(.block-focus) > .list:has(.block-focus) > .li::after {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  border-left: ${px(config.values.lineWidth, 2)} solid ${stringValue(config.values.lineColor, "rgb(70, 110, 220)")};
+  border-bottom: ${px(config.values.lineWidth, 2)} solid ${stringValue(config.values.lineColor, "rgb(70, 110, 220)")};
+  border-bottom-left-radius: ${px(config.values.radius, 8)};
+  position: absolute;
+  left: ${px(config.values.leftOffset, -18)};
+  pointer-events: none;
+}`.trim(),
+    controls: [
+      {
+        key: "lineColor",
+        label: "线条颜色",
+        type: "color",
+      },
+      {
+        key: "lineWidth",
+        label: "线条粗细",
+        max: 4,
+        min: 1,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "radius",
+        label: "圆角",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      leftOffset: -18,
+      lineColor: "rgb(70, 110, 220)",
+      lineWidth: 2,
+      radius: 8,
+    }),
+    hint: "为聚焦列表项显示层级连接线（需配合 JS 激活 block-focus）。",
+    label: "列表层次线",
+    preview: "├─",
+    risk: "编辑器 UI",
+    value: "listBulletLine",
+  },
+  {
+    buildCss: config => `
+div[data-subtype="o"].list {
+  --o1-style: counter(o1, decimal)".";
+  --o2-style: counter(o2, lower-latin)".";
+  --o3-style: counter(o3, lower-roman)".";
+  --o4-style: counter(o4, upper-latin)".";
+  --o5-style: counter(o5, upper-roman)".";
+  --o6-style: counter(o6, lower-greek)".";
+}
+.protyle-wysiwyg [data-subtype="o"].li > .protyle-action:after {
+  margin: -12px 0 0 -12px !important;
+  line-height: 20px;
+}
+.list[data-subtype="o"] {
+  counter-reset: o1 0 o2 0 o3 0 o4 0 o5 0 o6 0;
+}
+.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o2;
+  content: var(--o2-style);
+  position: absolute;
+}
+.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o3;
+  content: var(--o3-style);
+  position: absolute;
+}
+.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o4;
+  content: var(--o4-style);
+  position: absolute;
+}
+.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o5;
+  content: var(--o5-style);
+  position: absolute;
+}
+.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o6;
+  content: var(--o6-style);
+  position: absolute;
+}
+.li[data-subtype="o"] > .protyle-action::after {
+  padding: ${px(config.values.paddingY, 3)} ${px(config.values.paddingX, 2)};
+  width: ${px(config.values.width, 24)};
+  display: flex;
+  justify-content: center;
+}
+${stringValue(config.values.showBackground, "no") === "yes" ? `
+.protyle-wysiwyg [data-node-id].li[fold="1"]:not([data-subtype="o"].en_item_bullet_actived) > .protyle-action:after,
+.protyle-wysiwyg [data-node-id].li > .protyle-action:hover:after {
+  background-color: ${stringValue(config.values.hoverBgColor, "oklch(55% 0.05 250 / 0.3)")} !important;
+}` : ""}`.trim(),
+    controls: [
+      {
+        key: "showBackground",
+        label: "悬停背景",
+        options: [
+          { label: "显示", value: "yes" },
+          { label: "隐藏", value: "no" },
+        ],
+        type: "select",
+      },
+      {
+        key: "hoverBgColor",
+        label: "悬停底色",
+        type: "color",
+      },
+      {
+        key: "width",
+        label: "序号宽度",
+        max: 40,
+        min: 16,
+        step: 2,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      hoverBgColor: "oklch(55% 0.05 250 / 0.3)",
+      paddingX: 2,
+      paddingY: 3,
+      showBackground: "no",
+      width: 24,
+    }),
+    hint: "为有序列表启用多级序号样式（小写字母、罗马数字等）。",
+    label: "有序列表序号",
+    preview: "1.",
+    risk: "正文安全",
+    value: "orderedListStyle",
   },
   {
     buildCss: config => `
@@ -620,6 +900,100 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     preview: "3",
     risk: "正文安全",
     value: "refcountBadge",
+  },
+  {
+    buildCss: config => `
+.protyle-hint {
+  padding: ${px(config.values.paddingY, 2)} ${px(config.values.paddingX, 5)};
+  border-radius: ${px(config.values.radius, 6)};
+  max-height: ${stringValue(config.values.maxHeight, "50vh")};
+  overflow-y: auto;
+}
+.protyle-hint .b3-list-item {
+  margin: ${px(config.values.itemMarginY, 5)} 0;
+  min-height: ${px(config.values.itemMinHeight, 45)};
+  border-radius: ${px(config.values.itemRadius, 6)};
+}
+.b3-list--background .b3-list-item:hover:not(.b3-list-item--focus):not(.dragover),
+.b3-list--background .b3-list-item--focus:not(.dragover) {
+  background-color: ${stringValue(config.values.hoverBgColor, "rgba(100, 200, 255, 0.15)")};
+}`.trim(),
+    controls: [
+      {
+        key: "hoverBgColor",
+        label: "悬停背景",
+        type: "color",
+      },
+      {
+        key: "radius",
+        label: "容器圆角",
+        max: 12,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "itemMinHeight",
+        label: "选项最小高度",
+        max: 72,
+        min: 28,
+        step: 4,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "maxHeight",
+        label: "最大高度",
+        options: [
+          { label: "40vh", value: "40vh" },
+          { label: "50vh", value: "50vh" },
+          { label: "60vh", value: "60vh" },
+          { label: "70vh", value: "70vh" },
+        ],
+        type: "select",
+      },
+    ],
+    defaults: createDefaultConfig({
+      hoverBgColor: "rgba(100, 200, 255, 0.15)",
+      itemMinHeight: 45,
+      itemMarginY: 5,
+      itemRadius: 6,
+      maxHeight: "50vh",
+      paddingX: 5,
+      paddingY: 2,
+      radius: 6,
+    }),
+    hint: "调整引用搜索菜单的候选项高度、圆角和悬停背景。",
+    label: "引用搜索菜单",
+    preview: "搜索",
+    risk: "编辑器 UI",
+    value: "refSearchMenu",
+  },
+  {
+    buildCss: config => `
+.backlinkMList .b3-list-item,
+.backlinkList .b3-list-item {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: ${stringValue(config.values.backgroundColor, "var(--b3-list-hover, #363636)")};
+}`.trim(),
+    controls: [
+      {
+        key: "backgroundColor",
+        label: "固定背景",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "var(--b3-list-hover, #363636)",
+    }),
+    hint: "在反链和提及面板中固定文档名称不随滚动消失。",
+    label: "反链固定标题",
+    preview: "反链",
+    risk: "编辑器 UI",
+    value: "backlinkSticky",
   },
   {
     buildCss: config => `

@@ -29,6 +29,13 @@ describe("style feature catalog", () => {
     expect(profile.blockRefStyle.values.fontWeight).toBe(600);
     expect(profile.hrStyle.values.mode).toBe("gradient");
     expect(profile.hrStyle.values.height).toBe(2);
+    expect(profile.headingDecoration.values.mode).toBe("leftBar");
+    expect(profile.headingDecoration.values.barWidth).toBe(3);
+    expect(profile.headingNumbering.enabled).toBe(false);
+    expect(profile.listBulletLine.values.lineColor).toBe("rgb(70, 110, 220)");
+    expect(profile.orderedListStyle.values.width).toBe(24);
+    expect(profile.refSearchMenu.values.itemMinHeight).toBe(45);
+    expect(profile.backlinkSticky.values.backgroundColor).toBe("var(--b3-list-hover, #363636)");
   });
 
   it("normalizes partial and invalid feature profile input", () => {
@@ -104,6 +111,39 @@ describe("style feature catalog", () => {
           mode: "unknown",
         },
       },
+      headingDecoration: {
+        enabled: true,
+        values: {
+          mode: "unknownMode",
+          barWidth: 99,
+        },
+      },
+      headingNumbering: {
+        enabled: true,
+        values: {},
+      },
+      listBulletLine: {
+        enabled: true,
+        values: {
+          lineWidth: 0,
+        },
+      },
+      orderedListStyle: {
+        enabled: true,
+        values: {
+          showBackground: "invalid",
+        },
+      },
+      refSearchMenu: {
+        enabled: true,
+        values: {
+          maxHeight: "invalid",
+        },
+      },
+      backlinkSticky: {
+        enabled: true,
+        values: {},
+      },
     } as Partial<FeatureStyleProfile>);
 
     expect(profile.imageRadius.enabled).toBe(true);
@@ -133,6 +173,17 @@ describe("style feature catalog", () => {
     expect(profile.blockRefStyle.values.lineStyle).toBe("dashed");
     expect(profile.hrStyle.enabled).toBe(true);
     expect(profile.hrStyle.values.mode).toBe("gradient");
+    expect(profile.headingDecoration.enabled).toBe(true);
+    expect(profile.headingDecoration.values.mode).toBe("leftBar");
+    expect(profile.headingDecoration.values.barWidth).toBe(8);
+    expect(profile.headingNumbering.enabled).toBe(true);
+    expect(profile.listBulletLine.enabled).toBe(true);
+    expect(profile.listBulletLine.values.lineWidth).toBe(1);
+    expect(profile.orderedListStyle.enabled).toBe(true);
+    expect(profile.orderedListStyle.values.showBackground).toBe("no");
+    expect(profile.refSearchMenu.enabled).toBe(true);
+    expect(profile.refSearchMenu.values.maxHeight).toBe("50vh");
+    expect(profile.backlinkSticky.enabled).toBe(true);
   });
 
   it("builds configurable css for mark text style", () => {
@@ -241,6 +292,142 @@ describe("style feature catalog", () => {
 
     expect(css).toContain('[data-node-id].hr > div:after');
     expect(css).toContain("border-top: 2px dashed #aaa;");
+  });
+
+  it("builds configurable css for heading decoration in left bar mode", () => {
+    const profile = normalizeFeatureProfile({
+      headingDecoration: {
+        enabled: true,
+        values: {
+          barColor: "#e53935",
+          barWidth: 4,
+          fontWeight: 700,
+          mode: "leftBar",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-node-id].h1');
+    expect(css).toContain("padding-left: 12px;");
+    expect(css).toContain("font-weight: 700;");
+    expect(css).toContain("background-color: #e53935;");
+    expect(css).toContain("width: 4px;");
+  });
+
+  it("builds configurable css for heading decoration in underline mode", () => {
+    const profile = normalizeFeatureProfile({
+      headingDecoration: {
+        enabled: true,
+        values: {
+          barColor: "rgba(44, 62, 80, 0.5)",
+          barWidth: 2,
+          fontWeight: 600,
+          mode: "underline",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain("linear-gradient(to right, transparent, rgba(44, 62, 80, 0.5))");
+    expect(css).toContain("height: 2px;");
+  });
+
+  it("builds css for heading numbering hide", () => {
+    const profile = normalizeFeatureProfile({
+      headingNumbering: {
+        enabled: true,
+        values: {},
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".h1::before");
+    expect(css).toContain("content: none !important;");
+    expect(css).toContain("display: none !important;");
+  });
+
+  it("builds configurable css for list bullet lines", () => {
+    const profile = normalizeFeatureProfile({
+      listBulletLine: {
+        enabled: true,
+        values: {
+          lineColor: "#466edc",
+          lineWidth: 2,
+          radius: 8,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".block-focus");
+    expect(css).toContain("border-left: 2px solid #466edc;");
+    expect(css).toContain("border-bottom-left-radius: 8px;");
+  });
+
+  it("builds configurable css for ordered list styles", () => {
+    const profile = normalizeFeatureProfile({
+      orderedListStyle: {
+        enabled: true,
+        values: {
+          showBackground: "yes",
+          hoverBgColor: "rgba(100, 150, 200, 0.3)",
+          width: 28,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('div[data-subtype="o"].list');
+    expect(css).toContain("counter-reset:");
+    expect(css).toContain("counter-increment: o2");
+    expect(css).toContain("width: 28px;");
+    expect(css).toContain("background-color: rgba(100, 150, 200, 0.3)");
+  });
+
+  it("builds configurable css for ref search menu", () => {
+    const profile = normalizeFeatureProfile({
+      refSearchMenu: {
+        enabled: true,
+        values: {
+          hoverBgColor: "rgba(200, 200, 255, 0.2)",
+          itemMinHeight: 50,
+          maxHeight: "60vh",
+          radius: 8,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".protyle-hint");
+    expect(css).toContain("border-radius: 8px;");
+    expect(css).toContain("max-height: 60vh;");
+    expect(css).toContain("min-height: 50px;");
+    expect(css).toContain("background-color: rgba(200, 200, 255, 0.2);");
+  });
+
+  it("builds configurable css for backlink sticky headers", () => {
+    const profile = normalizeFeatureProfile({
+      backlinkSticky: {
+        enabled: true,
+        values: {
+          backgroundColor: "#363636",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".backlinkMList .b3-list-item");
+    expect(css).toContain(".backlinkList .b3-list-item");
+    expect(css).toContain("position: sticky;");
+    expect(css).toContain("background-color: #363636;");
   });
 
   it("builds css only for enabled features", () => {
