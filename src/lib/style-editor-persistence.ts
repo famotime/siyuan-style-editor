@@ -8,6 +8,7 @@ import {
   normalizePresetPaletteCollections,
   type PresetPaletteCollection,
 } from "@/lib/preset-palette-catalog";
+import { normalizeFeatureProfile, type FeatureStyleProfile } from "@/lib/style-feature-catalog";
 import { normalizeStyleProfile, type StyleProfile } from "@/lib/style-profile";
 
 export async function loadPersistedEditorState(
@@ -22,6 +23,7 @@ export async function savePersistedEditorState(
   plugin: Plugin | null,
   storageKey: string,
   profile: StyleProfile,
+  featureProfile: FeatureStyleProfile,
   customPresetPalettes: PresetPaletteCollection[],
 ): Promise<void> {
   if (!plugin) {
@@ -30,6 +32,7 @@ export async function savePersistedEditorState(
 
   await plugin.saveData(storageKey, {
     customPresetPalettes: normalizePresetPaletteCollections(customPresetPalettes),
+    featureProfile: normalizeFeatureProfile(featureProfile),
     profile: normalizeStyleProfile(profile),
   });
 }

@@ -1,3 +1,7 @@
+import {
+  normalizeFeatureProfile,
+  type FeatureStyleProfile,
+} from "@/lib/style-feature-catalog";
 import { normalizeStyleProfile, type StyleProfile } from "@/lib/style-profile";
 import { STYLE_TARGETS } from "@/lib/style-target-catalog";
 
@@ -14,6 +18,7 @@ export interface StyleTransferMetadata {
 interface StyleTransferDocument {
   author: string;
   exportedAt: string;
+  featureProfile: FeatureStyleProfile;
   profile: StyleProfile;
   styleName: string;
   type: typeof STYLE_TRANSFER_TYPE;
@@ -46,10 +51,12 @@ function createTransferDocument(
   profile: Partial<StyleProfile>,
   metadata: StyleTransferMetadata,
   exportedAt: string,
+  featureProfile?: Partial<FeatureStyleProfile> | null,
 ): StyleTransferDocument {
   return {
     author: metadata.author,
     exportedAt,
+    featureProfile: normalizeFeatureProfile(featureProfile),
     profile: normalizeStyleProfile(profile),
     styleName: metadata.styleName,
     type: STYLE_TRANSFER_TYPE,
@@ -71,15 +78,17 @@ export function serializeStyleProfileTransfer(
   profile: Partial<StyleProfile>,
   metadata: StyleTransferMetadata,
   exportedAt = new Date().toISOString(),
+  featureProfile?: Partial<FeatureStyleProfile> | null,
 ): string {
   return JSON.stringify(
-    createTransferDocument(profile, normalizeTransferMetadata(metadata), exportedAt),
+    createTransferDocument(profile, normalizeTransferMetadata(metadata), exportedAt, featureProfile),
     null,
     2,
   );
 }
 
 export function parseImportedStyleTransfer(raw: string): {
+  featureProfile: FeatureStyleProfile;
   metadata: StyleTransferMetadata;
   profile: StyleProfile;
 } {
@@ -111,6 +120,7 @@ export function parseImportedStyleTransfer(raw: string): {
   const metadata = normalizeTransferMetadata(parsed);
 
   return {
+    featureProfile: normalizeFeatureProfile(isObject(parsed.featureProfile) ? parsed.featureProfile : null),
     metadata,
     profile: normalizeStyleProfile(parsed.profile),
   };

@@ -3,6 +3,13 @@ import {
   type PresetPaletteCollection,
 } from "@/lib/preset-palette-catalog";
 import {
+  createDefaultFeatureProfile,
+  normalizeFeatureProfile,
+  type FeatureStyleConfig,
+  type FeatureStyleId,
+  type FeatureStyleProfile,
+} from "@/lib/style-feature-catalog";
+import {
   createDefaultStyleProfile,
   normalizeStyleProfile,
   type StyleProfile,
@@ -11,6 +18,7 @@ import {
 
 export interface StyleEditorState {
   customPresetPalettes: PresetPaletteCollection[];
+  featureProfile: FeatureStyleProfile;
   profile: StyleProfile;
 }
 
@@ -21,12 +29,14 @@ export interface StyleTargetChannelRef {
 
 type PartialState = Partial<{
   customPresetPalettes: unknown;
+  featureProfile: Partial<FeatureStyleProfile>;
   profile: Partial<StyleProfile>;
 }>;
 
 export function createDefaultEditorState(): StyleEditorState {
   return {
     customPresetPalettes: [],
+    featureProfile: createDefaultFeatureProfile(),
     profile: createDefaultStyleProfile(),
   };
 }
@@ -34,7 +44,31 @@ export function createDefaultEditorState(): StyleEditorState {
 export function normalizeEditorState(input?: PartialState | null): StyleEditorState {
   return {
     customPresetPalettes: normalizePresetPaletteCollections(input?.customPresetPalettes),
+    featureProfile: normalizeFeatureProfile(input?.featureProfile),
     profile: normalizeStyleProfile(input?.profile),
+  };
+}
+
+export function updateFeatureConfig(
+  state: StyleEditorState,
+  featureId: FeatureStyleId,
+  config: Partial<FeatureStyleConfig>,
+): StyleEditorState {
+  const normalizedFeatureProfile = normalizeFeatureProfile({
+    ...state.featureProfile,
+    [featureId]: {
+      ...state.featureProfile[featureId],
+      ...config,
+      values: {
+        ...state.featureProfile[featureId].values,
+        ...(config.values ?? {}),
+      },
+    },
+  });
+
+  return {
+    ...state,
+    featureProfile: normalizedFeatureProfile,
   };
 }
 
@@ -103,6 +137,7 @@ export function swapTargetChannelValues(
 export function resetEditorStyles(state: StyleEditorState): StyleEditorState {
   return {
     ...state,
+    featureProfile: createDefaultFeatureProfile(),
     profile: createDefaultStyleProfile(),
   };
 }

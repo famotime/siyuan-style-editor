@@ -22,6 +22,30 @@ function createShellState(options: {
   isPresetPaletteSectionExpanded?: boolean;
 } = {}) {
   const runtimeState = reactive({
+    featureProfile: {
+      imageRadius: {
+        enabled: false,
+        values: {
+          radius: 6,
+        },
+      },
+      linkStyle: {
+        enabled: false,
+        values: {
+          color: "#4fc3f7",
+          hoverColor: "#1de9b6",
+          lineStyle: "dashed",
+        },
+      },
+      paragraphHover: {
+        enabled: false,
+        values: {
+          backgroundColor: "hsla(0, 0%, 77%, 0.035)",
+          shadowSize: 3,
+          transitionMs: 350,
+        },
+      },
+    },
     profile: {
       heading1: {
         backgroundColor: "",
@@ -37,6 +61,63 @@ function createShellState(options: {
   });
 
   return {
+    FEATURE_STYLE_OPTIONS: [
+      {
+        controls: [
+          {
+            key: "backgroundColor",
+            label: "悬停底色",
+            type: "color",
+          },
+          {
+            key: "transitionMs",
+            label: "过渡时间",
+            type: "number",
+          },
+        ],
+        hint: "鼠标经过正文块时提供轻微底色和阴影反馈。",
+        label: "段落悬停高亮",
+        preview: "段落块",
+        risk: "正文安全",
+        value: "paragraphHover",
+      },
+      {
+        controls: [
+          {
+            key: "radius",
+            label: "图片圆角",
+            type: "number",
+          },
+        ],
+        hint: "为编辑区图片增加统一圆角。",
+        label: "圆角图片",
+        preview: "图片",
+        risk: "正文安全",
+        value: "imageRadius",
+      },
+      {
+        controls: [
+          {
+            key: "color",
+            label: "链接字色",
+            type: "color",
+          },
+          {
+            key: "lineStyle",
+            label: "下划线",
+            options: [
+              { label: "虚线", value: "dashed" },
+            ],
+            type: "select",
+          },
+        ],
+        hint: "统一块内超链接的颜色和悬停反馈。",
+        label: "超链接强调",
+        preview: "链接",
+        risk: "正文安全",
+        value: "linkStyle",
+      },
+    ],
     STYLE_TARGET_OPTIONS: [
       {
         hint: "用于文章总标题与大章节入口",
@@ -95,6 +176,7 @@ function createShellState(options: {
     handleResetAllStyles: vi.fn(),
     handleSavePresetPalette: vi.fn(),
     handleSwapTargetChannelValues: vi.fn(),
+    handleUpdateFeatureStyle: vi.fn(),
     importFileInputRef: ref<HTMLInputElement | null>(null),
     inlineColorFieldRef: ref<HTMLElement | null>(null),
     inlineColorFieldStyle: ref({

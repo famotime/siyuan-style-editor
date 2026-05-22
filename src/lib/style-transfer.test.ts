@@ -13,11 +13,26 @@ describe("style transfer", () => {
     }, {
       author: "无名",
       styleName: "无名样式",
-    }, "2026-03-26T00:00:00.000Z");
+    }, "2026-03-26T00:00:00.000Z", {
+      imageRadius: {
+        enabled: true,
+        values: {
+          radius: 12,
+        },
+      },
+    });
 
     expect(JSON.parse(serialized)).toEqual({
       author: "无名",
       exportedAt: "2026-03-26T00:00:00.000Z",
+      featureProfile: expect.objectContaining({
+        imageRadius: expect.objectContaining({
+          enabled: true,
+          values: expect.objectContaining({
+            radius: 12,
+          }),
+        }),
+      }),
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#fff2a8",
@@ -30,16 +45,38 @@ describe("style transfer", () => {
   });
 
   it("imports either a transfer document or a persisted config payload", () => {
-    expect(parseImportedStyleProfile(JSON.stringify({
+    expect(parseImportedStyleTransfer(JSON.stringify({
       type: "siyuan-style-editor-profile",
       version: 1,
       exportedAt: "2026-03-26T00:00:00.000Z",
+      featureProfile: {
+        paragraphHover: {
+          enabled: true,
+          values: {
+            backgroundColor: "#eeeeee",
+          },
+        },
+      },
       profile: {
         heading1: {
           color: "#224488",
         },
       },
-    })).heading1.color).toBe("#224488");
+    }))).toEqual(expect.objectContaining({
+      featureProfile: expect.objectContaining({
+        paragraphHover: expect.objectContaining({
+          enabled: true,
+          values: expect.objectContaining({
+            backgroundColor: "#eeeeee",
+          }),
+        }),
+      }),
+      profile: expect.objectContaining({
+        heading1: expect.objectContaining({
+          color: "#224488",
+        }),
+      }),
+    }));
 
     expect(parseImportedStyleProfile(JSON.stringify({
       profile: {
@@ -48,6 +85,20 @@ describe("style transfer", () => {
         },
       },
     })).mark.backgroundColor).toBe("#fff2a8");
+  });
+
+  it("keeps legacy imports without featureProfile backwards compatible", () => {
+    const parsed = parseImportedStyleTransfer(JSON.stringify({
+      profile: {
+        heading1: {
+          color: "#224488",
+        },
+      },
+    }));
+
+    expect(parsed.profile.heading1.color).toBe("#224488");
+    expect(parsed.featureProfile.imageRadius.enabled).toBe(false);
+    expect(parsed.featureProfile.imageRadius.values.radius).toBe(6);
   });
 
   it("rejects invalid local config payloads", () => {

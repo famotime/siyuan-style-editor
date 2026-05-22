@@ -12,9 +12,16 @@ import {
   savePersistedEditorState,
 } from "@/lib/style-editor-persistence";
 import {
+  buildFeatureStyleCss,
+  normalizeFeatureProfile,
+  type FeatureStyleConfig,
+  type FeatureStyleId,
+} from "@/lib/style-feature-catalog";
+import {
   createDefaultEditorState,
   resetEditorStyles,
   swapTargetChannelValues as swapTargetChannelValuesInState,
+  updateFeatureConfig,
   type StyleTargetChannelRef,
   updateTargetBackgroundColor,
   updateTargetColor,
@@ -68,6 +75,13 @@ function replaceProfile(nextState: StyleEditorState) {
   }
 }
 
+function replaceFeatureProfile(nextState: StyleEditorState) {
+  const normalizedFeatureProfile = normalizeFeatureProfile(nextState.featureProfile);
+  for (const featureId of Object.keys(normalizedFeatureProfile) as FeatureStyleId[]) {
+    runtimeState.featureProfile[featureId] = normalizedFeatureProfile[featureId];
+  }
+}
+
 function replaceCustomPresetPalettes(nextState: StyleEditorState) {
   runtimeState.customPresetPalettes = [...nextState.customPresetPalettes];
 }
@@ -75,6 +89,7 @@ function replaceCustomPresetPalettes(nextState: StyleEditorState) {
 function snapshotState(): StyleEditorState {
   return {
     customPresetPalettes: [...runtimeState.customPresetPalettes],
+    featureProfile: normalizeFeatureProfile(runtimeState.featureProfile),
     profile: normalizeStyleProfile(runtimeState.profile),
   };
 }
@@ -87,6 +102,7 @@ function commitState(
   } = {},
 ) {
   replaceProfile(nextState);
+  replaceFeatureProfile(nextState);
 
   if (options.replaceCustomPresetPalettes ?? false) {
     replaceCustomPresetPalettes(nextState);
@@ -102,7 +118,10 @@ function commitState(
 }
 
 function applyInjectedStyles() {
-  const css = buildStyleCss(runtimeState.profile);
+  const css = [
+    buildStyleCss(runtimeState.profile),
+    buildFeatureStyleCss(runtimeState.featureProfile),
+  ].filter(Boolean).join("\n\n");
   stylesheet.apply(css);
 }
 
@@ -112,6 +131,7 @@ async function persistState() {
     pluginInstance,
     STORAGE_KEY,
     state.profile,
+    state.featureProfile,
     state.customPresetPalettes,
   );
 }
@@ -150,6 +170,7 @@ export async function initializeRuntime(plugin: Plugin) {
   pluginInstance = plugin;
   const savedState = await loadPersistedEditorState(plugin, STORAGE_KEY);
   replaceProfile(savedState);
+  replaceFeatureProfile(savedState);
   replaceCustomPresetPalettes(savedState);
   runtimeState.ready = true;
   applyInjectedStyles();
@@ -161,6 +182,7 @@ export function teardownRuntime() {
   runtimeState.selectedTarget = "heading1";
   runtimeState.selectedChannel = "color";
   replaceProfile(createDefaultEditorState());
+  replaceFeatureProfile(createDefaultEditorState());
   replaceCustomPresetPalettes(createDefaultEditorState());
   stylesheet.remove();
 }
@@ -222,6 +244,14 @@ export async function clearSelectedTargetColor() {
   await applyPaletteColor("");
 }
 
+export async function updateFeatureStyle(
+  featureId: FeatureStyleId,
+  config: Partial<FeatureStyleConfig>,
+) {
+  const nextState = updateFeatureConfig(snapshotState(), featureId, config);
+  await commitState(nextState);
+}
+
 export async function resetAllStyles() {
   const nextState = resetEditorStyles(snapshotState());
   await commitState(nextState);
@@ -255,7 +285,8 @@ export async function extractCurrentStyles() {
 }
 
 export function exportCurrentStyles(metadata: StyleTransferMetadata): string {
-  return serializeStyleProfileTransfer(snapshotState().profile, metadata);
+  const state = snapshotState();
+  return serializeStyleProfileTransfer(state.profile, metadata, new Date().toISOString(), state.featureProfile);
 }
 
 export async function importStyles(raw: string) {
@@ -264,6 +295,7 @@ export async function importStyles(raw: string) {
 
   await commitState({
     ...snapshotState(),
+    featureProfile: importedTransfer.featureProfile,
     profile: importedProfile,
   });
 

@@ -28,6 +28,12 @@
         @swap-channel-value="handleSwapTargetChannelValues"
         @activate-channel="handleTargetChannelActivation"
       />
+
+      <FeatureStudio
+        :feature-style-options="FEATURE_STYLE_OPTIONS"
+        :feature-profile="runtimeState.featureProfile"
+        @update-feature-style="handleUpdateFeatureStyle"
+      />
     </section>
 
     <FloatingPalettePanel
@@ -69,6 +75,7 @@ import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue";
+import FeatureStudio from "@/components/StyleEditorShell/FeatureStudio.vue";
 import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue";
 import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue";
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell";
@@ -99,6 +106,7 @@ const {
   handleResetAllStyles,
   handleSavePresetPalette,
   handleSwapTargetChannelValues,
+  handleUpdateFeatureStyle,
   importedStyleSignature,
   importFileInputRef,
   inlineColorFieldRef,
@@ -120,6 +128,7 @@ const {
   selectPreviewTarget,
   openImportStylesPicker,
   statusCopy,
+  FEATURE_STYLE_OPTIONS,
   STYLE_TARGET_OPTIONS,
 } = useStyleEditorShell();
 

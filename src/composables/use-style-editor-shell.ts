@@ -8,7 +8,11 @@ import { computed } from "vue";
 import { useInlinePaletteSession } from "@/composables/use-inline-palette-session";
 import { usePanelThemeVars } from "@/composables/use-panel-theme-vars";
 import { useStyleTransferActions } from "@/composables/use-style-transfer-actions";
+import { FEATURE_STYLE_OPTIONS } from "@/lib/style-feature-catalog";
 import { STYLE_TARGET_OPTIONS } from "@/lib/style-target-catalog";
+import {
+  updateFeatureStyle,
+} from "@/style-editor-runtime";
 
 export function useStyleEditorShell() {
   const { panelThemeVars } = usePanelThemeVars();
@@ -53,6 +57,7 @@ export function useStyleEditorShell() {
     handleResetAllStyles,
     handleSavePresetPalette,
     handleSwapTargetChannelValues: inlinePaletteSession.handleSwapTargetChannelValues,
+    handleUpdateFeatureStyle: updateFeatureStyle,
     handleExportStyles,
     importedStyleSignature,
     importFileInputRef,
@@ -61,6 +66,7 @@ export function useStyleEditorShell() {
     selectedTargetMeta,
     openImportStylesPicker,
     statusCopy,
+    FEATURE_STYLE_OPTIONS,
     STYLE_TARGET_OPTIONS,
     ...inlinePaletteSession,
   };

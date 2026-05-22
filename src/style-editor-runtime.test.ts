@@ -15,6 +15,7 @@ import {
   selectChannel,
   selectTarget,
   teardownRuntime,
+  updateFeatureStyle,
 } from "@/style-editor-runtime";
 
 function createPluginStub(savedState?: unknown) {
@@ -58,14 +59,15 @@ describe("style editor runtime", () => {
     await applyPaletteColor("#f6d365");
 
     expect(runtimeState.profile.mark.backgroundColor).toBe("#f6d365");
-    expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#f6d365",
         }),
       }),
-    });
+    }));
 
     const styleElement = document.getElementById("siyuan-style-editor-style");
     expect(styleElement?.textContent).toContain("background-color: #f6d365 !important;");
@@ -94,14 +96,15 @@ describe("style editor runtime", () => {
     await persistCurrentStyles();
 
     expect(plugin.saveData).toHaveBeenCalledOnce();
-    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         mark: expect.objectContaining({
           backgroundColor: "#f6d365",
         }),
       }),
-    });
+    }));
   });
 
   it("applies a palette sequence to targets in order and persists once", async () => {
@@ -119,8 +122,9 @@ describe("style editor runtime", () => {
     expect(runtimeState.profile.heading3.color).toBe("#f6d365");
     expect(runtimeState.profile.heading4.color).toBe("");
     expect(plugin.saveData).toHaveBeenCalledOnce();
-    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         heading1: expect.objectContaining({
           color: "#224488",
@@ -135,7 +139,7 @@ describe("style editor runtime", () => {
           color: "",
         }),
       }),
-    });
+    }));
 
     const styleElement = document.getElementById("siyuan-style-editor-style");
     expect(styleElement?.textContent).toContain("color: #224488 !important;");
@@ -162,8 +166,9 @@ describe("style editor runtime", () => {
     expect(runtimeState.profile.heading2.color).toBe("#fff2a8");
     expect(runtimeState.profile.mark.backgroundColor).toBe("#224488");
     expect(plugin.saveData).toHaveBeenCalledOnce();
-    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         heading2: expect.objectContaining({
           color: "#fff2a8",
@@ -172,11 +177,47 @@ describe("style editor runtime", () => {
           backgroundColor: "#224488",
         }),
       }),
-    });
+    }));
 
     const styleElement = document.getElementById("siyuan-style-editor-style");
     expect(styleElement?.textContent).toContain("color: #fff2a8 !important;");
     expect(styleElement?.textContent).toContain("background-color: #224488 !important;");
+  });
+
+  it("updates feature styles, injects their css, persists them, and resets them", async () => {
+    const plugin = createPluginStub();
+    await initializeRuntime(plugin as never);
+
+    await updateFeatureStyle("imageRadius", {
+      enabled: true,
+      values: {
+        radius: 14,
+      },
+    });
+
+    expect(runtimeState.featureProfile.imageRadius.enabled).toBe(true);
+    expect(runtimeState.featureProfile.imageRadius.values.radius).toBe(14);
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
+      customPresetPalettes: [],
+      featureProfile: expect.objectContaining({
+        imageRadius: expect.objectContaining({
+          enabled: true,
+          values: expect.objectContaining({
+            radius: 14,
+          }),
+        }),
+      }),
+      profile: expect.any(Object),
+    }));
+
+    const styleElement = document.getElementById("siyuan-style-editor-style");
+    expect(styleElement?.textContent).toContain(".protyle-wysiwyg img:not(.av__gallery-img)");
+    expect(styleElement?.textContent).toContain("border-radius: 14px !important;");
+
+    await resetAllStyles();
+
+    expect(runtimeState.featureProfile.imageRadius.enabled).toBe(false);
+    expect(styleElement?.textContent).toBe("");
   });
 
   it("can roll previewed palette colors back to the last committed value without persisting", async () => {
@@ -217,8 +258,9 @@ describe("style editor runtime", () => {
     });
     expect(runtimeState.profile.heading1.color).toBe("rgb(200, 40, 40)");
     expect(runtimeState.profile.mark.backgroundColor).toBe("rgb(255, 240, 180)");
-    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         heading1: expect.objectContaining({
           color: "rgb(200, 40, 40)",
@@ -227,7 +269,7 @@ describe("style editor runtime", () => {
           backgroundColor: "rgb(255, 240, 180)",
         }),
       }),
-    });
+    }));
   });
 
   it("exports the current profile as a portable style document", async () => {
@@ -287,7 +329,8 @@ describe("style editor runtime", () => {
     });
     expect(runtimeState.profile.heading2.color).toBe("#3355aa");
     expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8");
-    expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenLastCalledWith("style-editor.json", expect.objectContaining({
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         heading2: expect.objectContaining({
           color: "#3355aa",
@@ -297,7 +340,7 @@ describe("style editor runtime", () => {
         }),
       }),
       customPresetPalettes: [],
-    });
+    }));
   });
 
   it("saves the current selected colors as a custom preset palette and persists it to the front of the list", async () => {
@@ -330,7 +373,8 @@ describe("style editor runtime", () => {
       id: expect.stringMatching(/^custom-palette-/),
       label: "My Favorite",
     });
-    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         heading1: expect.objectContaining({
           color: "#3355aa",
@@ -345,7 +389,7 @@ describe("style editor runtime", () => {
           label: "My Favorite",
         }),
       ],
-    });
+    }));
   });
 
   it("deletes a saved custom preset palette and persists the remaining palette list", async () => {
@@ -366,14 +410,15 @@ describe("style editor runtime", () => {
       label: "My Favorite",
     });
     expect(runtimeState.customPresetPalettes).toEqual([]);
-    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", {
+    expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
+      featureProfile: expect.any(Object),
       profile: expect.objectContaining({
         heading1: expect.objectContaining({
           color: "#3355aa",
         }),
       }),
       customPresetPalettes: [],
-    });
+    }));
   });
 
   it("tears down the runtime state and removes the stylesheet", async () => {

@@ -3,6 +3,7 @@ import {
   normalizeEditorState,
   resetEditorStyles,
   swapTargetChannelValues,
+  updateFeatureConfig,
   updateTargetBackgroundColor,
   updateTargetColor,
 } from "@/lib/style-editor-state";
@@ -16,6 +17,8 @@ describe("style editor state", () => {
     expect(state.profile.strong.color).toBe("");
     expect(state.profile.mark.backgroundColor).toBe("");
     expect(state.profile.codeBlock.backgroundColor).toBe("");
+    expect(state.featureProfile.paragraphHover.enabled).toBe(false);
+    expect(state.featureProfile.imageRadius.values.radius).toBe(6);
   });
 
   it("normalizes persisted state onto the full schema", () => {
@@ -27,6 +30,14 @@ describe("style editor state", () => {
           label: "Saved",
         },
       ],
+      featureProfile: {
+        imageRadius: {
+          enabled: true,
+          values: {
+            radius: 14,
+          },
+        },
+      },
       profile: { strong: { color: "rgb(1, 2, 3)" } },
     });
 
@@ -41,6 +52,24 @@ describe("style editor state", () => {
     expect(state.profile.heading3.color).toBe("");
     expect(state.profile.inlineCode.backgroundColor).toBe("");
     expect(state.profile.taskList.color).toBe("");
+    expect(state.featureProfile.imageRadius.enabled).toBe(true);
+    expect(state.featureProfile.imageRadius.values.radius).toBe(14);
+    expect(state.featureProfile.linkStyle.enabled).toBe(false);
+  });
+
+  it("updates one feature config without changing target styles", () => {
+    const nextState = updateFeatureConfig(createDefaultEditorState(), "paragraphHover", {
+      enabled: true,
+      values: {
+        backgroundColor: "#eeeeee",
+      },
+    });
+
+    expect(nextState.featureProfile.paragraphHover.enabled).toBe(true);
+    expect(nextState.featureProfile.paragraphHover.values.backgroundColor).toBe("#eeeeee");
+    expect(nextState.featureProfile.paragraphHover.values.transitionMs).toBe(350);
+    expect(nextState.featureProfile.imageRadius.enabled).toBe(false);
+    expect(nextState.profile.heading1.color).toBe("");
   });
 
   it("updates only the chosen target color", () => {
@@ -73,7 +102,16 @@ describe("style editor state", () => {
 
   it("resets all configured styles back to the default state", () => {
     const stateWithStyles = updateTargetBackgroundColor(
-      updateTargetColor(createDefaultEditorState(), "heading2", "var(--b3-font-color4)"),
+      updateFeatureConfig(
+        updateTargetColor(createDefaultEditorState(), "heading2", "var(--b3-font-color4)"),
+        "imageRadius",
+        {
+          enabled: true,
+          values: {
+            radius: 18,
+          },
+        },
+      ),
       "mark",
       "var(--b3-font-background8)",
     );
@@ -85,6 +123,8 @@ describe("style editor state", () => {
     expect(resetState.profile.mark.backgroundColor).toBe("");
     expect(resetState.profile.heading1.color).toBe("");
     expect(resetState.profile.codeBlock.backgroundColor).toBe("");
+    expect(resetState.featureProfile.imageRadius.enabled).toBe(false);
+    expect(resetState.featureProfile.imageRadius.values.radius).toBe(6);
   });
 
   it("swaps colors between any two target channels", () => {
