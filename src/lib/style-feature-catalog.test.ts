@@ -21,6 +21,14 @@ describe("style feature catalog", () => {
     expect(profile.editorBackground.values.backgroundColor).toBe("#222222");
     expect(profile.headingSpacing.values.headingTopMargin).toBe(0.5);
     expect(profile.unorderedListMarkerColor.values.markerColor).toBe("oklch(75% 0 0)");
+    expect(profile.markStyle.values.backgroundColor).toBe("rgba(255, 212, 0, 0.14)");
+    expect(profile.markStyle.values.emphasisThickness).toBe(2);
+    expect(profile.inlineCodeStyle.values.color).toBe("#ffa657");
+    expect(profile.inlineCodeStyle.values.radius).toBe(4);
+    expect(profile.blockRefStyle.values.color).toBe("rgb(170, 210, 255)");
+    expect(profile.blockRefStyle.values.fontWeight).toBe(600);
+    expect(profile.hrStyle.values.mode).toBe("gradient");
+    expect(profile.hrStyle.values.height).toBe(2);
   });
 
   it("normalizes partial and invalid feature profile input", () => {
@@ -70,6 +78,32 @@ describe("style feature catalog", () => {
           markerColor: 42,
         },
       },
+      markStyle: {
+        enabled: true,
+        values: {
+          emphasisThickness: 999,
+          lineStyle: "invalid",
+        },
+      },
+      inlineCodeStyle: {
+        enabled: true,
+        values: {
+          radius: -5,
+        },
+      },
+      blockRefStyle: {
+        enabled: true,
+        values: {
+          fontWeight: 100,
+          lineStyle: "wavy",
+        },
+      },
+      hrStyle: {
+        enabled: true,
+        values: {
+          mode: "unknown",
+        },
+      },
     } as Partial<FeatureStyleProfile>);
 
     expect(profile.imageRadius.enabled).toBe(true);
@@ -89,6 +123,124 @@ describe("style feature catalog", () => {
     expect(profile.headingSpacing.values.headingBottomMargin).toBe(0.1);
     expect(profile.unorderedListMarkerColor.enabled).toBe(true);
     expect(profile.unorderedListMarkerColor.values.markerColor).toBe("oklch(75% 0 0)");
+    expect(profile.markStyle.enabled).toBe(true);
+    expect(profile.markStyle.values.emphasisThickness).toBe(5);
+    expect(profile.markStyle.values.lineStyle).toBe("solid");
+    expect(profile.inlineCodeStyle.enabled).toBe(true);
+    expect(profile.inlineCodeStyle.values.radius).toBe(0);
+    expect(profile.blockRefStyle.enabled).toBe(true);
+    expect(profile.blockRefStyle.values.fontWeight).toBe(400);
+    expect(profile.blockRefStyle.values.lineStyle).toBe("dashed");
+    expect(profile.hrStyle.enabled).toBe(true);
+    expect(profile.hrStyle.values.mode).toBe("gradient");
+  });
+
+  it("builds configurable css for mark text style", () => {
+    const profile = normalizeFeatureProfile({
+      markStyle: {
+        enabled: true,
+        values: {
+          backgroundColor: "rgba(255, 212, 0, 0.2)",
+          color: "#ffffff",
+          emphasisColor: "rgba(255, 200, 0, 0.9)",
+          emphasisThickness: 3,
+          lineStyle: "solid",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-type~=mark]');
+    expect(css).toContain("color: #ffffff !important;");
+    expect(css).toContain("background-color: rgba(255, 212, 0, 0.2) !important;");
+    expect(css).toContain("border-bottom: 3px solid rgba(255, 200, 0, 0.9) !important;");
+  });
+
+  it("builds configurable css for inline code style", () => {
+    const profile = normalizeFeatureProfile({
+      inlineCodeStyle: {
+        enabled: true,
+        values: {
+          backgroundColor: "rgba(100, 100, 100, 0.2)",
+          color: "#ff9c9c",
+          paddingX: 6,
+          paddingY: 3,
+          radius: 8,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-type~=code]');
+    expect(css).toContain("color: #ff9c9c !important;");
+    expect(css).toContain("background-color: rgba(100, 100, 100, 0.2) !important;");
+    expect(css).toContain("padding: 3px 6px;");
+    expect(css).toContain("border-radius: 8px;");
+  });
+
+  it("builds configurable css for block reference link style", () => {
+    const profile = normalizeFeatureProfile({
+      blockRefStyle: {
+        enabled: true,
+        values: {
+          backgroundColor: "rgba(100, 150, 200, 0.15)",
+          color: "rgb(130, 190, 255)",
+          fontWeight: 700,
+          lineColor: "rgba(130, 190, 255, 0.6)",
+          lineStyle: "solid",
+          lineThickness: 1.5,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-type~="block-ref"]');
+    expect(css).toContain('[data-type~="file-annotation-ref"]');
+    expect(css).toContain("color: rgb(130, 190, 255) !important;");
+    expect(css).toContain("font-weight: 700;");
+    expect(css).toContain("border-bottom: 1.5px solid rgba(130, 190, 255, 0.6) !important;");
+  });
+
+  it("builds configurable css for hr divider style in gradient mode", () => {
+    const profile = normalizeFeatureProfile({
+      hrStyle: {
+        enabled: true,
+        values: {
+          colorLeft: "rgba(255, 0, 0, 0.5)",
+          colorRight: "rgba(0, 0, 255, 0.5)",
+          height: 3,
+          mode: "gradient",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-node-id].hr > div:after');
+    expect(css).toContain("height: 3px;");
+    expect(css).toContain("linear-gradient(to right, rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.5))");
+  });
+
+  it("builds configurable css for hr divider style in line mode", () => {
+    const profile = normalizeFeatureProfile({
+      hrStyle: {
+        enabled: true,
+        values: {
+          colorLeft: "#aaa",
+          height: 2,
+          lineStyle: "dashed",
+          mode: "line",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-node-id].hr > div:after');
+    expect(css).toContain("border-top: 2px dashed #aaa;");
   });
 
   it("builds css only for enabled features", () => {

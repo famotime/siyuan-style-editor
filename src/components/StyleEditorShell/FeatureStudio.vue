@@ -226,6 +226,33 @@ function getPreviewStyle(featureId: FeatureStyleId) {
     style.opacity = String(values.doneOpacity);
     style.color = String(values.doneColor);
   }
+  if (featureId === "markStyle") {
+    style.color = String(values.color);
+    style.backgroundColor = String(values.backgroundColor);
+    style.borderBottom = `${values.emphasisThickness}px ${values.lineStyle} ${values.emphasisColor}`;
+  }
+  if (featureId === "inlineCodeStyle") {
+    style.color = String(values.color);
+    style.backgroundColor = String(values.backgroundColor);
+    style.borderRadius = `${values.radius}px`;
+    style.padding = `${values.paddingY}px ${values.paddingX}px`;
+    style.fontFamily = "monospace";
+  }
+  if (featureId === "blockRefStyle") {
+    style.color = String(values.color);
+    style.backgroundColor = String(values.backgroundColor);
+    style.borderBottom = `${values.lineThickness}px ${values.lineStyle} ${values.lineColor}`;
+    style.fontWeight = String(values.fontWeight);
+  }
+  if (featureId === "hrStyle") {
+    style.borderTop = `${values.height}px ${values.lineStyle} ${values.colorLeft}`;
+    style.height = "0";
+    if (values.mode === "gradient") {
+      style.background = `linear-gradient(to right, ${values.colorLeft}, ${values.colorRight})`;
+      style.borderTop = "none";
+      style.height = `${values.height}px`;
+    }
+  }
 
   return style;
 }

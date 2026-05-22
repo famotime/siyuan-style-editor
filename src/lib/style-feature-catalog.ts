@@ -1,8 +1,12 @@
 export type FeatureStyleId =
   | "blockquoteFrame"
+  | "blockRefStyle"
+  | "hrStyle"
   | "imageRadius"
+  | "inlineCodeStyle"
   | "linkStyle"
   | "editorBackground"
+  | "markStyle"
   | "paragraphHover"
   | "foldedBlockStyle"
   | "headingSpacing"
@@ -702,6 +706,253 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     preview: "表格",
     risk: "正文安全",
     value: "tableStyle",
+  },
+  {
+    buildCss: config => {
+      const lineStyle = lineStyleValue(config.values.lineStyle, "solid");
+      return `
+.b3-typography mark,
+.b3-typography span[data-type~=mark],
+.protyle-wysiwyg mark,
+.protyle-wysiwyg span[data-type~=mark] {
+  color: ${stringValue(config.values.color, "var(--b3-theme-on-background)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "rgba(255, 212, 0, 0.14)")} !important;
+  border-bottom: ${numberValue(config.values.emphasisThickness, 2)}px ${lineStyle} ${stringValue(config.values.emphasisColor, "rgba(255, 212, 0, 0.8)")} !important;
+}`.trim();
+    },
+    controls: [
+      {
+        key: "color",
+        label: "字色",
+        type: "color",
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "emphasisColor",
+        label: "底线颜色",
+        type: "color",
+      },
+      {
+        key: "emphasisThickness",
+        label: "底线粗细",
+        max: 5,
+        min: 0,
+        step: 0.5,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "lineStyle",
+        label: "底线线型",
+        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "none"),
+        type: "select",
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "rgba(255, 212, 0, 0.14)",
+      color: "var(--b3-theme-on-background)",
+      emphasisColor: "rgba(255, 212, 0, 0.8)",
+      emphasisThickness: 2,
+      lineStyle: "solid",
+    }),
+    hint: "调整标记文本的背景色、底线强调和字色。",
+    label: "标记文本样式",
+    preview: "标记",
+    risk: "正文安全",
+    value: "markStyle",
+  },
+  {
+    buildCss: config => `
+.fn__code,
+.b3-typography code:not(.hljs),
+.b3-typography span[data-type~=code],
+.protyle-wysiwyg code:not(.hljs),
+.protyle-wysiwyg span[data-type~=code] {
+  color: ${stringValue(config.values.color, "#ffa657")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "rgba(120, 120, 120, 0.15)")} !important;
+  padding: ${px(config.values.paddingY, 2)} ${px(config.values.paddingX, 4)};
+  border-radius: ${px(config.values.radius, 4)};
+}`.trim(),
+    controls: [
+      {
+        key: "color",
+        label: "字色",
+        type: "color",
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "radius",
+        label: "圆角",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "paddingX",
+        label: "水平内边距",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "paddingY",
+        label: "垂直内边距",
+        max: 12,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "rgba(120, 120, 120, 0.15)",
+      color: "#ffa657",
+      paddingX: 4,
+      paddingY: 2,
+      radius: 4,
+    }),
+    hint: "调整行内代码的字色、背景色、圆角和内边距。",
+    label: "行内代码样式",
+    preview: "<code/>",
+    risk: "正文安全",
+    value: "inlineCodeStyle",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) {
+  color: ${stringValue(config.values.color, "rgb(170, 210, 255)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "rgba(200, 200, 200, 0.1)")} !important;
+  border-bottom: ${numberValue(config.values.lineThickness, 1)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.lineColor, "rgba(210, 210, 210, 0.8)")} !important;
+  padding: 1px 4px;
+  padding-bottom: ${px(config.values.offset, 2)};
+  font-weight: ${numberValue(config.values.fontWeight, 600)};
+  border-radius: 0;
+}`.trim(),
+    controls: [
+      {
+        key: "color",
+        label: "链接字色",
+        type: "color",
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "lineColor",
+        label: "底线颜色",
+        type: "color",
+      },
+      {
+        key: "lineStyle",
+        label: "底线线型",
+        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "wavy"),
+        type: "select",
+      },
+      {
+        key: "fontWeight",
+        label: "字重",
+        max: 900,
+        min: 400,
+        step: 100,
+        type: "number",
+      },
+      {
+        key: "lineThickness",
+        label: "底线粗细",
+        max: 4,
+        min: 0,
+        step: 0.5,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "rgba(200, 200, 200, 0.1)",
+      color: "rgb(170, 210, 255)",
+      fontWeight: 600,
+      lineColor: "rgba(210, 210, 210, 0.8)",
+      lineStyle: "dashed",
+      lineThickness: 1,
+      offset: 2,
+    }),
+    hint: "调整块引用链接和文件标注的字色、背景和底线样式。",
+    label: "引用链接样式",
+    preview: "引用",
+    risk: "正文安全",
+    value: "blockRefStyle",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg [data-node-id].hr > div:after {
+  height: ${numberValue(config.values.height, 2)}px;
+  ${stringValue(config.values.mode, "gradient") === "gradient"
+    ? `background: linear-gradient(to right, ${stringValue(config.values.colorLeft, "rgba(255, 110, 196, 0.5)")}, ${stringValue(config.values.colorRight, "rgba(120, 115, 245, 0.5)")});`
+    : `border-top: ${numberValue(config.values.height, 2)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.colorLeft, "#aaa")};`
+  }
+}`.trim(),
+    controls: [
+      {
+        key: "mode",
+        label: "风格",
+        options: [
+          { label: "渐变", value: "gradient" },
+          { label: "线条", value: "line" },
+        ],
+        type: "select",
+      },
+      {
+        key: "colorLeft",
+        label: "左色/线色",
+        type: "color",
+      },
+      {
+        key: "colorRight",
+        label: "右色",
+        type: "color",
+      },
+      {
+        key: "lineStyle",
+        label: "线型",
+        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "none" && option.value !== "wavy"),
+        type: "select",
+      },
+      {
+        key: "height",
+        label: "粗细",
+        max: 6,
+        min: 1,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      colorLeft: "rgba(255, 110, 196, 0.5)",
+      colorRight: "rgba(120, 115, 245, 0.5)",
+      height: 2,
+      lineStyle: "dashed",
+      mode: "gradient",
+    }),
+    hint: "调整分割线的样式、颜色和粗细。",
+    label: "分割线样式",
+    preview: "——",
+    risk: "正文安全",
+    value: "hrStyle",
   },
   {
     buildCss: config => {
