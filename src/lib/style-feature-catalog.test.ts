@@ -17,6 +17,10 @@ describe("style feature catalog", () => {
     expect(profile.linkStyle.values.lineStyle).toBe("dashed");
     expect(profile.referencedBlockCorners.values.cornerLength).toBe(12);
     expect(profile.refcountBadge.values.hoverScale).toBe(1.15);
+    expect(profile.foldedBlockStyle.values.opacity).toBe(0.85);
+    expect(profile.editorBackground.values.backgroundColor).toBe("#222222");
+    expect(profile.headingSpacing.values.headingTopMargin).toBe(0.5);
+    expect(profile.unorderedListMarkerColor.values.markerColor).toBe("oklch(75% 0 0)");
   });
 
   it("normalizes partial and invalid feature profile input", () => {
@@ -46,6 +50,26 @@ describe("style feature catalog", () => {
           strokeWidth: "wide",
         },
       },
+      foldedBlockStyle: {
+        enabled: true,
+        values: {
+          borderColor: "#111111",
+          opacity: "soft",
+        },
+      },
+      headingSpacing: {
+        enabled: true,
+        values: {
+          headingTopMargin: 1,
+          headingBottomMargin: "wide",
+        },
+      },
+      unorderedListMarkerColor: {
+        enabled: true,
+        values: {
+          markerColor: 42,
+        },
+      },
     } as Partial<FeatureStyleProfile>);
 
     expect(profile.imageRadius.enabled).toBe(true);
@@ -57,6 +81,14 @@ describe("style feature catalog", () => {
     expect(profile.referencedBlockCorners.enabled).toBe(true);
     expect(profile.referencedBlockCorners.values.cornerLength).toBe(32);
     expect(profile.referencedBlockCorners.values.strokeWidth).toBe(2);
+    expect(profile.foldedBlockStyle.enabled).toBe(true);
+    expect(profile.foldedBlockStyle.values.opacity).toBe(0.85);
+    expect(profile.foldedBlockStyle.values.borderColor).toBe("#111111");
+    expect(profile.headingSpacing.enabled).toBe(true);
+    expect(profile.headingSpacing.values.headingTopMargin).toBe(1);
+    expect(profile.headingSpacing.values.headingBottomMargin).toBe(0.1);
+    expect(profile.unorderedListMarkerColor.enabled).toBe(true);
+    expect(profile.unorderedListMarkerColor.values.markerColor).toBe("oklch(75% 0 0)");
   });
 
   it("builds css only for enabled features", () => {
@@ -165,5 +197,78 @@ describe("style feature catalog", () => {
     expect(css).toContain("border-radius: 3px;");
     expect(css).toContain("transform: scale(1.15);");
     expect(css).toContain("box-shadow: 0 0 10px oklch(70% 0.25 250 / 1);");
+  });
+
+  it("builds configurable css for folded block hints", () => {
+    const profile = normalizeFeatureProfile({
+      foldedBlockStyle: {
+        enabled: true,
+        values: {
+          borderColor: "rgba(90, 90, 90, 0.6)",
+          opacity: 0.85,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('div[fold="1"]:not(div[data-type="NodeListItem"])');
+    expect(css).toContain('background-image: repeating-linear-gradient(');
+    expect(css).toContain("border-radius: 5px;");
+    expect(css).toContain("border: 1px solid rgba(90, 90, 90, 0.6);");
+    expect(css).toContain("opacity: 0.85;");
+    expect(css).toContain('[fold="1"]:hover');
+  });
+
+  it("builds configurable css for editor background", () => {
+    const profile = normalizeFeatureProfile({
+      editorBackground: {
+        enabled: true,
+        values: {
+          backgroundColor: "#222222",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(":root");
+    expect(css).toContain("--b3-theme-background: #222222;");
+  });
+
+  it("builds configurable css for heading spacing", () => {
+    const profile = normalizeFeatureProfile({
+      headingSpacing: {
+        enabled: true,
+        values: {
+          headingBottomMargin: 0.1,
+          headingTopMargin: 0.5,
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain(".protyle-wysiwyg > .h1");
+    expect(css).toContain("margin-top: 0.5em;");
+    expect(css).toContain("margin-bottom: 0.1em;");
+    expect(css).toContain(".protyle-wysiwyg .protyle-wysiwyg__embed");
+    expect(css).toContain(".bq > .h1");
+  });
+
+  it("builds configurable css for unordered list marker colors", () => {
+    const profile = normalizeFeatureProfile({
+      unorderedListMarkerColor: {
+        enabled: true,
+        values: {
+          markerColor: "oklch(75% 0 0)",
+        },
+      },
+    });
+
+    const css = buildFeatureStyleCss(profile);
+
+    expect(css).toContain('[data-subtype="u"] > .protyle-action');
+    expect(css).toContain("color: oklch(75% 0 0);");
   });
 });

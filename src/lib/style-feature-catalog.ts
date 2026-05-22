@@ -2,7 +2,11 @@ export type FeatureStyleId =
   | "blockquoteFrame"
   | "imageRadius"
   | "linkStyle"
+  | "editorBackground"
   | "paragraphHover"
+  | "foldedBlockStyle"
+  | "headingSpacing"
+  | "unorderedListMarkerColor"
   | "referencedBlockCorners"
   | "refcountBadge"
   | "strikethroughStyle"
@@ -72,6 +76,10 @@ const LINK_LINE_STYLE_OPTIONS = LINE_STYLE_OPTIONS.filter(option => option.value
 
 function px(value: unknown, fallback: number): string {
   return `${typeof value === "number" ? value : fallback}px`;
+}
+
+function em(value: unknown, fallback: number): string {
+  return `${typeof value === "number" ? value : fallback}em`;
 }
 
 function numberValue(value: unknown, fallback: number): number {
@@ -150,6 +158,216 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     preview: "段落块",
     risk: "正文安全",
     value: "paragraphHover",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg div[fold="1"]:not(div[data-type="NodeListItem"]),
+.protyle-wysiwyg [data-node-id][fold="1"]:not(.li):not([data-type="NodeHeading"]) {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgb(45, 45, 45),
+    rgb(45, 45, 45) 6px,
+    rgb(60, 60, 60) 0,
+    rgb(60, 60, 60) 12px
+  );
+  border-radius: ${px(config.values.radius, 5)};
+  border: ${px(config.values.borderWidth, 1)} solid ${stringValue(config.values.borderColor, "rgba(90, 90, 90, 0.6)")};
+  opacity: ${numberValue(config.values.opacity, 0.85)};
+}
+
+.protyle-wysiwyg [fold="1"]:hover {
+  opacity: ${numberValue(config.values.hoverOpacity, 1)};
+  box-shadow: 0 0 ${px(config.values.shadowSize, 6)} ${stringValue(config.values.shadowColor, "rgba(0, 0, 0, 0.2)")};
+}`.trim(),
+    controls: [
+      {
+        key: "borderColor",
+        label: "边框色",
+        type: "color",
+      },
+      {
+        key: "borderWidth",
+        label: "边框粗细",
+        max: 4,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "opacity",
+        label: "透明度",
+        max: 1,
+        min: 0.2,
+        step: 0.05,
+        type: "number",
+      },
+      {
+        key: "hoverOpacity",
+        label: "悬停透明度",
+        max: 1,
+        min: 0.2,
+        step: 0.05,
+        type: "number",
+      },
+      {
+        key: "shadowColor",
+        label: "阴影色",
+        type: "color",
+      },
+      {
+        key: "shadowSize",
+        label: "阴影范围",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "radius",
+        label: "圆角",
+        max: 18,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+    ],
+    defaults: createDefaultConfig({
+      borderColor: "rgba(90, 90, 90, 0.6)",
+      borderWidth: 1,
+      hoverOpacity: 1,
+      opacity: 0.85,
+      radius: 5,
+      shadowColor: "rgba(0, 0, 0, 0.2)",
+      shadowSize: 6,
+    }),
+    hint: "为折叠块增加条纹背景和悬停反馈。",
+    label: "折叠块提示",
+    preview: "折叠",
+    risk: "正文安全",
+    value: "foldedBlockStyle",
+  },
+  {
+    buildCss: config => `
+:root {
+  --b3-theme-background: ${stringValue(config.values.backgroundColor, "#222222")};
+}`.trim(),
+    controls: [
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "#222222",
+    }),
+    hint: "覆盖编辑区背景变量，影响整个阅读和编辑外壳。",
+    label: "编辑区背景色",
+    preview: "背景",
+    risk: "编辑器 UI",
+    value: "editorBackground",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg > .h1,
+.protyle-wysiwyg > .h2,
+.protyle-wysiwyg > .h3,
+.protyle-wysiwyg > .h4,
+.protyle-wysiwyg > .h5,
+.protyle-wysiwyg > .h6 {
+  font-weight: 700;
+  margin-top: ${em(config.values.headingTopMargin, 0.5)};
+  margin-bottom: ${em(config.values.headingBottomMargin, 0.1)};
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h1,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h2,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h3,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h4,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h5,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h6 {
+  margin: ${px(config.values.embedVerticalMargin, 2)}px 0;
+}
+
+.bq > .h1,
+.bq > .h2,
+.bq > .h3,
+.bq > .h4,
+.bq > .h5,
+.bq > .h6 {
+  margin-top: 0 !important;
+  margin-bottom: ${em(config.values.blockquoteBottomMargin, 0.1)} !important;
+}`.trim(),
+    controls: [
+      {
+        key: "headingTopMargin",
+        label: "标题上间距",
+        max: 2,
+        min: 0,
+        step: 0.1,
+        type: "number",
+      },
+      {
+        key: "headingBottomMargin",
+        label: "标题下间距",
+        max: 2,
+        min: 0,
+        step: 0.1,
+        type: "number",
+      },
+      {
+        key: "embedVerticalMargin",
+        label: "嵌入块间距",
+        max: 12,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "blockquoteBottomMargin",
+        label: "引述块标题下距",
+        max: 2,
+        min: 0,
+        step: 0.1,
+        type: "number",
+      },
+    ],
+    defaults: createDefaultConfig({
+      blockquoteBottomMargin: 0.1,
+      embedVerticalMargin: 2,
+      headingBottomMargin: 0.1,
+      headingTopMargin: 0.5,
+    }),
+    hint: "统一调整标题在正文、嵌入块和引述块中的上下间距。",
+    label: "标题间距",
+    preview: "H1",
+    risk: "正文安全",
+    value: "headingSpacing",
+  },
+  {
+    buildCss: config => `
+.protyle-wysiwyg [data-node-id].li[data-subtype="u"] > .protyle-action {
+  color: ${stringValue(config.values.markerColor, "oklch(75% 0 0)")};
+}`.trim(),
+    controls: [
+      {
+        key: "markerColor",
+        label: "圆点颜色",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      markerColor: "oklch(75% 0 0)",
+    }),
+    hint: "调整无序列表圆点的颜色，保持层级结构不变。",
+    label: "无序列表圆点颜色",
+    preview: "•",
+    risk: "正文安全",
+    value: "unorderedListMarkerColor",
   },
   {
     buildCss: config => `

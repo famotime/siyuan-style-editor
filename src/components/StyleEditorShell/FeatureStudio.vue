@@ -194,6 +194,28 @@ function getPreviewStyle(featureId: FeatureStyleId) {
   if (featureId === "paragraphHover") {
     style.backgroundColor = String(values.backgroundColor);
   }
+  if (featureId === "foldedBlockStyle") {
+    style.backgroundImage = "repeating-linear-gradient(-45deg, rgb(45, 45, 45), rgb(45, 45, 45) 6px, rgb(60, 60, 60) 0, rgb(60, 60, 60) 12px)";
+    style.border = `${values.borderWidth}px solid ${values.borderColor}`;
+    style.opacity = String(values.opacity);
+    style.borderRadius = `${values.radius}px`;
+  }
+  if (featureId === "editorBackground") {
+    style.backgroundColor = String(values.backgroundColor);
+  }
+  if (featureId === "headingSpacing") {
+    style.display = "grid";
+    style.gap = "2px";
+    style.justifyContent = "center";
+    style.padding = "10px 12px";
+  }
+  if (featureId === "unorderedListMarkerColor") {
+    style.alignItems = "center";
+    style.backgroundColor = "transparent";
+    style.color = String(values.markerColor);
+    style.justifyContent = "center";
+    style.fontSize = "18px";
+  }
   if (featureId === "underlineStyle") {
     style.borderBottom = `${values.thickness}px ${values.lineStyle} ${values.color}`;
   }
