@@ -745,7 +745,7 @@ describe("feature option filters", () => {
   it("splits options into body-safe and editor-UI groups", () => {
     expect(BODY_SAFE_FEATURE_OPTIONS.length + EDITOR_UI_FEATURE_OPTIONS.length).toBe(FEATURE_STYLE_OPTIONS.length);
     expect(BODY_SAFE_FEATURE_OPTIONS.every(option => option.risk === "正文安全")).toBe(true);
-    expect(EDITOR_UI_FEATURE_OPTIONS.every(option => option.risk === "编辑器 UI")).toBe(true);
+    expect(EDITOR_UI_FEATURE_OPTIONS.every(option => option.risk === "全屋改造")).toBe(true);
   });
 
   it("includes known body-safe features", () => {

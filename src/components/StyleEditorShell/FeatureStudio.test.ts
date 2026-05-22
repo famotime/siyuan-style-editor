@@ -61,7 +61,6 @@ describe("FeatureStudio", () => {
     expect(container.querySelector(".feature-studio")).not.toBeNull();
     expect(container.querySelectorAll(".feature-card")).toHaveLength(FEATURE_STYLE_OPTIONS.length);
     expect(container.textContent).toContain("段落悬停高亮");
-    expect(container.textContent).toContain("正文安全");
     expect(container.querySelector('input[type="checkbox"]')).not.toBeNull();
     expect(container.querySelector('input[type="color"]')).not.toBeNull();
     expect(container.querySelector('input[type="number"]')).not.toBeNull();

@@ -57,7 +57,7 @@ export interface FeatureStyleOption {
   hint: string;
   label: string;
   preview: string;
-  risk: "正文安全" | "编辑器 UI";
+  risk: "正文安全" | "全屋改造";
   value: FeatureStyleId;
 }
 
@@ -287,7 +287,7 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     hint: "覆盖编辑区背景变量，影响整个阅读和编辑外壳。",
     label: "编辑区背景色",
     preview: "背景",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "editorBackground",
   },
   {
@@ -498,7 +498,7 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     hint: "隐藏 H1-H6 标题前的自动编号。",
     label: "标题编号隐藏",
     preview: "H·",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "headingNumbering",
   },
   {
@@ -569,7 +569,7 @@ const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     hint: "为聚焦列表项显示层级连接线（需配合 JS 激活 block-focus）。",
     label: "列表层次线",
     preview: "├─",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "listBulletLine",
   },
   {
@@ -977,7 +977,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整引用搜索菜单的候选项高度、圆角和悬停背景。",
     label: "引用搜索菜单",
     preview: "搜索",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "refSearchMenu",
   },
   {
@@ -1002,7 +1002,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "在反链和提及面板中固定文档名称不随滚动消失。",
     label: "反链固定标题",
     preview: "反链",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "backlinkSticky",
   },
   {
@@ -1285,9 +1285,9 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
 .protyle-wysiwyg [data-node-id].hr > div:after {
   height: ${numberValue(config.values.height, 2)}px;
   ${stringValue(config.values.mode, "gradient") === "gradient"
-    ? `background: linear-gradient(to right, ${stringValue(config.values.colorLeft, "rgba(255, 110, 196, 0.5)")}, ${stringValue(config.values.colorRight, "rgba(120, 115, 245, 0.5)")});`
-    : `border-top: ${numberValue(config.values.height, 2)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.colorLeft, "#aaa")};`
-  }
+        ? `background: linear-gradient(to right, ${stringValue(config.values.colorLeft, "rgba(255, 110, 196, 0.5)")}, ${stringValue(config.values.colorRight, "rgba(120, 115, 245, 0.5)")});`
+        : `border-top: ${numberValue(config.values.height, 2)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.colorLeft, "#aaa")};`
+      }
 }`.trim(),
     controls: [
       {
@@ -1564,7 +1564,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整文档标题字号和空标题占位提示颜色。",
     label: "文档标题",
     preview: "标题",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "documentTitle",
   },
   {
@@ -1601,7 +1601,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整头图圆角和左右边距。",
     label: "头图样式",
     preview: "头图",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "headImage",
   },
   {
@@ -1651,7 +1651,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整头图下方文档标签的圆角、颜色和字号。",
     label: "文档标签",
     preview: "标签",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "docTag",
   },
   {
@@ -1726,7 +1726,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "为文档树条目按五色循环设置彩色分块背景。",
     label: "文档树彩色分块",
     preview: "树",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "docTreeColorBlocks",
   },
   {
@@ -1784,7 +1784,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "在大纲标题前显示彩色数字标志。",
     label: "大纲数字标志",
     preview: "❶",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "outlineNumber",
   },
   {
@@ -1829,7 +1829,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整块标图标颜色、悬停背景和移动过渡速度。",
     label: "块标动画",
     preview: "⋮⋮",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "blockGutterAnim",
   },
   {
@@ -1879,7 +1879,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整文字工具条的按钮尺寸、悬停背景和选中项颜色。",
     label: "工具条样式",
     preview: "工具",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "toolbarStyle",
   },
   {
@@ -1930,7 +1930,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整斜杠菜单的列宽、圆角和文字颜色。",
     label: "斜杠菜单",
     preview: "/",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "slashMenu",
   },
   {
@@ -1980,7 +1980,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整表情面板宽度和表情项尺寸。",
     label: "表情面板",
     preview: "😊",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "emojiPanel",
   },
   {
@@ -2033,7 +2033,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     hint: "调整多行搜索结果的间距、行高和分组圆角。",
     label: "搜索面板",
     preview: "搜索",
-    risk: "编辑器 UI",
+    risk: "全屋改造",
     value: "searchPanel",
   },
 ];
@@ -2053,7 +2053,7 @@ export const FEATURE_STYLE_OPTIONS: FeatureStyleOption[] = FEATURE_DEFINITIONS.m
 
 export const BODY_SAFE_FEATURE_OPTIONS = FEATURE_STYLE_OPTIONS.filter(option => option.risk === "正文安全");
 
-export const EDITOR_UI_FEATURE_OPTIONS = FEATURE_STYLE_OPTIONS.filter(option => option.risk === "编辑器 UI");
+export const EDITOR_UI_FEATURE_OPTIONS = FEATURE_STYLE_OPTIONS.filter(option => option.risk === "全屋改造");
 
 function cloneConfig(config: FeatureStyleConfig): FeatureStyleConfig {
   return {

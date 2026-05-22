@@ -6,12 +6,31 @@
           Editor UI
         </p>
         <h2 class="section-heading__title">
-          编辑器 UI
+          全屋改造
         </h2>
       </div>
+      <button
+        type="button"
+        class="panel-collapse-btn"
+        :aria-label="collapsed ? '展开面板' : '折叠面板'"
+        :title="collapsed ? '展开面板' : '折叠面板'"
+        @click="collapsed = !collapsed"
+      >
+        <svg
+          class="panel-collapse-btn__icon"
+          :class="{ 'panel-collapse-btn__icon--collapsed': collapsed }"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
     </div>
 
-    <div class="feature-grid">
+    <div v-show="!collapsed" class="feature-grid">
       <article
         v-for="feature in featureStyleOptions"
         :key="feature.value"
@@ -21,7 +40,6 @@
       >
         <div class="feature-card__top">
           <div class="feature-card__copy">
-            <span class="feature-card__risk feature-card__risk--warning">{{ feature.risk }}</span>
             <h3 class="feature-card__title">
               {{ feature.label }}
             </h3>
@@ -95,6 +113,10 @@ import type {
   FeatureStyleProfile,
 } from "@/lib/style-feature-catalog";
 
+import { ref } from "vue";
+
+const collapsed = ref(true);
+
 const props = defineProps<{
   featureProfile: FeatureStyleProfile;
   featureStyleOptions: FeatureStyleOption[];
@@ -153,9 +175,13 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
 
 .editor-ui-studio__header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
+  padding: 10px 12px;
+  margin: -14px -14px 0;
+  border-radius: 20px 20px 0 0;
+  background: color-mix(in srgb, var(--panel-chip-active-bg) 40%, transparent 60%);
 }
 
 .section-heading__kicker {
@@ -168,10 +194,40 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
 
 .section-heading__title {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.1;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   color: var(--panel-text);
+}
+
+.panel-collapse-btn {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--panel-card-inner-stroke);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel-pill-bg) 74%, transparent 26%);
+  color: var(--panel-text-muted);
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.panel-collapse-btn:hover {
+  color: var(--panel-text);
+  background: var(--panel-chip-active-bg);
+  transform: translateY(-1px);
+}
+
+.panel-collapse-btn__icon {
+  transition: transform 200ms ease;
+}
+
+.panel-collapse-btn__icon--collapsed {
+  transform: rotate(-90deg);
 }
 
 .feature-grid {
@@ -198,8 +254,14 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
 
 .feature-card__top {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
+  padding: 10px 12px;
+  margin: -12px -12px 0;
+  border-radius: 18px 18px 0 0;
+  border-bottom: 1px solid var(--panel-divider);
+  background: color-mix(in srgb, var(--panel-chip-active-bg) 30%, transparent 70%);
 }
 
 .feature-card__copy {
@@ -208,25 +270,11 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   min-width: 0;
 }
 
-.feature-card__risk {
-  width: fit-content;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--panel-chip-active-bg);
-  color: var(--panel-accent);
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.feature-card__risk--warning {
-  background: color-mix(in srgb, #f59e0b 18%, transparent 82%);
-  color: #f59e0b;
-}
-
 .feature-card__title {
   margin: 0;
   color: var(--panel-text);
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1.25;
 }
 
@@ -286,7 +334,7 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
 
 .feature-control__label {
   color: var(--panel-text-muted);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 

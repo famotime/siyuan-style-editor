@@ -35,9 +35,7 @@ describe("EditorUiStudio", () => {
 
     expect(container.querySelector(".editor-ui-studio")).not.toBeNull();
     expect(container.querySelectorAll(".feature-card")).toHaveLength(EDITOR_UI_FEATURE_OPTIONS.length);
-    expect(container.textContent).toContain("编辑器 UI");
-    expect(container.textContent).toContain("编辑器 UI");
-    expect(container.querySelector(".feature-card__risk--warning")).not.toBeNull();
+    expect(container.textContent).toContain("全屋改造");
     expect(container.querySelector('input[type="checkbox"]')).not.toBeNull();
 
     app.unmount();

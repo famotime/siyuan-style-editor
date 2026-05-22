@@ -50,7 +50,7 @@ npm run release:patch|minor|major # 非交互式版本发布
 
 - **StyleTarget** (`src/lib/style-target-catalog.ts`): 14 种样式目标（h1-h6、strong、blockquote、inlineCode、mark、codeBlock、bulletList、orderedList、taskList），每个目标有 `cssSelector` 和 `extractSelector`
 - **StyleProfile**: `Record<StyleTarget, StyleRule>`，StyleRule 含 color/backgroundColor/fontWeight/fontStyle/textDecoration
-- **FeatureStyleId** (`src/lib/style-feature-catalog.ts`): 14 种功能样式（段落悬停、引用框、图片圆角等），每个功能自含 `buildCss(config)` 和 controls 元数据
+- **FeatureStyleId** (`src/lib/style-feature-catalog.ts`): 14 种高级定制（段落悬停、引用框、图片圆角等），每个功能自含 `buildCss(config)` 和 controls 元数据
 - **StyleEditorState** (`src/lib/style-editor-state.ts`): 不可变状态转换函数
 
 ### 样式注入机制

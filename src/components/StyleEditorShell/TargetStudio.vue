@@ -3,10 +3,10 @@
     <div class="target-studio__header">
       <div>
         <p class="section-heading__kicker">
-          Editable Targets
+          Custom Colors
         </p>
         <h2 class="section-heading__title">
-          对象工作区
+          基础粉刷
         </h2>
       </div>
       <div class="target-studio__header-actions">
@@ -56,10 +56,29 @@
             </button>
           </form>
         </div>
+        <button
+          type="button"
+          class="panel-collapse-btn"
+          :aria-label="collapsed ? '展开面板' : '折叠面板'"
+          :title="collapsed ? '展开面板' : '折叠面板'"
+          @click="collapsed = !collapsed"
+        >
+          <svg
+            class="panel-collapse-btn__icon"
+            :class="{ 'panel-collapse-btn__icon--collapsed': collapsed }"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
       </div>
     </div>
 
-    <div class="target-grid">
+    <div v-show="!collapsed" class="target-grid">
       <article
         v-for="target in styleTargetOptions"
         :key="target.value"
@@ -129,7 +148,7 @@
     </div>
 
     <div
-      v-if="floatingOrbPreview"
+      v-if="!collapsed && floatingOrbPreview"
       class="target-studio__drag-preview"
       :style="{
         left: `${floatingOrbPreview.x}px`,
@@ -153,6 +172,8 @@ import {
   nextTick,
   ref,
 } from "vue";
+
+const collapsed = ref(false);
 
 import { useTargetOrbDragSession } from "@/composables/use-target-orb-drag-session";
 
@@ -239,9 +260,13 @@ function submitSaveForm() {
 
 .target-studio__header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
+  padding: 10px 12px;
+  margin: -14px -14px 0;
+  border-radius: 20px 20px 0 0;
+  background: color-mix(in srgb, var(--panel-chip-active-bg) 40%, transparent 60%);
 }
 
 .target-studio__header-actions {
@@ -265,10 +290,40 @@ function submitSaveForm() {
 
 .section-heading__title {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.1;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   color: var(--panel-text);
+}
+
+.panel-collapse-btn {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--panel-card-inner-stroke);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel-pill-bg) 74%, transparent 26%);
+  color: var(--panel-text-muted);
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.panel-collapse-btn:hover {
+  color: var(--panel-text);
+  background: var(--panel-chip-active-bg);
+  transform: translateY(-1px);
+}
+
+.panel-collapse-btn__icon {
+  transition: transform 200ms ease;
+}
+
+.panel-collapse-btn__icon--collapsed {
+  transform: rotate(-90deg);
 }
 
 .target-studio__note {
