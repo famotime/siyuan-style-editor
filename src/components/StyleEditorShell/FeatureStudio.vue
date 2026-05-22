@@ -38,13 +38,6 @@
           </label>
         </div>
 
-        <div
-          class="feature-card__preview"
-          :style="getPreviewStyle(feature.value)"
-        >
-          {{ feature.preview }}
-        </div>
-
         <div class="feature-card__controls">
           <label
             v-for="control in feature.controls"
@@ -145,200 +138,6 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   const value = props.featureProfile[featureId].values[key];
   return typeof value === "string" && value.startsWith("#") ? value : "#888888";
 }
-
-function getPreviewStyle(featureId: FeatureStyleId) {
-  const config = props.featureProfile[featureId];
-  const values = config.values;
-  const style: Record<string, string> = {};
-
-  if (!config.enabled) {
-    return style;
-  }
-
-  if (featureId === "imageRadius") {
-    style.borderRadius = `${values.radius}px`;
-  }
-  if (featureId === "linkStyle") {
-    style.color = String(values.color);
-    style.borderBottom = `1px ${values.lineStyle} currentColor`;
-  }
-  if (featureId === "blockquoteFrame") {
-    style.boxShadow = `inset 0 0 0 2px ${values.borderColor}`;
-    style.borderLeft = `4px solid ${values.lineColor}`;
-    style.backgroundColor = String(values.backgroundColor);
-    style.borderRadius = `${values.radius}px`;
-    style.color = String(values.color);
-    style.margin = `${values.marginY}px 0`;
-    style.padding = `${values.padding}px`;
-  }
-  if (featureId === "referencedBlockCorners") {
-    style.boxShadow = `
-      inset ${values.strokeWidth}px ${values.strokeWidth}px 0 0 ${values.color},
-      inset -${values.strokeWidth}px -${values.strokeWidth}px 0 0 ${values.color}
-    `;
-    style.padding = `${values.cornerLength}px`;
-  }
-  if (featureId === "refcountBadge") {
-    style.alignItems = "center";
-    style.backgroundColor = String(values.backgroundColor);
-    style.borderRadius = `${values.radius}px`;
-    style.color = String(values.color);
-    style.justifyContent = "center";
-    style.minHeight = `${values.size}px`;
-    style.width = `${values.size}px`;
-  }
-  if (featureId === "tableStyle") {
-    style.backgroundColor = String(values.headerBackgroundColor);
-    style.color = String(values.headerColor);
-  }
-  if (featureId === "paragraphHover") {
-    style.backgroundColor = String(values.backgroundColor);
-  }
-  if (featureId === "foldedBlockStyle") {
-    style.backgroundImage = "repeating-linear-gradient(-45deg, rgb(45, 45, 45), rgb(45, 45, 45) 6px, rgb(60, 60, 60) 0, rgb(60, 60, 60) 12px)";
-    style.border = `${values.borderWidth}px solid ${values.borderColor}`;
-    style.opacity = String(values.opacity);
-    style.borderRadius = `${values.radius}px`;
-  }
-  if (featureId === "editorBackground") {
-    style.backgroundColor = String(values.backgroundColor);
-  }
-  if (featureId === "headingSpacing") {
-    style.display = "grid";
-    style.gap = "2px";
-    style.justifyContent = "center";
-    style.padding = "10px 12px";
-  }
-  if (featureId === "unorderedListMarkerColor") {
-    style.alignItems = "center";
-    style.backgroundColor = "transparent";
-    style.color = String(values.markerColor);
-    style.justifyContent = "center";
-    style.fontSize = "18px";
-  }
-  if (featureId === "underlineStyle") {
-    style.borderBottom = `${values.thickness}px ${values.lineStyle} ${values.color}`;
-  }
-  if (featureId === "strikethroughStyle") {
-    style.textDecoration = `line-through ${values.lineStyle} ${values.color}`;
-  }
-  if (featureId === "taskListStyle") {
-    style.opacity = String(values.doneOpacity);
-    style.color = String(values.doneColor);
-  }
-  if (featureId === "markStyle") {
-    style.color = String(values.color);
-    style.backgroundColor = String(values.backgroundColor);
-    style.borderBottom = `${values.emphasisThickness}px ${values.lineStyle} ${values.emphasisColor}`;
-  }
-  if (featureId === "inlineCodeStyle") {
-    style.color = String(values.color);
-    style.backgroundColor = String(values.backgroundColor);
-    style.borderRadius = `${values.radius}px`;
-    style.padding = `${values.paddingY}px ${values.paddingX}px`;
-    style.fontFamily = "monospace";
-  }
-  if (featureId === "blockRefStyle") {
-    style.color = String(values.color);
-    style.backgroundColor = String(values.backgroundColor);
-    style.borderBottom = `${values.lineThickness}px ${values.lineStyle} ${values.lineColor}`;
-    style.fontWeight = String(values.fontWeight);
-  }
-  if (featureId === "hrStyle") {
-    style.borderTop = `${values.height}px ${values.lineStyle} ${values.colorLeft}`;
-    style.height = "0";
-    if (values.mode === "gradient") {
-      style.background = `linear-gradient(to right, ${values.colorLeft}, ${values.colorRight})`;
-      style.borderTop = "none";
-      style.height = `${values.height}px`;
-    }
-  }
-  if (featureId === "headingDecoration") {
-    if (values.mode === "leftBar") {
-      style.borderLeft = `${values.barWidth}px solid ${values.barColor}`;
-      style.paddingLeft = "8px";
-    } else {
-      style.borderBottom = `${values.barWidth}px solid ${values.barColor}`;
-    }
-    style.fontWeight = String(values.fontWeight);
-  }
-  if (featureId === "headingNumbering") {
-    style.textDecoration = "line-through";
-    style.opacity = "0.6";
-  }
-  if (featureId === "listBulletLine") {
-    style.borderLeft = `${values.lineWidth}px solid ${values.lineColor}`;
-    style.borderBottom = `${values.lineWidth}px solid ${values.lineColor}`;
-    style.borderBottomLeftRadius = `${values.radius}px`;
-    style.width = "40px";
-    style.height = "20px";
-  }
-  if (featureId === "orderedListStyle") {
-    style.display = "flex";
-    style.alignItems = "center";
-    style.justifyContent = "center";
-    style.fontFamily = "serif";
-  }
-  if (featureId === "refSearchMenu") {
-    style.borderRadius = `${values.radius}px`;
-    style.minHeight = `${values.itemMinHeight}px`;
-  }
-  if (featureId === "backlinkSticky") {
-    style.position = "sticky";
-    style.top = "0";
-    style.backgroundColor = String(values.backgroundColor);
-  }
-  if (featureId === "documentTitle") {
-    style.fontSize = `${values.fontSize}px`;
-  }
-  if (featureId === "headImage") {
-    style.borderRadius = `${values.radius}px`;
-    style.width = "100%";
-    style.height = "40px";
-    style.backgroundColor = "var(--panel-card-inner-stroke)";
-  }
-  if (featureId === "docTag") {
-    style.borderRadius = `${values.radius}px`;
-    style.backgroundColor = String(values.secondaryBg);
-    style.color = String(values.secondaryColor);
-    style.padding = "2px 8px";
-    style.fontSize = `${values.fontSize}%`;
-  }
-  if (featureId === "docTreeColorBlocks") {
-    style.backgroundColor = String(values.color1);
-    style.borderRadius = `${values.radius}px`;
-  }
-  if (featureId === "outlineNumber") {
-    style.fontFamily = "serif";
-    style.fontSize = `${values.fontSize}px`;
-    style.color = String(values.h1Color);
-  }
-  if (featureId === "blockGutterAnim") {
-    style.color = String(values.iconColor);
-    style.transition = `all ${values.transitionMs}ms ease-out`;
-  }
-  if (featureId === "toolbarStyle") {
-    style.width = `${values.buttonSize}px`;
-    style.height = `${values.buttonSize}px`;
-    style.borderRadius = `${values.buttonRadius}px`;
-    style.backgroundColor = String(values.hoverBg);
-  }
-  if (featureId === "slashMenu") {
-    style.borderRadius = `${values.radius}px`;
-    style.color = String(values.textColor);
-  }
-  if (featureId === "emojiPanel") {
-    style.width = `${values.itemSize}px`;
-    style.height = `${values.itemSize}px`;
-    style.fontSize = `${values.emojiFontSize}px`;
-  }
-  if (featureId === "searchPanel") {
-    style.lineHeight = String(values.lineHeight);
-    style.borderRadius = `${values.groupRadius}px`;
-  }
-
-  return style;
-}
 </script>
 
 <style scoped lang="scss">
@@ -377,7 +176,7 @@ function getPreviewStyle(featureId: FeatureStyleId) {
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
@@ -424,19 +223,6 @@ function getPreviewStyle(featureId: FeatureStyleId) {
   color: var(--panel-text);
   font-size: 14px;
   line-height: 1.25;
-}
-
-.feature-card__preview {
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid var(--panel-card-inner-stroke);
-  background: var(--panel-preview-bg);
-  color: var(--panel-text);
-  font-size: 13px;
-  font-weight: 700;
 }
 
 .feature-switch {
@@ -521,9 +307,4 @@ function getPreviewStyle(featureId: FeatureStyleId) {
   padding: 0 8px;
 }
 
-@media (max-width: 720px) {
-  .feature-grid {
-    grid-template-columns: 1fr;
-  }
-}
 </style>
