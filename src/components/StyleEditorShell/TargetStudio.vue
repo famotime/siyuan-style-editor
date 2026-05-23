@@ -2,10 +2,7 @@
   <section class="target-studio">
     <div class="target-studio__header">
       <div>
-        <p class="section-heading__kicker">
-          Custom Colors
-        </p>
-        <h2 class="section-heading__title">
+        <h2 class="section-heading__title" data-tooltip="Custom Colors — 为标题、加粗、引用等元素定制颜色与样式">
           基础粉刷
         </h2>
       </div>
@@ -292,20 +289,41 @@ function submitSaveForm() {
   align-items: center;
 }
 
-.section-heading__kicker {
-  margin: 0;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--panel-text-subtle);
-}
-
 .section-heading__title {
+  position: relative;
   margin: 0;
   font-size: 20px;
   line-height: 1.1;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   color: var(--panel-text);
+  cursor: help;
+}
+
+.section-heading__title[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--panel-text);
+  color: var(--panel-card-bg);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: system-ui, sans-serif;
+  line-height: 1.4;
+  white-space: normal;
+  max-width: 260px;
+  z-index: 100;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.section-heading__title[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .panel-collapse-btn {

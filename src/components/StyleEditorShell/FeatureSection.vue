@@ -2,12 +2,8 @@
   <section class="feature-section">
     <div class="feature-section__header">
       <div>
-        <p class="section-heading__kicker">
-          {{ kicker }}
-        </p>
-        <h2 class="section-heading__title">
+        <h2 class="section-heading__title" :data-tooltip="`${kicker} — ${enabledCount}/${totalCount} 已启用`">
           {{ title }}
-          <span class="feature-section__stats">{{ enabledCount }}/{{ totalCount }} 已启用</span>
         </h2>
       </div>
       <button
@@ -68,19 +64,12 @@
           >
             <div class="feature-card__top">
               <div class="feature-card__copy">
-                <span
-                  v-if="feature.preview"
-                  class="feature-card__preview-tag"
-                >{{ feature.preview }}</span>
-                <h3 class="feature-card__title">
+                <h3
+                  class="feature-card__title"
+                  :data-tooltip="feature.preview || feature.hint ? [feature.preview, feature.hint].filter(Boolean).join(' — ') : undefined"
+                >
                   {{ feature.label }}
                 </h3>
-                <p
-                  v-if="feature.hint"
-                  class="feature-card__hint"
-                >
-                  {{ feature.hint }}
-                </p>
               </div>
               <label class="feature-switch">
                 <input
@@ -299,27 +288,40 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   background: color-mix(in srgb, var(--panel-chip-active-bg) 40%, transparent 60%);
 }
 
-.section-heading__kicker {
-  margin: 0;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--panel-text-subtle);
-}
-
 .section-heading__title {
+  position: relative;
   margin: 0;
   font-size: 20px;
   line-height: 1.1;
   font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
   color: var(--panel-text);
+  cursor: help;
 }
 
-.feature-section__stats {
-  margin-left: 8px;
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--panel-text-muted);
+.section-heading__title[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--panel-text);
+  color: var(--panel-card-bg);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: system-ui, sans-serif;
+  line-height: 1.4;
+  white-space: nowrap;
+  z-index: 100;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.section-heading__title[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .panel-collapse-btn {
@@ -427,31 +429,40 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   min-width: 0;
 }
 
-.feature-card__preview-tag {
-  display: inline-block;
-  width: fit-content;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--panel-chip-active-bg);
-  color: var(--panel-text-muted);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
 .feature-card__title {
+  position: relative;
   margin: 0;
   color: var(--panel-text);
   font-size: 15px;
   font-weight: 700;
   line-height: 1.25;
+  cursor: help;
 }
 
-.feature-card__hint {
-  margin: 0;
-  color: var(--panel-text-muted);
-  font-size: 12px;
-  line-height: 1.4;
+.feature-card__title[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  top: calc(100% + 4px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: var(--panel-text);
+  color: var(--panel-card-bg);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: system-ui, sans-serif;
+  line-height: 1.3;
+  white-space: nowrap;
+  z-index: 100;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.feature-card__title[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .feature-switch {

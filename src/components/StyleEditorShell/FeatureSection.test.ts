@@ -110,14 +110,17 @@ describe("featureSection", () => {
     vi.clearAllMocks()
   })
 
-  it("渲染 kicker 和 title", async () => {
+  it("渲染 title 并将 kicker 存入 tooltip", async () => {
     const {
       container,
       unmount,
     } = await mountFeatureSection()
 
-    expect(container.textContent).toContain("Test Kicker")
     expect(container.textContent).toContain("测试标题")
+
+    const heading = container.querySelector(".section-heading__title") as HTMLElement
+    expect(heading).not.toBeNull()
+    expect(heading.dataset.tooltip).toContain("Test Kicker")
 
     unmount()
   })
@@ -139,32 +142,17 @@ describe("featureSection", () => {
     unmount()
   })
 
-  it("展示 hint 描述", async () => {
+  it("将 hint 和 preview 存入特性卡片 tooltip", async () => {
     const testOptions = createTestOptions()
     const {
       container,
       unmount,
     } = await mountFeatureSection({ featureStyleOptions: testOptions })
 
-    const hints = container.querySelectorAll(".feature-card__hint")
-    expect(hints.length).toBeGreaterThanOrEqual(2)
-    expect(hints[0].textContent).toContain("测试提示信息")
-    expect(hints[1].textContent).toContain("另一个测试提示")
-
-    unmount()
-  })
-
-  it("展示 preview 标签", async () => {
-    const testOptions = createTestOptions()
-    const {
-      container,
-      unmount,
-    } = await mountFeatureSection({ featureStyleOptions: testOptions })
-
-    const previewTags = container.querySelectorAll(".feature-card__preview-tag")
-    expect(previewTags.length).toBeGreaterThanOrEqual(2)
-    expect(previewTags[0].textContent).toBe("段落")
-    expect(previewTags[1].textContent).toBe("标题")
+    const titles = container.querySelectorAll(".feature-card__title")
+    expect(titles[0].getAttribute("data-tooltip")).toBe("段落 — 测试提示信息")
+    expect(titles[1].getAttribute("data-tooltip")).toBe("标题 — 另一个测试提示")
+    expect(titles[2].getAttribute("data-tooltip")).toBeNull()
 
     unmount()
   })
@@ -192,7 +180,7 @@ describe("featureSection", () => {
     unmount()
   })
 
-  it("显示启用状态统计", async () => {
+  it("显示启用状态统计为 tooltip", async () => {
     const testOptions = createTestOptions()
     const profile = createDefaultFeatureProfile()
     profile.paragraphHover.enabled = true
@@ -205,9 +193,9 @@ describe("featureSection", () => {
       featureStyleOptions: testOptions,
     })
 
-    const stats = container.querySelector(".feature-section__stats")
-    expect(stats).not.toBeNull()
-    expect(stats.textContent).toContain("1/3 已启用")
+    const heading = container.querySelector(".section-heading__title") as HTMLElement
+    expect(heading).not.toBeNull()
+    expect(heading.dataset.tooltip).toContain("1/3 已启用")
 
     unmount()
   })
