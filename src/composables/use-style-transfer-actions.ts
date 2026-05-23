@@ -82,7 +82,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
     try {
       const result = await createStylePreviewDocument();
-      const message = `已生成预览文档「${result.title}」，请到 Daily Notes 目录打开查看样式效果。`;
+      const message = `已生成预览文档「${result.title}」，保存于 ${result.path}。`;
       actionMessage.value = message;
       await pushMsg(message, 5000);
       return result;

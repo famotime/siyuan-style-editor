@@ -1,6 +1,9 @@
+import type { App } from "siyuan";
+
 import {
   fetchSyncPost,
   type IWebSocketData,
+  openTab,
 } from "siyuan";
 
 interface NotebookListResult {
@@ -62,5 +65,15 @@ export async function pushErrMsg(msg: string, timeout = 7000) {
   return request<string>("/api/notification/pushErrMsg", {
     msg,
     timeout,
+  });
+}
+
+export async function openDocByTab(app: App, docId: DocumentId) {
+  return openTab({
+    app,
+    doc: {
+      id: docId,
+      action: ["cb-get-focus"],
+    },
   });
 }

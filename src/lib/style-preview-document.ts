@@ -3,8 +3,10 @@ import {
   getBlockByID,
   getNotebookConf,
   lsNotebooks,
+  openDocByTab,
   renderSprig,
 } from "@/api";
+import { getPluginApp } from "@/style-editor-runtime";
 
 import stylePreviewDocumentMarkdown from "../../docs/样式效果预览文档.md?raw";
 
@@ -144,7 +146,7 @@ async function resolveNotebookId() {
 }
 
 export function formatStylePreviewDocumentTitle(now = new Date()) {
-  return `${formatDate(now)} ${STYLE_PREVIEW_SUFFIX}`;
+  return `${STYLE_PREVIEW_SUFFIX} ${formatDate(now)}`;
 }
 
 export function buildStylePreviewDocumentPath(dailyNoteSavePath: string | undefined, now = new Date()) {
@@ -163,7 +165,7 @@ export function buildStylePreviewDocumentPath(dailyNoteSavePath: string | undefi
 
   const parent = segments.slice(0, -1).join("/");
   const leaf = segments.at(-1) || formatDate(now);
-  return `/${parent}/${leaf} ${STYLE_PREVIEW_SUFFIX}`;
+  return `/${parent}/${STYLE_PREVIEW_SUFFIX} ${leaf}`;
 }
 
 export async function createStylePreviewDocument(now = new Date()) {
@@ -180,6 +182,11 @@ export async function createStylePreviewDocument(now = new Date()) {
   const title = formatStylePreviewDocumentTitle(now);
   const path = buildStylePreviewDocumentPath(resolvedDailyNotePath, now);
   const documentId = await createDocWithMd(notebookId, path, stylePreviewDocumentMarkdown);
+
+  const app = getPluginApp();
+  if (app) {
+    await openDocByTab(app, documentId);
+  }
 
   return {
     documentId,

@@ -1,4 +1,4 @@
-import type { Plugin } from "siyuan";
+import type { App as SiYuanApp, Plugin } from "siyuan";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import { reactive } from "vue";
@@ -68,6 +68,10 @@ export const runtimeState = reactive<RuntimeState>(createRuntimeState());
 
 let pluginInstance: Plugin | null = null;
 const stylesheet = createStyleEditorStylesheetController(STYLE_ELEMENT_ID);
+
+export function getPluginApp(): SiYuanApp | null {
+  return pluginInstance?.app ?? null;
+}
 
 function replaceProfile(nextState: StyleEditorState) {
   const normalizedProfile = normalizeStyleProfile(nextState.profile);

@@ -280,7 +280,7 @@ describe("useStyleEditorShell", () => {
       configurable: true,
       value: vi.fn(),
     });
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => { });
 
     const { shell, unmount } = await mountShell();
 
@@ -297,8 +297,8 @@ describe("useStyleEditorShell", () => {
     mockCreateStylePreviewDocument.mockResolvedValue({
       documentId: "20260328123456-preview",
       notebookId: "box-current",
-      path: "/日记/2026/03/2026-03-28 样式效果预览",
-      title: "2026-03-28 样式效果预览",
+      path: "/日记/2026/03/样式效果预览 2026-03-28",
+      title: "样式效果预览 2026-03-28",
     });
 
     const { shell, unmount } = await mountShell();
@@ -306,8 +306,8 @@ describe("useStyleEditorShell", () => {
     await shell.handleCreateStylePreviewDocument();
 
     expect(mockCreateStylePreviewDocument).toHaveBeenCalledOnce();
-    expect(mockPushMsg).toHaveBeenCalledWith("已生成预览文档「2026-03-28 样式效果预览」，请到 Daily Notes 目录打开查看样式效果。", 5000);
-    expect(shell.statusCopy.value).toBe("已生成预览文档「2026-03-28 样式效果预览」，请到 Daily Notes 目录打开查看样式效果。");
+    expect(mockPushMsg).toHaveBeenCalledWith("已生成预览文档「样式效果预览 2026-03-28」，保存于 /日记/2026/03/样式效果预览 2026-03-28。", 5000);
+    expect(shell.statusCopy.value).toBe("已生成预览文档「样式效果预览 2026-03-28」，保存于 /日记/2026/03/样式效果预览 2026-03-28。");
 
     unmount();
   });
