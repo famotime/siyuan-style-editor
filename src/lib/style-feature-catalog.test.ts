@@ -885,6 +885,39 @@ describe("style feature catalog", () => {
     expect(css).toContain("max-width: 80%");
     expect(css).toContain("border: 1px");
   });
+
+  it("searchHighlight — 搜索高亮色", () => {
+    const profile = normalizeFeatureProfile({
+      searchHighlight: { enabled: true, values: { matchColor: "#ffff00", currentMatchColor: "#ff0000", matchBorderRadius: 3 } },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("search-mark");
+    expect(css).toContain("background-color: #ffff00");
+    expect(css).toContain("background-color: #ff0000");
+    expect(css).toContain("border-radius: 3px");
+  });
+
+  it("dialogStyle — 对话框样式", () => {
+    const profile = normalizeFeatureProfile({
+      dialogStyle: { enabled: true, values: { borderRadius: 16, backdropBlur: 10, backdropOpacity: 0.6, shadowIntensity: "heavy" } },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain(".b3-dialog__container");
+    expect(css).toContain("border-radius: 16px");
+    expect(css).toContain("backdrop-filter: blur(10px)");
+    expect(css).toContain(".b3-dialog__scrim");
+  });
+
+  it("listMarkerStyle — 列表标记样式", () => {
+    const profile = normalizeFeatureProfile({
+      listMarkerStyle: { enabled: true, values: { unorderedStyle: "circle", orderedStyle: "upper-roman", itemSpacing: 6, indentation: 28 } },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("list-style-type: circle");
+    expect(css).toContain("list-style-type: upper-roman");
+    expect(css).toContain("margin-bottom: 6px");
+    expect(css).toContain("margin-left: 28px");
+  });
 });
 
 describe("feature option filters", () => {

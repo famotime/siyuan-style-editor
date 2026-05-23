@@ -2493,4 +2493,145 @@ ${indicatorCss}`;
 }`;
     },
   },
+  {
+    value: "searchHighlight",
+    label: "搜索高亮色",
+    hint: "自定义搜索匹配项和当前匹配项的高亮颜色",
+    preview: "🔍",
+    risk: "全屋改造",
+    group: "系统元素",
+    controls: [
+      { key: "matchColor", label: "匹配项颜色", type: "color" },
+      { key: "currentMatchColor", label: "当前匹配颜色", type: "color" },
+      { key: "matchBorderRadius", label: "高亮圆角", type: "number", min: 0, max: 4, step: 1, unit: "px" },
+    ],
+    defaults: createDefaultConfig({
+      matchColor: "#fff3a8",
+      currentMatchColor: "#ff9632",
+      matchBorderRadius: 2,
+    }),
+    buildCss: (config) => {
+      const matchColor = stringValue(config.values.matchColor, "#fff3a8");
+      const currentColor = stringValue(config.values.currentMatchColor, "#ff9632");
+      const radius = px(config.values.matchBorderRadius, 2);
+
+      return `.protyle-wysiwyg mark[data-type="search-mark"] {
+  background-color: ${matchColor} !important;
+  border-radius: ${radius} !important;
+}
+
+.protyle-wysiwyg mark[data-type="search-mark"].search-mark--current {
+  background-color: ${currentColor} !important;
+}`;
+    },
+  },
+  {
+    value: "dialogStyle",
+    label: "对话框样式",
+    hint: "自定义弹窗圆角、背景模糊和阴影",
+    preview: "💬",
+    risk: "全屋改造",
+    group: "系统元素",
+    controls: [
+      { key: "borderRadius", label: "圆角", type: "number", min: 0, max: 24, step: 2, unit: "px", slider: true },
+      { key: "backdropBlur", label: "背景模糊", type: "number", min: 0, max: 20, step: 1, unit: "px" },
+      { key: "backdropOpacity", label: "遮罩透明度", type: "number", min: 0, max: 1, step: 0.05 },
+      {
+        key: "shadowIntensity", label: "阴影", type: "select",
+        options: [
+          { label: "无", value: "none" },
+          { label: "轻", value: "light" },
+          { label: "重", value: "heavy" },
+        ],
+      },
+    ],
+    defaults: createDefaultConfig({
+      borderRadius: 12,
+      backdropBlur: 8,
+      backdropOpacity: 0.5,
+      shadowIntensity: "light",
+    }),
+    buildCss: (config) => {
+      const radius = px(config.values.borderRadius, 12);
+      const blur = px(config.values.backdropBlur, 8);
+      const opacity = numberValue(config.values.backdropOpacity, 0.5);
+      const shadow = stringValue(config.values.shadowIntensity, "light");
+
+      const SHADOW_MAP: Record<string, string> = {
+        none: "none",
+        light: "0 8px 32px rgba(0,0,0,0.12)",
+        heavy: "0 16px 64px rgba(0,0,0,0.24)",
+      };
+
+      return `.b3-dialog__container {
+  border-radius: ${radius} !important;
+  box-shadow: ${SHADOW_MAP[shadow]} !important;
+}
+
+.b3-dialog__scrim {
+  backdrop-filter: blur(${blur}) !important;
+  -webkit-backdrop-filter: blur(${blur}) !important;
+  background-color: rgba(0, 0, 0, ${opacity}) !important;
+}`;
+    },
+  },
+  {
+    value: "listMarkerStyle",
+    label: "列表标记样式",
+    hint: "自定义列表标记形状和列表项间距",
+    preview: "📋",
+    risk: "正文安全",
+    group: "列表",
+    controls: [
+      {
+        key: "unorderedStyle", label: "无序标记", type: "select",
+        options: [
+          { label: "默认", value: "default" },
+          { label: "实心圆", value: "disc" },
+          { label: "空心圆", value: "circle" },
+          { label: "方块", value: "square" },
+        ],
+      },
+      {
+        key: "orderedStyle", label: "有序编号", type: "select",
+        options: [
+          { label: "默认", value: "default" },
+          { label: "罗马数字", value: "upper-roman" },
+          { label: "中文数字", value: "cjk" },
+        ],
+      },
+      { key: "itemSpacing", label: "列表项间距", type: "number", min: 0, max: 12, step: 1, unit: "px", slider: true },
+      { key: "indentation", label: "嵌套缩进", type: "number", min: 16, max: 40, step: 2, unit: "px" },
+    ],
+    defaults: createDefaultConfig({
+      unorderedStyle: "default",
+      orderedStyle: "default",
+      itemSpacing: 4,
+      indentation: 24,
+    }),
+    buildCss: (config) => {
+      const unordered = stringValue(config.values.unorderedStyle, "default");
+      const ordered = stringValue(config.values.orderedStyle, "default");
+      const spacing = px(config.values.itemSpacing, 4);
+      const indent = px(config.values.indentation, 24);
+
+      const rules: string[] = [];
+
+      if (unordered !== "default") {
+        rules.push(`.protyle-wysiwyg .li > [data-type="NodeList"] > .li { list-style-type: ${unordered} !important; }`);
+      }
+
+      if (ordered === "upper-roman") {
+        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: upper-roman !important; }');
+      }
+      else if (ordered === "cjk") {
+        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: cjk-ideographic !important; }');
+      }
+
+      rules.push(`.protyle-wysiwyg .li { margin-bottom: ${spacing} !important; }`);
+      rules.push(`.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: ${indent} !important; }`);
+
+      return rules.join("\n");
+    },
+  },
 ];

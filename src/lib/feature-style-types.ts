@@ -42,7 +42,10 @@ export type FeatureStyleId =
   | "tableStyle"
   | "tabBarStyle"
   | "taskListStyle"
-  | "underlineStyle";
+  | "underlineStyle"
+  | "dialogStyle"
+  | "listMarkerStyle"
+  | "searchHighlight";
 
 type FeatureValueType = "color" | "number" | "select" | "text";
 
