@@ -890,29 +890,88 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "backlinkSticky",
   },
   {
-    buildCss: config => `
-.protyle-wysiwyg img:not(.av__gallery-img) {
-  border-radius: ${px(config.values.radius, 6)} !important;
-}`.trim(),
+    value: "imageRadius",
+    label: "图片增强",
+    hint: "自定义图片圆角、阴影、悬停缩放、最大宽度和边框",
+    preview: "🖼️",
+    risk: "正文安全",
     controls: [
+      { key: "radius", label: "圆角", type: "number", min: 0, max: 24, step: 1, unit: "px", slider: true },
       {
-        key: "radius",
-        label: "图片圆角",
-        max: 32,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
+        key: "shadow", label: "阴影", type: "select",
+        options: [
+          { label: "无", value: "none" },
+          { label: "轻微", value: "light" },
+          { label: "中等", value: "medium" },
+          { label: "强", value: "strong" },
+        ],
       },
+      {
+        key: "hoverZoom", label: "悬停效果", type: "select",
+        options: [
+          { label: "无", value: "none" },
+          { label: "轻微放大", value: "slight" },
+          { label: "明显放大", value: "obvious" },
+        ],
+      },
+      {
+        key: "maxWidth", label: "最大宽度", type: "select",
+        options: [
+          { label: "自动", value: "auto" },
+          { label: "80%", value: "80%" },
+          { label: "100%", value: "100%" },
+        ],
+      },
+      { key: "borderColor", label: "边框颜色", type: "color" },
+      { key: "borderWidth", label: "边框粗细", type: "number", min: 0, max: 4, step: 1, unit: "px" },
     ],
     defaults: createDefaultConfig({
       radius: 6,
+      shadow: "none",
+      hoverZoom: "none",
+      maxWidth: "auto",
+      borderColor: "#cccccc",
+      borderWidth: 0,
     }),
-    hint: "为编辑区图片增加统一圆角。",
-    label: "圆角图片",
-    preview: "图片",
-    risk: "正文安全",
-    value: "imageRadius",
+    buildCss: (config) => {
+      const radius = px(config.values.radius, 6);
+      const shadow = stringValue(config.values.shadow, "none");
+      const hoverZoom = stringValue(config.values.hoverZoom, "none");
+      const maxWidth = stringValue(config.values.maxWidth, "auto");
+      const borderColor = stringValue(config.values.borderColor, "#cccccc");
+      const borderWidth = numberValue(config.values.borderWidth, 0);
+
+      const SHADOW_MAP: Record<string, string> = {
+        none: "none",
+        light: "0 2px 8px rgba(0,0,0,0.08)",
+        medium: "0 4px 16px rgba(0,0,0,0.12)",
+        strong: "0 8px 32px rgba(0,0,0,0.18)",
+      };
+      const ZOOM_MAP: Record<string, string> = {
+        none: "",
+        slight: "transform: scale(1.02);",
+        obvious: "transform: scale(1.08);",
+      };
+
+      const maxW = maxWidth === "auto" ? "" : `max-width: ${maxWidth} !important;`;
+      const border = borderWidth > 0 ? `border: ${borderWidth}px solid ${borderColor} !important;` : "";
+
+      let css = `.protyle-wysiwyg img {
+  border-radius: ${radius} !important;
+  box-shadow: ${SHADOW_MAP[shadow]} !important;
+  ${maxW}
+  ${border}
+  transition: transform 200ms ease, box-shadow 200ms ease !important;
+}`;
+
+      if (ZOOM_MAP[hoverZoom]) {
+        css += `\n\n.protyle-wysiwyg img:hover {
+  ${ZOOM_MAP[hoverZoom]}
+}`;
+      }
+
+      return css;
+    },
   },
   {
     buildCss: config => `
@@ -2227,6 +2286,166 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
 
 .protyle-wysiwyg .protyle-linenumber {
   color: ${lineNumberColor} !important;
+}`;
+    },
+  },
+  {
+    value: "boldTextStyle",
+    label: "加粗文本样式",
+    hint: "自定义加粗文本的颜色、背景色和字重",
+    preview: "B",
+    risk: "正文安全",
+    controls: [
+      { key: "color", label: "文字颜色", type: "color" },
+      { key: "backgroundColor", label: "背景色", type: "color" },
+      { key: "borderRadius", label: "背景圆角", type: "number", min: 0, max: 8, step: 1, unit: "px" },
+      { key: "fontWeight", label: "字重", type: "number", min: 600, max: 900, step: 100 },
+    ],
+    defaults: createDefaultConfig({
+      color: "#1a1a2e",
+      backgroundColor: "#fff3bf",
+      borderRadius: 3,
+      fontWeight: 700,
+    }),
+    buildCss: (config) => {
+      const color = stringValue(config.values.color, "#1a1a2e");
+      const bg = stringValue(config.values.backgroundColor, "#fff3bf");
+      const radius = px(config.values.borderRadius, 3);
+      const weight = numberValue(config.values.fontWeight, 700);
+
+      return `strong, b, span[data-type~="strong"] {
+  color: ${color} !important;
+  background-color: ${bg} !important;
+  border-radius: ${radius} !important;
+  font-weight: ${weight} !important;
+  padding: 0 2px !important;
+}`;
+    },
+  },
+  {
+    value: "tabBarStyle",
+    label: "页签栏样式",
+    hint: "自定义页签高度、字号和活动指示器",
+    preview: "📑",
+    risk: "全屋改造",
+    controls: [
+      { key: "height", label: "页签高度", type: "number", min: 28, max: 44, step: 1, unit: "px", slider: true },
+      { key: "fontSize", label: "字号", type: "number", min: 11, max: 16, step: 1, unit: "px" },
+      {
+        key: "activeIndicator", label: "活动指示器", type: "select",
+        options: [
+          { label: "底线", value: "border" },
+          { label: "背景", value: "background" },
+          { label: "无", value: "none" },
+        ],
+      },
+      { key: "indicatorColor", label: "指示器颜色", type: "color" },
+      { key: "backgroundColor", label: "背景色", type: "color" },
+    ],
+    defaults: createDefaultConfig({
+      height: 32,
+      fontSize: 13,
+      activeIndicator: "border",
+      indicatorColor: "#4C8BF5",
+      backgroundColor: "transparent",
+    }),
+    buildCss: (config) => {
+      const height = px(config.values.height, 32);
+      const fontSize = px(config.values.fontSize, 13);
+      const indicator = stringValue(config.values.activeIndicator, "border");
+      const indicatorColor = stringValue(config.values.indicatorColor, "#4C8BF5");
+      const bgColor = stringValue(config.values.backgroundColor, "transparent");
+
+      let indicatorCss = "";
+      if (indicator === "border") {
+        indicatorCss = `.layout-tab-bar .item--focus { border-bottom: 2px solid ${indicatorColor} !important; }`;
+      } else if (indicator === "background") {
+        indicatorCss = `.layout-tab-bar .item--focus { background: ${indicatorColor}22 !important; }`;
+      }
+
+      return `.layout-tab-bar {
+  height: ${height} !important;
+  background: ${bgColor} !important;
+}
+
+.layout-tab-bar .item {
+  font-size: ${fontSize} !important;
+}
+
+${indicatorCss}`;
+    },
+  },
+  {
+    value: "breadcrumbStyle",
+    label: "面包屑样式",
+    hint: "自定义面包屑文字颜色、背景和字号",
+    preview: "🧭",
+    risk: "全屋改造",
+    controls: [
+      { key: "textColor", label: "文字颜色", type: "color" },
+      { key: "backgroundColor", label: "背景色", type: "color" },
+      { key: "separatorColor", label: "分隔符颜色", type: "color" },
+      { key: "fontSize", label: "字号", type: "number", min: 11, max: 14, step: 1, unit: "px" },
+    ],
+    defaults: createDefaultConfig({
+      textColor: "#666666",
+      backgroundColor: "transparent",
+      separatorColor: "#999999",
+      fontSize: 12,
+    }),
+    buildCss: (config) => {
+      const textColor = stringValue(config.values.textColor, "#666666");
+      const bgColor = stringValue(config.values.backgroundColor, "transparent");
+      const sepColor = stringValue(config.values.separatorColor, "#999999");
+      const fontSize = px(config.values.fontSize, 12);
+
+      return `.protyle-breadcrumb {
+  color: ${textColor} !important;
+  background-color: ${bgColor} !important;
+  font-size: ${fontSize} !important;
+}
+
+.protyle-breadcrumb__separator {
+  color: ${sepColor} !important;
+}`;
+    },
+  },
+  {
+    value: "dockStyle",
+    label: "停靠栏样式",
+    hint: "自定义停靠栏图标大小、背景色和宽度",
+    preview: "📌",
+    risk: "全屋改造",
+    controls: [
+      { key: "iconSize", label: "图标大小", type: "number", min: 16, max: 28, step: 1, unit: "px", slider: true },
+      { key: "backgroundColor", label: "背景色", type: "color" },
+      { key: "hoverColor", label: "悬停颜色", type: "color" },
+      { key: "width", label: "宽度", type: "number", min: 36, max: 56, step: 2, unit: "px", slider: true },
+    ],
+    defaults: createDefaultConfig({
+      iconSize: 20,
+      backgroundColor: "transparent",
+      hoverColor: "#e8e8e8",
+      width: 40,
+    }),
+    buildCss: (config) => {
+      const iconSize = px(config.values.iconSize, 20);
+      const bgColor = stringValue(config.values.backgroundColor, "transparent");
+      const hoverColor = stringValue(config.values.hoverColor, "#e8e8e8");
+      const width = px(config.values.width, 40);
+
+      return `.dock {
+  background: ${bgColor} !important;
+  width: ${width} !important;
+}
+
+.dock__item {
+  width: ${iconSize} !important;
+  height: ${iconSize} !important;
+}
+
+.dock__item:hover {
+  background: ${hoverColor} !important;
 }`;
     },
   },

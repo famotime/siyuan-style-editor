@@ -582,7 +582,7 @@ describe("style feature catalog", () => {
     expect(css).toContain(".protyle-wysiwyg .bq");
     expect(css).toContain("box-shadow: 0 0 0 1px rgb(235, 235, 235) inset !important;");
     expect(css).toContain("border-left: 0.25em solid rgb(180, 180, 180) !important;");
-    expect(css).toContain(".protyle-wysiwyg img:not(.av__gallery-img)");
+    expect(css).toContain(".protyle-wysiwyg img");
     expect(css).toContain("border-radius: 9px !important;");
     expect(css).not.toContain("paragraph hover");
   });
@@ -826,6 +826,64 @@ describe("style feature catalog", () => {
     expect(css).toContain("border-radius: 8px");
     expect(css).toContain("max-height: 300px");
     expect(css).toContain(".protyle-linenumber");
+  });
+
+  it("boldTextStyle — 加粗文本样式", () => {
+    const profile = normalizeFeatureProfile({
+      boldTextStyle: {
+        enabled: true,
+        values: { color: "#ff0000", backgroundColor: "#ffff00", borderRadius: 4, fontWeight: 800 },
+      },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("strong, b");
+    expect(css).toContain("color: #ff0000");
+    expect(css).toContain("font-weight: 800");
+  });
+
+  it("tabBarStyle — 页签栏样式", () => {
+    const profile = normalizeFeatureProfile({
+      tabBarStyle: { enabled: true, values: { height: 36, fontSize: 14, activeIndicator: "background", indicatorColor: "#ff0000", backgroundColor: "#f5f5f5" } },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain(".layout-tab-bar");
+    expect(css).toContain("height: 36px");
+    expect(css).toContain("font-size: 14px");
+  });
+
+  it("breadcrumbStyle — 面包屑样式", () => {
+    const profile = normalizeFeatureProfile({
+      breadcrumbStyle: { enabled: true, values: { textColor: "#333333", backgroundColor: "#fafafa", separatorColor: "#aaaaaa", fontSize: 13 } },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain(".protyle-breadcrumb");
+    expect(css).toContain("color: #333333");
+    expect(css).toContain("font-size: 13px");
+  });
+
+  it("dockStyle — 停靠栏样式", () => {
+    const profile = normalizeFeatureProfile({
+      dockStyle: { enabled: true, values: { iconSize: 22, backgroundColor: "#f0f0f0", hoverColor: "#e0e0e0", width: 44 } },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain(".dock");
+    expect(css).toContain("width: 44px");
+    expect(css).toContain(".dock__item");
+  });
+
+  it("imageRadius — 扩展：阴影和悬停效果", () => {
+    const profile = normalizeFeatureProfile({
+      imageRadius: {
+        enabled: true,
+        values: { radius: 8, shadow: "medium", hoverZoom: "slight", maxWidth: "80%", borderColor: "#cccccc", borderWidth: 1 },
+      },
+    } as Partial<FeatureStyleProfile>);
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("border-radius: 8px");
+    expect(css).toContain("box-shadow");
+    expect(css).toContain("transform: scale(1.02)");
+    expect(css).toContain("max-width: 80%");
+    expect(css).toContain("border: 1px");
   });
 });
 

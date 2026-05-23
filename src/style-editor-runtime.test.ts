@@ -213,7 +213,7 @@ describe("style editor runtime", () => {
     }));
 
     const styleElement = document.getElementById("siyuan-style-editor-style");
-    expect(styleElement?.textContent).toContain(".protyle-wysiwyg img:not(.av__gallery-img)");
+    expect(styleElement?.textContent).toContain(".protyle-wysiwyg img {");
     expect(styleElement?.textContent).toContain("border-radius: 14px !important;");
 
     await resetAllStyles();

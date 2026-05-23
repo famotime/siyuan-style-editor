@@ -2,11 +2,14 @@ export type FeatureStyleId =
   | "backlinkSticky"
   | "blockquoteFrame"
   | "blockGutterAnim"
+  | "boldTextStyle"
+  | "breadcrumbStyle"
   | "blockRefStyle"
   | "codeBlockStyle"
   | "docTag"
   | "docTreeColorBlocks"
   | "documentTitle"
+  | "dockStyle"
   | "editorWidth"
   | "emojiPanel"
   | "fontFamily"
@@ -37,6 +40,7 @@ export type FeatureStyleId =
   | "refSearchMenu"
   | "strikethroughStyle"
   | "tableStyle"
+  | "tabBarStyle"
   | "taskListStyle"
   | "underlineStyle";
 
