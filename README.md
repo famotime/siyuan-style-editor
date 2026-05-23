@@ -22,6 +22,7 @@
 - `src/composables/use-style-editor-shell.ts`：面板交互编排。
 - `src/style-editor-runtime.ts`：运行时公开接口。
 - `src/lib/style-target-catalog.ts`：样式目标目录与 selector 单一来源。
+- `src/lib/style-feature-catalog.ts`：功能样式目录导出（归一化与 API），内部拆分为类型（`feature-style-types.ts`）与定义（`feature-style-definitions.ts`）。
 - `docs/project-structure.md`：更完整的模块说明与职责映射。
 
 ## 开发命令
@@ -36,4 +37,4 @@ npm run build
 
 - 测试使用 Vitest，采用“测试与源码并置”的方式组织在 `src/` 下。
 - 运行时、样式目录、颜色交互和布局约束都有自动化测试覆盖。
-- 仓库已移除未接入主流程的模板遗留 API 与旧 UI 组件，后续新增能力建议按实际需求最小化实现。
+- `src/api.ts` 封装思源内核 HTTP API，供运行时和预览文档功能使用。

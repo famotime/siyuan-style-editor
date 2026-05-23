@@ -48,10 +48,11 @@ npm run release:patch|minor|major # 非交互式版本发布
 
 ### 关键领域模型
 
-- **StyleTarget** (`src/lib/style-target-catalog.ts`): 14 种样式目标（h1-h6、strong、blockquote、inlineCode、mark、codeBlock、bulletList、orderedList、taskList），每个目标有 `cssSelector` 和 `extractSelector`
+- **StyleTarget** (`src/lib/style-target-catalog.ts`): 15 种样式目标（h1-h6、strong、blockquote、inlineCode、mark、codeBlock、bulletList、orderedList、taskList），每个目标有 `cssSelector` 和 `extractSelector`
 - **StyleProfile**: `Record<StyleTarget, StyleRule>`，StyleRule 含 color/backgroundColor/fontWeight/fontStyle/textDecoration
-- **FeatureStyleId** (`src/lib/style-feature-catalog.ts`): 14 种高级定制（段落悬停、引用框、图片圆角等），每个功能自含 `buildCss(config)` 和 controls 元数据
+- **FeatureStyleId** (`src/lib/feature-style-types.ts`): 34 种高级定制（段落悬停、引用框、图片圆角等），定义数组位于 `src/lib/feature-style-definitions.ts`，每个功能自含 `buildCss(config)` 和 controls 元数据
 - **StyleEditorState** (`src/lib/style-editor-state.ts`): 不可变状态转换函数
+- **API 封装** (`src/api.ts`): 封装思源内核 HTTP API（`fetchSyncPost`、`openTab` 等），供运行时和预览文档功能使用
 
 ### 样式注入机制
 

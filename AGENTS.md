@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This repository is a Vite + Vue 3 + TypeScript plugin for SiYuan. Main source files live in `src/`: plugin entry points are `src/main.ts`, `src/index.ts`, and `src/App.vue`; reusable logic is in `src/lib/`; Vue UI is in `src/components/`; composables are in `src/composables/`; locale files are in `src/i18n/`; shared types are in `src/types/`. Tests are colocated with implementation as `*.test.ts`. Static and release assets include `asset/`, `icon.png`, `preview.png`, `plugin.json`, and generated `dist/` / `package.zip`. Reference material is in `docs/` and `developer_docs/`; `plugin-sample-vite-vue/` is a sample project, not the main plugin.
+This repository is a Vite + Vue 3 + TypeScript plugin for SiYuan. Main source files live in `src/`: plugin entry points are `src/main.ts`, `src/index.ts`, and `src/App.vue`; reusable logic is in `src/lib/` (including the feature style catalog split across `feature-style-types.ts`, `feature-style-definitions.ts`, and `style-feature-catalog.ts`); Vue UI is in `src/components/`; composables are in `src/composables/`; locale files are in `src/i18n/`; shared types are in `src/types/`; SiYuan kernel HTTP API wrappers are in `src/api.ts`. Tests are colocated with implementation as `*.test.ts`. Static and release assets include `asset/`, `icon.png`, `preview.png`, `plugin.json`, and generated `dist/` / `package.zip`. Reference material is in `docs/` and `developer_docs/`; `plugin-sample-vite-vue/` is a sample project, not the main plugin.
 
 ## Build, Test, and Development Commands
 

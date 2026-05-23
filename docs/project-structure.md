@@ -10,18 +10,37 @@
 
 ## `src/lib`
 
+### 样式目标与样式规则
+
 - `style-target-catalog.ts`：样式目标单一目录，集中维护 target 顺序、selector、标签和提示文案。
 - `style-profile.ts`：样式领域模型，负责默认 profile、归一化和 CSS 生成。
-- `style-editor-state.ts`：纯状态更新函数，处理颜色更新与重置。
+- `style-extractor.ts`：从当前文档 DOM 提取显式颜色样式。
+
+### 功能样式目录（拆分自原 `style-feature-catalog.ts`）
+
+- `feature-style-types.ts`（~130 行）：功能样式类型定义（`FeatureStyleId`、`FeatureStyleConfig`、`FeatureStyleControl` 等）与辅助函数（`px`、`em`、`stringValue`、`lineStyleValue` 等）。
+- `feature-style-definitions.ts`（~1920 行）：34 个功能定义数组，每项含 `buildCss(config)` CSS 生成函数、控件元数据与默认值。
+- `style-feature-catalog.ts`（~130 行）：归一化、导出 API（`createDefaultFeatureProfile`、`normalizeFeatureProfile`、`buildFeatureStyleCss`、`FEATURE_STYLE_OPTIONS` 等），对外保持原有导入路径不变。
+
+### 编辑器状态与运行时辅助
+
+- `style-editor-state.ts`：纯状态更新函数，处理颜色更新、重置与 channel 交换。
 - `style-editor-persistence.ts`：运行时持久化读写封装。
 - `style-editor-stylesheet.ts`：运行时注入 `<style>` 节点的创建、更新与清理。
 - `style-editor-shell-actions.ts`：UI 交互规则辅助函数，处理自定义颜色、清空操作和反馈文案。
-- `style-extractor.ts`：从当前文档 DOM 提取显式颜色样式。
+- `style-transfer.ts`：样式导入/导出序列化与元数据。
+- `style-transfer-download.ts`：导出文件的下载触发。
+- `style-preview-document.ts`：生成预览文档的逻辑。
+
+### 面板 UI 辅助
+
 - `target-preview.ts`：预览卡片和颜色圆点的展示样式辅助。
 - `custom-color.ts`：十六进制颜色归一化与颜色选择器默认值逻辑。
 - `inline-palette.ts`：内联调色板开关状态机。
+- `inline-color-picker.ts`：内联颜色选择器逻辑。
 - `floating-palette.ts`：浮层定位计算。
 - `panel-theme.ts`：面板 light/dark 主题 token 生成。
+- `preset-palette-catalog.ts`：预设色卡集合定义与归一化。
 
 ## `src/composables`
 
@@ -52,5 +71,6 @@
 
 ## 当前边界
 
-- 当前仓库已移除模板遗留的 `src/api.ts`、`src/types/api.d.ts` 与 `src/components/SiyuanTheme/*`。
+- `src/api.ts`：封装思源内核 HTTP API（`fetchSyncPost`、`openTab` 等），被 `use-style-transfer-actions.ts` 和 `style-preview-document.ts` 使用。
+- `src/types/api.d.ts` 已移除，`src/components/SiyuanTheme/` 目录为空。
 - 若未来需要接入新的思源内核 API，建议以实际使用场景为单位新增最小封装，而不是恢复整套模板 API。
