@@ -739,6 +739,50 @@ describe("style feature catalog", () => {
     expect(css).toContain('[data-subtype="u"] > .protyle-action');
     expect(css).toContain("color: oklch(75% 0 0);");
   });
+  it("typographyBase — 正文排版", () => {
+    const profile = normalizeFeatureProfile({
+      typographyBase: {
+        enabled: true,
+        values: { fontSize: 17, lineHeight: 1.8, textIndent: 2, paragraphSpacing: 12, letterSpacing: 0.5 },
+      },
+    } as Partial<FeatureStyleProfile>);
+
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("--b3-font-size: 17px");
+    expect(css).toContain("--b3-font-line-height: 1.8");
+    expect(css).toContain("text-indent: 2em");
+    expect(css).toContain("margin-bottom: 12px");
+    expect(css).toContain("letter-spacing: 0.5px");
+  });
+
+  it("editorWidth — 编辑器宽度", () => {
+    const profile = normalizeFeatureProfile({
+      editorWidth: {
+        enabled: true,
+        values: { maxWidth: 800, fullWidth: "no", contentPadding: 16 },
+      },
+    } as Partial<FeatureStyleProfile>);
+
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("max-width: 800px");
+    expect(css).toContain("padding-left: 16px");
+    expect(css).toContain("padding-right: 16px");
+  });
+
+  it("fontFamily — 正文字体", () => {
+    const profile = normalizeFeatureProfile({
+      fontFamily: {
+        enabled: true,
+        values: { mainFont: "lxgw", codeFont: "jetbrains", customMainFont: "" },
+      },
+    } as Partial<FeatureStyleProfile>);
+
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("--b3-font-family-protyle");
+    expect(css).toContain("霞鹜文楷");
+    expect(css).toContain("--b3-font-family-code");
+    expect(css).toContain("JetBrains Mono");
+  });
 });
 
 describe("feature option filters", () => {

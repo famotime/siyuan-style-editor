@@ -1920,4 +1920,149 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     risk: "全屋改造",
     value: "searchPanel",
   },
+  {
+    value: "typographyBase",
+    label: "正文排版",
+    hint: "调整正文字号、行高、缩进、段间距和字间距",
+    preview: "📝",
+    risk: "正文安全",
+    controls: [
+      { key: "fontSize", label: "字号", type: "number", min: 12, max: 20, step: 1, unit: "px", slider: true },
+      { key: "lineHeight", label: "行高", type: "number", min: 1.2, max: 2.4, step: 0.05, slider: true },
+      { key: "textIndent", label: "首行缩进", type: "number", min: 0, max: 4, step: 0.5, unit: "em" },
+      { key: "paragraphSpacing", label: "段间距", type: "number", min: 0, max: 24, step: 1, unit: "px", slider: true },
+      { key: "letterSpacing", label: "字间距", type: "number", min: -0.5, max: 2, step: 0.1, unit: "px" },
+    ],
+    defaults: createDefaultConfig({
+      fontSize: 16,
+      lineHeight: 1.625,
+      textIndent: 0,
+      paragraphSpacing: 8,
+      letterSpacing: 0,
+    }),
+    buildCss: (config) => {
+      const fontSize = px(config.values.fontSize, 16);
+      const lineHeight = numberValue(config.values.lineHeight, 1.625);
+      const textIndent = em(config.values.textIndent, 0);
+      const paragraphSpacing = px(config.values.paragraphSpacing, 8);
+      const letterSpacing = px(config.values.letterSpacing, 0);
+
+      return `:root {
+  --b3-font-size: ${fontSize} !important;
+  --b3-font-line-height: ${lineHeight} !important;
+  letter-spacing: ${letterSpacing} !important;
+}
+
+.protyle-wysiwyg [data-type="NodeParagraph"] {
+  text-indent: ${textIndent} !important;
+  margin-bottom: ${paragraphSpacing} !important;
+}`;
+    },
+  },
+  {
+    value: "editorWidth",
+    label: "编辑器宽度",
+    hint: "自定义编辑区最大宽度和内容内边距",
+    preview: "↔️",
+    risk: "全屋改造",
+    controls: [
+      { key: "maxWidth", label: "最大宽度", type: "number", min: 600, max: 2000, step: 10, unit: "px", slider: true },
+      { key: "fullWidth", label: "全宽模式", type: "select", options: [{ label: "否", value: "no" }, { label: "是", value: "yes" }] },
+      { key: "contentPadding", label: "内容边距", type: "number", min: 0, max: 60, step: 2, unit: "px", slider: true },
+    ],
+    defaults: createDefaultConfig({
+      maxWidth: 900,
+      fullWidth: "no",
+      contentPadding: 16,
+    }),
+    buildCss: (config) => {
+      const maxWidth = px(config.values.maxWidth, 900);
+      const fullWidth = stringValue(config.values.fullWidth, "no");
+      const contentPadding = px(config.values.contentPadding, 16);
+
+      const widthRule = fullWidth === "yes"
+        ? ".protyle-content { max-width: 100% !important; }"
+        : `.protyle-content { max-width: ${maxWidth} !important; }`;
+
+      return `${widthRule}
+
+.protyle-content {
+  padding-left: ${contentPadding} !important;
+  padding-right: ${contentPadding} !important;
+}`;
+    },
+  },
+  {
+    value: "fontFamily",
+    label: "正文字体",
+    hint: "设置正文和代码块的字体族",
+    preview: "A",
+    risk: "正文安全",
+    controls: [
+      {
+        key: "mainFont",
+        label: "正文字体",
+        type: "select",
+        options: [
+          { label: "默认", value: "default" },
+          { label: "思源黑体", value: "sourceHanSans" },
+          { label: "苹方", value: "pingfang" },
+          { label: "微软雅黑", value: "yahei" },
+          { label: "霞鹜文楷", value: "lxgw" },
+          { label: "自定义", value: "custom" },
+        ],
+      },
+      {
+        key: "codeFont",
+        label: "代码字体",
+        type: "select",
+        options: [
+          { label: "默认", value: "default" },
+          { label: "JetBrains Mono", value: "jetbrains" },
+          { label: "Fira Code", value: "firaCode" },
+          { label: "Cascadia Code", value: "cascadia" },
+          { label: "自定义", value: "custom" },
+        ],
+      },
+      { key: "customMainFont", label: "自定义正文字体", type: "text", placeholder: "字体名称" },
+    ],
+    defaults: createDefaultConfig({
+      mainFont: "default",
+      codeFont: "default",
+      customMainFont: "",
+    }),
+    buildCss: (config) => {
+      const MAIN_FONT_MAP: Record<string, string> = {
+        default: "",
+        sourceHanSans: '"Source Han Sans SC", "Noto Sans SC", sans-serif',
+        pingfang: '"PingFang SC", "Hiragino Sans GB", sans-serif',
+        yahei: '"Microsoft YaHei", sans-serif',
+        lxgw: '"LXGW WenKai", "霞鹜文楷", serif',
+      };
+      const CODE_FONT_MAP: Record<string, string> = {
+        default: "",
+        jetbrains: '"JetBrains Mono", monospace',
+        firaCode: '"Fira Code", monospace',
+        cascadia: '"Cascadia Code", monospace',
+      };
+
+      const mainFontKey = stringValue(config.values.mainFont, "default");
+      const codeFontKey = stringValue(config.values.codeFont, "default");
+      const customFont = stringValue(config.values.customMainFont, "");
+
+      const mainFont = mainFontKey === "custom" && customFont
+        ? `"${customFont}", sans-serif`
+        : MAIN_FONT_MAP[mainFontKey] || "";
+      const codeFont = CODE_FONT_MAP[codeFontKey] || "";
+
+      const rules: string[] = [];
+      if (mainFont) {
+        rules.push(`:root {\n  --b3-font-family-protyle: ${mainFont} !important;\n}`);
+      }
+      if (codeFont) {
+        rules.push(`:root {\n  --b3-font-family-code: ${codeFont} !important;\n}`);
+      }
+      return rules.join("\n\n");
+    },
+  },
 ];
