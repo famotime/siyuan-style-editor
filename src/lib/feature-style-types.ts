@@ -34,7 +34,7 @@ export type FeatureStyleId =
   | "taskListStyle"
   | "underlineStyle";
 
-type FeatureValueType = "color" | "number" | "select";
+type FeatureValueType = "color" | "number" | "select" | "text";
 
 export interface FeatureStyleControlOption {
   label: string;
@@ -47,6 +47,8 @@ export interface FeatureStyleControl {
   max?: number;
   min?: number;
   options?: FeatureStyleControlOption[];
+  placeholder?: string;
+  slider?: boolean;
   step?: number;
   type: FeatureValueType;
   unit?: string;
