@@ -31,7 +31,7 @@
       </button>
     </div>
 
-    <div v-show="!collapsed" class="feature-grid">
+    <div v-show="!collapsed" class="feature-section__body">
       <div class="feature-search">
         <input
           v-model="searchQuery"
@@ -41,116 +41,121 @@
         >
       </div>
 
-      <article
-        v-for="feature in filteredOptions"
-        :key="feature.value"
-        class="feature-card"
-        :class="{ 'feature-card--enabled': featureProfile[feature.value].enabled }"
-        :data-feature-id="feature.value"
-      >
-        <div class="feature-card__top">
-          <div class="feature-card__copy">
-            <span v-if="feature.preview" class="feature-card__preview-tag">{{ feature.preview }}</span>
-            <h3 class="feature-card__title">
-              {{ feature.label }}
-            </h3>
-            <p v-if="feature.hint" class="feature-card__hint">{{ feature.hint }}</p>
-          </div>
-          <label class="feature-switch">
-            <input
-              type="checkbox"
-              :checked="featureProfile[feature.value].enabled"
-              @change="handleEnabledChange(feature.value, $event)"
-            >
-            <span class="feature-switch__track">
-              <span class="feature-switch__thumb" />
-            </span>
-          </label>
-        </div>
-
-        <div class="feature-card__controls">
-          <label
-            v-for="control in feature.controls"
-            :key="control.key"
-            class="feature-control"
+      <div v-for="[groupName, features] in groupedOptions" :key="groupName" class="feature-group">
+        <h4 class="feature-group__title">{{ groupName }}</h4>
+        <div class="feature-grid">
+          <article
+            v-for="feature in features"
+            :key="feature.value"
+            class="feature-card"
+            :class="{ 'feature-card--enabled': featureProfile[feature.value].enabled }"
+            :data-feature-id="feature.value"
           >
-            <span class="feature-control__label">
-              {{ control.label }}
-            </span>
-
-            <div v-if="control.type === 'color'" class="feature-control__color-group">
-              <input
-                type="color"
-                class="feature-control__color"
-                :value="getColorControlValue(feature.value, control.key)"
-                @input="handleControlInput(feature.value, control.key, $event)"
-              >
-              <input
-                type="text"
-                class="feature-control__color-text"
-                :value="getColorControlValue(feature.value, control.key)"
-                @input="handleControlInput(feature.value, control.key, $event)"
-              >
+            <div class="feature-card__top">
+              <div class="feature-card__copy">
+                <span v-if="feature.preview" class="feature-card__preview-tag">{{ feature.preview }}</span>
+                <h3 class="feature-card__title">
+                  {{ feature.label }}
+                </h3>
+                <p v-if="feature.hint" class="feature-card__hint">{{ feature.hint }}</p>
+              </div>
+              <label class="feature-switch">
+                <input
+                  type="checkbox"
+                  :checked="featureProfile[feature.value].enabled"
+                  @change="handleEnabledChange(feature.value, $event)"
+                >
+                <span class="feature-switch__track">
+                  <span class="feature-switch__thumb" />
+                </span>
+              </label>
             </div>
 
-            <div v-else-if="control.type === 'number' && control.slider" class="feature-control__number-group">
-              <input
-                type="range"
-                class="feature-control__range"
-                :min="control.min"
-                :max="control.max"
-                :step="control.step"
-                :value="featureProfile[feature.value].values[control.key]"
-                @input="handleControlInput(feature.value, control.key, $event)"
+            <div class="feature-card__controls">
+              <label
+                v-for="control in feature.controls"
+                :key="control.key"
+                class="feature-control"
               >
-              <input
-                type="number"
-                class="feature-control__number"
-                :min="control.min"
-                :max="control.max"
-                :step="control.step"
-                :value="featureProfile[feature.value].values[control.key]"
-                @input="handleControlInput(feature.value, control.key, $event)"
-              >
+                <span class="feature-control__label">
+                  {{ control.label }}
+                </span>
+
+                <div v-if="control.type === 'color'" class="feature-control__color-group">
+                  <input
+                    type="color"
+                    class="feature-control__color"
+                    :value="getColorControlValue(feature.value, control.key)"
+                    @input="handleControlInput(feature.value, control.key, $event)"
+                  >
+                  <input
+                    type="text"
+                    class="feature-control__color-text"
+                    :value="getColorControlValue(feature.value, control.key)"
+                    @input="handleControlInput(feature.value, control.key, $event)"
+                  >
+                </div>
+
+                <div v-else-if="control.type === 'number' && control.slider" class="feature-control__number-group">
+                  <input
+                    type="range"
+                    class="feature-control__range"
+                    :min="control.min"
+                    :max="control.max"
+                    :step="control.step"
+                    :value="featureProfile[feature.value].values[control.key]"
+                    @input="handleControlInput(feature.value, control.key, $event)"
+                  >
+                  <input
+                    type="number"
+                    class="feature-control__number"
+                    :min="control.min"
+                    :max="control.max"
+                    :step="control.step"
+                    :value="featureProfile[feature.value].values[control.key]"
+                    @input="handleControlInput(feature.value, control.key, $event)"
+                  >
+                </div>
+
+                <input
+                  v-else-if="control.type === 'number'"
+                  type="number"
+                  class="feature-control__number"
+                  :min="control.min"
+                  :max="control.max"
+                  :step="control.step"
+                  :value="featureProfile[feature.value].values[control.key]"
+                  @input="handleControlInput(feature.value, control.key, $event)"
+                >
+
+                <input
+                  v-else-if="control.type === 'text'"
+                  type="text"
+                  class="feature-control__text"
+                  :placeholder="control.placeholder"
+                  :value="featureProfile[feature.value].values[control.key]"
+                  @input="handleControlInput(feature.value, control.key, $event)"
+                >
+
+                <select
+                  v-else
+                  class="feature-control__select"
+                  :value="featureProfile[feature.value].values[control.key]"
+                  @change="handleControlInput(feature.value, control.key, $event)"
+                >
+                  <option
+                    v-for="option in control.options"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
+              </label>
             </div>
-
-            <input
-              v-else-if="control.type === 'number'"
-              type="number"
-              class="feature-control__number"
-              :min="control.min"
-              :max="control.max"
-              :step="control.step"
-              :value="featureProfile[feature.value].values[control.key]"
-              @input="handleControlInput(feature.value, control.key, $event)"
-            >
-
-            <input
-              v-else-if="control.type === 'text'"
-              type="text"
-              class="feature-control__text"
-              :placeholder="control.placeholder"
-              :value="featureProfile[feature.value].values[control.key]"
-              @input="handleControlInput(feature.value, control.key, $event)"
-            >
-
-            <select
-              v-else
-              class="feature-control__select"
-              :value="featureProfile[feature.value].values[control.key]"
-              @change="handleControlInput(feature.value, control.key, $event)"
-            >
-              <option
-                v-for="option in control.options"
-                :key="option.value"
-                :value="option.value"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-          </label>
+          </article>
         </div>
-      </article>
+      </div>
     </div>
   </section>
 </template>
@@ -194,6 +199,16 @@ const filteredOptions = computed(() => {
     option.label.toLowerCase().includes(query) ||
     option.hint.toLowerCase().includes(query)
   );
+});
+
+const groupedOptions = computed(() => {
+  const groups = new Map<string, FeatureStyleOption[]>();
+  for (const opt of filteredOptions.value) {
+    const group = opt.group || "其他";
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group)!.push(opt);
+  }
+  return groups;
 });
 
 const enabledCount = computed(() =>
@@ -311,6 +326,19 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
+}
+
+.feature-section__body {
+  display: grid;
+  gap: 12px;
+}
+
+.feature-group__title {
+  margin: 8px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--panel-text-muted);
+  letter-spacing: 0.04em;
 }
 
 .feature-search {

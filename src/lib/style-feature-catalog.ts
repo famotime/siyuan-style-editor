@@ -6,6 +6,7 @@ import type {
   FeatureStyleId,
   FeatureStyleOption,
   FeatureStyleProfile,
+  StylePreset,
 } from "./feature-style-types";
 
 export type {
@@ -14,6 +15,7 @@ export type {
   FeatureStyleId,
   FeatureStyleOption,
   FeatureStyleProfile,
+  StylePreset,
 } from "./feature-style-types";
 
 export { FEATURE_DEFINITIONS } from "./feature-style-definitions";

@@ -238,9 +238,9 @@ describe("FeatureSection", () => {
   it("折叠/展开面板", async () => {
     const { container, unmount } = await mountFeatureSection();
 
-    const grid = container.querySelector(".feature-grid") as HTMLElement;
-    expect(grid).not.toBeNull();
-    expect(grid.style.display).toBe("none");
+    const body = container.querySelector(".feature-section__body") as HTMLElement;
+    expect(body).not.toBeNull();
+    expect(body.style.display).toBe("none");
 
     const collapseBtn = container.querySelector(".panel-collapse-btn") as HTMLButtonElement;
     expect(collapseBtn).not.toBeNull();
@@ -248,12 +248,12 @@ describe("FeatureSection", () => {
     collapseBtn.click();
     await nextTick();
 
-    expect(grid.style.display).toBe("");
+    expect(body.style.display).toBe("");
 
     collapseBtn.click();
     await nextTick();
 
-    expect(grid.style.display).toBe("none");
+    expect(body.style.display).toBe("none");
 
     unmount();
   });

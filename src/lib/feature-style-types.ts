@@ -66,6 +66,7 @@ export interface FeatureStyleControl {
 
 export interface FeatureStyleOption {
   controls: FeatureStyleControl[];
+  group?: string;
   hint: string;
   label: string;
   preview: string;
@@ -79,6 +80,13 @@ export interface FeatureStyleConfig {
 }
 
 export type FeatureStyleProfile = Record<FeatureStyleId, FeatureStyleConfig>;
+
+export interface StylePreset {
+  id: string;
+  name: string;
+  createdAt: string;
+  featureProfile: FeatureStyleProfile;
+}
 
 export interface FeatureDefinition extends FeatureStyleOption {
   buildCss: (config: FeatureStyleConfig) => string;
