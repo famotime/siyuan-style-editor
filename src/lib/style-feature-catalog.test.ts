@@ -783,6 +783,50 @@ describe("style feature catalog", () => {
     expect(css).toContain("--b3-font-family-code");
     expect(css).toContain("JetBrains Mono");
   });
+
+  it("topBarStyle — 顶栏样式", () => {
+    const profile = normalizeFeatureProfile({
+      topBarStyle: {
+        enabled: true,
+        values: { mode: "glass", blurRadius: 12, backgroundColor: "#ffffff", height: 40, borderBottom: "show" },
+      },
+    } as Partial<FeatureStyleProfile>);
+
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("#toolbar");
+    expect(css).toContain("backdrop-filter: blur(12px)");
+    expect(css).toContain("height: 40px");
+  });
+
+  it("scrollbarStyle — 滚动条样式", () => {
+    const profile = normalizeFeatureProfile({
+      scrollbarStyle: {
+        enabled: true,
+        values: { width: 6, trackColor: "#f0f0f0", thumbColor: "#c0c0c0", thumbRadius: 4, hideMode: "hover" },
+      },
+    } as Partial<FeatureStyleProfile>);
+
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain("::-webkit-scrollbar");
+    expect(css).toContain("width: 6px");
+    expect(css).toContain("::-webkit-scrollbar-thumb");
+    expect(css).toContain("::-webkit-scrollbar-track");
+  });
+
+  it("codeBlockStyle — 代码块外观", () => {
+    const profile = normalizeFeatureProfile({
+      codeBlockStyle: {
+        enabled: true,
+        values: { borderRadius: 8, backgroundColor: "#1e1e1e", headerBgColor: "#2d2d2d", maxHeight: "300px", lineNumberColor: "#858585" },
+      },
+    } as Partial<FeatureStyleProfile>);
+
+    const css = buildFeatureStyleCss(profile);
+    expect(css).toContain(".code-block");
+    expect(css).toContain("border-radius: 8px");
+    expect(css).toContain("max-height: 300px");
+    expect(css).toContain(".protyle-linenumber");
+  });
 });
 
 describe("feature option filters", () => {

@@ -2065,4 +2065,169 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       return rules.join("\n\n");
     },
   },
+  {
+    value: "topBarStyle",
+    label: "顶栏样式",
+    hint: "自定义顶栏背景、高度和边框（透明/毛玻璃/自定义色）",
+    preview: "🔧",
+    risk: "全屋改造",
+    controls: [
+      {
+        key: "mode", label: "风格", type: "select",
+        options: [
+          { label: "默认", value: "default" },
+          { label: "透明", value: "transparent" },
+          { label: "毛玻璃", value: "glass" },
+        ],
+      },
+      { key: "blurRadius", label: "模糊半径", type: "number", min: 0, max: 20, step: 1, unit: "px", slider: true },
+      { key: "backgroundColor", label: "背景色", type: "color" },
+      { key: "height", label: "高度", type: "number", min: 32, max: 48, step: 1, unit: "px", slider: true },
+      {
+        key: "borderBottom", label: "底边线", type: "select",
+        options: [{ label: "显示", value: "show" }, { label: "隐藏", value: "hide" }],
+      },
+    ],
+    defaults: createDefaultConfig({
+      mode: "default",
+      blurRadius: 12,
+      backgroundColor: "#ffffff",
+      height: 36,
+      borderBottom: "show",
+    }),
+    buildCss: (config) => {
+      const mode = stringValue(config.values.mode, "default");
+      const blurRadius = px(config.values.blurRadius, 12);
+      const backgroundColor = stringValue(config.values.backgroundColor, "#ffffff");
+      const height = px(config.values.height, 36);
+      const borderBottom = stringValue(config.values.borderBottom, "show");
+
+      const rules: string[] = [`#toolbar { height: ${height} !important; }`];
+
+      if (mode === "transparent") {
+        rules.push("#toolbar { background: transparent !important; }");
+      } else if (mode === "glass") {
+        rules.push(`#toolbar { background: ${backgroundColor}cc !important; backdrop-filter: blur(${blurRadius}) !important; -webkit-backdrop-filter: blur(${blurRadius}) !important; }`);
+      } else {
+        rules.push(`#toolbar { background: ${backgroundColor} !important; }`);
+      }
+
+      if (borderBottom === "hide") {
+        rules.push("#toolbar { border-bottom: none !important; box-shadow: none !important; }");
+      }
+
+      return rules.join("\n");
+    },
+  },
+  {
+    value: "scrollbarStyle",
+    label: "滚动条样式",
+    hint: "自定义滚动条宽度、颜色和显示模式",
+    preview: "📏",
+    risk: "全屋改造",
+    controls: [
+      { key: "width", label: "宽度", type: "number", min: 4, max: 16, step: 1, unit: "px", slider: true },
+      { key: "trackColor", label: "轨道颜色", type: "color" },
+      { key: "thumbColor", label: "滑块颜色", type: "color" },
+      { key: "thumbRadius", label: "滑块圆角", type: "number", min: 0, max: 8, step: 1, unit: "px" },
+      {
+        key: "hideMode", label: "显示模式", type: "select",
+        options: [
+          { label: "始终显示", value: "always" },
+          { label: "悬停显示", value: "hover" },
+          { label: "完全隐藏", value: "hidden" },
+        ],
+      },
+    ],
+    defaults: createDefaultConfig({
+      width: 6,
+      trackColor: "#f0f0f0",
+      thumbColor: "#c0c0c0",
+      thumbRadius: 4,
+      hideMode: "always",
+    }),
+    buildCss: (config) => {
+      const width = px(config.values.width, 6);
+      const trackColor = stringValue(config.values.trackColor, "#f0f0f0");
+      const thumbColor = stringValue(config.values.thumbColor, "#c0c0c0");
+      const thumbRadius = px(config.values.thumbRadius, 4);
+      const hideMode = stringValue(config.values.hideMode, "always");
+
+      if (hideMode === "hidden") {
+        return "::-webkit-scrollbar { display: none !important; }\n* { scrollbar-width: none !important; }";
+      }
+
+      const hover = hideMode === "hover"
+        ? `::-webkit-scrollbar { width: ${width} !important; opacity: 0; transition: opacity 200ms ease; }\n::-webkit-scrollbar:hover { opacity: 1; }`
+        : `::-webkit-scrollbar { width: ${width} !important; }`;
+
+      return `${hover}
+
+::-webkit-scrollbar-track {
+  background: ${trackColor} !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: ${thumbColor} !important;
+  border-radius: ${thumbRadius} !important;
+}`;
+    },
+  },
+  {
+    value: "codeBlockStyle",
+    label: "代码块外观",
+    hint: "自定义代码块圆角、背景色、信息栏背景和最大高度",
+    preview: "{ }",
+    risk: "正文安全",
+    controls: [
+      { key: "borderRadius", label: "圆角", type: "number", min: 0, max: 16, step: 1, unit: "px", slider: true },
+      { key: "backgroundColor", label: "背景色", type: "color" },
+      { key: "headerBgColor", label: "信息栏背景", type: "color" },
+      {
+        key: "maxHeight", label: "最大高度", type: "select",
+        options: [
+          { label: "不限", value: "none" },
+          { label: "300px", value: "300px" },
+          { label: "500px", value: "500px" },
+          { label: "70vh", value: "70vh" },
+        ],
+      },
+      { key: "lineNumberColor", label: "行号颜色", type: "color" },
+    ],
+    defaults: createDefaultConfig({
+      borderRadius: 6,
+      backgroundColor: "#1e1e1e",
+      headerBgColor: "#2d2d2d",
+      maxHeight: "none",
+      lineNumberColor: "#858585",
+    }),
+    buildCss: (config) => {
+      const borderRadius = px(config.values.borderRadius, 6);
+      const backgroundColor = stringValue(config.values.backgroundColor, "#1e1e1e");
+      const headerBgColor = stringValue(config.values.headerBgColor, "#2d2d2d");
+      const maxHeight = stringValue(config.values.maxHeight, "none");
+      const lineNumberColor = stringValue(config.values.lineNumberColor, "#858585");
+
+      const maxH = maxHeight === "none" ? "" : `max-height: ${maxHeight} !important;`;
+
+      return `.protyle-wysiwyg .code-block {
+  border-radius: ${borderRadius} !important;
+  background: ${backgroundColor} !important;
+}
+
+.protyle-wysiwyg .code-block .protyle-action {
+  background: ${headerBgColor} !important;
+  border-radius: ${borderRadius} ${borderRadius} 0 0 !important;
+}
+
+.protyle-wysiwyg .code-block .hljs {
+  ${maxH}
+  overflow: auto !important;
+}
+
+.protyle-wysiwyg .protyle-linenumber {
+  color: ${lineNumberColor} !important;
+}`;
+    },
+  },
 ];
