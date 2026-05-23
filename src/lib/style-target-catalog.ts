@@ -12,20 +12,20 @@ export type StyleTarget =
   | "codeBlock"
   | "bulletList"
   | "orderedList"
-  | "taskList";
+  | "taskList"
 
 export interface StyleTargetMeta {
-  value: StyleTarget;
-  cssSelector: string;
-  extractSelector: string;
-  label: string;
-  shortLabel: string;
-  hint: string;
+  value: StyleTarget
+  cssSelector: string
+  extractSelector: string
+  label: string
+  shortLabel: string
+  hint: string
 }
 
 function createListSelectors(subtype: "o" | "t" | "u", typographySelector: string) {
-  const listSelector = `[data-type="NodeList"][data-subtype="${subtype}"]`;
-  const listItemSelector = `[data-type="NodeListItem"][data-subtype="${subtype}"]`;
+  const listSelector = `[data-type="NodeList"][data-subtype="${subtype}"]`
+  const listItemSelector = `[data-type="NodeListItem"][data-subtype="${subtype}"]`
 
   return {
     cssSelector: [
@@ -34,7 +34,7 @@ function createListSelectors(subtype: "o" | "t" | "u", typographySelector: strin
       `.protyle-wysiwyg ${listSelector} > ${listItemSelector} > :not([data-type="NodeList"])`,
     ].join(",\n"),
     extractSelector: `.protyle-wysiwyg ${listSelector}`,
-  };
+  }
 }
 
 const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
@@ -195,14 +195,14 @@ const STYLE_TARGET_CATALOG: StyleTargetMeta[] = [
     shortLabel: "☑",
     hint: "用于待办与完成状态列表",
   },
-];
+]
 
 const STYLE_TARGET_META_MAP = STYLE_TARGET_CATALOG.reduce((metaMap, item) => {
-  metaMap[item.value] = item;
-  return metaMap;
-}, {} as Record<StyleTarget, StyleTargetMeta>);
+  metaMap[item.value] = item
+  return metaMap
+}, {} as Record<StyleTarget, StyleTargetMeta>)
 
-export const STYLE_TARGETS: StyleTarget[] = STYLE_TARGET_CATALOG.map(item => item.value);
+export const STYLE_TARGETS: StyleTarget[] = STYLE_TARGET_CATALOG.map((item) => item.value)
 
 export const STYLE_TARGET_OPTIONS = STYLE_TARGET_CATALOG.map(({
   value,
@@ -214,16 +214,16 @@ export const STYLE_TARGET_OPTIONS = STYLE_TARGET_CATALOG.map(({
   label,
   shortLabel,
   value,
-}));
+}))
 
 export function getStyleTargetMeta(target: StyleTarget): StyleTargetMeta {
-  return STYLE_TARGET_META_MAP[target];
+  return STYLE_TARGET_META_MAP[target]
 }
 
 export function getStyleTargetSelector(target: StyleTarget): string {
-  return getStyleTargetMeta(target).cssSelector;
+  return getStyleTargetMeta(target).cssSelector
 }
 
 export function getStyleTargetExtractSelector(target: StyleTarget): string {
-  return getStyleTargetMeta(target).extractSelector;
+  return getStyleTargetMeta(target).extractSelector
 }

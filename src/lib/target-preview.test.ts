@@ -1,7 +1,7 @@
 import {
   buildChannelSwatchStyle,
   buildTargetPreviewStyle,
-} from "@/lib/target-preview";
+} from "@/lib/target-preview"
 
 describe("target preview helpers", () => {
   it("keeps strong text bold by default", () => {
@@ -21,8 +21,8 @@ describe("target preview helpers", () => {
       fontStyle: undefined,
       fontWeight: "700",
       textDecoration: undefined,
-    });
-  });
+    })
+  })
 
   it("uses the configured style values for the preview card", () => {
     expect(buildTargetPreviewStyle(
@@ -41,20 +41,20 @@ describe("target preview helpers", () => {
       fontStyle: "italic",
       fontWeight: "600",
       textDecoration: "underline",
-    });
-  });
+    })
+  })
 
   it("builds a visible swatch even when the channel is unset", () => {
     expect(buildChannelSwatchStyle("", "var(--panel-text)")).toEqual({
       background: "var(--panel-text)",
       isEmpty: true,
-    });
-  });
+    })
+  })
 
   it("uses the actual channel value for a configured swatch", () => {
     expect(buildChannelSwatchStyle("#60a5fa", "var(--panel-text)")).toEqual({
       background: "#60a5fa",
       isEmpty: false,
-    });
-  });
-});
+    })
+  })
+})

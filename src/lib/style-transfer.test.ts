@@ -1,8 +1,8 @@
 import {
-  parseImportedStyleTransfer,
   parseImportedStyleProfile,
+  parseImportedStyleTransfer,
   serializeStyleProfileTransfer,
-} from "@/lib/style-transfer";
+} from "@/lib/style-transfer"
 
 describe("style transfer", () => {
   it("serializes the current profile as a portable transfer document", () => {
@@ -20,7 +20,7 @@ describe("style transfer", () => {
           radius: 12,
         },
       },
-    });
+    })
 
     expect(JSON.parse(serialized)).toEqual({
       author: "无名",
@@ -41,8 +41,8 @@ describe("style transfer", () => {
       styleName: "无名样式",
       type: "siyuan-style-editor-profile",
       version: 1,
-    });
-  });
+    })
+  })
 
   it("imports either a transfer document or a persisted config payload", () => {
     expect(parseImportedStyleTransfer(JSON.stringify({
@@ -76,7 +76,7 @@ describe("style transfer", () => {
           color: "#224488",
         }),
       }),
-    }));
+    }))
 
     expect(parseImportedStyleProfile(JSON.stringify({
       profile: {
@@ -84,8 +84,8 @@ describe("style transfer", () => {
           backgroundColor: "#fff2a8",
         },
       },
-    })).mark.backgroundColor).toBe("#fff2a8");
-  });
+    })).mark.backgroundColor).toBe("#fff2a8")
+  })
 
   it("keeps legacy imports without featureProfile backwards compatible", () => {
     const parsed = parseImportedStyleTransfer(JSON.stringify({
@@ -94,20 +94,20 @@ describe("style transfer", () => {
           color: "#224488",
         },
       },
-    }));
+    }))
 
-    expect(parsed.profile.heading1.color).toBe("#224488");
-    expect(parsed.featureProfile.imageRadius.enabled).toBe(false);
-    expect(parsed.featureProfile.imageRadius.values.radius).toBe(6);
-  });
+    expect(parsed.profile.heading1.color).toBe("#224488")
+    expect(parsed.featureProfile.imageRadius.enabled).toBe(false)
+    expect(parsed.featureProfile.imageRadius.values.radius).toBe(6)
+  })
 
   it("rejects invalid local config payloads", () => {
-    expect(() => parseImportedStyleProfile("{")).toThrow("样式配置文件不是有效的 JSON。");
-    expect(() => parseImportedStyleProfile(JSON.stringify({}))).toThrow("样式配置文件缺少可导入的 profile 字段。");
+    expect(() => parseImportedStyleProfile("{")).toThrow("样式配置文件不是有效的 JSON。")
+    expect(() => parseImportedStyleProfile(JSON.stringify({}))).toThrow("样式配置文件缺少可导入的 profile 字段。")
     expect(() => parseImportedStyleProfile(JSON.stringify({
       type: "unknown",
-    }))).toThrow("样式配置文件格式不受支持。");
-  });
+    }))).toThrow("样式配置文件格式不受支持。")
+  })
 
   it("parses imported transfer metadata and falls back to default names", () => {
     expect(parseImportedStyleTransfer(JSON.stringify({
@@ -128,7 +128,7 @@ describe("style transfer", () => {
           color: "#224488",
         }),
       }),
-    }));
+    }))
 
     expect(parseImportedStyleTransfer(JSON.stringify({
       profile: {
@@ -139,6 +139,6 @@ describe("style transfer", () => {
     })).metadata).toEqual({
       author: "无名",
       styleName: "无名样式",
-    });
-  });
-});
+    })
+  })
+})

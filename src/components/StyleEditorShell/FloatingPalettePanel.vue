@@ -68,71 +68,69 @@
 <script setup lang="ts">
 import {
   computed,
-} from "vue";
+} from "vue"
 
-import FloatingPaletteCustomSection from "@/components/StyleEditorShell/FloatingPaletteCustomSection.vue";
-import FloatingPalettePresetSection from "@/components/StyleEditorShell/FloatingPalettePresetSection.vue";
+import FloatingPaletteCustomSection from "@/components/StyleEditorShell/FloatingPaletteCustomSection.vue"
+import FloatingPalettePresetSection from "@/components/StyleEditorShell/FloatingPalettePresetSection.vue"
 
-const INLINE_PALETTE_BACKDROP_Z_INDEX = "10";
-const INLINE_PALETTE_PANEL_Z_INDEX = "11";
+const props = defineProps<{
+  activePresetPalette: PaletteCollection
+  activePresetPaletteId: string
+  colorPickerValue: string
+  customColorDraft: string
+  customColorPlaceholder: string
+  floatingPaletteStyle: Record<string, string>
+  inlineColorFieldStyle: Record<string, string>
+  inlineColorThumbStyle: Record<string, string>
+  inlineHue: number
+  isCustomColorDraftValid: boolean
+  isPresetPaletteSectionExpanded: boolean
+  panelThemeVars: Record<string, string>
+  presetPaletteCollections: PaletteCollection[]
+  selectedChannelLabel: string
+  selectedSwatch: string
+  selectedTargetLabel: string
+  setFloatingPaletteRef: (element: Element | null) => void
+  setInlineColorFieldRef: (element: Element | null) => void
+  visible: boolean
+}>()
+const emit = defineEmits<{
+  "apply-custom-color": []
+  "apply-preset-palette-sequence": [paletteId: string]
+  "clear-selected-target-color": []
+  "delete-preset-palette": [paletteId: string]
+  "inline-color-field-pointerdown": [event: PointerEvent]
+  "select-preset-color": [color: string]
+  "select-preset-palette-tab": [paletteId: string]
+  "toggle-preset-palette-section": []
+  "update:customColorDraft": [value: string]
+  "hue-input": [event: Event]
+  "cancel": []
+}>()
+const INLINE_PALETTE_BACKDROP_Z_INDEX = "10"
+const INLINE_PALETTE_PANEL_Z_INDEX = "11"
 
 interface PaletteColor {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 interface PaletteCollection {
-  colors: PaletteColor[];
-  id: string;
-  label: string;
+  colors: PaletteColor[]
+  id: string
+  label: string
 }
-
-const props = defineProps<{
-  activePresetPalette: PaletteCollection;
-  activePresetPaletteId: string;
-  colorPickerValue: string;
-  customColorDraft: string;
-  customColorPlaceholder: string;
-  floatingPaletteStyle: Record<string, string>;
-  inlineColorFieldStyle: Record<string, string>;
-  inlineColorThumbStyle: Record<string, string>;
-  inlineHue: number;
-  isCustomColorDraftValid: boolean;
-  isPresetPaletteSectionExpanded: boolean;
-  panelThemeVars: Record<string, string>;
-  presetPaletteCollections: PaletteCollection[];
-  selectedChannelLabel: string;
-  selectedSwatch: string;
-  selectedTargetLabel: string;
-  setFloatingPaletteRef: (element: Element | null) => void;
-  setInlineColorFieldRef: (element: Element | null) => void;
-  visible: boolean;
-}>();
-
-const emit = defineEmits<{
-  "apply-custom-color": [];
-  "apply-preset-palette-sequence": [paletteId: string];
-  "clear-selected-target-color": [];
-  "delete-preset-palette": [paletteId: string];
-  "inline-color-field-pointerdown": [event: PointerEvent];
-  "select-preset-color": [color: string];
-  "select-preset-palette-tab": [paletteId: string];
-  "toggle-preset-palette-section": [];
-  "update:customColorDraft": [value: string];
-  "hue-input": [event: Event];
-  cancel: [];
-}>();
 
 const customColorDraftModel = computed({
   get: () => props.customColorDraft,
   set: (value: string) => {
-    emit("update:customColorDraft", value);
+    emit("update:customColorDraft", value)
   },
-});
+})
 
 const inlinePaletteBackdropStyle = computed(() => ({
   zIndex: INLINE_PALETTE_BACKDROP_Z_INDEX,
-}));
+}))
 
 const inlinePalettePanelStyle = computed(() => ({
   ...props.panelThemeVars,
@@ -141,7 +139,7 @@ const inlinePalettePanelStyle = computed(() => ({
   borderStyle: "solid",
   borderWidth: "1px",
   zIndex: INLINE_PALETTE_PANEL_Z_INDEX,
-}));
+}))
 </script>
 
 <style scoped lang="scss">

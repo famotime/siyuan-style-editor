@@ -62,32 +62,32 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from "vue"
 
 const props = defineProps<{
-  colorPickerValue: string;
-  customColorDraft: string;
-  customColorPlaceholder: string;
-  inlineColorFieldStyle: Record<string, string>;
-  inlineColorThumbStyle: Record<string, string>;
-  inlineHue: number;
-  isCustomColorDraftValid: boolean;
-  setInlineColorFieldRef: (element: Element | null) => void;
-}>();
+  colorPickerValue: string
+  customColorDraft: string
+  customColorPlaceholder: string
+  inlineColorFieldStyle: Record<string, string>
+  inlineColorThumbStyle: Record<string, string>
+  inlineHue: number
+  isCustomColorDraftValid: boolean
+  setInlineColorFieldRef: (element: Element | null) => void
+}>()
 
 const emit = defineEmits<{
-  "apply-custom-color": [];
-  "inline-color-field-pointerdown": [event: PointerEvent];
-  "update:customColorDraft": [value: string];
-  "hue-input": [event: Event];
-}>();
+  "apply-custom-color": []
+  "inline-color-field-pointerdown": [event: PointerEvent]
+  "update:customColorDraft": [value: string]
+  "hue-input": [event: Event]
+}>()
 
 const customColorDraftModel = computed({
   get: () => props.customColorDraft,
   set: (value: string) => {
-    emit("update:customColorDraft", value);
+    emit("update:customColorDraft", value)
   },
-});
+})
 </script>
 
 <style scoped lang="scss">

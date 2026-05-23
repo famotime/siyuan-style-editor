@@ -1,35 +1,38 @@
-import type { PaintChannel } from "@/style-editor-runtime";
 
+import type {
+  ComputedRef,
+  Ref,
+} from "vue"
 import {
+
   nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
-  watch,
-  type ComputedRef,
-  type Ref,
-} from "vue";
 
-import { resolveFloatingPalettePosition } from "@/lib/floating-palette";
+  watch,
+} from "vue"
+
+import { resolveFloatingPalettePosition } from "@/lib/floating-palette"
 
 interface UseInlinePaletteLayoutSessionOptions {
-  cancelInlinePalettePanel: () => Promise<void>;
-  floatingPaletteRef: Ref<HTMLElement | null>;
-  floatingPaletteStyle: Ref<Record<string, string>>;
-  isInlinePaletteVisible: ComputedRef<boolean>;
+  cancelInlinePalettePanel: () => Promise<void>
+  floatingPaletteRef: Ref<HTMLElement | null>
+  floatingPaletteStyle: Ref<Record<string, string>>
+  isInlinePaletteVisible: ComputedRef<boolean>
 }
 
 export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSessionOptions) {
   const inlinePaletteAnchorRect = ref<{
-    height: number;
-    left: number;
-    top: number;
-    width: number;
-  } | null>(null);
+    height: number
+    left: number
+    top: number
+    width: number
+  } | null>(null)
 
   function resetInlinePaletteLayout() {
-    inlinePaletteAnchorRect.value = null;
-    options.floatingPaletteStyle.value = {};
+    inlinePaletteAnchorRect.value = null
+    options.floatingPaletteStyle.value = {}
   }
 
   function updateFloatingPalettePosition() {
@@ -39,10 +42,10 @@ export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSes
       || !options.floatingPaletteRef.value
       || typeof window === "undefined"
     ) {
-      return;
+      return
     }
 
-    const rect = options.floatingPaletteRef.value.getBoundingClientRect();
+    const rect = options.floatingPaletteRef.value.getBoundingClientRect()
     const position = resolveFloatingPalettePosition(
       inlinePaletteAnchorRect.value,
       {
@@ -53,27 +56,37 @@ export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSes
         height: window.innerHeight,
         width: window.innerWidth,
       },
-    );
+    )
 
     options.floatingPaletteStyle.value = {
       left: `${position.left}px`,
       top: `${position.top}px`,
       transformOrigin: position.transformOrigin,
-    };
+    }
   }
 
   async function syncFloatingPalettePosition() {
-    await nextTick();
-    updateFloatingPalettePosition();
+    await nextTick()
+    updateFloatingPalettePosition()
   }
 
   function setInlinePaletteAnchor(anchorElement: HTMLElement | null) {
     if (!anchorElement) {
-      return;
+      return
     }
 
-    const { height, left, top, width } = anchorElement.getBoundingClientRect();
-    inlinePaletteAnchorRect.value = { height, left, top, width };
+    const {
+      height,
+      left,
+      top,
+      width,
+    } = anchorElement.getBoundingClientRect()
+    inlinePaletteAnchorRect.value = {
+      height,
+      left,
+      top,
+      width,
+    }
     if (typeof window !== "undefined") {
       const initialPosition = resolveFloatingPalettePosition(
         inlinePaletteAnchorRect.value,
@@ -85,66 +98,66 @@ export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSes
           height: window.innerHeight,
           width: window.innerWidth,
         },
-      );
+      )
 
       options.floatingPaletteStyle.value = {
         left: `${initialPosition.left}px`,
         top: `${initialPosition.top}px`,
         transformOrigin: initialPosition.transformOrigin,
-      };
+      }
     }
   }
 
   function handleViewportResize() {
     if (!options.isInlinePaletteVisible.value) {
-      return;
+      return
     }
 
-    void syncFloatingPalettePosition();
+    void syncFloatingPalettePosition()
   }
 
   function handleViewportScroll(event: Event) {
     if (!options.isInlinePaletteVisible.value) {
-      return;
+      return
     }
 
-    const eventTarget = event.target;
+    const eventTarget = event.target
     if (eventTarget instanceof Node && options.floatingPaletteRef.value?.contains(eventTarget)) {
-      return;
+      return
     }
 
-    void options.cancelInlinePalettePanel();
+    void options.cancelInlinePalettePanel()
   }
 
   onMounted(() => {
     if (typeof window !== "undefined") {
-      window.addEventListener("resize", handleViewportResize);
-      window.addEventListener("scroll", handleViewportScroll, true);
+      window.addEventListener("resize", handleViewportResize)
+      window.addEventListener("scroll", handleViewportScroll, true)
     }
-  });
+  })
 
   onBeforeUnmount(() => {
     if (typeof window !== "undefined") {
-      window.removeEventListener("resize", handleViewportResize);
-      window.removeEventListener("scroll", handleViewportScroll, true);
+      window.removeEventListener("resize", handleViewportResize)
+      window.removeEventListener("scroll", handleViewportScroll, true)
     }
-  });
+  })
 
   watch(
     options.isInlinePaletteVisible,
     (isVisible) => {
       if (!isVisible) {
-        resetInlinePaletteLayout();
-        return;
+        resetInlinePaletteLayout()
+        return
       }
 
-      void syncFloatingPalettePosition();
+      void syncFloatingPalettePosition()
     },
-  );
+  )
 
   return {
     resetInlinePaletteLayout,
     setInlinePaletteAnchor,
     syncFloatingPalettePosition,
-  };
+  }
 }

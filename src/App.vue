@@ -81,14 +81,14 @@
 </template>
 
 <script setup lang="ts">
-import type { PaintChannel } from "@/style-editor-runtime";
-import type { StyleTarget } from "@/lib/style-profile";
+import type { StyleTarget } from "@/lib/style-profile"
+import type { PaintChannel } from "@/style-editor-runtime"
 
-import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue";
-import FeatureSection from "@/components/StyleEditorShell/FeatureSection.vue";
-import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue";
-import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue";
-import { useStyleEditorShell } from "@/composables/use-style-editor-shell";
+import FeatureSection from "@/components/StyleEditorShell/FeatureSection.vue"
+import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue"
+import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue"
+import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue"
+import { useStyleEditorShell } from "@/composables/use-style-editor-shell"
 
 const {
   activePresetPalette,
@@ -141,26 +141,26 @@ const {
   bodySafeFeatureOptions,
   editorUiFeatureOptions,
   STYLE_TARGET_OPTIONS,
-} = useStyleEditorShell();
+} = useStyleEditorShell()
 
 function setImportFileInputRef(element: Element | null) {
-  importFileInputRef.value = element as HTMLInputElement | null;
+  importFileInputRef.value = element as HTMLInputElement | null
 }
 
 function setFloatingPaletteRef(element: Element | null) {
-  floatingPaletteRef.value = element as HTMLElement | null;
+  floatingPaletteRef.value = element as HTMLElement | null
 }
 
 function setInlineColorFieldRef(element: Element | null) {
-  inlineColorFieldRef.value = element as HTMLElement | null;
+  inlineColorFieldRef.value = element as HTMLElement | null
 }
 
 function handleTargetChannelActivation(payload: {
-  channel: PaintChannel;
-  event: MouseEvent;
-  target: StyleTarget;
+  channel: PaintChannel
+  event: MouseEvent
+  target: StyleTarget
 }) {
-  void activateTargetChannel(payload.target, payload.channel, payload.event);
+  void activateTargetChannel(payload.target, payload.channel, payload.event)
 }
 </script>
 

@@ -69,7 +69,10 @@
               title="删除色卡"
               @click.stop="requestDeletePalette(palette.id)"
             >
-              <span class="preset-palette-tab__delete-icon" aria-hidden="true">
+              <span
+                class="preset-palette-tab__delete-icon"
+                aria-hidden="true"
+              >
                 <span class="preset-palette-tab__delete-lid" />
                 <span class="preset-palette-tab__delete-body" />
               </span>
@@ -105,10 +108,15 @@
           class="swatch-chip"
           :aria-label="color.label"
           :class="{ 'swatch-chip--active': selectedSwatch === color.value }"
-          :style="{ '--swatch-color': color.value, borderWidth: '0' }"
+          :style="{
+            '--swatch-color': color.value, 'borderWidth': '0',
+          }"
           @click="emit('select-preset-color', color.value)"
         >
-          <span class="swatch-chip__dot" :style="{ borderWidth: '1px' }" />
+          <span
+            class="swatch-chip__dot"
+            :style="{ borderWidth: '1px' }"
+          />
         </button>
         <button
           type="button"
@@ -118,7 +126,10 @@
           :style="{ borderWidth: '0' }"
           @click="emit('clear-selected-target-color')"
         >
-          <span class="swatch-chip__dot swatch-chip__dot--clear" :style="{ borderWidth: '1px' }">
+          <span
+            class="swatch-chip__dot swatch-chip__dot--clear"
+            :style="{ borderWidth: '1px' }"
+          >
             <span class="swatch-chip__dot-clear-surface" />
             <span class="swatch-chip__dot-clear-slash" />
           </span>
@@ -133,78 +144,78 @@ import {
   computed,
   ref,
   watch,
-} from "vue";
+} from "vue"
 
-import { buildPresetPaletteCardBackground } from "@/lib/preset-palette-catalog";
+import { buildPresetPaletteCardBackground } from "@/lib/preset-palette-catalog"
 
 interface PaletteColor {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 interface PaletteCollection {
-  colors: PaletteColor[];
-  id: string;
-  label: string;
+  colors: PaletteColor[]
+  id: string
+  label: string
 }
 
 const props = defineProps<{
-  activePresetPalette: PaletteCollection;
-  activePresetPaletteId: string;
-  isPresetPaletteSectionExpanded: boolean;
-  presetPaletteCollections: PaletteCollection[];
-  selectedSwatch: string;
-}>();
+  activePresetPalette: PaletteCollection
+  activePresetPaletteId: string
+  isPresetPaletteSectionExpanded: boolean
+  presetPaletteCollections: PaletteCollection[]
+  selectedSwatch: string
+}>()
 
 const emit = defineEmits<{
-  "apply-preset-palette-sequence": [paletteId: string];
-  "clear-selected-target-color": [];
-  "delete-preset-palette": [paletteId: string];
-  "select-preset-color": [color: string];
-  "select-preset-palette-tab": [paletteId: string];
-  "toggle-preset-palette-section": [];
-}>();
+  "apply-preset-palette-sequence": [paletteId: string]
+  "clear-selected-target-color": []
+  "delete-preset-palette": [paletteId: string]
+  "select-preset-color": [color: string]
+  "select-preset-palette-tab": [paletteId: string]
+  "toggle-preset-palette-section": []
+}>()
 
-const pendingDeletePaletteId = ref("");
+const pendingDeletePaletteId = ref("")
 
 const presetPaletteToggleLabel = computed(() => {
-  return props.isPresetPaletteSectionExpanded ? "折叠预设配色" : "展开预设配色";
-});
+  return props.isPresetPaletteSectionExpanded ? "折叠预设配色" : "展开预设配色"
+})
 
 function getPresetPaletteTabStyle(palette: PaletteCollection) {
   return {
     "--preset-palette-gradient": buildPresetPaletteCardBackground(palette.colors),
-    borderWidth: "0",
-  };
+    "borderWidth": "0",
+  }
 }
 
 function isCustomPresetPalette(palette: PaletteCollection) {
-  return palette.id.startsWith("custom-palette-");
+  return palette.id.startsWith("custom-palette-")
 }
 
 function requestDeletePalette(paletteId: string) {
-  pendingDeletePaletteId.value = paletteId;
+  pendingDeletePaletteId.value = paletteId
 }
 
 function cancelDeletePalette() {
-  pendingDeletePaletteId.value = "";
+  pendingDeletePaletteId.value = ""
 }
 
 function confirmDeletePalette(paletteId: string) {
-  emit("delete-preset-palette", paletteId);
+  emit("delete-preset-palette", paletteId)
   if (pendingDeletePaletteId.value === paletteId) {
-    pendingDeletePaletteId.value = "";
+    pendingDeletePaletteId.value = ""
   }
 }
 
 watch(
-  () => props.presetPaletteCollections.map(palette => palette.id),
+  () => props.presetPaletteCollections.map((palette) => palette.id),
   (paletteIds) => {
     if (!paletteIds.includes(pendingDeletePaletteId.value)) {
-      pendingDeletePaletteId.value = "";
+      pendingDeletePaletteId.value = ""
     }
   },
-);
+)
 </script>
 
 <style scoped lang="scss">

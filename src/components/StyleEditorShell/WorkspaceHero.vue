@@ -125,51 +125,51 @@
 import {
   nextTick,
   ref,
-} from "vue";
+} from "vue"
 
 import {
   DEFAULT_STYLE_TRANSFER_AUTHOR,
   DEFAULT_STYLE_TRANSFER_NAME,
-} from "@/lib/style-transfer";
+} from "@/lib/style-transfer"
 
 defineProps<{
-  importedStyleSignature: string;
-  setImportFileInputRef: (element: Element | null) => void;
-  statusCopy: string;
-}>();
+  importedStyleSignature: string
+  setImportFileInputRef: (element: Element | null) => void
+  statusCopy: string
+}>()
 
 const emit = defineEmits<{
-  "create-preview-document": [];
-  "import-change": [event: Event];
-  "open-import": [];
-  extract: [];
-  export: [author: string, styleName: string];
-  reset: [];
-}>();
+  "create-preview-document": []
+  "import-change": [event: Event]
+  "open-import": []
+  "extract": []
+  "export": [author: string, styleName: string]
+  "reset": []
+}>()
 
-const exportAuthor = ref(DEFAULT_STYLE_TRANSFER_AUTHOR);
-const exportAuthorInputRef = ref<HTMLInputElement | null>(null);
-const exportStyleName = ref(DEFAULT_STYLE_TRANSFER_NAME);
-const isExportFormVisible = ref(false);
+const exportAuthor = ref(DEFAULT_STYLE_TRANSFER_AUTHOR)
+const exportAuthorInputRef = ref<HTMLInputElement | null>(null)
+const exportStyleName = ref(DEFAULT_STYLE_TRANSFER_NAME)
+const isExportFormVisible = ref(false)
 
 async function openExportForm() {
-  exportAuthor.value = DEFAULT_STYLE_TRANSFER_AUTHOR;
-  exportStyleName.value = DEFAULT_STYLE_TRANSFER_NAME;
-  isExportFormVisible.value = true;
-  await nextTick();
-  exportAuthorInputRef.value?.focus();
-  exportAuthorInputRef.value?.select();
+  exportAuthor.value = DEFAULT_STYLE_TRANSFER_AUTHOR
+  exportStyleName.value = DEFAULT_STYLE_TRANSFER_NAME
+  isExportFormVisible.value = true
+  await nextTick()
+  exportAuthorInputRef.value?.focus()
+  exportAuthorInputRef.value?.select()
 }
 
 function closeExportForm() {
-  isExportFormVisible.value = false;
-  exportAuthor.value = DEFAULT_STYLE_TRANSFER_AUTHOR;
-  exportStyleName.value = DEFAULT_STYLE_TRANSFER_NAME;
+  isExportFormVisible.value = false
+  exportAuthor.value = DEFAULT_STYLE_TRANSFER_AUTHOR
+  exportStyleName.value = DEFAULT_STYLE_TRANSFER_NAME
 }
 
 function submitExportForm() {
-  emit("export", exportAuthor.value, exportStyleName.value);
-  closeExportForm();
+  emit("export", exportAuthor.value, exportStyleName.value)
+  closeExportForm()
 }
 </script>
 

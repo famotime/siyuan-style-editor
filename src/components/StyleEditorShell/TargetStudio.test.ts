@@ -2,9 +2,9 @@ import {
   createApp,
   h,
   nextTick,
-} from "vue";
+} from "vue"
 
-import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue";
+import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue"
 
 function createProps() {
   return {
@@ -34,16 +34,16 @@ function createProps() {
         value: "mark",
       },
     ],
-  } as const;
+  } as const
 }
 
 async function mountTargetStudio() {
-  const onActivateChannel = vi.fn();
-  const onSavePresetPalette = vi.fn();
-  const onSelectTarget = vi.fn();
-  const onSwapChannelValue = vi.fn();
-  const container = document.createElement("div");
-  document.body.append(container);
+  const onActivateChannel = vi.fn()
+  const onSavePresetPalette = vi.fn()
+  const onSelectTarget = vi.fn()
+  const onSwapChannelValue = vi.fn()
+  const container = document.createElement("div")
+  document.body.append(container)
 
   const app = createApp({
     render() {
@@ -53,12 +53,12 @@ async function mountTargetStudio() {
         onSavePresetPalette,
         onSelectTarget,
         onSwapChannelValue,
-      });
+      })
     },
-  });
+  })
 
-  app.mount(container);
-  await nextTick();
+  app.mount(container)
+  await nextTick()
 
   return {
     container,
@@ -67,46 +67,49 @@ async function mountTargetStudio() {
     onSelectTarget,
     onSwapChannelValue,
     unmount() {
-      app.unmount();
-      container.remove();
+      app.unmount()
+      container.remove()
     },
-  };
+  }
 }
 
-describe("TargetStudio", () => {
+describe("targetStudio", () => {
   afterEach(() => {
-    document.body.innerHTML = "";
-    vi.clearAllMocks();
-  });
+    document.body.innerHTML = ""
+    vi.clearAllMocks()
+  })
 
   it("shows drag preview and drop-target state while dragging an orb", async () => {
-    const { container, unmount } = await mountTargetStudio();
+    const {
+      container,
+      unmount,
+    } = await mountTargetStudio()
 
-    const cards = [...container.querySelectorAll(".target-preview-card")];
-    const sourceOrb = cards[0]?.querySelectorAll(".channel-orb")[0] as HTMLElement | null;
-    const targetOrb = cards[1]?.querySelectorAll(".channel-orb")[1] as HTMLElement | null;
+    const cards = [...container.querySelectorAll(".target-preview-card")]
+    const sourceOrb = cards[0]?.querySelectorAll(".channel-orb")[0] as HTMLElement | null
+    const targetOrb = cards[1]?.querySelectorAll(".channel-orb")[1] as HTMLElement | null
 
     sourceOrb!.dispatchEvent(new MouseEvent("mousedown", {
       bubbles: true,
       clientX: 16,
       clientY: 16,
-    }));
+    }))
     window.dispatchEvent(new MouseEvent("mousemove", {
       bubbles: true,
       clientX: 40,
       clientY: 40,
-    }));
+    }))
     targetOrb!.dispatchEvent(new MouseEvent("mouseenter", {
       bubbles: true,
       clientX: 40,
       clientY: 40,
-    }));
-    await nextTick();
+    }))
+    await nextTick()
 
-    expect(container.querySelector(".target-studio__drag-preview")).not.toBeNull();
-    expect(sourceOrb?.classList.contains("channel-orb--drag-source")).toBe(true);
-    expect(targetOrb?.classList.contains("channel-orb--drop-target")).toBe(true);
+    expect(container.querySelector(".target-studio__drag-preview")).not.toBeNull()
+    expect(sourceOrb?.classList.contains("channel-orb--drag-source")).toBe(true)
+    expect(targetOrb?.classList.contains("channel-orb--drop-target")).toBe(true)
 
-    unmount();
-  });
-});
+    unmount()
+  })
+})

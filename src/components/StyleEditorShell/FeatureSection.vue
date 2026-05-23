@@ -26,12 +26,21 @@
           fill="none"
           aria-hidden="true"
         >
-          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path
+            d="M4 6l4 4 4-4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       </button>
     </div>
 
-    <div v-show="!collapsed" class="feature-section__body">
+    <div
+      v-show="!collapsed"
+      class="feature-section__body"
+    >
       <div class="feature-search">
         <input
           v-model="searchQuery"
@@ -41,8 +50,14 @@
         >
       </div>
 
-      <div v-for="[groupName, features] in groupedOptions" :key="groupName" class="feature-group">
-        <h4 class="feature-group__title">{{ groupName }}</h4>
+      <div
+        v-for="[groupName, features] in groupedOptions"
+        :key="groupName"
+        class="feature-group"
+      >
+        <h4 class="feature-group__title">
+          {{ groupName }}
+        </h4>
         <div class="feature-grid">
           <article
             v-for="feature in features"
@@ -53,11 +68,19 @@
           >
             <div class="feature-card__top">
               <div class="feature-card__copy">
-                <span v-if="feature.preview" class="feature-card__preview-tag">{{ feature.preview }}</span>
+                <span
+                  v-if="feature.preview"
+                  class="feature-card__preview-tag"
+                >{{ feature.preview }}</span>
                 <h3 class="feature-card__title">
                   {{ feature.label }}
                 </h3>
-                <p v-if="feature.hint" class="feature-card__hint">{{ feature.hint }}</p>
+                <p
+                  v-if="feature.hint"
+                  class="feature-card__hint"
+                >
+                  {{ feature.hint }}
+                </p>
               </div>
               <label class="feature-switch">
                 <input
@@ -81,7 +104,10 @@
                   {{ control.label }}
                 </span>
 
-                <div v-if="control.type === 'color'" class="feature-control__color-group">
+                <div
+                  v-if="control.type === 'color'"
+                  class="feature-control__color-group"
+                >
                   <input
                     type="color"
                     class="feature-control__color"
@@ -96,7 +122,10 @@
                   >
                 </div>
 
-                <div v-else-if="control.type === 'number' && control.slider" class="feature-control__number-group">
+                <div
+                  v-else-if="control.type === 'number' && control.slider"
+                  class="feature-control__number-group"
+                >
                   <input
                     type="range"
                     class="feature-control__range"
@@ -165,72 +194,73 @@ import type {
   FeatureStyleId,
   FeatureStyleOption,
   FeatureStyleProfile,
-} from "@/lib/style-feature-catalog";
+} from "@/lib/style-feature-catalog"
 
-import { computed, ref } from "vue";
-
-const collapsed = ref(true);
-const searchQuery = ref("");
+import {
+  computed,
+  ref,
+} from "vue"
 
 const props = defineProps<{
-  featureProfile: FeatureStyleProfile;
-  featureStyleOptions: FeatureStyleOption[];
-  kicker: string;
-  title: string;
-}>();
-
+  featureProfile: FeatureStyleProfile
+  featureStyleOptions: FeatureStyleOption[]
+  kicker: string
+  title: string
+}>()
 const emit = defineEmits<{
   "update-feature-style": [
     featureId: FeatureStyleId,
     config: {
-      enabled?: boolean;
-      values?: Record<string, string | number | boolean>;
+      enabled?: boolean
+      values?: Record<string, string | number | boolean>
     },
-  ];
-}>();
+  ]
+}>()
+const collapsed = ref(true)
+const searchQuery = ref("")
 
 const filteredOptions = computed(() => {
   if (!searchQuery.value.trim()) {
-    return props.featureStyleOptions;
+    return props.featureStyleOptions
   }
 
-  const query = searchQuery.value.toLowerCase();
-  return props.featureStyleOptions.filter(option =>
-    option.label.toLowerCase().includes(query) ||
-    option.hint.toLowerCase().includes(query)
-  );
-});
+  const query = searchQuery.value.toLowerCase()
+  return props.featureStyleOptions.filter((option) =>
+    option.label.toLowerCase().includes(query)
+    || option.hint.toLowerCase().includes(query),
+  )
+})
 
 const groupedOptions = computed(() => {
-  const groups = new Map<string, FeatureStyleOption[]>();
+  const groups = new Map<string, FeatureStyleOption[]>()
   for (const opt of filteredOptions.value) {
-    const group = opt.group || "其他";
-    if (!groups.has(group)) groups.set(group, []);
-    groups.get(group)!.push(opt);
+    const group = opt.group || "其他"
+    if (!groups.has(group)) groups.set(group, [])
+    groups.get(group)!.push(opt)
   }
-  return groups;
-});
+  return groups
+})
 
 const enabledCount = computed(() =>
-  props.featureStyleOptions.filter(option => props.featureProfile[option.value].enabled).length
-);
+  props.featureStyleOptions.filter((option) => props.featureProfile[option.value].enabled).length,
+)
 
-const totalCount = computed(() => props.featureStyleOptions.length);
+const totalCount = computed(() => props.featureStyleOptions.length)
 
 function handleEnabledChange(featureId: FeatureStyleId, event: Event) {
-  const input = event.target as HTMLInputElement;
+  const input = event.target as HTMLInputElement
   emit("update-feature-style", featureId, {
     enabled: input.checked,
-  });
+  })
 }
 
 function parseInputValue(event: Event) {
-  const input = event.target as HTMLInputElement | HTMLSelectElement;
+  const input = event.target as HTMLInputElement | HTMLSelectElement
   if (input instanceof HTMLInputElement && (input.type === "number" || input.type === "range")) {
-    return Number(input.value);
+    return Number(input.value)
   }
 
-  return input.value;
+  return input.value
 }
 
 function handleControlInput(featureId: FeatureStyleId, key: string, event: Event) {
@@ -238,12 +268,12 @@ function handleControlInput(featureId: FeatureStyleId, key: string, event: Event
     values: {
       [key]: parseInputValue(event),
     },
-  });
+  })
 }
 
 function getColorControlValue(featureId: FeatureStyleId, key: string) {
-  const value = props.featureProfile[featureId].values[key];
-  return typeof value === "string" && value.startsWith("#") ? value : "#888888";
+  const value = props.featureProfile[featureId].values[key]
+  return typeof value === "string" && value.startsWith("#") ? value : "#888888"
 }
 </script>
 

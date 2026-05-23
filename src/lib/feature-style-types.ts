@@ -45,55 +45,55 @@ export type FeatureStyleId =
   | "underlineStyle"
   | "dialogStyle"
   | "listMarkerStyle"
-  | "searchHighlight";
+  | "searchHighlight"
 
-type FeatureValueType = "color" | "number" | "select" | "text";
+type FeatureValueType = "color" | "number" | "select" | "text"
 
 export interface FeatureStyleControlOption {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 export interface FeatureStyleControl {
-  key: string;
-  label: string;
-  max?: number;
-  min?: number;
-  options?: FeatureStyleControlOption[];
-  placeholder?: string;
-  slider?: boolean;
-  step?: number;
-  type: FeatureValueType;
-  unit?: string;
+  key: string
+  label: string
+  max?: number
+  min?: number
+  options?: FeatureStyleControlOption[]
+  placeholder?: string
+  slider?: boolean
+  step?: number
+  type: FeatureValueType
+  unit?: string
 }
 
 export interface FeatureStyleOption {
-  controls: FeatureStyleControl[];
-  group?: string;
-  hint: string;
-  label: string;
-  preview: string;
-  risk: "正文安全" | "全屋改造";
-  value: FeatureStyleId;
+  controls: FeatureStyleControl[]
+  group?: string
+  hint: string
+  label: string
+  preview: string
+  risk: "正文安全" | "全屋改造"
+  value: FeatureStyleId
 }
 
 export interface FeatureStyleConfig {
-  enabled: boolean;
-  values: Record<string, string | number | boolean>;
+  enabled: boolean
+  values: Record<string, string | number | boolean>
 }
 
-export type FeatureStyleProfile = Record<FeatureStyleId, FeatureStyleConfig>;
+export type FeatureStyleProfile = Record<FeatureStyleId, FeatureStyleConfig>
 
 export interface StylePreset {
-  id: string;
-  name: string;
-  createdAt: string;
-  featureProfile: FeatureStyleProfile;
+  id: string
+  name: string
+  createdAt: string
+  featureProfile: FeatureStyleProfile
 }
 
 export interface FeatureDefinition extends FeatureStyleOption {
-  buildCss: (config: FeatureStyleConfig) => string;
-  defaults: FeatureStyleConfig;
+  buildCss: (config: FeatureStyleConfig) => string
+  defaults: FeatureStyleConfig
 }
 
 export const LINE_STYLE_OPTIONS: FeatureStyleControlOption[] = [
@@ -113,29 +113,29 @@ export const LINE_STYLE_OPTIONS: FeatureStyleControlOption[] = [
     label: "无",
     value: "none",
   },
-];
+]
 
-export const LINK_LINE_STYLE_OPTIONS = LINE_STYLE_OPTIONS.filter(option => option.value !== "wavy");
+export const LINK_LINE_STYLE_OPTIONS = LINE_STYLE_OPTIONS.filter((option) => option.value !== "wavy")
 
 export function px(value: unknown, fallback: number): string {
-  return `${typeof value === "number" ? value : fallback}px`;
+  return `${typeof value === "number" ? value : fallback}px`
 }
 
 export function em(value: unknown, fallback: number): string {
-  return `${typeof value === "number" ? value : fallback}em`;
+  return `${typeof value === "number" ? value : fallback}em`
 }
 
 export function numberValue(value: unknown, fallback: number): number {
-  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback
 }
 
 export function stringValue(value: unknown, fallback: string): string {
-  return typeof value === "string" && value.trim() ? value : fallback;
+  return typeof value === "string" && value.trim() ? value : fallback
 }
 
 export function lineStyleValue(value: unknown, fallback: string): string {
-  const normalized = stringValue(value, fallback);
-  return LINE_STYLE_OPTIONS.some(option => option.value === normalized) ? normalized : fallback;
+  const normalized = stringValue(value, fallback)
+  return LINE_STYLE_OPTIONS.some((option) => option.value === normalized) ? normalized : fallback
 }
 
 export function optionValue(
@@ -143,13 +143,13 @@ export function optionValue(
   fallback: string,
   options: FeatureStyleControlOption[],
 ): string {
-  const normalized = stringValue(value, fallback);
-  return options.some(option => option.value === normalized) ? normalized : fallback;
+  const normalized = stringValue(value, fallback)
+  return options.some((option) => option.value === normalized) ? normalized : fallback
 }
 
 export function createDefaultConfig(values: Record<string, string | number | boolean>): FeatureStyleConfig {
   return {
     enabled: false,
     values,
-  };
+  }
 }

@@ -1,4 +1,7 @@
-import type { StyleRule, StyleTarget } from "@/lib/style-profile";
+import type {
+  StyleRule,
+  StyleTarget,
+} from "@/lib/style-profile"
 
 export function buildTargetPreviewStyle(
   target: StyleTarget,
@@ -11,12 +14,12 @@ export function buildTargetPreviewStyle(
     fontStyle: rule.fontStyle || undefined,
     fontWeight: rule.fontWeight || (target === "strong" ? "700" : undefined),
     textDecoration: rule.textDecoration || undefined,
-  };
+  }
 }
 
 export function buildChannelSwatchStyle(value: string, fallbackColor: string) {
   return {
     background: value || fallbackColor,
     isEmpty: !value,
-  };
+  }
 }

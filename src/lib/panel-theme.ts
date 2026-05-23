@@ -1,14 +1,14 @@
-export type PanelThemeAppearance = "light" | "dark";
+export type PanelThemeAppearance = "light" | "dark"
 
 export function resolvePanelThemeAppearance(
   themeMode: string | null | undefined,
   prefersDark: boolean,
 ): PanelThemeAppearance {
   if (themeMode === "dark" || themeMode === "light") {
-    return themeMode;
+    return themeMode
   }
 
-  return prefersDark ? "dark" : "light";
+  return prefersDark ? "dark" : "light"
 }
 
 export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<string, string> {
@@ -55,7 +55,7 @@ export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<s
       "--panel-swatch-dot-shadow": "0 0 0 1px rgba(7, 12, 18, 0.42)",
       "--panel-clear-icon": "#ffffff",
       "--panel-clear-surface": "rgba(6, 10, 16, 0.88)",
-    };
+    }
   }
 
   return {
@@ -100,5 +100,5 @@ export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<s
     "--panel-swatch-dot-shadow": "0 0 0 1px rgba(255, 250, 242, 0.9)",
     "--panel-clear-icon": "#000000",
     "--panel-clear-surface": "rgba(255, 250, 242, 0.96)",
-  };
+  }
 }

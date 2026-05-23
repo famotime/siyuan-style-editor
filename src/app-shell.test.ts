@@ -1,25 +1,25 @@
+import { readFileSync } from "node:fs"
 import {
   resolve,
-} from "node:path";
+} from "node:path"
 import {
   createApp,
   nextTick,
   reactive,
   ref,
-} from "vue";
-import { readFileSync } from "node:fs";
+} from "vue"
 
-const mockUseStyleEditorShell = vi.hoisted(() => vi.fn());
+import App from "@/App.vue"
+
+const mockUseStyleEditorShell = vi.hoisted(() => vi.fn())
 
 vi.mock("@/composables/use-style-editor-shell", () => ({
   useStyleEditorShell: () => mockUseStyleEditorShell(),
-}));
-
-import App from "@/App.vue";
+}))
 
 function createShellState(options: {
-  isInlinePaletteVisible?: boolean;
-  isPresetPaletteSectionExpanded?: boolean;
+  isInlinePaletteVisible?: boolean
+  isPresetPaletteSectionExpanded?: boolean
 } = {}) {
   const runtimeState = reactive({
     featureProfile: {
@@ -58,7 +58,7 @@ function createShellState(options: {
     },
     selectedChannel: "color",
     selectedTarget: "heading1",
-  });
+  })
 
   return {
     FEATURE_STYLE_OPTIONS: [
@@ -106,7 +106,10 @@ function createShellState(options: {
             key: "lineStyle",
             label: "下划线",
             options: [
-              { label: "虚线", value: "dashed" },
+              {
+                label: "虚线",
+                value: "dashed",
+              },
             ],
             type: "select",
           },
@@ -163,7 +166,10 @@ function createShellState(options: {
             key: "lineStyle",
             label: "下划线",
             options: [
-              { label: "虚线", value: "dashed" },
+              {
+                label: "虚线",
+                value: "dashed",
+              },
             ],
             type: "select",
           },
@@ -192,9 +198,18 @@ function createShellState(options: {
     ],
     activePresetPalette: ref({
       colors: [
-        { label: "#224488", value: "#224488" },
-        { label: "#5B8DEF", value: "#5B8DEF" },
-        { label: "#F6D365", value: "#F6D365" },
+        {
+          label: "#224488",
+          value: "#224488",
+        },
+        {
+          label: "#5B8DEF",
+          value: "#5B8DEF",
+        },
+        {
+          label: "#F6D365",
+          value: "#F6D365",
+        },
       ],
       id: "custom-palette-1",
       label: "My Favorite",
@@ -263,27 +278,54 @@ function createShellState(options: {
     presetPaletteCollections: [
       {
         colors: [
-          { label: "#224488", value: "#224488" },
-          { label: "#5B8DEF", value: "#5B8DEF" },
-          { label: "#F6D365", value: "#F6D365" },
+          {
+            label: "#224488",
+            value: "#224488",
+          },
+          {
+            label: "#5B8DEF",
+            value: "#5B8DEF",
+          },
+          {
+            label: "#F6D365",
+            value: "#F6D365",
+          },
         ],
         id: "custom-palette-1",
         label: "My Favorite",
       },
       {
         colors: [
-          { label: "#5B8DEF", value: "#5B8DEF" },
-          { label: "#91C8FF", value: "#91C8FF" },
-          { label: "#F6D365", value: "#F6D365" },
+          {
+            label: "#5B8DEF",
+            value: "#5B8DEF",
+          },
+          {
+            label: "#91C8FF",
+            value: "#91C8FF",
+          },
+          {
+            label: "#F6D365",
+            value: "#F6D365",
+          },
         ],
         id: "cool-blue",
         label: "Cool Blue",
       },
       {
         colors: [
-          { label: "#F6D365", value: "#F6D365" },
-          { label: "#F2A65A", value: "#F2A65A" },
-          { label: "#D97B2D", value: "#D97B2D" },
+          {
+            label: "#F6D365",
+            value: "#F6D365",
+          },
+          {
+            label: "#F2A65A",
+            value: "#F2A65A",
+          },
+          {
+            label: "#D97B2D",
+            value: "#D97B2D",
+          },
         ],
         id: "warm-sand",
         label: "Warm Sand",
@@ -302,357 +344,384 @@ function createShellState(options: {
     selectPreviewTarget: vi.fn(),
     statusCopy: ref("当前正在编辑标题颜色"),
     togglePresetPaletteSection: vi.fn(),
-  };
+  }
 }
 
 async function mountApp(shellState: ReturnType<typeof createShellState>) {
-  mockUseStyleEditorShell.mockReturnValue(shellState);
+  mockUseStyleEditorShell.mockReturnValue(shellState)
 
-  const container = document.createElement("div");
-  document.body.append(container);
+  const container = document.createElement("div")
+  document.body.append(container)
 
-  const app = createApp(App);
-  app.mount(container);
-  await nextTick();
+  const app = createApp(App)
+  app.mount(container)
+  await nextTick()
 
   return {
     container,
     unmount() {
-      app.unmount();
-      container.remove();
+      app.unmount()
+      container.remove()
     },
-  };
+  }
 }
 
 function click(element: Element | null) {
-  expect(element).not.toBeNull();
-  element!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  expect(element).not.toBeNull()
+  element!.dispatchEvent(new MouseEvent("click", { bubbles: true }))
 }
 
 describe("app shell", () => {
   afterEach(() => {
-    document.body.innerHTML = "";
-    vi.clearAllMocks();
-  });
+    document.body.innerHTML = ""
+    vi.clearAllMocks()
+  })
 
   it("renders the hero actions in order and wires the import input", async () => {
-    const shellState = createShellState();
-    const { container, unmount } = await mountApp(shellState);
+    const shellState = createShellState()
+    const {
+      container,
+      unmount,
+    } = await mountApp(shellState)
 
-    const heroButtons = [...container.querySelectorAll(".workspace-hero__actions button")];
-    expect(heroButtons.map(button => button.textContent?.trim())).toEqual([
+    const heroButtons = [...container.querySelectorAll(".workspace-hero__actions button")]
+    expect(heroButtons.map((button) => button.textContent?.trim())).toEqual([
       "提取样式",
       "清除样式",
       "导入样式",
       "导出样式",
       "生成样式效果预览文档",
-    ]);
+    ])
 
-    click(heroButtons[0]);
-    click(heroButtons[1]);
-    click(heroButtons[2]);
-    click(heroButtons[4]);
+    click(heroButtons[0])
+    click(heroButtons[1])
+    click(heroButtons[2])
+    click(heroButtons[4])
 
-    expect(shellState.handleExtractStyles).toHaveBeenCalledOnce();
-    expect(shellState.handleResetAllStyles).toHaveBeenCalledOnce();
-    expect(shellState.openImportStylesPicker).toHaveBeenCalledOnce();
-    expect(shellState.handleCreateStylePreviewDocument).toHaveBeenCalledOnce();
+    expect(shellState.handleExtractStyles).toHaveBeenCalledOnce()
+    expect(shellState.handleResetAllStyles).toHaveBeenCalledOnce()
+    expect(shellState.openImportStylesPicker).toHaveBeenCalledOnce()
+    expect(shellState.handleCreateStylePreviewDocument).toHaveBeenCalledOnce()
 
-    const input = container.querySelector(".workspace-hero__file-input");
-    expect(input?.getAttribute("type")).toBe("file");
-    expect(input?.getAttribute("accept")).toBe(".json,application/json");
-    expect(shellState.importFileInputRef.value).toBe(input);
-    input?.dispatchEvent(new Event("change", { bubbles: true }));
-    expect(shellState.handleImportStylesChange).toHaveBeenCalledOnce();
-    expect(container.querySelector(".workspace-hero__import-signature")?.textContent).toContain("Paper Glow from Alice");
+    const input = container.querySelector(".workspace-hero__file-input")
+    expect(input?.getAttribute("type")).toBe("file")
+    expect(input?.getAttribute("accept")).toBe(".json,application/json")
+    expect(shellState.importFileInputRef.value).toBe(input)
+    input?.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(shellState.handleImportStylesChange).toHaveBeenCalledOnce()
+    expect(container.querySelector(".workspace-hero__import-signature")?.textContent).toContain("Paper Glow from Alice")
 
-    expect(container.querySelector(".inline-palette-panel")).toBeNull();
+    expect(container.querySelector(".inline-palette-panel")).toBeNull()
 
-    click(heroButtons[3]);
-    await nextTick();
-    expect(shellState.handleExportStyles).not.toHaveBeenCalled();
-    expect(container.querySelector(".workspace-hero__actions")?.querySelector(".workspace-hero__export-form")).toBeNull();
-    expect(container.querySelector(".workspace-hero__export-panel")).not.toBeNull();
-    expect(container.querySelector(".workspace-hero__export-panel")?.textContent).toContain("作者");
-    expect(container.querySelector(".workspace-hero__export-panel")?.textContent).toContain("样式名称");
+    click(heroButtons[3])
+    await nextTick()
+    expect(shellState.handleExportStyles).not.toHaveBeenCalled()
+    expect(container.querySelector(".workspace-hero__actions")?.querySelector(".workspace-hero__export-form")).toBeNull()
+    expect(container.querySelector(".workspace-hero__export-panel")).not.toBeNull()
+    expect(container.querySelector(".workspace-hero__export-panel")?.textContent).toContain("作者")
+    expect(container.querySelector(".workspace-hero__export-panel")?.textContent).toContain("样式名称")
 
-    const exportAuthorInput = container.querySelector(".workspace-hero__export-input--author") as HTMLInputElement | null;
-    const exportStyleInput = container.querySelector(".workspace-hero__export-input--style") as HTMLInputElement | null;
-    expect(exportAuthorInput?.value).toBe("无名");
-    expect(exportStyleInput?.value).toBe("无名样式");
+    const exportAuthorInput = container.querySelector(".workspace-hero__export-input--author") as HTMLInputElement | null
+    const exportStyleInput = container.querySelector(".workspace-hero__export-input--style") as HTMLInputElement | null
+    expect(exportAuthorInput?.value).toBe("无名")
+    expect(exportStyleInput?.value).toBe("无名样式")
 
-    exportAuthorInput!.value = "Alice";
-    exportAuthorInput!.dispatchEvent(new Event("input", { bubbles: true }));
-    exportStyleInput!.value = "Paper Glow";
-    exportStyleInput!.dispatchEvent(new Event("input", { bubbles: true }));
-    container.querySelector(".workspace-hero__export-panel")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-    await nextTick();
+    exportAuthorInput!.value = "Alice"
+    exportAuthorInput!.dispatchEvent(new Event("input", { bubbles: true }))
+    exportStyleInput!.value = "Paper Glow"
+    exportStyleInput!.dispatchEvent(new Event("input", { bubbles: true }))
+    container.querySelector(".workspace-hero__export-panel")?.dispatchEvent(new Event("submit", {
+      bubbles: true,
+      cancelable: true,
+    }))
+    await nextTick()
 
-    expect(shellState.handleExportStyles).toHaveBeenCalledOnce();
-    expect(shellState.handleExportStyles).toHaveBeenCalledWith("Alice", "Paper Glow");
-    expect(container.querySelector(".workspace-hero__export-panel")).toBeNull();
+    expect(shellState.handleExportStyles).toHaveBeenCalledOnce()
+    expect(shellState.handleExportStyles).toHaveBeenCalledWith("Alice", "Paper Glow")
+    expect(container.querySelector(".workspace-hero__export-panel")).toBeNull()
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("renders feature cards in both FeatureSection panels", async () => {
-    const shellState = createShellState();
-    const { container, unmount } = await mountApp(shellState);
+    const shellState = createShellState()
+    const {
+      container,
+      unmount,
+    } = await mountApp(shellState)
 
-    const featureSections = container.querySelectorAll(".feature-section");
+    const featureSections = container.querySelectorAll(".feature-section")
 
-    expect(featureSections.length).toBe(2);
+    expect(featureSections.length).toBe(2)
 
-    const bodySafeCards = featureSections[0].querySelectorAll(".feature-card");
-    const editorUiCards = featureSections[1].querySelectorAll(".feature-card");
+    const bodySafeCards = featureSections[0].querySelectorAll(".feature-card")
+    const editorUiCards = featureSections[1].querySelectorAll(".feature-card")
 
-    expect(bodySafeCards.length).toBe(shellState.bodySafeFeatureOptions.length);
-    expect(editorUiCards.length).toBe(shellState.editorUiFeatureOptions.length);
+    expect(bodySafeCards.length).toBe(shellState.bodySafeFeatureOptions.length)
+    expect(editorUiCards.length).toBe(shellState.editorUiFeatureOptions.length)
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("constrains export signature fields inside the panel grid", () => {
     const componentSource = readFileSync(
       resolve(process.cwd(), "src", "components", "StyleEditorShell", "WorkspaceHero.vue"),
       "utf8",
-    ).replace(/\r\n/g, "\n");
+    ).replace(/\r\n/g, "\n")
 
     expect(componentSource).toContain([
       ".workspace-hero__export-field {",
       "  display: grid;",
       "  gap: 6px;",
       "  min-width: 0;",
-    ].join("\n"));
+    ].join("\n"))
     expect(componentSource).toContain([
       ".workspace-hero__export-input {",
       "  width: 100%;",
       "  min-width: 0;",
       "  box-sizing: border-box;",
-    ].join("\n"));
+    ].join("\n"))
     expect(componentSource).toContain([
       ".workspace-hero__preview-button {",
       "  grid-column: 1 / -1;",
-    ].join("\n"));
-  });
+    ].join("\n"))
+  })
 
   it("renders target cards from the style target catalog and wires card actions", async () => {
-    const shellState = createShellState();
-    const { container, unmount } = await mountApp(shellState);
+    const shellState = createShellState()
+    const {
+      container,
+      unmount,
+    } = await mountApp(shellState)
 
-    const cards = [...container.querySelectorAll(".target-preview-card")];
-    expect(cards).toHaveLength(2);
-    expect(cards[0]?.classList.contains("target-preview-card--selected")).toBe(true);
-    expect(cards[1]?.classList.contains("target-preview-card--selected")).toBe(false);
+    const cards = [...container.querySelectorAll(".target-preview-card")]
+    expect(cards).toHaveLength(2)
+    expect(cards[0]?.classList.contains("target-preview-card--selected")).toBe(true)
+    expect(cards[1]?.classList.contains("target-preview-card--selected")).toBe(false)
 
-    const saveButton = container.querySelector(".target-studio__save");
-    expect(saveButton?.textContent?.trim()).toBe("");
-    expect(saveButton?.getAttribute("aria-label")).toBe("保存当前配色为色卡");
-    expect(saveButton?.getAttribute("data-tooltip")).toBe("保存当前配色");
-    expect(saveButton?.querySelector(".target-studio__save-icon")).not.toBeNull();
-    expect(saveButton?.querySelector(".target-studio__save-icon-notch")).not.toBeNull();
-    expect(saveButton?.querySelector(".target-studio__save-icon-label")).not.toBeNull();
+    const saveButton = container.querySelector(".target-studio__save")
+    expect(saveButton?.textContent?.trim()).toBe("")
+    expect(saveButton?.getAttribute("aria-label")).toBe("保存当前配色为色卡")
+    expect(saveButton?.getAttribute("data-tooltip")).toBe("保存当前配色")
+    expect(saveButton?.querySelector(".target-studio__save-icon")).not.toBeNull()
+    expect(saveButton?.querySelector(".target-studio__save-icon-notch")).not.toBeNull()
+    expect(saveButton?.querySelector(".target-studio__save-icon-label")).not.toBeNull()
 
-    click(saveButton);
-    await nextTick();
-    expect(shellState.handleSavePresetPalette).not.toHaveBeenCalled();
-    expect(container.querySelector(".target-studio__save-form")).not.toBeNull();
+    click(saveButton)
+    await nextTick()
+    expect(shellState.handleSavePresetPalette).not.toHaveBeenCalled()
+    expect(container.querySelector(".target-studio__save-form")).not.toBeNull()
 
-    const saveInput = container.querySelector(".target-studio__save-input") as HTMLInputElement | null;
-    expect(saveInput).not.toBeNull();
-    expect(saveInput?.value).toBe("");
-    expect(container.querySelector(".target-studio__save-confirm")).not.toBeNull();
+    const saveInput = container.querySelector(".target-studio__save-input") as HTMLInputElement | null
+    expect(saveInput).not.toBeNull()
+    expect(saveInput?.value).toBe("")
+    expect(container.querySelector(".target-studio__save-confirm")).not.toBeNull()
 
-    saveInput!.value = "My Favorite";
-    saveInput!.dispatchEvent(new Event("input", { bubbles: true }));
-    container.querySelector(".target-studio__save-form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-    await nextTick();
-    expect(shellState.handleSavePresetPalette).toHaveBeenCalledOnce();
-    expect(shellState.handleSavePresetPalette).toHaveBeenCalledWith("My Favorite");
-    expect(container.querySelector(".target-studio__save-form")).toBeNull();
+    saveInput!.value = "My Favorite"
+    saveInput!.dispatchEvent(new Event("input", { bubbles: true }))
+    container.querySelector(".target-studio__save-form")?.dispatchEvent(new Event("submit", {
+      bubbles: true,
+      cancelable: true,
+    }))
+    await nextTick()
+    expect(shellState.handleSavePresetPalette).toHaveBeenCalledOnce()
+    expect(shellState.handleSavePresetPalette).toHaveBeenCalledWith("My Favorite")
+    expect(container.querySelector(".target-studio__save-form")).toBeNull()
 
-    click(cards[1]?.querySelector(".target-preview-card__surface") ?? null);
-    expect(shellState.selectPreviewTarget).toHaveBeenCalledWith("mark");
+    click(cards[1]?.querySelector(".target-preview-card__surface") ?? null)
+    expect(shellState.selectPreviewTarget).toHaveBeenCalledWith("mark")
 
-    const secondCardButtons = cards[1]?.querySelectorAll(".channel-orb") ?? [];
-    click(secondCardButtons[0] ?? null);
-    click(secondCardButtons[1] ?? null);
+    const secondCardButtons = cards[1]?.querySelectorAll(".channel-orb") ?? []
+    click(secondCardButtons[0] ?? null)
+    click(secondCardButtons[1] ?? null)
 
-    expect(shellState.activateTargetChannel).toHaveBeenNthCalledWith(1, "mark", "color", expect.any(MouseEvent));
-    expect(shellState.activateTargetChannel).toHaveBeenNthCalledWith(2, "mark", "backgroundColor", expect.any(MouseEvent));
+    expect(shellState.activateTargetChannel).toHaveBeenNthCalledWith(1, "mark", "color", expect.any(MouseEvent))
+    expect(shellState.activateTargetChannel).toHaveBeenNthCalledWith(2, "mark", "backgroundColor", expect.any(MouseEvent))
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("swaps channel colors by dragging one orb onto another without triggering click activation", async () => {
-    const shellState = createShellState();
-    const { container, unmount } = await mountApp(shellState);
+    const shellState = createShellState()
+    const {
+      container,
+      unmount,
+    } = await mountApp(shellState)
 
-    const cards = [...container.querySelectorAll(".target-preview-card")];
-    const sourceOrb = cards[0]?.querySelectorAll(".channel-orb")[0] as HTMLElement | null;
-    const targetOrb = cards[1]?.querySelectorAll(".channel-orb")[1] as HTMLElement | null;
+    const cards = [...container.querySelectorAll(".target-preview-card")]
+    const sourceOrb = cards[0]?.querySelectorAll(".channel-orb")[0] as HTMLElement | null
+    const targetOrb = cards[1]?.querySelectorAll(".channel-orb")[1] as HTMLElement | null
 
-    expect(sourceOrb).not.toBeNull();
-    expect(targetOrb).not.toBeNull();
+    expect(sourceOrb).not.toBeNull()
+    expect(targetOrb).not.toBeNull()
 
     sourceOrb!.dispatchEvent(new MouseEvent("mousedown", {
       bubbles: true,
       clientX: 16,
       clientY: 16,
-    }));
+    }))
     window.dispatchEvent(new MouseEvent("mousemove", {
       bubbles: true,
       clientX: 40,
       clientY: 40,
-    }));
+    }))
     targetOrb!.dispatchEvent(new MouseEvent("mouseenter", {
       bubbles: true,
       clientX: 40,
       clientY: 40,
-    }));
+    }))
     window.dispatchEvent(new MouseEvent("mouseup", {
       bubbles: true,
       clientX: 40,
       clientY: 40,
-    }));
-    await nextTick();
+    }))
+    await nextTick()
 
     expect(shellState.handleSwapTargetChannelValues).toHaveBeenCalledWith(
-      { channel: "color", target: "heading1" },
-      { channel: "backgroundColor", target: "mark" },
-    );
-    expect(shellState.activateTargetChannel).not.toHaveBeenCalled();
+      {
+        channel: "color",
+        target: "heading1",
+      },
+      {
+        channel: "backgroundColor",
+        target: "mark",
+      },
+    )
+    expect(shellState.activateTargetChannel).not.toHaveBeenCalled()
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("renders the floating palette with the expected controls and interaction wiring", async () => {
     const shellState = createShellState({
       isInlinePaletteVisible: true,
       isPresetPaletteSectionExpanded: true,
-    });
-    const { container, unmount } = await mountApp(shellState);
+    })
+    const {
+      container,
+      unmount,
+    } = await mountApp(shellState)
 
-    expect(document.body.querySelector(".inline-palette-panel")).not.toBeNull();
-    expect(document.body.textContent).toContain("正在编辑 H1 标题 的文字颜色");
+    expect(document.body.querySelector(".inline-palette-panel")).not.toBeNull()
+    expect(document.body.textContent).toContain("正在编辑 H1 标题 的文字颜色")
 
-    const customColorField = document.body.querySelector(".custom-color-field") as HTMLInputElement | null;
-    expect(customColorField?.value).toBe("#5b8def");
-    expect(customColorField?.placeholder).toBe("#5b8def");
-    expect(shellState.floatingPaletteRef.value).toBe(document.body.querySelector(".inline-palette-panel--floating"));
-    expect(shellState.inlineColorFieldRef.value).toBe(document.body.querySelector(".inline-color-picker__field"));
+    const customColorField = document.body.querySelector(".custom-color-field") as HTMLInputElement | null
+    expect(customColorField?.value).toBe("#5b8def")
+    expect(customColorField?.placeholder).toBe("#5b8def")
+    expect(shellState.floatingPaletteRef.value).toBe(document.body.querySelector(".inline-palette-panel--floating"))
+    expect(shellState.inlineColorFieldRef.value).toBe(document.body.querySelector(".inline-color-picker__field"))
 
-    const presetTabFrames = [...document.body.querySelectorAll(".preset-palette-tab-frame")];
-    const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")];
-    expect(presetTabs).toHaveLength(3);
-    expect(presetTabs[0]?.getAttribute("style")).toContain("linear-gradient(");
-    expect(presetTabs[0]?.textContent).toContain("My Favorite");
-    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete")).not.toBeNull();
-    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete")?.textContent?.trim()).toBe("");
-    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-icon")).not.toBeNull();
-    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-lid")).not.toBeNull();
-    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-body")).not.toBeNull();
-    expect(presetTabs[0]?.getAttribute("style")).toContain("#5B8DEF");
-    expect(presetTabs[0]?.getAttribute("style")).toContain("#F6D365");
-    expect(presetTabFrames[1]?.querySelector(".preset-palette-tab__delete")).toBeNull();
-    click(presetTabs[2] ?? null);
-    expect(shellState.selectPresetPaletteTab).toHaveBeenCalledWith("warm-sand");
-    presetTabs[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
-    expect(shellState.handlePresetPaletteBatchApply).toHaveBeenCalledWith("custom-palette-1");
+    const presetTabFrames = [...document.body.querySelectorAll(".preset-palette-tab-frame")]
+    const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")]
+    expect(presetTabs).toHaveLength(3)
+    expect(presetTabs[0]?.getAttribute("style")).toContain("linear-gradient(")
+    expect(presetTabs[0]?.textContent).toContain("My Favorite")
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete")).not.toBeNull()
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete")?.textContent?.trim()).toBe("")
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-icon")).not.toBeNull()
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-lid")).not.toBeNull()
+    expect(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete-body")).not.toBeNull()
+    expect(presetTabs[0]?.getAttribute("style")).toContain("#5B8DEF")
+    expect(presetTabs[0]?.getAttribute("style")).toContain("#F6D365")
+    expect(presetTabFrames[1]?.querySelector(".preset-palette-tab__delete")).toBeNull()
+    click(presetTabs[2] ?? null)
+    expect(shellState.selectPresetPaletteTab).toHaveBeenCalledWith("warm-sand")
+    presetTabs[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }))
+    expect(shellState.handlePresetPaletteBatchApply).toHaveBeenCalledWith("custom-palette-1")
 
-    click(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete") ?? null);
-    await nextTick();
-    expect(document.body.querySelector(".preset-palette-tab__delete-confirm")).not.toBeNull();
-    click(document.body.querySelector(".preset-palette-tab__delete-confirm"));
-    expect(shellState.handleDeletePresetPalette).toHaveBeenCalledWith("custom-palette-1");
+    click(presetTabFrames[0]?.querySelector(".preset-palette-tab__delete") ?? null)
+    await nextTick()
+    expect(document.body.querySelector(".preset-palette-tab__delete-confirm")).not.toBeNull()
+    click(document.body.querySelector(".preset-palette-tab__delete-confirm"))
+    expect(shellState.handleDeletePresetPalette).toHaveBeenCalledWith("custom-palette-1")
 
-    const toggleButton = document.body.querySelector(".inline-palette-panel__toggle");
-    expect(toggleButton?.textContent?.trim()).toBe("");
-    expect(toggleButton?.getAttribute("aria-label")).toBe("折叠预设配色");
-    expect(toggleButton?.getAttribute("data-tooltip")).toBeNull();
-    expect(toggleButton?.getAttribute("title")).toBeNull();
-    expect(toggleButton?.querySelector(".inline-palette-panel__toggle-icon")).not.toBeNull();
+    const toggleButton = document.body.querySelector(".inline-palette-panel__toggle")
+    expect(toggleButton?.textContent?.trim()).toBe("")
+    expect(toggleButton?.getAttribute("aria-label")).toBe("折叠预设配色")
+    expect(toggleButton?.getAttribute("data-tooltip")).toBeNull()
+    expect(toggleButton?.getAttribute("title")).toBeNull()
+    expect(toggleButton?.querySelector(".inline-palette-panel__toggle-icon")).not.toBeNull()
 
-    click(toggleButton);
-    expect(shellState.togglePresetPaletteSection).toHaveBeenCalledOnce();
+    click(toggleButton)
+    expect(shellState.togglePresetPaletteSection).toHaveBeenCalledOnce()
 
-    click(document.body.querySelector(".custom-color-apply"));
-    expect(shellState.applyCustomColorDraft).toHaveBeenCalledOnce();
+    click(document.body.querySelector(".custom-color-apply"))
+    expect(shellState.applyCustomColorDraft).toHaveBeenCalledOnce()
 
-    const swatchButtons = [...document.body.querySelectorAll(".swatch-chip")];
-    expect(swatchButtons).toHaveLength(4);
-    click(swatchButtons[0] ?? null);
-    expect(shellState.handlePresetColorSelection).toHaveBeenCalledWith("#224488");
+    const swatchButtons = [...document.body.querySelectorAll(".swatch-chip")]
+    expect(swatchButtons).toHaveLength(4)
+    click(swatchButtons[0] ?? null)
+    expect(shellState.handlePresetColorSelection).toHaveBeenCalledWith("#224488")
 
-    click(swatchButtons.at(-1) ?? null);
-    expect(shellState.handleClearSelectedTargetColor).toHaveBeenCalledOnce();
+    click(swatchButtons.at(-1) ?? null)
+    expect(shellState.handleClearSelectedTargetColor).toHaveBeenCalledOnce()
 
-    click(document.body.querySelector(".inline-palette-panel__close"));
-    expect(shellState.cancelInlinePalettePanel).toHaveBeenCalledOnce();
+    click(document.body.querySelector(".inline-palette-panel__close"))
+    expect(shellState.cancelInlinePalettePanel).toHaveBeenCalledOnce()
 
-    expect(container.querySelector(".style-editor-shell")).not.toBeNull();
+    expect(container.querySelector(".style-editor-shell")).not.toBeNull()
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("renders the floating palette above the default document layer", async () => {
     const shellState = createShellState({
       isInlinePaletteVisible: true,
-    });
-    const { unmount } = await mountApp(shellState);
+    })
+    const { unmount } = await mountApp(shellState)
 
-    const backdrop = document.body.querySelector(".inline-palette-backdrop");
-    const panel = document.body.querySelector(".inline-palette-panel--floating");
+    const backdrop = document.body.querySelector(".inline-palette-backdrop")
+    const panel = document.body.querySelector(".inline-palette-panel--floating")
 
-    expect(backdrop).not.toBeNull();
-    expect(panel).not.toBeNull();
-    expect(getComputedStyle(backdrop as Element).zIndex).toBe("10");
-    expect(getComputedStyle(panel as Element).zIndex).toBe("11");
-    expect(panel?.getAttribute("style")).toContain("border-width: 1px;");
-    expect(panel?.getAttribute("style")).toContain("border-style: solid;");
-    expect(panel?.getAttribute("style")).toContain("border-color: var(--panel-accent-outline);");
-    expect(panel?.getAttribute("style")).toContain("--panel-dot-border: #000000;");
-    expect(panel?.getAttribute("style")).toContain("--panel-swatch-dot-ring: rgba(111, 82, 48, 0.44);");
+    expect(backdrop).not.toBeNull()
+    expect(panel).not.toBeNull()
+    expect(getComputedStyle(backdrop as Element).zIndex).toBe("10")
+    expect(getComputedStyle(panel as Element).zIndex).toBe("11")
+    expect(panel?.getAttribute("style")).toContain("border-width: 1px;")
+    expect(panel?.getAttribute("style")).toContain("border-style: solid;")
+    expect(panel?.getAttribute("style")).toContain("border-color: var(--panel-accent-outline);")
+    expect(panel?.getAttribute("style")).toContain("--panel-dot-border: #000000;")
+    expect(panel?.getAttribute("style")).toContain("--panel-swatch-dot-ring: rgba(111, 82, 48, 0.44);")
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("renders the clear swatch as a slashed circular icon without visible text", async () => {
     const shellState = createShellState({
       isInlinePaletteVisible: true,
       isPresetPaletteSectionExpanded: true,
-    });
-    const { unmount } = await mountApp(shellState);
+    })
+    const { unmount } = await mountApp(shellState)
 
-    const clearChip = document.body.querySelector(".swatch-chip--clear");
+    const clearChip = document.body.querySelector(".swatch-chip--clear")
 
-    expect(clearChip).not.toBeNull();
-    expect(clearChip?.getAttribute("aria-label")).toBe("恢复默认颜色");
-    expect(clearChip?.textContent?.trim()).toBe("");
-    expect(clearChip?.querySelector(".swatch-chip__dot-clear-surface")).not.toBeNull();
-    expect(clearChip?.querySelector(".swatch-chip__dot-clear-slash")).not.toBeNull();
+    expect(clearChip).not.toBeNull()
+    expect(clearChip?.getAttribute("aria-label")).toBe("恢复默认颜色")
+    expect(clearChip?.textContent?.trim()).toBe("")
+    expect(clearChip?.querySelector(".swatch-chip__dot-clear-surface")).not.toBeNull()
+    expect(clearChip?.querySelector(".swatch-chip__dot-clear-slash")).not.toBeNull()
 
-    unmount();
-  });
+    unmount()
+  })
 
   it("keeps borders only on the bottom circular swatches", async () => {
     const shellState = createShellState({
       isInlinePaletteVisible: true,
       isPresetPaletteSectionExpanded: true,
-    });
-    const { unmount } = await mountApp(shellState);
+    })
+    const { unmount } = await mountApp(shellState)
 
-    const presetTab = document.body.querySelector(".preset-palette-tab") as HTMLElement | null;
-    const swatchChip = document.body.querySelector(".swatch-chip") as HTMLElement | null;
-    const swatchDot = document.body.querySelector(".swatch-chip__dot") as HTMLElement | null;
+    const presetTab = document.body.querySelector(".preset-palette-tab") as HTMLElement | null
+    const swatchChip = document.body.querySelector(".swatch-chip") as HTMLElement | null
+    const swatchDot = document.body.querySelector(".swatch-chip__dot") as HTMLElement | null
 
-    expect(presetTab).not.toBeNull();
-    expect(swatchChip).not.toBeNull();
-    expect(swatchDot).not.toBeNull();
-    expect(getComputedStyle(presetTab!).borderTopWidth).toBe("0px");
-    expect(getComputedStyle(swatchChip!).borderTopWidth).toBe("0px");
-    expect(getComputedStyle(swatchDot!).borderTopWidth).toBe("1px");
+    expect(presetTab).not.toBeNull()
+    expect(swatchChip).not.toBeNull()
+    expect(swatchDot).not.toBeNull()
+    expect(getComputedStyle(presetTab!).borderTopWidth).toBe("0px")
+    expect(getComputedStyle(swatchChip!).borderTopWidth).toBe("0px")
+    expect(getComputedStyle(swatchDot!).borderTopWidth).toBe("1px")
 
-    unmount();
-  });
-});
+    unmount()
+  })
+})

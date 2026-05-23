@@ -1,23 +1,22 @@
 import type {
   FeatureDefinition,
-  FeatureStyleControlOption,
-} from "./feature-style-types";
+} from "./feature-style-types"
 
 import {
   createDefaultConfig,
   em,
   LINE_STYLE_OPTIONS,
-  LINK_LINE_STYLE_OPTIONS,
   lineStyleValue,
+  LINK_LINE_STYLE_OPTIONS,
   numberValue,
   optionValue,
   px,
   stringValue,
-} from "./feature-style-types";
+} from "./feature-style-types"
 
 export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-type]:hover:not(.protyle-wysiwyg [data-type="NodeList"]):not(.protyle-wysiwyg [data-type="NodeListItem"]):not(.protyle-wysiwyg [data-type="img"]) {
   background-color: ${stringValue(config.values.backgroundColor, "hsla(0, 0%, 77%, 0.035)")} !important;
   box-shadow: 0 0 ${px(config.values.shadowSize, 3)} 0 hsla(0, 0%, 77%, ${numberValue(config.values.shadowStrength, 0.05)}) !important;
@@ -65,7 +64,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "paragraphHover",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg div[fold="1"]:not(div[data-type="NodeListItem"]),
 .protyle-wysiwyg [data-node-id][fold="1"]:not(.li):not([data-type="NodeHeading"]) {
   background-image: repeating-linear-gradient(
@@ -156,7 +155,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "foldedBlockStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 :root {
   --b3-theme-background: ${stringValue(config.values.backgroundColor, "#222222")};
 }`.trim(),
@@ -178,7 +177,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "editorBackground",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg > .h1,
 .protyle-wysiwyg > .h2,
 .protyle-wysiwyg > .h3,
@@ -257,8 +256,8 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "headingSpacing",
   },
   {
-    buildCss: config => {
-      const mode = stringValue(config.values.mode, "leftBar");
+    buildCss: (config) => {
+      const mode = stringValue(config.values.mode, "leftBar")
       if (mode === "leftBar") {
         return `
 .protyle-wysiwyg [data-node-id].h1,
@@ -286,7 +285,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
   height: 1.2em;
   border-radius: ${px(config.values.barRadius, 2)};
   background-color: ${stringValue(config.values.barColor, "var(--b3-theme-primary)")};
-}`.trim();
+}`.trim()
       }
       return `
 .protyle-wysiwyg [data-node-id].h1,
@@ -312,15 +311,21 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
   width: 100%;
   height: ${px(config.values.barWidth, 2)};
   background: linear-gradient(to right, transparent, ${stringValue(config.values.barColor, "rgba(44, 62, 80, 0.5)")});
-}`.trim();
+}`.trim()
     },
     controls: [
       {
         key: "mode",
         label: "装饰风格",
         options: [
-          { label: "左竖线", value: "leftBar" },
-          { label: "下划线", value: "underline" },
+          {
+            label: "左竖线",
+            value: "leftBar",
+          },
+          {
+            label: "下划线",
+            value: "underline",
+          },
         ],
         type: "select",
       },
@@ -363,7 +368,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "headingDecoration",
   },
   {
-    buildCss: config => `
+    buildCss: (_config) => `
 .protyle-wysiwyg > [data-node-id].h1::before,
 .protyle-wysiwyg > [data-node-id].h2::before,
 .protyle-wysiwyg > [data-node-id].h3::before,
@@ -392,7 +397,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "headingNumbering",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-node-id].li[data-subtype="u"] > .protyle-action {
   color: ${stringValue(config.values.markerColor, "oklch(75% 0 0)")};
 }`.trim(),
@@ -414,7 +419,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "unorderedListMarkerColor",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-node-id].li:has(.block-focus) > .list:has(.block-focus) > .li::after {
   content: "";
   display: block;
@@ -465,7 +470,7 @@ export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
     value: "listBulletLine",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 div[data-subtype="o"].list {
   --o1-style: counter(o1, decimal)".";
   --o2-style: counter(o2, lower-latin)".";
@@ -512,18 +517,26 @@ div[data-subtype="o"].list {
   display: flex;
   justify-content: center;
 }
-${stringValue(config.values.showBackground, "no") === "yes" ? `
+${stringValue(config.values.showBackground, "no") === "yes"
+  ? `
 .protyle-wysiwyg [data-node-id].li[fold="1"]:not([data-subtype="o"].en_item_bullet_actived) > .protyle-action:after,
 .protyle-wysiwyg [data-node-id].li > .protyle-action:hover:after {
   background-color: ${stringValue(config.values.hoverBgColor, "oklch(55% 0.05 250 / 0.3)")} !important;
-}` : ""}`.trim(),
+}`
+  : ""}`.trim(),
     controls: [
       {
         key: "showBackground",
         label: "悬停背景",
         options: [
-          { label: "显示", value: "yes" },
-          { label: "隐藏", value: "no" },
+          {
+            label: "显示",
+            value: "yes",
+          },
+          {
+            label: "隐藏",
+            value: "no",
+          },
         ],
         type: "select",
       },
@@ -557,7 +570,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "orderedListStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .b3-typography blockquote,
 .b3-typography .bq,
 .protyle-wysiwyg blockquote,
@@ -639,7 +652,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "blockquoteFrame",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-node-id][refcount] {
   position: relative;
   outline: none;
@@ -713,7 +726,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "referencedBlockCorners",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-attr--refcount {
   height: ${px(config.values.size, 16)};
   width: ${px(config.values.size, 16)};
@@ -808,7 +821,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "refcountBadge",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-hint {
   padding: ${px(config.values.paddingY, 2)} ${px(config.values.paddingX, 5)};
   border-radius: ${px(config.values.radius, 6)};
@@ -852,10 +865,22 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
         key: "maxHeight",
         label: "最大高度",
         options: [
-          { label: "40vh", value: "40vh" },
-          { label: "50vh", value: "50vh" },
-          { label: "60vh", value: "60vh" },
-          { label: "70vh", value: "70vh" },
+          {
+            label: "40vh",
+            value: "40vh",
+          },
+          {
+            label: "50vh",
+            value: "50vh",
+          },
+          {
+            label: "60vh",
+            value: "60vh",
+          },
+          {
+            label: "70vh",
+            value: "70vh",
+          },
         ],
         type: "select",
       },
@@ -878,7 +903,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "refSearchMenu",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .backlinkMList .b3-list-item,
 .backlinkList .b3-list-item {
   position: sticky;
@@ -911,34 +936,91 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "🖼️",
     risk: "正文安全",
     controls: [
-      { key: "radius", label: "圆角", type: "number", min: 0, max: 24, step: 1, unit: "px", slider: true },
       {
-        key: "shadow", label: "阴影", type: "select",
+        key: "radius",
+        label: "圆角",
+        type: "number",
+        min: 0,
+        max: 24,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "shadow",
+        label: "阴影",
+        type: "select",
         options: [
-          { label: "无", value: "none" },
-          { label: "轻微", value: "light" },
-          { label: "中等", value: "medium" },
-          { label: "强", value: "strong" },
+          {
+            label: "无",
+            value: "none",
+          },
+          {
+            label: "轻微",
+            value: "light",
+          },
+          {
+            label: "中等",
+            value: "medium",
+          },
+          {
+            label: "强",
+            value: "strong",
+          },
         ],
       },
       {
-        key: "hoverZoom", label: "悬停效果", type: "select",
+        key: "hoverZoom",
+        label: "悬停效果",
+        type: "select",
         options: [
-          { label: "无", value: "none" },
-          { label: "轻微放大", value: "slight" },
-          { label: "明显放大", value: "obvious" },
+          {
+            label: "无",
+            value: "none",
+          },
+          {
+            label: "轻微放大",
+            value: "slight",
+          },
+          {
+            label: "明显放大",
+            value: "obvious",
+          },
         ],
       },
       {
-        key: "maxWidth", label: "最大宽度", type: "select",
+        key: "maxWidth",
+        label: "最大宽度",
+        type: "select",
         options: [
-          { label: "自动", value: "auto" },
-          { label: "80%", value: "80%" },
-          { label: "100%", value: "100%" },
+          {
+            label: "自动",
+            value: "auto",
+          },
+          {
+            label: "80%",
+            value: "80%",
+          },
+          {
+            label: "100%",
+            value: "100%",
+          },
         ],
       },
-      { key: "borderColor", label: "边框颜色", type: "color" },
-      { key: "borderWidth", label: "边框粗细", type: "number", min: 0, max: 4, step: 1, unit: "px" },
+      {
+        key: "borderColor",
+        label: "边框颜色",
+        type: "color",
+      },
+      {
+        key: "borderWidth",
+        label: "边框粗细",
+        type: "number",
+        min: 0,
+        max: 4,
+        step: 1,
+        unit: "px",
+      },
     ],
     defaults: createDefaultConfig({
       radius: 6,
@@ -949,27 +1031,27 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       borderWidth: 0,
     }),
     buildCss: (config) => {
-      const radius = px(config.values.radius, 6);
-      const shadow = stringValue(config.values.shadow, "none");
-      const hoverZoom = stringValue(config.values.hoverZoom, "none");
-      const maxWidth = stringValue(config.values.maxWidth, "auto");
-      const borderColor = stringValue(config.values.borderColor, "#cccccc");
-      const borderWidth = numberValue(config.values.borderWidth, 0);
+      const radius = px(config.values.radius, 6)
+      const shadow = stringValue(config.values.shadow, "none")
+      const hoverZoom = stringValue(config.values.hoverZoom, "none")
+      const maxWidth = stringValue(config.values.maxWidth, "auto")
+      const borderColor = stringValue(config.values.borderColor, "#cccccc")
+      const borderWidth = numberValue(config.values.borderWidth, 0)
 
       const SHADOW_MAP: Record<string, string> = {
         none: "none",
         light: "0 2px 8px rgba(0,0,0,0.08)",
         medium: "0 4px 16px rgba(0,0,0,0.12)",
         strong: "0 8px 32px rgba(0,0,0,0.18)",
-      };
+      }
       const ZOOM_MAP: Record<string, string> = {
         none: "",
         slight: "transform: scale(1.02);",
         obvious: "transform: scale(1.08);",
-      };
+      }
 
-      const maxW = maxWidth === "auto" ? "" : `max-width: ${maxWidth} !important;`;
-      const border = borderWidth > 0 ? `border: ${borderWidth}px solid ${borderColor} !important;` : "";
+      const maxW = maxWidth === "auto" ? "" : `max-width: ${maxWidth} !important;`
+      const border = borderWidth > 0 ? `border: ${borderWidth}px solid ${borderColor} !important;` : ""
 
       let css = `.protyle-wysiwyg img {
   border-radius: ${radius} !important;
@@ -977,19 +1059,19 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
   ${maxW}
   ${border}
   transition: transform 200ms ease, box-shadow 200ms ease !important;
-}`;
+}`
 
       if (ZOOM_MAP[hoverZoom]) {
         css += `\n\n.protyle-wysiwyg img:hover {
   ${ZOOM_MAP[hoverZoom]}
-}`;
+}`
       }
 
-      return css;
+      return css
     },
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .b3-typography table,
 .protyle-wysiwyg table {
   font-weight: 500;
@@ -1051,8 +1133,8 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "tableStyle",
   },
   {
-    buildCss: config => {
-      const lineStyle = lineStyleValue(config.values.lineStyle, "solid");
+    buildCss: (config) => {
+      const lineStyle = lineStyleValue(config.values.lineStyle, "solid")
       return `
 .b3-typography mark,
 .b3-typography span[data-type~=mark],
@@ -1061,7 +1143,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
   color: ${stringValue(config.values.color, "var(--b3-theme-on-background)")} !important;
   background-color: ${stringValue(config.values.backgroundColor, "rgba(255, 212, 0, 0.14)")} !important;
   border-bottom: ${numberValue(config.values.emphasisThickness, 2)}px ${lineStyle} ${stringValue(config.values.emphasisColor, "rgba(255, 212, 0, 0.8)")} !important;
-}`.trim();
+}`.trim()
     },
     controls: [
       {
@@ -1091,7 +1173,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       {
         key: "lineStyle",
         label: "底线线型",
-        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "none"),
+        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none"),
         type: "select",
       },
     ],
@@ -1110,7 +1192,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "markStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .fn__code,
 .b3-typography code:not(.hljs),
 .b3-typography span[data-type~=code],
@@ -1175,7 +1257,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "inlineCodeStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
 .protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) {
   color: ${stringValue(config.values.color, "rgb(170, 210, 255)")} !important;
@@ -1205,7 +1287,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       {
         key: "lineStyle",
         label: "底线线型",
-        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "wavy"),
+        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "wavy"),
         type: "select",
       },
       {
@@ -1243,21 +1325,27 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "blockRefStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-node-id].hr > div:after {
   height: ${numberValue(config.values.height, 2)}px;
   ${stringValue(config.values.mode, "gradient") === "gradient"
-        ? `background: linear-gradient(to right, ${stringValue(config.values.colorLeft, "rgba(255, 110, 196, 0.5)")}, ${stringValue(config.values.colorRight, "rgba(120, 115, 245, 0.5)")});`
-        : `border-top: ${numberValue(config.values.height, 2)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.colorLeft, "#aaa")};`
-      }
+      ? `background: linear-gradient(to right, ${stringValue(config.values.colorLeft, "rgba(255, 110, 196, 0.5)")}, ${stringValue(config.values.colorRight, "rgba(120, 115, 245, 0.5)")});`
+      : `border-top: ${numberValue(config.values.height, 2)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.colorLeft, "#aaa")};`
+  }
 }`.trim(),
     controls: [
       {
         key: "mode",
         label: "风格",
         options: [
-          { label: "渐变", value: "gradient" },
-          { label: "线条", value: "line" },
+          {
+            label: "渐变",
+            value: "gradient",
+          },
+          {
+            label: "线条",
+            value: "line",
+          },
         ],
         type: "select",
       },
@@ -1274,7 +1362,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       {
         key: "lineStyle",
         label: "线型",
-        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "none" && option.value !== "wavy"),
+        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none" && option.value !== "wavy"),
         type: "select",
       },
       {
@@ -1302,10 +1390,10 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "hrStyle",
   },
   {
-    buildCss: config => {
-      const lineStyle = optionValue(config.values.lineStyle, "dashed", LINK_LINE_STYLE_OPTIONS);
-      const textDecoration = lineStyle === "none" ? "none" : "none";
-      const border = lineStyle === "none" ? "none" : `1px ${lineStyle} currentColor`;
+    buildCss: (config) => {
+      const lineStyle = optionValue(config.values.lineStyle, "dashed", LINK_LINE_STYLE_OPTIONS)
+      const textDecoration = lineStyle === "none" ? "none" : "none"
+      const border = lineStyle === "none" ? "none" : `1px ${lineStyle} currentColor`
       return `
 .protyle-wysiwyg [data-node-id] span[data-type~=a] {
   color: ${stringValue(config.values.color, "#4fc3f7")} !important;
@@ -1318,7 +1406,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
 .protyle-wysiwyg [data-node-id] span[data-type~=a]:hover {
   color: ${stringValue(config.values.hoverColor, "#1de9b6")} !important;
   border-bottom-color: ${stringValue(config.values.hoverColor, "#1de9b6")} !important;
-}`.trim();
+}`.trim()
     },
     controls: [
       {
@@ -1351,8 +1439,8 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "linkStyle",
   },
   {
-    buildCss: config => {
-      const lineStyle = lineStyleValue(config.values.lineStyle, "solid");
+    buildCss: (config) => {
+      const lineStyle = lineStyleValue(config.values.lineStyle, "solid")
       return lineStyle === "wavy"
         ? `
 .b3-typography u,
@@ -1373,7 +1461,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
   border-bottom: ${numberValue(config.values.thickness, 1.5)}px ${lineStyleValue(config.values.lineStyle, "solid")} ${stringValue(config.values.color, "rgb(200, 200, 200)")} !important;
   text-decoration: none !important;
   padding-bottom: ${px(config.values.offset, 1)};
-}`.trim();
+}`.trim()
     },
     controls: [
       {
@@ -1384,7 +1472,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       {
         key: "lineStyle",
         label: "线型",
-        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "none"),
+        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none"),
         type: "select",
       },
       {
@@ -1411,7 +1499,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "underlineStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .b3-typography s,
 .b3-typography span[data-type~="s"],
 .protyle-wysiwyg s,
@@ -1430,7 +1518,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       {
         key: "lineStyle",
         label: "线型",
-        options: LINE_STYLE_OPTIONS.filter(option => option.value !== "none"),
+        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none"),
         type: "select",
       },
       {
@@ -1456,7 +1544,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "strikethroughStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-wysiwyg [data-type="NodeList"][data-subtype="t"] .protyle-task--done {
   opacity: ${numberValue(config.values.doneOpacity, 0.62)} !important;
 }
@@ -1501,7 +1589,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "taskListStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-title__input {
   font-size: ${px(config.values.fontSize, 40)};
 }
@@ -1536,7 +1624,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "documentTitle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-background .protyle-background__img img {
   margin: 0 ${px(config.values.marginX, 5)};
   border-radius: ${px(config.values.radius, 6)};
@@ -1574,7 +1662,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "headImage",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .b3-chips__doctag .b3-chip {
   border-radius: ${px(config.values.radius, 6)};
   padding: 0 0 1px ${px(config.values.paddingX, 8)};
@@ -1625,7 +1713,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "docTag",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .sy__file .b3-list--background:nth-child(5n-4) {
   background-color: ${stringValue(config.values.color1, "rgba(120, 90, 69, 0.85)")} !important;
   box-shadow: 0 0 0 1px ${stringValue(config.values.color1, "rgba(120, 90, 69, 0.85)")} inset;
@@ -1701,7 +1789,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "docTreeColorBlocks",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .sy__outline ul.b3-list.b3-list--background [data-subtype*="h"] > span:first-child::after {
   visibility: visible !important;
   position: relative;
@@ -1760,7 +1848,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "outlineNumber",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-gutters {
   transition: top ${numberValue(config.values.transitionMs, 150)}ms ease-out;
 }
@@ -1806,7 +1894,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "blockGutterAnim",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .protyle-toolbar {
   padding: ${px(config.values.padding, 2)};
 }
@@ -1857,7 +1945,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "toolbarStyle",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .hint--menu {
   border-radius: ${px(config.values.radius, 6)};
   padding: ${px(config.values.padding, 5)};
@@ -1909,7 +1997,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "slashMenu",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .emojis {
   width: ${px(config.values.panelWidth, 366)} !important;
 }
@@ -1960,7 +2048,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     value: "emojiPanel",
   },
   {
-    buildCss: config => `
+    buildCss: (config) => `
 .fn__flex-column #searchList > .b3-list-item[data-type='search-item'] {
   padding-bottom: ${px(config.values.itemPaddingBottom, 20)};
   margin: ${px(config.values.itemMargin, 6)};
@@ -2021,11 +2109,53 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "📝",
     risk: "正文安全",
     controls: [
-      { key: "fontSize", label: "字号", type: "number", min: 12, max: 20, step: 1, unit: "px", slider: true },
-      { key: "lineHeight", label: "行高", type: "number", min: 1.2, max: 2.4, step: 0.05, slider: true },
-      { key: "textIndent", label: "首行缩进", type: "number", min: 0, max: 4, step: 0.5, unit: "em" },
-      { key: "paragraphSpacing", label: "段间距", type: "number", min: 0, max: 24, step: 1, unit: "px", slider: true },
-      { key: "letterSpacing", label: "字间距", type: "number", min: -0.5, max: 2, step: 0.1, unit: "px" },
+      {
+        key: "fontSize",
+        label: "字号",
+        type: "number",
+        min: 12,
+        max: 20,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "lineHeight",
+        label: "行高",
+        type: "number",
+        min: 1.2,
+        max: 2.4,
+        step: 0.05,
+        slider: true,
+      },
+      {
+        key: "textIndent",
+        label: "首行缩进",
+        type: "number",
+        min: 0,
+        max: 4,
+        step: 0.5,
+        unit: "em",
+      },
+      {
+        key: "paragraphSpacing",
+        label: "段间距",
+        type: "number",
+        min: 0,
+        max: 24,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "letterSpacing",
+        label: "字间距",
+        type: "number",
+        min: -0.5,
+        max: 2,
+        step: 0.1,
+        unit: "px",
+      },
     ],
     defaults: createDefaultConfig({
       fontSize: 16,
@@ -2035,11 +2165,11 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       letterSpacing: 0,
     }),
     buildCss: (config) => {
-      const fontSize = px(config.values.fontSize, 16);
-      const lineHeight = numberValue(config.values.lineHeight, 1.625);
-      const textIndent = em(config.values.textIndent, 0);
-      const paragraphSpacing = px(config.values.paragraphSpacing, 8);
-      const letterSpacing = px(config.values.letterSpacing, 0);
+      const fontSize = px(config.values.fontSize, 16)
+      const lineHeight = numberValue(config.values.lineHeight, 1.625)
+      const textIndent = em(config.values.textIndent, 0)
+      const paragraphSpacing = px(config.values.paragraphSpacing, 8)
+      const letterSpacing = px(config.values.letterSpacing, 0)
 
       return `:root {
   --b3-font-size: ${fontSize} !important;
@@ -2050,7 +2180,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
 .protyle-wysiwyg [data-type="NodeParagraph"] {
   text-indent: ${textIndent} !important;
   margin-bottom: ${paragraphSpacing} !important;
-}`;
+}`
     },
   },
   {
@@ -2061,9 +2191,38 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "↔️",
     risk: "全屋改造",
     controls: [
-      { key: "maxWidth", label: "最大宽度", type: "number", min: 600, max: 2000, step: 10, unit: "px", slider: true },
-      { key: "fullWidth", label: "全宽模式", type: "select", options: [{ label: "否", value: "no" }, { label: "是", value: "yes" }] },
-      { key: "contentPadding", label: "内容边距", type: "number", min: 0, max: 60, step: 2, unit: "px", slider: true },
+      {
+        key: "maxWidth",
+        label: "最大宽度",
+        type: "number",
+        min: 600,
+        max: 2000,
+        step: 10,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "fullWidth",
+        label: "全宽模式",
+        type: "select",
+        options: [{
+          label: "否",
+          value: "no",
+        }, {
+          label: "是",
+          value: "yes",
+        }],
+      },
+      {
+        key: "contentPadding",
+        label: "内容边距",
+        type: "number",
+        min: 0,
+        max: 60,
+        step: 2,
+        unit: "px",
+        slider: true,
+      },
     ],
     defaults: createDefaultConfig({
       maxWidth: 900,
@@ -2071,20 +2230,20 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       contentPadding: 16,
     }),
     buildCss: (config) => {
-      const maxWidth = px(config.values.maxWidth, 900);
-      const fullWidth = stringValue(config.values.fullWidth, "no");
-      const contentPadding = px(config.values.contentPadding, 16);
+      const maxWidth = px(config.values.maxWidth, 900)
+      const fullWidth = stringValue(config.values.fullWidth, "no")
+      const contentPadding = px(config.values.contentPadding, 16)
 
       const widthRule = fullWidth === "yes"
         ? ".protyle-content { max-width: 100% !important; }"
-        : `.protyle-content { max-width: ${maxWidth} !important; }`;
+        : `.protyle-content { max-width: ${maxWidth} !important; }`
 
       return `${widthRule}
 
 .protyle-content {
   padding-left: ${contentPadding} !important;
   padding-right: ${contentPadding} !important;
-}`;
+}`
     },
   },
   {
@@ -2100,12 +2259,30 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
         label: "正文字体",
         type: "select",
         options: [
-          { label: "默认", value: "default" },
-          { label: "思源黑体", value: "sourceHanSans" },
-          { label: "苹方", value: "pingfang" },
-          { label: "微软雅黑", value: "yahei" },
-          { label: "霞鹜文楷", value: "lxgw" },
-          { label: "自定义", value: "custom" },
+          {
+            label: "默认",
+            value: "default",
+          },
+          {
+            label: "思源黑体",
+            value: "sourceHanSans",
+          },
+          {
+            label: "苹方",
+            value: "pingfang",
+          },
+          {
+            label: "微软雅黑",
+            value: "yahei",
+          },
+          {
+            label: "霞鹜文楷",
+            value: "lxgw",
+          },
+          {
+            label: "自定义",
+            value: "custom",
+          },
         ],
       },
       {
@@ -2113,14 +2290,34 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
         label: "代码字体",
         type: "select",
         options: [
-          { label: "默认", value: "default" },
-          { label: "JetBrains Mono", value: "jetbrains" },
-          { label: "Fira Code", value: "firaCode" },
-          { label: "Cascadia Code", value: "cascadia" },
-          { label: "自定义", value: "custom" },
+          {
+            label: "默认",
+            value: "default",
+          },
+          {
+            label: "JetBrains Mono",
+            value: "jetbrains",
+          },
+          {
+            label: "Fira Code",
+            value: "firaCode",
+          },
+          {
+            label: "Cascadia Code",
+            value: "cascadia",
+          },
+          {
+            label: "自定义",
+            value: "custom",
+          },
         ],
       },
-      { key: "customMainFont", label: "自定义正文字体", type: "text", placeholder: "字体名称" },
+      {
+        key: "customMainFont",
+        label: "自定义正文字体",
+        type: "text",
+        placeholder: "字体名称",
+      },
     ],
     defaults: createDefaultConfig({
       mainFont: "default",
@@ -2134,31 +2331,31 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
         pingfang: '"PingFang SC", "Hiragino Sans GB", sans-serif',
         yahei: '"Microsoft YaHei", sans-serif',
         lxgw: '"LXGW WenKai", "霞鹜文楷", serif',
-      };
+      }
       const CODE_FONT_MAP: Record<string, string> = {
         default: "",
         jetbrains: '"JetBrains Mono", monospace',
         firaCode: '"Fira Code", monospace',
         cascadia: '"Cascadia Code", monospace',
-      };
+      }
 
-      const mainFontKey = stringValue(config.values.mainFont, "default");
-      const codeFontKey = stringValue(config.values.codeFont, "default");
-      const customFont = stringValue(config.values.customMainFont, "");
+      const mainFontKey = stringValue(config.values.mainFont, "default")
+      const codeFontKey = stringValue(config.values.codeFont, "default")
+      const customFont = stringValue(config.values.customMainFont, "")
 
       const mainFont = mainFontKey === "custom" && customFont
         ? `"${customFont}", sans-serif`
-        : MAIN_FONT_MAP[mainFontKey] || "";
-      const codeFont = CODE_FONT_MAP[codeFontKey] || "";
+        : MAIN_FONT_MAP[mainFontKey] || ""
+      const codeFont = CODE_FONT_MAP[codeFontKey] || ""
 
-      const rules: string[] = [];
+      const rules: string[] = []
       if (mainFont) {
-        rules.push(`:root {\n  --b3-font-family-protyle: ${mainFont} !important;\n}`);
+        rules.push(`:root {\n  --b3-font-family-protyle: ${mainFont} !important;\n}`)
       }
       if (codeFont) {
-        rules.push(`:root {\n  --b3-font-family-code: ${codeFont} !important;\n}`);
+        rules.push(`:root {\n  --b3-font-family-code: ${codeFont} !important;\n}`)
       }
-      return rules.join("\n\n");
+      return rules.join("\n\n")
     },
   },
   {
@@ -2170,19 +2367,60 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     risk: "全屋改造",
     controls: [
       {
-        key: "mode", label: "风格", type: "select",
+        key: "mode",
+        label: "风格",
+        type: "select",
         options: [
-          { label: "默认", value: "default" },
-          { label: "透明", value: "transparent" },
-          { label: "毛玻璃", value: "glass" },
+          {
+            label: "默认",
+            value: "default",
+          },
+          {
+            label: "透明",
+            value: "transparent",
+          },
+          {
+            label: "毛玻璃",
+            value: "glass",
+          },
         ],
       },
-      { key: "blurRadius", label: "模糊半径", type: "number", min: 0, max: 20, step: 1, unit: "px", slider: true },
-      { key: "backgroundColor", label: "背景色", type: "color" },
-      { key: "height", label: "高度", type: "number", min: 32, max: 48, step: 1, unit: "px", slider: true },
       {
-        key: "borderBottom", label: "底边线", type: "select",
-        options: [{ label: "显示", value: "show" }, { label: "隐藏", value: "hide" }],
+        key: "blurRadius",
+        label: "模糊半径",
+        type: "number",
+        min: 0,
+        max: 20,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "height",
+        label: "高度",
+        type: "number",
+        min: 32,
+        max: 48,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "borderBottom",
+        label: "底边线",
+        type: "select",
+        options: [{
+          label: "显示",
+          value: "show",
+        }, {
+          label: "隐藏",
+          value: "hide",
+        }],
       },
     ],
     defaults: createDefaultConfig({
@@ -2193,27 +2431,27 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       borderBottom: "show",
     }),
     buildCss: (config) => {
-      const mode = stringValue(config.values.mode, "default");
-      const blurRadius = px(config.values.blurRadius, 12);
-      const backgroundColor = stringValue(config.values.backgroundColor, "#ffffff");
-      const height = px(config.values.height, 36);
-      const borderBottom = stringValue(config.values.borderBottom, "show");
+      const mode = stringValue(config.values.mode, "default")
+      const blurRadius = px(config.values.blurRadius, 12)
+      const backgroundColor = stringValue(config.values.backgroundColor, "#ffffff")
+      const height = px(config.values.height, 36)
+      const borderBottom = stringValue(config.values.borderBottom, "show")
 
-      const rules: string[] = [`#toolbar { height: ${height} !important; }`];
+      const rules: string[] = [`#toolbar { height: ${height} !important; }`]
 
       if (mode === "transparent") {
-        rules.push("#toolbar { background: transparent !important; }");
+        rules.push("#toolbar { background: transparent !important; }")
       } else if (mode === "glass") {
-        rules.push(`#toolbar { background: ${backgroundColor}cc !important; backdrop-filter: blur(${blurRadius}) !important; -webkit-backdrop-filter: blur(${blurRadius}) !important; }`);
+        rules.push(`#toolbar { background: ${backgroundColor}cc !important; backdrop-filter: blur(${blurRadius}) !important; -webkit-backdrop-filter: blur(${blurRadius}) !important; }`)
       } else {
-        rules.push(`#toolbar { background: ${backgroundColor} !important; }`);
+        rules.push(`#toolbar { background: ${backgroundColor} !important; }`)
       }
 
       if (borderBottom === "hide") {
-        rules.push("#toolbar { border-bottom: none !important; box-shadow: none !important; }");
+        rules.push("#toolbar { border-bottom: none !important; box-shadow: none !important; }")
       }
 
-      return rules.join("\n");
+      return rules.join("\n")
     },
   },
   {
@@ -2224,16 +2462,52 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "📏",
     risk: "全屋改造",
     controls: [
-      { key: "width", label: "宽度", type: "number", min: 4, max: 16, step: 1, unit: "px", slider: true },
-      { key: "trackColor", label: "轨道颜色", type: "color" },
-      { key: "thumbColor", label: "滑块颜色", type: "color" },
-      { key: "thumbRadius", label: "滑块圆角", type: "number", min: 0, max: 8, step: 1, unit: "px" },
       {
-        key: "hideMode", label: "显示模式", type: "select",
+        key: "width",
+        label: "宽度",
+        type: "number",
+        min: 4,
+        max: 16,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "trackColor",
+        label: "轨道颜色",
+        type: "color",
+      },
+      {
+        key: "thumbColor",
+        label: "滑块颜色",
+        type: "color",
+      },
+      {
+        key: "thumbRadius",
+        label: "滑块圆角",
+        type: "number",
+        min: 0,
+        max: 8,
+        step: 1,
+        unit: "px",
+      },
+      {
+        key: "hideMode",
+        label: "显示模式",
+        type: "select",
         options: [
-          { label: "始终显示", value: "always" },
-          { label: "悬停显示", value: "hover" },
-          { label: "完全隐藏", value: "hidden" },
+          {
+            label: "始终显示",
+            value: "always",
+          },
+          {
+            label: "悬停显示",
+            value: "hover",
+          },
+          {
+            label: "完全隐藏",
+            value: "hidden",
+          },
         ],
       },
     ],
@@ -2245,19 +2519,19 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       hideMode: "always",
     }),
     buildCss: (config) => {
-      const width = px(config.values.width, 6);
-      const trackColor = stringValue(config.values.trackColor, "#f0f0f0");
-      const thumbColor = stringValue(config.values.thumbColor, "#c0c0c0");
-      const thumbRadius = px(config.values.thumbRadius, 4);
-      const hideMode = stringValue(config.values.hideMode, "always");
+      const width = px(config.values.width, 6)
+      const trackColor = stringValue(config.values.trackColor, "#f0f0f0")
+      const thumbColor = stringValue(config.values.thumbColor, "#c0c0c0")
+      const thumbRadius = px(config.values.thumbRadius, 4)
+      const hideMode = stringValue(config.values.hideMode, "always")
 
       if (hideMode === "hidden") {
-        return "::-webkit-scrollbar { display: none !important; }\n* { scrollbar-width: none !important; }";
+        return "::-webkit-scrollbar { display: none !important; }\n* { scrollbar-width: none !important; }"
       }
 
       const hover = hideMode === "hover"
         ? `::-webkit-scrollbar { width: ${width} !important; opacity: 0; transition: opacity 200ms ease; }\n::-webkit-scrollbar:hover { opacity: 1; }`
-        : `::-webkit-scrollbar { width: ${width} !important; }`;
+        : `::-webkit-scrollbar { width: ${width} !important; }`
 
       return `${hover}
 
@@ -2268,7 +2542,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
 ::-webkit-scrollbar-thumb {
   background: ${thumbColor} !important;
   border-radius: ${thumbRadius} !important;
-}`;
+}`
     },
   },
   {
@@ -2279,19 +2553,54 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "{ }",
     risk: "正文安全",
     controls: [
-      { key: "borderRadius", label: "圆角", type: "number", min: 0, max: 16, step: 1, unit: "px", slider: true },
-      { key: "backgroundColor", label: "背景色", type: "color" },
-      { key: "headerBgColor", label: "信息栏背景", type: "color" },
       {
-        key: "maxHeight", label: "最大高度", type: "select",
+        key: "borderRadius",
+        label: "圆角",
+        type: "number",
+        min: 0,
+        max: 16,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "headerBgColor",
+        label: "信息栏背景",
+        type: "color",
+      },
+      {
+        key: "maxHeight",
+        label: "最大高度",
+        type: "select",
         options: [
-          { label: "不限", value: "none" },
-          { label: "300px", value: "300px" },
-          { label: "500px", value: "500px" },
-          { label: "70vh", value: "70vh" },
+          {
+            label: "不限",
+            value: "none",
+          },
+          {
+            label: "300px",
+            value: "300px",
+          },
+          {
+            label: "500px",
+            value: "500px",
+          },
+          {
+            label: "70vh",
+            value: "70vh",
+          },
         ],
       },
-      { key: "lineNumberColor", label: "行号颜色", type: "color" },
+      {
+        key: "lineNumberColor",
+        label: "行号颜色",
+        type: "color",
+      },
     ],
     defaults: createDefaultConfig({
       borderRadius: 6,
@@ -2301,13 +2610,13 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       lineNumberColor: "#858585",
     }),
     buildCss: (config) => {
-      const borderRadius = px(config.values.borderRadius, 6);
-      const backgroundColor = stringValue(config.values.backgroundColor, "#1e1e1e");
-      const headerBgColor = stringValue(config.values.headerBgColor, "#2d2d2d");
-      const maxHeight = stringValue(config.values.maxHeight, "none");
-      const lineNumberColor = stringValue(config.values.lineNumberColor, "#858585");
+      const borderRadius = px(config.values.borderRadius, 6)
+      const backgroundColor = stringValue(config.values.backgroundColor, "#1e1e1e")
+      const headerBgColor = stringValue(config.values.headerBgColor, "#2d2d2d")
+      const maxHeight = stringValue(config.values.maxHeight, "none")
+      const lineNumberColor = stringValue(config.values.lineNumberColor, "#858585")
 
-      const maxH = maxHeight === "none" ? "" : `max-height: ${maxHeight} !important;`;
+      const maxH = maxHeight === "none" ? "" : `max-height: ${maxHeight} !important;`
 
       return `.protyle-wysiwyg .code-block {
   border-radius: ${borderRadius} !important;
@@ -2326,7 +2635,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
 
 .protyle-wysiwyg .protyle-linenumber {
   color: ${lineNumberColor} !important;
-}`;
+}`
     },
   },
   {
@@ -2337,10 +2646,33 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "B",
     risk: "正文安全",
     controls: [
-      { key: "color", label: "文字颜色", type: "color" },
-      { key: "backgroundColor", label: "背景色", type: "color" },
-      { key: "borderRadius", label: "背景圆角", type: "number", min: 0, max: 8, step: 1, unit: "px" },
-      { key: "fontWeight", label: "字重", type: "number", min: 600, max: 900, step: 100 },
+      {
+        key: "color",
+        label: "文字颜色",
+        type: "color",
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "borderRadius",
+        label: "背景圆角",
+        type: "number",
+        min: 0,
+        max: 8,
+        step: 1,
+        unit: "px",
+      },
+      {
+        key: "fontWeight",
+        label: "字重",
+        type: "number",
+        min: 600,
+        max: 900,
+        step: 100,
+      },
     ],
     defaults: createDefaultConfig({
       color: "#1a1a2e",
@@ -2349,10 +2681,10 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       fontWeight: 700,
     }),
     buildCss: (config) => {
-      const color = stringValue(config.values.color, "#1a1a2e");
-      const bg = stringValue(config.values.backgroundColor, "#fff3bf");
-      const radius = px(config.values.borderRadius, 3);
-      const weight = numberValue(config.values.fontWeight, 700);
+      const color = stringValue(config.values.color, "#1a1a2e")
+      const bg = stringValue(config.values.backgroundColor, "#fff3bf")
+      const radius = px(config.values.borderRadius, 3)
+      const weight = numberValue(config.values.fontWeight, 700)
 
       return `strong, b, span[data-type~="strong"] {
   color: ${color} !important;
@@ -2360,7 +2692,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
   border-radius: ${radius} !important;
   font-weight: ${weight} !important;
   padding: 0 2px !important;
-}`;
+}`
     },
   },
   {
@@ -2371,18 +2703,54 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
     preview: "📑",
     risk: "全屋改造",
     controls: [
-      { key: "height", label: "页签高度", type: "number", min: 28, max: 44, step: 1, unit: "px", slider: true },
-      { key: "fontSize", label: "字号", type: "number", min: 11, max: 16, step: 1, unit: "px" },
       {
-        key: "activeIndicator", label: "活动指示器", type: "select",
+        key: "height",
+        label: "页签高度",
+        type: "number",
+        min: 28,
+        max: 44,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "fontSize",
+        label: "字号",
+        type: "number",
+        min: 11,
+        max: 16,
+        step: 1,
+        unit: "px",
+      },
+      {
+        key: "activeIndicator",
+        label: "活动指示器",
+        type: "select",
         options: [
-          { label: "底线", value: "border" },
-          { label: "背景", value: "background" },
-          { label: "无", value: "none" },
+          {
+            label: "底线",
+            value: "border",
+          },
+          {
+            label: "背景",
+            value: "background",
+          },
+          {
+            label: "无",
+            value: "none",
+          },
         ],
       },
-      { key: "indicatorColor", label: "指示器颜色", type: "color" },
-      { key: "backgroundColor", label: "背景色", type: "color" },
+      {
+        key: "indicatorColor",
+        label: "指示器颜色",
+        type: "color",
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
     ],
     defaults: createDefaultConfig({
       height: 32,
@@ -2392,17 +2760,17 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
       backgroundColor: "transparent",
     }),
     buildCss: (config) => {
-      const height = px(config.values.height, 32);
-      const fontSize = px(config.values.fontSize, 13);
-      const indicator = stringValue(config.values.activeIndicator, "border");
-      const indicatorColor = stringValue(config.values.indicatorColor, "#4C8BF5");
-      const bgColor = stringValue(config.values.backgroundColor, "transparent");
+      const height = px(config.values.height, 32)
+      const fontSize = px(config.values.fontSize, 13)
+      const indicator = stringValue(config.values.activeIndicator, "border")
+      const indicatorColor = stringValue(config.values.indicatorColor, "#4C8BF5")
+      const bgColor = stringValue(config.values.backgroundColor, "transparent")
 
-      let indicatorCss = "";
+      let indicatorCss = ""
       if (indicator === "border") {
-        indicatorCss = `.layout-tab-bar .item--focus { border-bottom: 2px solid ${indicatorColor} !important; }`;
+        indicatorCss = `.layout-tab-bar .item--focus { border-bottom: 2px solid ${indicatorColor} !important; }`
       } else if (indicator === "background") {
-        indicatorCss = `.layout-tab-bar .item--focus { background: ${indicatorColor}22 !important; }`;
+        indicatorCss = `.layout-tab-bar .item--focus { background: ${indicatorColor}22 !important; }`
       }
 
       return `.layout-tab-bar {
@@ -2414,7 +2782,7 @@ ${stringValue(config.values.showBackground, "no") === "yes" ? `
   font-size: ${fontSize} !important;
 }
 
-${indicatorCss}`;
+${indicatorCss}`
     },
   },
   {
@@ -2425,10 +2793,30 @@ ${indicatorCss}`;
     preview: "🧭",
     risk: "全屋改造",
     controls: [
-      { key: "textColor", label: "文字颜色", type: "color" },
-      { key: "backgroundColor", label: "背景色", type: "color" },
-      { key: "separatorColor", label: "分隔符颜色", type: "color" },
-      { key: "fontSize", label: "字号", type: "number", min: 11, max: 14, step: 1, unit: "px" },
+      {
+        key: "textColor",
+        label: "文字颜色",
+        type: "color",
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "separatorColor",
+        label: "分隔符颜色",
+        type: "color",
+      },
+      {
+        key: "fontSize",
+        label: "字号",
+        type: "number",
+        min: 11,
+        max: 14,
+        step: 1,
+        unit: "px",
+      },
     ],
     defaults: createDefaultConfig({
       textColor: "#666666",
@@ -2437,10 +2825,10 @@ ${indicatorCss}`;
       fontSize: 12,
     }),
     buildCss: (config) => {
-      const textColor = stringValue(config.values.textColor, "#666666");
-      const bgColor = stringValue(config.values.backgroundColor, "transparent");
-      const sepColor = stringValue(config.values.separatorColor, "#999999");
-      const fontSize = px(config.values.fontSize, 12);
+      const textColor = stringValue(config.values.textColor, "#666666")
+      const bgColor = stringValue(config.values.backgroundColor, "transparent")
+      const sepColor = stringValue(config.values.separatorColor, "#999999")
+      const fontSize = px(config.values.fontSize, 12)
 
       return `.protyle-breadcrumb {
   color: ${textColor} !important;
@@ -2450,7 +2838,7 @@ ${indicatorCss}`;
 
 .protyle-breadcrumb__separator {
   color: ${sepColor} !important;
-}`;
+}`
     },
   },
   {
@@ -2461,10 +2849,36 @@ ${indicatorCss}`;
     preview: "📌",
     risk: "全屋改造",
     controls: [
-      { key: "iconSize", label: "图标大小", type: "number", min: 16, max: 28, step: 1, unit: "px", slider: true },
-      { key: "backgroundColor", label: "背景色", type: "color" },
-      { key: "hoverColor", label: "悬停颜色", type: "color" },
-      { key: "width", label: "宽度", type: "number", min: 36, max: 56, step: 2, unit: "px", slider: true },
+      {
+        key: "iconSize",
+        label: "图标大小",
+        type: "number",
+        min: 16,
+        max: 28,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "backgroundColor",
+        label: "背景色",
+        type: "color",
+      },
+      {
+        key: "hoverColor",
+        label: "悬停颜色",
+        type: "color",
+      },
+      {
+        key: "width",
+        label: "宽度",
+        type: "number",
+        min: 36,
+        max: 56,
+        step: 2,
+        unit: "px",
+        slider: true,
+      },
     ],
     defaults: createDefaultConfig({
       iconSize: 20,
@@ -2473,10 +2887,10 @@ ${indicatorCss}`;
       width: 40,
     }),
     buildCss: (config) => {
-      const iconSize = px(config.values.iconSize, 20);
-      const bgColor = stringValue(config.values.backgroundColor, "transparent");
-      const hoverColor = stringValue(config.values.hoverColor, "#e8e8e8");
-      const width = px(config.values.width, 40);
+      const iconSize = px(config.values.iconSize, 20)
+      const bgColor = stringValue(config.values.backgroundColor, "transparent")
+      const hoverColor = stringValue(config.values.hoverColor, "#e8e8e8")
+      const width = px(config.values.width, 40)
 
       return `.dock {
   background: ${bgColor} !important;
@@ -2490,7 +2904,7 @@ ${indicatorCss}`;
 
 .dock__item:hover {
   background: ${hoverColor} !important;
-}`;
+}`
     },
   },
   {
@@ -2501,9 +2915,25 @@ ${indicatorCss}`;
     risk: "全屋改造",
     group: "系统元素",
     controls: [
-      { key: "matchColor", label: "匹配项颜色", type: "color" },
-      { key: "currentMatchColor", label: "当前匹配颜色", type: "color" },
-      { key: "matchBorderRadius", label: "高亮圆角", type: "number", min: 0, max: 4, step: 1, unit: "px" },
+      {
+        key: "matchColor",
+        label: "匹配项颜色",
+        type: "color",
+      },
+      {
+        key: "currentMatchColor",
+        label: "当前匹配颜色",
+        type: "color",
+      },
+      {
+        key: "matchBorderRadius",
+        label: "高亮圆角",
+        type: "number",
+        min: 0,
+        max: 4,
+        step: 1,
+        unit: "px",
+      },
     ],
     defaults: createDefaultConfig({
       matchColor: "#fff3a8",
@@ -2511,9 +2941,9 @@ ${indicatorCss}`;
       matchBorderRadius: 2,
     }),
     buildCss: (config) => {
-      const matchColor = stringValue(config.values.matchColor, "#fff3a8");
-      const currentColor = stringValue(config.values.currentMatchColor, "#ff9632");
-      const radius = px(config.values.matchBorderRadius, 2);
+      const matchColor = stringValue(config.values.matchColor, "#fff3a8")
+      const currentColor = stringValue(config.values.currentMatchColor, "#ff9632")
+      const radius = px(config.values.matchBorderRadius, 2)
 
       return `.protyle-wysiwyg mark[data-type="search-mark"] {
   background-color: ${matchColor} !important;
@@ -2522,7 +2952,7 @@ ${indicatorCss}`;
 
 .protyle-wysiwyg mark[data-type="search-mark"].search-mark--current {
   background-color: ${currentColor} !important;
-}`;
+}`
     },
   },
   {
@@ -2533,15 +2963,50 @@ ${indicatorCss}`;
     risk: "全屋改造",
     group: "系统元素",
     controls: [
-      { key: "borderRadius", label: "圆角", type: "number", min: 0, max: 24, step: 2, unit: "px", slider: true },
-      { key: "backdropBlur", label: "背景模糊", type: "number", min: 0, max: 20, step: 1, unit: "px" },
-      { key: "backdropOpacity", label: "遮罩透明度", type: "number", min: 0, max: 1, step: 0.05 },
       {
-        key: "shadowIntensity", label: "阴影", type: "select",
+        key: "borderRadius",
+        label: "圆角",
+        type: "number",
+        min: 0,
+        max: 24,
+        step: 2,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "backdropBlur",
+        label: "背景模糊",
+        type: "number",
+        min: 0,
+        max: 20,
+        step: 1,
+        unit: "px",
+      },
+      {
+        key: "backdropOpacity",
+        label: "遮罩透明度",
+        type: "number",
+        min: 0,
+        max: 1,
+        step: 0.05,
+      },
+      {
+        key: "shadowIntensity",
+        label: "阴影",
+        type: "select",
         options: [
-          { label: "无", value: "none" },
-          { label: "轻", value: "light" },
-          { label: "重", value: "heavy" },
+          {
+            label: "无",
+            value: "none",
+          },
+          {
+            label: "轻",
+            value: "light",
+          },
+          {
+            label: "重",
+            value: "heavy",
+          },
         ],
       },
     ],
@@ -2552,16 +3017,16 @@ ${indicatorCss}`;
       shadowIntensity: "light",
     }),
     buildCss: (config) => {
-      const radius = px(config.values.borderRadius, 12);
-      const blur = px(config.values.backdropBlur, 8);
-      const opacity = numberValue(config.values.backdropOpacity, 0.5);
-      const shadow = stringValue(config.values.shadowIntensity, "light");
+      const radius = px(config.values.borderRadius, 12)
+      const blur = px(config.values.backdropBlur, 8)
+      const opacity = numberValue(config.values.backdropOpacity, 0.5)
+      const shadow = stringValue(config.values.shadowIntensity, "light")
 
       const SHADOW_MAP: Record<string, string> = {
         none: "none",
         light: "0 8px 32px rgba(0,0,0,0.12)",
         heavy: "0 16px 64px rgba(0,0,0,0.24)",
-      };
+      }
 
       return `.b3-dialog__container {
   border-radius: ${radius} !important;
@@ -2572,7 +3037,7 @@ ${indicatorCss}`;
   backdrop-filter: blur(${blur}) !important;
   -webkit-backdrop-filter: blur(${blur}) !important;
   background-color: rgba(0, 0, 0, ${opacity}) !important;
-}`;
+}`
     },
   },
   {
@@ -2584,24 +3049,66 @@ ${indicatorCss}`;
     group: "列表",
     controls: [
       {
-        key: "unorderedStyle", label: "无序标记", type: "select",
+        key: "unorderedStyle",
+        label: "无序标记",
+        type: "select",
         options: [
-          { label: "默认", value: "default" },
-          { label: "实心圆", value: "disc" },
-          { label: "空心圆", value: "circle" },
-          { label: "方块", value: "square" },
+          {
+            label: "默认",
+            value: "default",
+          },
+          {
+            label: "实心圆",
+            value: "disc",
+          },
+          {
+            label: "空心圆",
+            value: "circle",
+          },
+          {
+            label: "方块",
+            value: "square",
+          },
         ],
       },
       {
-        key: "orderedStyle", label: "有序编号", type: "select",
+        key: "orderedStyle",
+        label: "有序编号",
+        type: "select",
         options: [
-          { label: "默认", value: "default" },
-          { label: "罗马数字", value: "upper-roman" },
-          { label: "中文数字", value: "cjk" },
+          {
+            label: "默认",
+            value: "default",
+          },
+          {
+            label: "罗马数字",
+            value: "upper-roman",
+          },
+          {
+            label: "中文数字",
+            value: "cjk",
+          },
         ],
       },
-      { key: "itemSpacing", label: "列表项间距", type: "number", min: 0, max: 12, step: 1, unit: "px", slider: true },
-      { key: "indentation", label: "嵌套缩进", type: "number", min: 16, max: 40, step: 2, unit: "px" },
+      {
+        key: "itemSpacing",
+        label: "列表项间距",
+        type: "number",
+        min: 0,
+        max: 12,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "indentation",
+        label: "嵌套缩进",
+        type: "number",
+        min: 16,
+        max: 40,
+        step: 2,
+        unit: "px",
+      },
     ],
     defaults: createDefaultConfig({
       unorderedStyle: "default",
@@ -2610,28 +3117,28 @@ ${indicatorCss}`;
       indentation: 24,
     }),
     buildCss: (config) => {
-      const unordered = stringValue(config.values.unorderedStyle, "default");
-      const ordered = stringValue(config.values.orderedStyle, "default");
-      const spacing = px(config.values.itemSpacing, 4);
-      const indent = px(config.values.indentation, 24);
+      const unordered = stringValue(config.values.unorderedStyle, "default")
+      const ordered = stringValue(config.values.orderedStyle, "default")
+      const spacing = px(config.values.itemSpacing, 4)
+      const indent = px(config.values.indentation, 24)
 
-      const rules: string[] = [];
+      const rules: string[] = []
 
       if (unordered !== "default") {
-        rules.push(`.protyle-wysiwyg .li > [data-type="NodeList"] > .li { list-style-type: ${unordered} !important; }`);
+        rules.push(`.protyle-wysiwyg .li > [data-type="NodeList"] > .li { list-style-type: ${unordered} !important; }`)
       }
 
       if (ordered === "upper-roman") {
-        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: upper-roman !important; }');
+        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: upper-roman !important; }')
       }
       else if (ordered === "cjk") {
-        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: cjk-ideographic !important; }');
+        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: cjk-ideographic !important; }')
       }
 
-      rules.push(`.protyle-wysiwyg .li { margin-bottom: ${spacing} !important; }`);
-      rules.push(`.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: ${indent} !important; }`);
+      rules.push(`.protyle-wysiwyg .li { margin-bottom: ${spacing} !important; }`)
+      rules.push(`.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: ${indent} !important; }`)
 
-      return rules.join("\n");
+      return rules.join("\n")
     },
   },
-];
+]

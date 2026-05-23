@@ -6,26 +6,29 @@ import {
   updateFeatureConfig,
   updateTargetBackgroundColor,
   updateTargetColor,
-} from "@/lib/style-editor-state";
+} from "@/lib/style-editor-state"
 
 describe("style editor state", () => {
   it("creates the expected default state", () => {
-    const state = createDefaultEditorState();
+    const state = createDefaultEditorState()
 
-    expect(state.customPresetPalettes).toEqual([]);
-    expect(state.profile.heading1.color).toBe("");
-    expect(state.profile.strong.color).toBe("");
-    expect(state.profile.mark.backgroundColor).toBe("");
-    expect(state.profile.codeBlock.backgroundColor).toBe("");
-    expect(state.featureProfile.paragraphHover.enabled).toBe(false);
-    expect(state.featureProfile.imageRadius.values.radius).toBe(6);
-  });
+    expect(state.customPresetPalettes).toEqual([])
+    expect(state.profile.heading1.color).toBe("")
+    expect(state.profile.strong.color).toBe("")
+    expect(state.profile.mark.backgroundColor).toBe("")
+    expect(state.profile.codeBlock.backgroundColor).toBe("")
+    expect(state.featureProfile.paragraphHover.enabled).toBe(false)
+    expect(state.featureProfile.imageRadius.values.radius).toBe(6)
+  })
 
   it("normalizes persisted state onto the full schema", () => {
     const state = normalizeEditorState({
       customPresetPalettes: [
         {
-          colors: [{ label: "#3355aa", value: "#3355aa" }],
+          colors: [{
+            label: "#3355aa",
+            value: "#3355aa",
+          }],
           id: "custom-palette-1",
           label: "Saved",
         },
@@ -39,23 +42,26 @@ describe("style editor state", () => {
         },
       },
       profile: { strong: { color: "rgb(1, 2, 3)" } },
-    });
+    })
 
     expect(state.customPresetPalettes).toEqual([
       {
-        colors: [{ label: "#3355aa", value: "#3355aa" }],
+        colors: [{
+          label: "#3355aa",
+          value: "#3355aa",
+        }],
         id: "custom-palette-1",
         label: "Saved",
       },
-    ]);
-    expect(state.profile.strong.color).toBe("rgb(1, 2, 3)");
-    expect(state.profile.heading3.color).toBe("");
-    expect(state.profile.inlineCode.backgroundColor).toBe("");
-    expect(state.profile.taskList.color).toBe("");
-    expect(state.featureProfile.imageRadius.enabled).toBe(true);
-    expect(state.featureProfile.imageRadius.values.radius).toBe(14);
-    expect(state.featureProfile.linkStyle.enabled).toBe(false);
-  });
+    ])
+    expect(state.profile.strong.color).toBe("rgb(1, 2, 3)")
+    expect(state.profile.heading3.color).toBe("")
+    expect(state.profile.inlineCode.backgroundColor).toBe("")
+    expect(state.profile.taskList.color).toBe("")
+    expect(state.featureProfile.imageRadius.enabled).toBe(true)
+    expect(state.featureProfile.imageRadius.values.radius).toBe(14)
+    expect(state.featureProfile.linkStyle.enabled).toBe(false)
+  })
 
   it("updates one feature config without changing target styles", () => {
     const nextState = updateFeatureConfig(createDefaultEditorState(), "paragraphHover", {
@@ -63,42 +69,48 @@ describe("style editor state", () => {
       values: {
         backgroundColor: "#eeeeee",
       },
-    });
+    })
 
-    expect(nextState.featureProfile.paragraphHover.enabled).toBe(true);
-    expect(nextState.featureProfile.paragraphHover.values.backgroundColor).toBe("#eeeeee");
-    expect(nextState.featureProfile.paragraphHover.values.transitionMs).toBe(350);
-    expect(nextState.featureProfile.imageRadius.enabled).toBe(false);
-    expect(nextState.profile.heading1.color).toBe("");
-  });
+    expect(nextState.featureProfile.paragraphHover.enabled).toBe(true)
+    expect(nextState.featureProfile.paragraphHover.values.backgroundColor).toBe("#eeeeee")
+    expect(nextState.featureProfile.paragraphHover.values.transitionMs).toBe(350)
+    expect(nextState.featureProfile.imageRadius.enabled).toBe(false)
+    expect(nextState.profile.heading1.color).toBe("")
+  })
 
   it("updates only the chosen target color", () => {
     const nextState = updateTargetColor({
       ...createDefaultEditorState(),
       customPresetPalettes: [{
-        colors: [{ label: "#3355aa", value: "#3355aa" }],
+        colors: [{
+          label: "#3355aa",
+          value: "#3355aa",
+        }],
         id: "custom-palette-1",
         label: "Saved",
       }],
-    }, "heading2", "var(--b3-font-color4)");
+    }, "heading2", "var(--b3-font-color4)")
 
     expect(nextState.customPresetPalettes).toEqual([{
-      colors: [{ label: "#3355aa", value: "#3355aa" }],
+      colors: [{
+        label: "#3355aa",
+        value: "#3355aa",
+      }],
       id: "custom-palette-1",
       label: "Saved",
-    }]);
-    expect(nextState.profile.heading2.color).toBe("var(--b3-font-color4)");
-    expect(nextState.profile.heading1.color).toBe("");
-    expect(nextState.profile.strong.color).toBe("");
-  });
+    }])
+    expect(nextState.profile.heading2.color).toBe("var(--b3-font-color4)")
+    expect(nextState.profile.heading1.color).toBe("")
+    expect(nextState.profile.strong.color).toBe("")
+  })
 
   it("updates only the chosen target background color", () => {
-    const nextState = updateTargetBackgroundColor(createDefaultEditorState(), "mark", "var(--b3-font-background8)");
+    const nextState = updateTargetBackgroundColor(createDefaultEditorState(), "mark", "var(--b3-font-background8)")
 
-    expect(nextState.profile.mark.backgroundColor).toBe("var(--b3-font-background8)");
-    expect(nextState.profile.heading2.backgroundColor).toBe("");
-    expect(nextState.profile.blockquote.backgroundColor).toBe("");
-  });
+    expect(nextState.profile.mark.backgroundColor).toBe("var(--b3-font-background8)")
+    expect(nextState.profile.heading2.backgroundColor).toBe("")
+    expect(nextState.profile.blockquote.backgroundColor).toBe("")
+  })
 
   it("resets all configured styles back to the default state", () => {
     const stateWithStyles = updateTargetBackgroundColor(
@@ -114,33 +126,39 @@ describe("style editor state", () => {
       ),
       "mark",
       "var(--b3-font-background8)",
-    );
+    )
 
-    const resetState = resetEditorStyles(stateWithStyles);
+    const resetState = resetEditorStyles(stateWithStyles)
 
-    expect(resetState.customPresetPalettes).toEqual([]);
-    expect(resetState.profile.heading2.color).toBe("");
-    expect(resetState.profile.mark.backgroundColor).toBe("");
-    expect(resetState.profile.heading1.color).toBe("");
-    expect(resetState.profile.codeBlock.backgroundColor).toBe("");
-    expect(resetState.featureProfile.imageRadius.enabled).toBe(false);
-    expect(resetState.featureProfile.imageRadius.values.radius).toBe(6);
-  });
+    expect(resetState.customPresetPalettes).toEqual([])
+    expect(resetState.profile.heading2.color).toBe("")
+    expect(resetState.profile.mark.backgroundColor).toBe("")
+    expect(resetState.profile.heading1.color).toBe("")
+    expect(resetState.profile.codeBlock.backgroundColor).toBe("")
+    expect(resetState.featureProfile.imageRadius.enabled).toBe(false)
+    expect(resetState.featureProfile.imageRadius.values.radius).toBe(6)
+  })
 
   it("swaps colors between any two target channels", () => {
     const state = updateTargetBackgroundColor(
       updateTargetColor(createDefaultEditorState(), "heading2", "#224488"),
       "mark",
       "#fff2a8",
-    );
+    )
 
     const swappedState = swapTargetChannelValues(
       state,
-      { channel: "color", target: "heading2" },
-      { channel: "backgroundColor", target: "mark" },
-    );
+      {
+        channel: "color",
+        target: "heading2",
+      },
+      {
+        channel: "backgroundColor",
+        target: "mark",
+      },
+    )
 
-    expect(swappedState.profile.heading2.color).toBe("#fff2a8");
-    expect(swappedState.profile.mark.backgroundColor).toBe("#224488");
-  });
-});
+    expect(swappedState.profile.heading2.color).toBe("#fff2a8")
+    expect(swappedState.profile.mark.backgroundColor).toBe("#224488")
+  })
+})

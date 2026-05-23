@@ -1,17 +1,17 @@
 export interface PresetPaletteColor {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 export interface PresetPaletteCollection {
-  colors: PresetPaletteColor[];
-  id: string;
-  label: string;
+  colors: PresetPaletteColor[]
+  id: string
+  label: string
 }
 
 export function normalizePresetPaletteCollections(input: unknown): PresetPaletteCollection[] {
   if (!Array.isArray(input)) {
-    return [];
+    return []
   }
 
   return input.flatMap((palette) => {
@@ -22,7 +22,7 @@ export function normalizePresetPaletteCollections(input: unknown): PresetPalette
       || typeof (palette as { label?: unknown }).label !== "string"
       || !Array.isArray((palette as { colors?: unknown[] }).colors)
     ) {
-      return [];
+      return []
     }
 
     const colors = (palette as { colors: unknown[] }).colors.flatMap((color) => {
@@ -32,60 +32,60 @@ export function normalizePresetPaletteCollections(input: unknown): PresetPalette
         || typeof (color as { label?: unknown }).label !== "string"
         || typeof (color as { value?: unknown }).value !== "string"
       ) {
-        return [];
+        return []
       }
 
       return [{
         label: (color as { label: string }).label,
         value: (color as { value: string }).value,
-      }];
-    });
+      }]
+    })
 
     if (colors.length === 0) {
-      return [];
+      return []
     }
 
     return [{
       colors,
       id: (palette as { id: string }).id,
       label: (palette as { label: string }).label,
-    }];
-  });
+    }]
+  })
 }
 
 export function createPresetPaletteColors(colors: string[]): PresetPaletteColor[] {
-  const uniqueColors = [...new Set(colors.filter(Boolean))];
-  return uniqueColors.map(color => ({
+  const uniqueColors = [...new Set(colors.filter(Boolean))]
+  return uniqueColors.map((color) => ({
     label: color,
     value: color,
-  }));
+  }))
 }
 
 export function buildPresetPaletteCardBackground(colors: PresetPaletteColor[]): string {
   if (colors.length === 0) {
-    return "linear-gradient(135deg, transparent 0%, transparent 100%)";
+    return "linear-gradient(135deg, transparent 0%, transparent 100%)"
   }
 
   if (colors.length === 1) {
-    return `linear-gradient(135deg, ${colors[0].value} 0%, ${colors[0].value} 100%)`;
+    return `linear-gradient(135deg, ${colors[0].value} 0%, ${colors[0].value} 100%)`
   }
 
-  const lastIndex = colors.length - 1;
+  const lastIndex = colors.length - 1
   const stops = colors.map((color, index) => {
     if (index === 0) {
-      return `${color.value} 0%`;
+      return `${color.value} 0%`
     }
 
     if (index === lastIndex) {
-      return `${color.value} 100%`;
+      return `${color.value} 100%`
     }
 
-    const baseStop = (index / lastIndex) * 100;
-    const softenedStop = Math.round(baseStop - (lastIndex - index));
-    return `${color.value} ${softenedStop}%`;
-  });
+    const baseStop = (index / lastIndex) * 100
+    const softenedStop = Math.round(baseStop - (lastIndex - index))
+    return `${color.value} ${softenedStop}%`
+  })
 
-  return `linear-gradient(135deg, ${stops.join(", ")})`;
+  return `linear-gradient(135deg, ${stops.join(", ")})`
 }
 
 export const PRESET_PALETTE_COLLECTIONS: PresetPaletteCollection[] = [
@@ -139,4 +139,4 @@ export const PRESET_PALETTE_COLLECTIONS: PresetPaletteCollection[] = [
     label: "Watermelon Sorbet",
     colors: createPresetPaletteColors(["#EF476F", "#FFD166", "#06D6A0", "#118AB2", "#073B4C"]),
   },
-];
+]

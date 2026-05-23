@@ -1,44 +1,54 @@
+import type { PresetPaletteCollection } from "@/lib/preset-palette-catalog"
+import type {
+  FeatureStyleConfig,
+  FeatureStyleId,
+  FeatureStyleProfile,
+} from "@/lib/style-feature-catalog"
+import type {
+  StyleProfile,
+  StyleTarget,
+} from "@/lib/style-profile"
 import {
   normalizePresetPaletteCollections,
-  type PresetPaletteCollection,
-} from "@/lib/preset-palette-catalog";
+
+} from "@/lib/preset-palette-catalog"
 import {
   createDefaultFeatureProfile,
+
+
+
   normalizeFeatureProfile,
-  type FeatureStyleConfig,
-  type FeatureStyleId,
-  type FeatureStyleProfile,
-} from "@/lib/style-feature-catalog";
+} from "@/lib/style-feature-catalog"
 import {
   createDefaultStyleProfile,
   normalizeStyleProfile,
-  type StyleProfile,
-  type StyleTarget,
-} from "@/lib/style-profile";
+
+
+} from "@/lib/style-profile"
 
 export interface StyleEditorState {
-  customPresetPalettes: PresetPaletteCollection[];
-  featureProfile: FeatureStyleProfile;
-  profile: StyleProfile;
+  customPresetPalettes: PresetPaletteCollection[]
+  featureProfile: FeatureStyleProfile
+  profile: StyleProfile
 }
 
 export interface StyleTargetChannelRef {
-  channel: "backgroundColor" | "color";
-  target: StyleTarget;
+  channel: "backgroundColor" | "color"
+  target: StyleTarget
 }
 
 type PartialState = Partial<{
-  customPresetPalettes: unknown;
-  featureProfile: Partial<FeatureStyleProfile>;
-  profile: Partial<StyleProfile>;
-}>;
+  customPresetPalettes: unknown
+  featureProfile: Partial<FeatureStyleProfile>
+  profile: Partial<StyleProfile>
+}>
 
 export function createDefaultEditorState(): StyleEditorState {
   return {
     customPresetPalettes: [],
     featureProfile: createDefaultFeatureProfile(),
     profile: createDefaultStyleProfile(),
-  };
+  }
 }
 
 export function normalizeEditorState(input?: PartialState | null): StyleEditorState {
@@ -46,7 +56,7 @@ export function normalizeEditorState(input?: PartialState | null): StyleEditorSt
     customPresetPalettes: normalizePresetPaletteCollections(input?.customPresetPalettes),
     featureProfile: normalizeFeatureProfile(input?.featureProfile),
     profile: normalizeStyleProfile(input?.profile),
-  };
+  }
 }
 
 export function updateFeatureConfig(
@@ -64,12 +74,12 @@ export function updateFeatureConfig(
         ...(config.values ?? {}),
       },
     },
-  });
+  })
 
   return {
     ...state,
     featureProfile: normalizedFeatureProfile,
-  };
+  }
 }
 
 export function updateTargetColor(
@@ -86,7 +96,7 @@ export function updateTargetColor(
         color,
       },
     },
-  };
+  }
 }
 
 export function updateTargetBackgroundColor(
@@ -103,7 +113,7 @@ export function updateTargetBackgroundColor(
         backgroundColor,
       },
     },
-  };
+  }
 }
 
 export function swapTargetChannelValues(
@@ -112,11 +122,11 @@ export function swapTargetChannelValues(
   target: StyleTargetChannelRef,
 ): StyleEditorState {
   if (source.target === target.target && source.channel === target.channel) {
-    return state;
+    return state
   }
 
-  const sourceValue = state.profile[source.target][source.channel];
-  const targetValue = state.profile[target.target][target.channel];
+  const sourceValue = state.profile[source.target][source.channel]
+  const targetValue = state.profile[target.target][target.channel]
 
   return {
     ...state,
@@ -131,7 +141,7 @@ export function swapTargetChannelValues(
         [target.channel]: sourceValue,
       },
     },
-  };
+  }
 }
 
 export function resetEditorStyles(state: StyleEditorState): StyleEditorState {
@@ -139,5 +149,5 @@ export function resetEditorStyles(state: StyleEditorState): StyleEditorState {
     ...state,
     featureProfile: createDefaultFeatureProfile(),
     profile: createDefaultStyleProfile(),
-  };
+  }
 }

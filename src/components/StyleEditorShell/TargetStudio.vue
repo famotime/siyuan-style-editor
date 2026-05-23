@@ -20,7 +20,10 @@
             title="保存当前配色为色卡"
             @click="openSaveForm"
           >
-            <span class="target-studio__save-icon" aria-hidden="true">
+            <span
+              class="target-studio__save-icon"
+              aria-hidden="true"
+            >
               <span class="target-studio__save-icon-body" />
               <span class="target-studio__save-icon-notch" />
               <span class="target-studio__save-icon-label" />
@@ -72,13 +75,22 @@
             fill="none"
             aria-hidden="true"
           >
-            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path
+              d="M4 6l4 4 4-4"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </button>
       </div>
     </div>
 
-    <div v-show="!collapsed" class="target-grid">
+    <div
+      v-show="!collapsed"
+      class="target-grid"
+    >
       <article
         v-for="target in styleTargetOptions"
         :key="target.value"
@@ -165,52 +177,52 @@
 </template>
 
 <script setup lang="ts">
-import type { PaintChannel } from "@/style-editor-runtime";
-import type { StyleTarget } from "@/lib/style-profile";
+import type { StyleTarget } from "@/lib/style-profile"
+import type { PaintChannel } from "@/style-editor-runtime"
 
 import {
   nextTick,
   ref,
-} from "vue";
+} from "vue"
 
-const collapsed = ref(false);
+import { useTargetOrbDragSession } from "@/composables/use-target-orb-drag-session"
 
-import { useTargetOrbDragSession } from "@/composables/use-target-orb-drag-session";
+const props = defineProps<{
+  getChannelSwatch: (target: StyleTarget, channel: PaintChannel) => ChannelSwatch
+  getTargetPreviewStyle: (target: StyleTarget) => Record<string, string>
+  isInlinePaletteOpenForTarget: (target: StyleTarget) => boolean
+  selectedChannel: PaintChannel
+  selectedTarget: StyleTarget
+  styleTargetOptions: StyleTargetOption[]
+}>()
+
+const emit = defineEmits<{
+  "activate-channel": [payload: { channel: PaintChannel, event: MouseEvent, target: StyleTarget }]
+  "save-preset-palette": [name: string]
+  "select-target": [target: StyleTarget]
+  "swap-channel-value": [
+    source: { channel: PaintChannel, target: StyleTarget },
+    target: { channel: PaintChannel, target: StyleTarget },
+  ]
+}>()
+
+const collapsed = ref(false)
 
 interface StyleTargetOption {
-  hint: string;
-  label: string;
-  shortLabel: string;
-  value: StyleTarget;
+  hint: string
+  label: string
+  shortLabel: string
+  value: StyleTarget
 }
 
 interface ChannelSwatch {
-  background: string;
-  isEmpty: boolean;
+  background: string
+  isEmpty: boolean
 }
 
-const props = defineProps<{
-  getChannelSwatch: (target: StyleTarget, channel: PaintChannel) => ChannelSwatch;
-  getTargetPreviewStyle: (target: StyleTarget) => Record<string, string>;
-  isInlinePaletteOpenForTarget: (target: StyleTarget) => boolean;
-  selectedChannel: PaintChannel;
-  selectedTarget: StyleTarget;
-  styleTargetOptions: StyleTargetOption[];
-}>();
-
-const emit = defineEmits<{
-  "activate-channel": [payload: { channel: PaintChannel; event: MouseEvent; target: StyleTarget }];
-  "save-preset-palette": [name: string];
-  "select-target": [target: StyleTarget];
-  "swap-channel-value": [
-    source: { channel: PaintChannel; target: StyleTarget },
-    target: { channel: PaintChannel; target: StyleTarget },
-  ];
-}>();
-
-const isSaveFormVisible = ref(false);
-const saveInputRef = ref<HTMLInputElement | null>(null);
-const savePaletteName = ref("");
+const isSaveFormVisible = ref(false)
+const saveInputRef = ref<HTMLInputElement | null>(null)
+const savePaletteName = ref("")
 const {
   floatingOrbPreview,
   handleOrbClick,
@@ -221,29 +233,29 @@ const {
   isDropTargetOrb,
 } = useTargetOrbDragSession({
   getChannelSwatch: props.getChannelSwatch,
-  onActivateChannel: payload => emit("activate-channel", payload),
+  onActivateChannel: (payload) => emit("activate-channel", payload),
   onSwapChannelValue: (source, target) => emit("swap-channel-value", source, target),
-});
+})
 
 async function openSaveForm() {
-  isSaveFormVisible.value = true;
-  await nextTick();
-  saveInputRef.value?.focus();
+  isSaveFormVisible.value = true
+  await nextTick()
+  saveInputRef.value?.focus()
 }
 
 function closeSaveForm() {
-  isSaveFormVisible.value = false;
-  savePaletteName.value = "";
+  isSaveFormVisible.value = false
+  savePaletteName.value = ""
 }
 
 function submitSaveForm() {
-  const trimmedName = savePaletteName.value.trim();
+  const trimmedName = savePaletteName.value.trim()
   if (!trimmedName) {
-    return;
+    return
   }
 
-  emit("save-preset-palette", trimmedName);
-  closeSaveForm();
+  emit("save-preset-palette", trimmedName)
+  closeSaveForm()
 }
 </script>
 

@@ -1,29 +1,29 @@
-import { Plugin } from "siyuan";
+import { Plugin } from "siyuan"
 
-import "@/index.scss";
-import PluginInfoString from "@/../plugin.json";
+import PluginInfoString from "@/../plugin.json"
 import {
   destroy,
   init,
   mountDock,
-} from "@/main";
+} from "@/main"
+import "@/index.scss"
 
 let pluginInfo = {
   version: "",
-};
+}
 
 try {
-  pluginInfo = PluginInfoString;
+  pluginInfo = PluginInfoString
 }
 catch (error) {
-  console.error("Plugin info parse error", error);
+  console.error("Plugin info parse error", error)
 }
 
 export default class SiyuanStyleEditorPlugin extends Plugin {
-  public readonly version = pluginInfo.version;
+  public readonly version = pluginInfo.version
 
   async onload() {
-    await init(this);
+    await init(this)
 
     this.addDock({
       config: {
@@ -39,12 +39,12 @@ export default class SiyuanStyleEditorPlugin extends Plugin {
       data: {},
       type: "style-editor-workshop",
       init(dock) {
-        mountDock(dock.element);
+        mountDock(dock.element)
       },
-    });
+    })
   }
 
   onunload() {
-    destroy();
+    destroy()
   }
 }

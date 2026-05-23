@@ -3,16 +3,22 @@ import {
   h,
   nextTick,
   ref,
-} from "vue";
+} from "vue"
 
-import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue";
+import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue"
 
 function createProps() {
   return {
     activePresetPalette: {
       colors: [
-        { label: "#224488", value: "#224488" },
-        { label: "#5B8DEF", value: "#5B8DEF" },
+        {
+          label: "#224488",
+          value: "#224488",
+        },
+        {
+          label: "#5B8DEF",
+          value: "#5B8DEF",
+        },
       ],
       id: "custom-palette-1",
       label: "My Favorite",
@@ -44,16 +50,28 @@ function createProps() {
     presetPaletteCollections: [
       {
         colors: [
-          { label: "#224488", value: "#224488" },
-          { label: "#5B8DEF", value: "#5B8DEF" },
+          {
+            label: "#224488",
+            value: "#224488",
+          },
+          {
+            label: "#5B8DEF",
+            value: "#5B8DEF",
+          },
         ],
         id: "custom-palette-1",
         label: "My Favorite",
       },
       {
         colors: [
-          { label: "#F6D365", value: "#F6D365" },
-          { label: "#F2A65A", value: "#F2A65A" },
+          {
+            label: "#F6D365",
+            value: "#F6D365",
+          },
+          {
+            label: "#F2A65A",
+            value: "#F2A65A",
+          },
         ],
         id: "warm-sand",
         label: "Warm Sand",
@@ -65,32 +83,32 @@ function createProps() {
     setFloatingPaletteRef: () => {},
     setInlineColorFieldRef: () => {},
     visible: true,
-  } as const;
+  } as const
 }
 
 async function mountFloatingPalettePanel() {
-  const onApplyCustomColor = vi.fn();
-  const onApplyPresetPaletteSequence = vi.fn();
-  const onClearSelectedTargetColor = vi.fn();
-  const onDeletePresetPalette = vi.fn();
-  const onSelectPresetColor = vi.fn();
-  const onSelectPresetPaletteTab = vi.fn();
-  const onTogglePresetPaletteSection = vi.fn();
-  const onUpdateCustomColorDraft = vi.fn();
-  const onHueInput = vi.fn();
-  const onCancel = vi.fn();
-  const customColorDraft = ref("#224488");
-  const container = document.createElement("div");
-  document.body.append(container);
+  const onApplyCustomColor = vi.fn()
+  const onApplyPresetPaletteSequence = vi.fn()
+  const onClearSelectedTargetColor = vi.fn()
+  const onDeletePresetPalette = vi.fn()
+  const onSelectPresetColor = vi.fn()
+  const onSelectPresetPaletteTab = vi.fn()
+  const onTogglePresetPaletteSection = vi.fn()
+  const onUpdateCustomColorDraft = vi.fn()
+  const onHueInput = vi.fn()
+  const onCancel = vi.fn()
+  const customColorDraft = ref("#224488")
+  const container = document.createElement("div")
+  document.body.append(container)
 
   const app = createApp({
     render() {
       return h(FloatingPalettePanel, {
         ...createProps(),
-        customColorDraft: customColorDraft.value,
+        "customColorDraft": customColorDraft.value,
         "onUpdate:customColorDraft": (value: string) => {
-          customColorDraft.value = value;
-          onUpdateCustomColorDraft(value);
+          customColorDraft.value = value
+          onUpdateCustomColorDraft(value)
         },
         onApplyCustomColor,
         onApplyPresetPaletteSequence,
@@ -101,12 +119,12 @@ async function mountFloatingPalettePanel() {
         onTogglePresetPaletteSection,
         onHueInput,
         onCancel,
-      });
+      })
     },
-  });
+  })
 
-  app.mount(container);
-  await nextTick();
+  app.mount(container)
+  await nextTick()
 
   return {
     container,
@@ -122,45 +140,52 @@ async function mountFloatingPalettePanel() {
     onHueInput,
     onCancel,
     unmount() {
-      app.unmount();
-      container.remove();
+      app.unmount()
+      container.remove()
     },
-  };
+  }
 }
 
-describe("FloatingPalettePanel", () => {
+describe("floatingPalettePanel", () => {
   afterEach(() => {
-    document.body.innerHTML = "";
-    vi.clearAllMocks();
-  });
+    document.body.innerHTML = ""
+    vi.clearAllMocks()
+  })
 
   it("emits preset, delete, clear, and apply interactions from the rendered sections", async () => {
-    const { onApplyCustomColor, onApplyPresetPaletteSequence, onClearSelectedTargetColor, onDeletePresetPalette, onSelectPresetColor, unmount } = await mountFloatingPalettePanel();
+    const {
+      onApplyCustomColor,
+      onApplyPresetPaletteSequence,
+      onClearSelectedTargetColor,
+      onDeletePresetPalette,
+      onSelectPresetColor,
+      unmount,
+    } = await mountFloatingPalettePanel()
 
-    const panel = document.body.querySelector(".inline-palette-panel");
-    expect(panel).not.toBeNull();
-    expect(panel?.textContent).toContain("My Favorite");
+    const panel = document.body.querySelector(".inline-palette-panel")
+    expect(panel).not.toBeNull()
+    expect(panel?.textContent).toContain("My Favorite")
 
-    const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")];
-    presetTabs[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
-    expect(onApplyPresetPaletteSequence).toHaveBeenCalledWith("custom-palette-1");
+    const presetTabs = [...document.body.querySelectorAll(".preset-palette-tab")]
+    presetTabs[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }))
+    expect(onApplyPresetPaletteSequence).toHaveBeenCalledWith("custom-palette-1")
 
-    const deleteButton = document.body.querySelector(".preset-palette-tab__delete");
-    deleteButton?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    await nextTick();
-    document.body.querySelector(".preset-palette-tab__delete-confirm")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(onDeletePresetPalette).toHaveBeenCalledWith("custom-palette-1");
+    const deleteButton = document.body.querySelector(".preset-palette-tab__delete")
+    deleteButton?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    await nextTick()
+    document.body.querySelector(".preset-palette-tab__delete-confirm")?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(onDeletePresetPalette).toHaveBeenCalledWith("custom-palette-1")
 
-    const swatchButtons = [...document.body.querySelectorAll(".swatch-chip")];
-    swatchButtons[0]?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(onSelectPresetColor).toHaveBeenCalledWith("#224488");
+    const swatchButtons = [...document.body.querySelectorAll(".swatch-chip")]
+    swatchButtons[0]?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(onSelectPresetColor).toHaveBeenCalledWith("#224488")
 
-    swatchButtons.at(-1)?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(onClearSelectedTargetColor).toHaveBeenCalledOnce();
+    swatchButtons.at(-1)?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(onClearSelectedTargetColor).toHaveBeenCalledOnce()
 
-    document.body.querySelector(".custom-color-apply")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(onApplyCustomColor).toHaveBeenCalledOnce();
+    document.body.querySelector(".custom-color-apply")?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(onApplyCustomColor).toHaveBeenCalledOnce()
 
-    unmount();
-  });
-});
+    unmount()
+  })
+})
