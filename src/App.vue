@@ -29,13 +29,17 @@
         @activate-channel="handleTargetChannelActivation"
       />
 
-      <FeatureStudio
+      <FeatureSection
+        kicker="Advanced Config"
+        title="高级定制"
         :feature-style-options="bodySafeFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         @update-feature-style="handleUpdateFeatureStyle"
       />
 
-      <EditorUiStudio
+      <FeatureSection
+        kicker="Editor UI"
+        title="全屋改造"
         :feature-style-options="editorUiFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         @update-feature-style="handleUpdateFeatureStyle"
@@ -81,8 +85,7 @@ import type { PaintChannel } from "@/style-editor-runtime";
 import type { StyleTarget } from "@/lib/style-profile";
 
 import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue";
-import FeatureStudio from "@/components/StyleEditorShell/FeatureStudio.vue";
-import EditorUiStudio from "@/components/StyleEditorShell/EditorUiStudio.vue";
+import FeatureSection from "@/components/StyleEditorShell/FeatureSection.vue";
 import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue";
 import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue";
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell";

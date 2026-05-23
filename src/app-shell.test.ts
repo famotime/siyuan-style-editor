@@ -395,18 +395,16 @@ describe("app shell", () => {
     unmount();
   });
 
-  it("renders feature cards in both FeatureStudio and EditorUiStudio panels", async () => {
+  it("renders feature cards in both FeatureSection panels", async () => {
     const shellState = createShellState();
     const { container, unmount } = await mountApp(shellState);
 
-    const featureStudio = container.querySelector(".feature-studio");
-    const editorUiStudio = container.querySelector(".editor-ui-studio");
+    const featureSections = container.querySelectorAll(".feature-section");
 
-    expect(featureStudio).not.toBeNull();
-    expect(editorUiStudio).not.toBeNull();
+    expect(featureSections.length).toBe(2);
 
-    const bodySafeCards = featureStudio!.querySelectorAll(".feature-card");
-    const editorUiCards = editorUiStudio!.querySelectorAll(".feature-card");
+    const bodySafeCards = featureSections[0].querySelectorAll(".feature-card");
+    const editorUiCards = featureSections[1].querySelectorAll(".feature-card");
 
     expect(bodySafeCards.length).toBe(shellState.bodySafeFeatureOptions.length);
     expect(editorUiCards.length).toBe(shellState.editorUiFeatureOptions.length);
