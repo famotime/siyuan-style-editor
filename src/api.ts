@@ -1,7 +1,10 @@
 import type {
   App,
+  IWebSocketData,
+} from "siyuan"
+
+import {
   fetchSyncPost,
-  type IWebSocketData,
   openTab,
 } from "siyuan"
 
