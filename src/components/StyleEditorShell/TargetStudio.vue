@@ -543,9 +543,9 @@ function submitSaveForm() {
 
 .target-preview-card {
   display: grid;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 20px;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 14px;
   border: 1px solid var(--panel-divider);
   background: var(--panel-card-strong);
 }
@@ -559,11 +559,11 @@ function submitSaveForm() {
 
 .target-preview-card__surface {
   display: grid;
-  gap: 6px;
-  min-height: 92px;
-  padding: 14px;
+  gap: 2px;
+  min-height: 68px;
+  padding: 8px 12px;
   border: 1px solid var(--panel-card-inner-stroke);
-  border-radius: 18px;
+  border-radius: 10px;
   text-align: left;
   cursor: pointer;
   background: var(--panel-preview-bg);

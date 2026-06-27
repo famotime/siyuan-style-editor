@@ -167,7 +167,7 @@ function handleTargetChannelActivation(payload: {
 <style scoped lang="scss">
 .style-editor-shell {
   min-height: 100%;
-  padding: 16px;
+  padding: 8px;
   display: grid;
   align-content: start;
   box-sizing: border-box;
@@ -185,10 +185,10 @@ function handleTargetChannelActivation(payload: {
   overflow: hidden;
   display: grid;
   align-content: start;
-  gap: 12px;
-  padding: 12px 16px 22px;
+  gap: 10px;
+  padding: 12px 12px 16px;
   border: 1px solid var(--panel-card-stroke);
-  border-radius: 26px;
+  border-radius: 16px;
   background:
     linear-gradient(135deg, var(--panel-glass), transparent 48%),
     linear-gradient(180deg, var(--panel-card-highlight), transparent 34%),
@@ -197,16 +197,17 @@ function handleTargetChannelActivation(payload: {
 }
 
 .style-card--workspace {
-  gap: 10px;
+  gap: 8px;
 }
 
 @media (max-width: 520px) {
   .style-editor-shell {
-    padding: 12px;
+    padding: 6px;
   }
 
   .style-card {
-    padding: 14px;
+    padding: 10px 10px 14px;
+    border-radius: 12px;
   }
 }
 </style>
