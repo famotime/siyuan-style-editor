@@ -14,6 +14,20 @@ import {
   stringValue,
 } from "./feature-style-types"
 
+function hexToRgb(hex: string): string {
+  const h = hex.replace(/^#/, "")
+  if (h.length === 3) {
+    const r = parseInt(h[0] + h[0], 16)
+    const g = parseInt(h[1] + h[1], 16)
+    const b = parseInt(h[2] + h[2], 16)
+    return `${r}, ${g}, ${b}`
+  }
+  const r = parseInt(h.substring(0, 2), 16)
+  const g = parseInt(h.substring(2, 4), 16)
+  const b = parseInt(h.substring(4, 6), 16)
+  return `${r}, ${g}, ${b}`
+}
+
 export const FEATURE_DEFINITIONS: FeatureDefinition[] = [
   {
     buildCss: (config) => `
@@ -1071,26 +1085,53 @@ ${stringValue(config.values.showBackground, "no") === "yes"
     },
   },
   {
-    buildCss: (config) => `
+    buildCss: (config) => {
+      const headerBg = stringValue(config.values.headerBackgroundColor, "#2c2c2c")
+      const headerFg = stringValue(config.values.headerColor, "#e0e0e0")
+      const borderCol = stringValue(config.values.borderColor, "var(--b3-border-color, #444)")
+      const borderW = numberValue(config.values.borderWidth, 1.5)
+      const padY = px(config.values.cellPaddingY, 6)
+      const padX = px(config.values.cellPaddingX, 10)
+      const radius = px(config.values.borderRadius, 0)
+      const textCol = stringValue(config.values.textColor, "")
+      const oddBg = stringValue(config.values.oddRowBackground, "")
+      const evenBg = stringValue(config.values.evenRowBackground, "")
+
+      let rules = `
 .b3-typography table,
 .protyle-wysiwyg table {
   font-weight: 500;
   border-collapse: collapse;
+  border-radius: ${radius} !important;
+  overflow: hidden !important;
 }
 
 .b3-typography table thead,
 .protyle-wysiwyg table thead {
-  background-color: ${stringValue(config.values.headerBackgroundColor, "#2c2c2c")} !important;
-  color: ${stringValue(config.values.headerColor, "#e0e0e0")} !important;
+  background-color: ${headerBg} !important;
+  color: ${headerFg} !important;
 }
 
 .b3-typography table td,
 .b3-typography table th,
 .protyle-wysiwyg table td,
 .protyle-wysiwyg table th {
-  border: ${numberValue(config.values.borderWidth, 1.5)}px solid ${stringValue(config.values.borderColor, "var(--b3-border-color, #444)")} !important;
-  padding: ${px(config.values.cellPaddingY, 6)} ${px(config.values.cellPaddingX, 10)};
-}`.trim(),
+  border: ${borderW}px solid ${borderCol} !important;
+  padding: ${padY} ${padX};
+}`.trim()
+
+      if (textCol) {
+        rules += `\n.b3-typography table td, .protyle-wysiwyg table td { color: ${textCol} !important; }`
+      }
+      if (oddBg) {
+        rules += `\n.b3-typography table tr:nth-child(odd), .protyle-wysiwyg table tr:nth-child(odd) { background-color: ${oddBg} !important; }`
+      }
+      if (evenBg) {
+        rules += `\n.b3-typography table tr:nth-child(even), .protyle-wysiwyg table tr:nth-child(even) { background-color: ${evenBg} !important; }`
+      }
+
+      return rules
+    },
     controls: [
       {
         key: "headerBackgroundColor",
@@ -1100,6 +1141,21 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       {
         key: "headerColor",
         label: "表头字色",
+        type: "color",
+      },
+      {
+        key: "textColor",
+        label: "单元格字色",
+        type: "color",
+      },
+      {
+        key: "oddRowBackground",
+        label: "奇数行底色",
+        type: "color",
+      },
+      {
+        key: "evenRowBackground",
+        label: "偶数行底色",
         type: "color",
       },
       {
@@ -1116,6 +1172,16 @@ ${stringValue(config.values.showBackground, "no") === "yes"
         type: "number",
         unit: "px",
       },
+      {
+        key: "borderRadius",
+        label: "表格圆角",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+        slider: true,
+      },
     ],
     defaults: createDefaultConfig({
       borderColor: "var(--b3-border-color, #444)",
@@ -1124,8 +1190,12 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       cellPaddingY: 6,
       headerBackgroundColor: "#2c2c2c",
       headerColor: "#e0e0e0",
+      textColor: "",
+      oddRowBackground: "",
+      evenRowBackground: "",
+      borderRadius: 0,
     }),
-    hint: "增强表头、边框和单元格阅读密度。",
+    hint: "增强表头、单元格圆角底色、边框和奇偶行阅读密度。",
     label: "表格增强",
     group: "块级元素",
     preview: "表格",
@@ -3137,6 +3207,245 @@ ${indicatorCss}`
 
       rules.push(`.protyle-wysiwyg .li { margin-bottom: ${spacing} !important; }`)
       rules.push(`.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: ${indent} !important; }`)
+
+      return rules.join("\n")
+    },
+  },
+  {
+    value: "customThemePrimary",
+    label: "全局自定义主色",
+    hint: "直接重写思源内置的主题主色变量，全局改变交互和焦点配色。",
+    preview: "🎨",
+    risk: "全屋改造",
+    group: "文档外观",
+    controls: [
+      {
+        key: "primaryColor",
+        label: "主题主色",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      primaryColor: "#0969da",
+    }),
+    buildCss: (config) => {
+      const primaryColor = stringValue(config.values.primaryColor, "")
+      if (!primaryColor) return ""
+      
+      const primaryColorRgb = hexToRgb(primaryColor)
+      return `
+:root {
+  --b3-theme-primary: ${primaryColor} !important;
+  --b3-theme-primary-rgb: ${primaryColorRgb} !important;
+}
+      `.trim()
+    },
+  },
+  {
+    value: "layoutCompactMode",
+    label: "界面紧凑模式",
+    hint: "微调侧边栏、文件树、编辑区、页签栏和控制项的间距与字体大小以提高信息密度。",
+    preview: "🗜️",
+    risk: "全屋改造",
+    group: "文档外观",
+    controls: [
+      {
+        key: "density",
+        label: "紧凑密度",
+        type: "select",
+        options: [
+          { label: "无", value: "none" },
+          { label: "温和", value: "moderate" },
+          { label: "紧凑", value: "compact" },
+          { label: "极致", value: "extreme" },
+        ],
+      },
+      {
+        key: "fontScale",
+        label: "字号缩放",
+        type: "select",
+        options: [
+          { label: "100%", value: "100" },
+          { label: "98%", value: "98" },
+          { label: "96%", value: "96" },
+          { label: "94%", value: "94" },
+          { label: "92%", value: "92" },
+          { label: "90%", value: "90" },
+        ],
+      },
+      {
+        key: "sidebar",
+        label: "侧边栏应用",
+        type: "select",
+        options: [
+          { label: "开启", value: "yes" },
+          { label: "关闭", value: "no" },
+        ],
+      },
+      {
+        key: "editor",
+        label: "编辑区应用",
+        type: "select",
+        options: [
+          { label: "开启", value: "yes" },
+          { label: "关闭", value: "no" },
+        ],
+      },
+      {
+        key: "tabs",
+        label: "页签栏应用",
+        type: "select",
+        options: [
+          { label: "开启", value: "yes" },
+          { label: "关闭", value: "no" },
+        ],
+      },
+      {
+        key: "dialogs",
+        label: "对话框应用",
+        type: "select",
+        options: [
+          { label: "开启", value: "yes" },
+          { label: "关闭", value: "no" },
+        ],
+      },
+      {
+        key: "controls",
+        label: "控制项应用",
+        type: "select",
+        options: [
+          { label: "开启", value: "yes" },
+          { label: "关闭", value: "no" },
+        ],
+      },
+    ],
+    defaults: createDefaultConfig({
+      density: "compact",
+      fontScale: "96",
+      sidebar: "yes",
+      editor: "yes",
+      tabs: "yes",
+      dialogs: "yes",
+      controls: "yes",
+    }),
+    buildCss: (config) => {
+      const density = stringValue(config.values.density, "none")
+      const fontScaleStr = stringValue(config.values.fontScale, "100")
+      
+      if (density === "none" && fontScaleStr === "100") {
+        return ""
+      }
+      
+      const scale = density === "none" ? 1.0 : density === "moderate" ? 0.8 : density === "compact" ? 0.6 : 0.4
+      const f = parseInt(fontScaleStr, 10) / 100.0
+
+      const enableSidebar = stringValue(config.values.sidebar, "yes") === "yes"
+      const enableEditor = stringValue(config.values.editor, "yes") === "yes"
+      const enableTabs = stringValue(config.values.tabs, "yes") === "yes"
+      const enableDialogs = stringValue(config.values.dialogs, "yes") === "yes"
+      const enableControls = stringValue(config.values.controls, "yes") === "yes"
+
+      const rules: string[] = []
+
+      // 1. 侧边栏与文件树
+      if (enableSidebar) {
+        rules.push(`
+          /* 侧边栏图标间距 */
+          .dock__item { padding: ${6 * scale}px !important; }
+          /* 文件树列表项 */
+          .b3-list-item {
+            padding: ${4 * scale}px ${8 * scale}px !important;
+            min-height: ${18 * scale + 6}px !important;
+            line-height: ${18 * scale + 6}px !important;
+          }
+          .b3-list-item--hide-action { line-height: ${18 * scale + 6}px !important; }
+          .b3-list-item__text { line-height: ${16 * scale + 6}px !important; }
+          /* 文件树字体缩放 */
+          .file-tree { font-size: ${12 * f}px !important; }
+          .sidebar { font-size: ${13 * f}px !important; }
+        `)
+      }
+
+      // 2. 编辑区与正文排版
+      if (enableEditor) {
+        rules.push(`
+          /* 工具栏间距 */
+          .toolbar {
+            gap: ${4 * scale}px !important;
+            padding: ${4 * scale}px ${8 * scale}px !important;
+          }
+          /* 编辑区容器 Padding */
+          .protyle-content { padding: ${8 * scale}px !important; }
+          /* 正文元素紧凑排版 */
+          .protyle-wysiwyg .bq, .protyle-wysiwyg .li, .protyle-wysiwyg .p {
+            line-height: 1.4 !important;
+          }
+          /* 标题 margin 紧凑化 */
+          .protyle-wysiwyg h1, .protyle-wysiwyg h2, .protyle-wysiwyg h3,
+          .protyle-wysiwyg h4, .protyle-wysiwyg h5, .protyle-wysiwyg h6 {
+            margin: ${4 * scale}px 0 !important;
+            padding: ${4 * scale}px 0 !important;
+          }
+          /* 代码块 Padding 缩放 */
+          .protyle-wysiwyg .code-block .hljs { padding: ${6 * scale}px !important; }
+        `)
+      }
+
+      // 3. 页签栏
+      if (enableTabs) {
+        rules.push(`
+          /* 页签项 Padding 与行高 */
+          .layout-tab-bar .item {
+            padding: ${4 * scale}px ${12 * scale}px !important;
+            line-height: ${16 * scale + 8}px !important;
+            font-size: ${12 * f}px !important;
+          }
+          .tab {
+            padding: ${6 * scale}px ${12 * scale}px !important;
+            font-size: ${12 * f}px !important;
+          }
+        `)
+      }
+
+      // 4. 对话框
+      if (enableDialogs) {
+        rules.push(`
+          /* 对话框容器及内部 Padding */
+          .b3-dialog { padding: ${12 * scale}px !important; }
+          .b3-dialog__header {
+            padding: ${8 * scale}px ${12 * scale}px !important;
+            font-size: ${14 * f}px !important;
+          }
+          .b3-dialog__body {
+            padding: ${8 * scale}px !important;
+            font-size: ${13 * f}px !important;
+          }
+        `)
+      }
+
+      // 5. 控制项与菜单按钮
+      if (enableControls) {
+        rules.push(`
+          /* 按钮紧凑 Padding */
+          .b3-button {
+            padding: ${6 * scale}px ${12 * scale}px !important;
+            font-size: ${12 * f}px !important;
+          }
+          /* 输入框和下拉框 */
+          .b3-text-field, .b3-input, .b3-select {
+            padding: ${6 * scale}px ${8 * scale}px !important;
+            font-size: ${12 * f}px !important;
+          }
+          /* 菜单列表项 */
+          .b3-menu__item {
+            padding: ${6 * scale}px ${12 * scale}px !important;
+            min-height: ${18 * scale + 6}px !important;
+            line-height: ${16 * scale + 4}px !important;
+            font-size: ${12 * f}px !important;
+          }
+          .b3-menu { padding: ${4 * scale}px 0 !important; }
+        `)
+      }
 
       return rules.join("\n")
     },

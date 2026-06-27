@@ -46,6 +46,8 @@ export type FeatureStyleId =
   | "dialogStyle"
   | "listMarkerStyle"
   | "searchHighlight"
+  | "customThemePrimary"
+  | "layoutCompactMode"
 
 type FeatureValueType = "color" | "number" | "select" | "text"
 
