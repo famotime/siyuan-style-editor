@@ -1,0 +1,65 @@
+.feature-switch {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.feature-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.feature-switch__track {
+  width: 38px;
+  height: 22px;
+  padding: 2px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel-pill-bg) 74%, transparent 26%);
+  box-shadow: inset 0 0 0 1px var(--panel-card-inner-stroke);
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.feature-switch__thumb {
+  width: 18px;
+  height: 18px;
+  display: block;
+  border-radius: 999px;
+  background: var(--panel-card-bg);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--panel-text) 18%, transparent);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.feature-switch input:checked + .feature-switch__track {
+  background: var(--panel-accent);
+}
+
+.feature-switch input:checked + .feature-switch__track .feature-switch__thumb {
+  transform: translateX(16px);
+}
+
+/* 🚀 新增：鼠标悬停交互高亮 */
+
+/* 1. 开启状态悬停：稍微加深 */
+.feature-switch:hover input:checked + .feature-switch__track {
+  background: color-mix(in srgb, var(--panel-accent) 85%, black 15%);
+}
+
+/* 2. 未开启状态悬停：呈现淡淡的 Accent 主色并加亮边框，使其明显可见 */
+.feature-switch:hover input:not(:checked) + .feature-switch__track {
+  box-shadow: inset 0 0 0 1px var(--panel-accent);
+  background: color-mix(in srgb, var(--panel-accent) 15%, var(--panel-pill-bg) 85%);
+}
+
+/* 3. 悬停时滑块微动发光 */
+.feature-switch:hover .feature-switch__thumb {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px var(--panel-accent-outline);
+}
+
+/* 4. 开启状态悬停时滑块保持偏移并缩放 */
+.feature-switch:hover input:checked + .feature-switch__track .feature-switch__thumb {
+  transform: translateX(16px) scale(1.05);
+}
