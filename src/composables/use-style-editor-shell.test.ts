@@ -278,6 +278,29 @@ describe("useStyleEditorShell", () => {
     unmount()
   })
 
+  it("syncs the detected theme appearance onto the document root", async () => {
+    vi.stubGlobal("siyuan", {
+      config: {
+        appearance: {
+          mode: 1,
+        },
+      },
+    })
+    const plugin = createPluginStub()
+    await initializeRuntime(plugin as never)
+
+    const {
+      shell,
+      unmount,
+    } = await mountShell()
+
+    expect(shell.themeAppearance.value).toBe("dark")
+    expect(document.documentElement.dataset.styleEditorThemeMode).toBe("dark")
+
+    unmount()
+    expect(document.documentElement.dataset.styleEditorThemeMode).toBeUndefined()
+  })
+
   it("exports styles with the provided author and style name", async () => {
     const plugin = createPluginStub()
     await initializeRuntime(plugin as never)
@@ -473,12 +496,12 @@ describe("useStyleEditorShell", () => {
         value: "#3355aa",
       },
       {
-        label: "rgba(111, 142, 207, 0.15)",
-        value: "rgba(111, 142, 207, 0.15)",
+        label: "var(--style-editor-heading-bg)",
+        value: "var(--style-editor-heading-bg)",
       },
       {
-        label: "#2d3748",
-        value: "#2d3748",
+        label: "var(--style-editor-mark-color)",
+        value: "var(--style-editor-mark-color)",
       },
       {
         label: "#fff2a8",
@@ -626,7 +649,7 @@ describe("useStyleEditorShell", () => {
     await shell.handleResetAllStyles()
 
     expect(mockShowConfirm).toHaveBeenCalledWith("清除样式", "确定要关闭所有样式开关且恢复各设置项的默认配置吗？")
-    expect(runtimeState.profile.heading1.color).toBe("#2b3a4a")
+    expect(runtimeState.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
     expect(shell.statusCopy.value).toBe("已清除全部样式，恢复到初始状态。")
 
     unmount()

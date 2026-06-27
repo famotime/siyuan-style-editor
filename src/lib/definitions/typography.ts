@@ -235,7 +235,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   {
     buildCss: (config) => `
 .protyle-wysiwyg [data-node-id].li[data-subtype="u"] > .protyle-action {
-  color: ${stringValue(config.values.markerColor, "oklch(68% 0.07 245)")};
+  color: ${stringValue(config.values.markerColor, "var(--style-editor-list-marker)")};
 }`.trim(),
     controls: [
       {
@@ -245,7 +245,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      markerColor: "oklch(68% 0.07 245)",
+      markerColor: "var(--style-editor-list-marker)",
     }),
     hint: "调整无序列表圆点的颜色，保持层级结构不变。",
     label: "无序列表圆点颜色",
@@ -260,8 +260,8 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   content: "";
   display: block;
   box-sizing: border-box;
-  border-left: ${px(config.values.lineWidth, 2)} solid ${stringValue(config.values.lineColor, "rgb(70, 110, 220)")};
-  border-bottom: ${px(config.values.lineWidth, 2)} solid ${stringValue(config.values.lineColor, "rgb(70, 110, 220)")};
+  border-left: ${px(config.values.lineWidth, 2)} solid ${stringValue(config.values.lineColor, "var(--style-editor-list-line)")};
+  border-bottom: ${px(config.values.lineWidth, 2)} solid ${stringValue(config.values.lineColor, "var(--style-editor-list-line)")};
   border-bottom-left-radius: ${px(config.values.radius, 8)};
   position: absolute;
   left: ${px(config.values.leftOffset, -18)};
@@ -294,7 +294,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
     ],
     defaults: createDefaultConfig({
       leftOffset: -18,
-      lineColor: "rgb(70, 110, 220)",
+      lineColor: "var(--style-editor-list-line)",
       lineWidth: 2,
       radius: 8,
     }),
@@ -414,8 +414,8 @@ ${stringValue(config.values.showBackground, "no") === "yes"
 .protyle-wysiwyg mark,
 .protyle-wysiwyg span[data-type~=mark] {
   color: ${stringValue(config.values.color, "var(--b3-theme-on-background)")} !important;
-  background-color: ${stringValue(config.values.backgroundColor, "rgba(255, 212, 0, 0.14)")} !important;
-  border-bottom: ${numberValue(config.values.emphasisThickness, 2)}px ${lineStyle} ${stringValue(config.values.emphasisColor, "rgba(255, 212, 0, 0.8)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-mark-bg)")} !important;
+  border-bottom: ${numberValue(config.values.emphasisThickness, 2)}px ${lineStyle} ${stringValue(config.values.emphasisColor, "var(--style-editor-mark-line)")} !important;
 }`.trim()
     },
     controls: [
@@ -451,9 +451,9 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       },
     ],
     defaults: createDefaultConfig({
-      backgroundColor: "rgba(255, 212, 0, 0.14)",
+      backgroundColor: "var(--style-editor-mark-bg)",
       color: "var(--b3-theme-on-background)",
-      emphasisColor: "rgba(255, 212, 0, 0.8)",
+      emphasisColor: "var(--style-editor-mark-line)",
       emphasisThickness: 2,
       lineStyle: "solid",
     }),
@@ -471,8 +471,8 @@ ${stringValue(config.values.showBackground, "no") === "yes"
 .b3-typography span[data-type~=code],
 .protyle-wysiwyg code:not(.hljs),
 .protyle-wysiwyg span[data-type~=code] {
-  color: ${stringValue(config.values.color, "#d19a66")} !important;
-  background-color: ${stringValue(config.values.backgroundColor, "rgba(209, 154, 102, 0.09)")} !important;
+  color: ${stringValue(config.values.color, "var(--style-editor-inline-code-color)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-inline-code-bg)")} !important;
   padding: ${px(config.values.paddingY, 2)} ${px(config.values.paddingX, 4)};
   border-radius: ${px(config.values.radius, 4)};
 }`.trim(),
@@ -516,8 +516,8 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       },
     ],
     defaults: createDefaultConfig({
-      backgroundColor: "rgba(209, 154, 102, 0.09)",
-      color: "#d19a66",
+      backgroundColor: "var(--style-editor-inline-code-bg)",
+      color: "var(--style-editor-inline-code-color)",
       paddingX: 4,
       paddingY: 2,
       radius: 4,
@@ -533,9 +533,9 @@ ${stringValue(config.values.showBackground, "no") === "yes"
     buildCss: (config) => `
 .protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
 .protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) {
-  color: ${stringValue(config.values.color, "#6f8ecf")} !important;
-  background-color: ${stringValue(config.values.backgroundColor, "rgba(111, 142, 207, 0.08)")} !important;
-  border-bottom: ${numberValue(config.values.lineThickness, 1)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.lineColor, "rgba(111, 142, 207, 0.4)")} !important;
+  color: ${stringValue(config.values.color, "var(--style-editor-link-color)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-link-bg)")} !important;
+  border-bottom: ${numberValue(config.values.lineThickness, 1)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.lineColor, "var(--style-editor-link-line)")} !important;
   padding: 1px 4px;
   padding-bottom: ${px(config.values.offset, 2)};
   font-weight: ${numberValue(config.values.fontWeight, 600)};
@@ -582,10 +582,10 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       },
     ],
     defaults: createDefaultConfig({
-      backgroundColor: "rgba(111, 142, 207, 0.08)",
-      color: "#6f8ecf",
+      backgroundColor: "var(--style-editor-link-bg)",
+      color: "var(--style-editor-link-color)",
       fontWeight: 600,
-      lineColor: "rgba(111, 142, 207, 0.4)",
+      lineColor: "var(--style-editor-link-line)",
       lineStyle: "dashed",
       lineThickness: 1,
       offset: 2,
@@ -604,7 +604,7 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       const border = lineStyle === "none" ? "none" : `1px ${lineStyle} currentColor`
       return `
 .protyle-wysiwyg [data-node-id] span[data-type~=a] {
-  color: ${stringValue(config.values.color, "#4fc3f7")} !important;
+  color: ${stringValue(config.values.color, "var(--style-editor-link-color)")} !important;
   text-decoration: ${textDecoration} !important;
   border-bottom: ${border} !important;
   cursor: pointer;
@@ -612,8 +612,8 @@ ${stringValue(config.values.showBackground, "no") === "yes"
 }
 
 .protyle-wysiwyg [data-node-id] span[data-type~=a]:hover {
-  color: ${stringValue(config.values.hoverColor, "#1de9b6")} !important;
-  border-bottom-color: ${stringValue(config.values.hoverColor, "#1de9b6")} !important;
+  color: ${stringValue(config.values.hoverColor, "var(--style-editor-link-hover)")} !important;
+  border-bottom-color: ${stringValue(config.values.hoverColor, "var(--style-editor-link-hover)")} !important;
 }`.trim()
     },
     controls: [
@@ -635,8 +635,8 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       },
     ],
     defaults: createDefaultConfig({
-      color: "#4fc3f7",
-      hoverColor: "#1de9b6",
+      color: "var(--style-editor-link-color)",
+      hoverColor: "var(--style-editor-link-hover)",
       lineStyle: "dashed",
     }),
     hint: "统一块内超链接的颜色和悬停反馈。",
@@ -758,7 +758,7 @@ ${stringValue(config.values.showBackground, "no") === "yes"
 }
 
 .protyle-wysiwyg .protyle-task:hover {
-  border-color: ${stringValue(config.values.hoverBorderColor, "#1de9b6")} !important;
+  border-color: ${stringValue(config.values.hoverBorderColor, "var(--style-editor-link-hover)")} !important;
 }
 
 .protyle-wysiwyg .protyle-task--done {
@@ -787,7 +787,7 @@ ${stringValue(config.values.showBackground, "no") === "yes"
     defaults: createDefaultConfig({
       doneColor: "var(--b3-theme-on-surface)",
       doneOpacity: 0.62,
-      hoverBorderColor: "#1de9b6",
+      hoverBorderColor: "var(--style-editor-link-hover)",
     }),
     hint: "增强任务列表完成态和悬停反馈。",
     label: "任务列表状态",

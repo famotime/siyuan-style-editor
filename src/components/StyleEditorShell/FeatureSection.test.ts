@@ -7,6 +7,8 @@ import {
   createApp,
   h,
   nextTick,
+  reactive,
+  ref,
 } from "vue"
 import FeatureSection from "@/components/StyleEditorShell/FeatureSection.vue"
 import {
@@ -70,6 +72,7 @@ async function mountFeatureSection(
   options?: {
     featureStyleOptions?: FeatureStyleOption[]
     featureProfile?: FeatureStyleProfile
+    themeAppearance?: ReturnType<typeof ref<"light" | "dark">>
   },
 ) {
   const onUpdateFeatureStyle = vi.fn()
@@ -86,6 +89,7 @@ async function mountFeatureSection(
         featureStyleOptions,
         kicker: "Test Kicker",
         onUpdateFeatureStyle,
+        themeAppearance: options?.themeAppearance?.value,
         title: "测试标题",
       })
     },
@@ -246,6 +250,42 @@ describe("featureSection", () => {
     const colorGroup = colorGroups[0]
     expect(colorGroup.querySelector('input[type="color"]')).not.toBeNull()
     expect(colorGroup.querySelector(".feature-control__color-text")).not.toBeNull()
+
+    unmount()
+  })
+
+  it("颜色控件从面板作用域解析主题变量", async () => {
+    const testOptions = createTestOptions()
+    const featureProfile = reactive(createDefaultFeatureProfile())
+    featureProfile.paragraphHover.values.color = "var(--style-editor-link-color)"
+    const themeAppearance = ref<"light" | "dark">("light")
+
+    const {
+      container,
+      unmount,
+    } = await mountFeatureSection({
+      featureProfile,
+      featureStyleOptions: testOptions,
+      themeAppearance,
+    })
+
+    const host = container.querySelector(".feature-section") as HTMLElement
+    host.style.setProperty("--style-editor-link-color", "#386fa8")
+    themeAppearance.value = "dark"
+    await nextTick()
+
+    const colorInput = container.querySelector(".feature-control__color") as HTMLInputElement
+    const colorTextInput = container.querySelector(".feature-control__color-text") as HTMLInputElement
+
+    expect(colorInput.value).toBe("#386fa8")
+    expect(colorTextInput.value).toBe("#386fa8")
+
+    host.style.setProperty("--style-editor-link-color", "#8bb7e8")
+    themeAppearance.value = "light"
+    await nextTick()
+
+    expect(colorInput.value).toBe("#8bb7e8")
+    expect(colorTextInput.value).toBe("#8bb7e8")
 
     unmount()
   })

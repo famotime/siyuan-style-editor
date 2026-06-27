@@ -24,7 +24,7 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   {
     buildCss: (config) => `
 :root {
-  --b3-theme-background: ${stringValue(config.values.backgroundColor, "#222222")};
+  --b3-theme-background: ${stringValue(config.values.backgroundColor, "var(--style-editor-editor-bg)")};
 }`.trim(),
     controls: [
       {
@@ -34,7 +34,7 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      backgroundColor: "#222222",
+      backgroundColor: "var(--style-editor-editor-bg)",
     }),
     hint: "覆盖编辑区背景变量，影响整个阅读和编辑外壳。",
     label: "编辑区背景色",
@@ -227,7 +227,7 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
 }
 .b3-list--background .b3-list-item:hover:not(.b3-list-item--focus):not(.dragover),
 .b3-list--background .b3-list-item--focus:not(.dragover) {
-  background-color: ${stringValue(config.values.hoverBgColor, "rgba(100, 200, 255, 0.15)")};
+  background-color: ${stringValue(config.values.hoverBgColor, "var(--style-editor-card-bg-soft)")};
 }`.trim(),
     controls: [
       {
@@ -278,7 +278,7 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      hoverBgColor: "rgba(100, 200, 255, 0.15)",
+      hoverBgColor: "var(--style-editor-card-bg-soft)",
       itemMinHeight: 45,
       itemMarginY: 5,
       itemRadius: 6,
@@ -405,8 +405,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   content: "#";
 }
 .b3-chips__doctag .b3-chip.b3-chip--secondary {
-  background-color: ${stringValue(config.values.secondaryBg, "rgba(111, 142, 207, 0.12)")};
-  color: ${stringValue(config.values.secondaryColor, "#5c7cba")};
+  background-color: ${stringValue(config.values.secondaryBg, "var(--style-editor-tag-bg)")};
+  color: ${stringValue(config.values.secondaryColor, "var(--style-editor-tag-color)")};
 }`.trim(),
     controls: [
       {
@@ -434,8 +434,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       fontWeight: 600,
       paddingX: 8,
       radius: 6,
-      secondaryBg: "rgba(111, 142, 207, 0.12)",
-      secondaryColor: "#5c7cba",
+      secondaryBg: "var(--style-editor-tag-bg)",
+      secondaryColor: "var(--style-editor-tag-color)",
     }),
     hint: "调整头图下方文档标签的圆角、颜色和字号。",
     label: "文档标签",
@@ -447,28 +447,28 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   {
     buildCss: (config) => `
 .sy__file .b3-list--background:nth-child(5n-4) {
-  background-color: ${stringValue(config.values.color1, "rgba(120, 90, 69, 0.85)")} !important;
-  box-shadow: 0 0 0 1px ${stringValue(config.values.color1, "rgba(120, 90, 69, 0.85)")} inset;
+  background-color: ${stringValue(config.values.color1, "var(--style-editor-tree-block-1)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color1, "var(--style-editor-tree-block-1)")} inset;
   border-radius: ${px(config.values.radius, 6)};
 }
 .sy__file .b3-list--background:nth-child(5n-3) {
-  background-color: ${stringValue(config.values.color2, "rgba(139, 117, 72, 0.85)")} !important;
-  box-shadow: 0 0 0 1px ${stringValue(config.values.color2, "rgba(139, 117, 72, 0.85)")} inset;
+  background-color: ${stringValue(config.values.color2, "var(--style-editor-tree-block-2)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color2, "var(--style-editor-tree-block-2)")} inset;
   border-radius: ${px(config.values.radius, 6)};
 }
 .sy__file .b3-list--background:nth-child(5n-2) {
-  background-color: ${stringValue(config.values.color3, "rgba(88, 105, 90, 0.85)")} !important;
-  box-shadow: 0 0 0 1px ${stringValue(config.values.color3, "rgba(88, 105, 90, 0.85)")} inset;
+  background-color: ${stringValue(config.values.color3, "var(--style-editor-tree-block-3)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color3, "var(--style-editor-tree-block-3)")} inset;
   border-radius: ${px(config.values.radius, 6)};
 }
 .sy__file .b3-list--background:nth-child(5n-1) {
-  background-color: ${stringValue(config.values.color4, "rgba(75, 88, 96, 0.85)")} !important;
-  box-shadow: 0 0 0 1px ${stringValue(config.values.color4, "rgba(75, 88, 96, 0.85)")} inset;
+  background-color: ${stringValue(config.values.color4, "var(--style-editor-tree-block-4)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color4, "var(--style-editor-tree-block-4)")} inset;
   border-radius: ${px(config.values.radius, 6)};
 }
 .sy__file .b3-list--background:nth-child(5n) {
-  background-color: ${stringValue(config.values.color5, "rgba(71, 63, 85, 0.85)")} !important;
-  box-shadow: 0 0 0 1px ${stringValue(config.values.color5, "rgba(71, 63, 85, 0.85)")} inset;
+  background-color: ${stringValue(config.values.color5, "var(--style-editor-tree-block-5)")} !important;
+  box-shadow: 0 0 0 1px ${stringValue(config.values.color5, "var(--style-editor-tree-block-5)")} inset;
   border-radius: ${px(config.values.radius, 6)};
 }
 .sy__file .b3-list--background:nth-child(5n-4),
@@ -505,11 +505,11 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      color1: "rgba(120, 90, 69, 0.85)",
-      color2: "rgba(139, 117, 72, 0.85)",
-      color3: "rgba(88, 105, 90, 0.85)",
-      color4: "rgba(75, 88, 96, 0.85)",
-      color5: "rgba(71, 63, 85, 0.85)",
+      color1: "var(--style-editor-tree-block-1)",
+      color2: "var(--style-editor-tree-block-2)",
+      color3: "var(--style-editor-tree-block-3)",
+      color4: "var(--style-editor-tree-block-4)",
+      color5: "var(--style-editor-tree-block-5)",
       gapY: 4,
       radius: 6,
     }),
@@ -531,12 +531,12 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   font-size: ${px(config.values.fontSize, 10)};
   pointer-events: none;
 }
-.sy__outline ul.b3-list.b3-list--background [data-subtype="h1"] > span:first-child::after { content: "❶"; color: ${stringValue(config.values.h1Color, "rgba(221, 136, 134, 1)")}; }
-.sy__outline ul.b3-list.b3-list--background [data-subtype="h2"] > span:first-child::after { content: "❷"; color: ${stringValue(config.values.h2Color, "rgba(171, 155, 199, 1)")}; }
-.sy__outline ul.b3-list.b3-list--background [data-subtype="h3"] > span:first-child::after { content: "❸"; color: ${stringValue(config.values.h3Color, "rgba(137, 180, 202, 1)")}; }
-.sy__outline ul.b3-list.b3-list--background [data-subtype="h4"] > span:first-child::after { content: "❹"; color: ${stringValue(config.values.h4Color, "rgba(125, 165, 151, 1)")}; }
-.sy__outline ul.b3-list.b3-list--background [data-subtype="h5"] > span:first-child::after { content: "❺"; color: ${stringValue(config.values.h5Color, "rgba(215, 192, 111, 1)")}; }
-.sy__outline ul.b3-list.b3-list--background [data-subtype="h6"] > span:first-child::after { content: "❻"; color: ${stringValue(config.values.h6Color, "rgba(212, 165, 155, 1)")}; }`.trim(),
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h1"] > span:first-child::after { content: "❶"; color: ${stringValue(config.values.h1Color, "var(--style-editor-outline-h1)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h2"] > span:first-child::after { content: "❷"; color: ${stringValue(config.values.h2Color, "var(--style-editor-outline-h2)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h3"] > span:first-child::after { content: "❸"; color: ${stringValue(config.values.h3Color, "var(--style-editor-outline-h3)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h4"] > span:first-child::after { content: "❹"; color: ${stringValue(config.values.h4Color, "var(--style-editor-outline-h4)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h5"] > span:first-child::after { content: "❺"; color: ${stringValue(config.values.h5Color, "var(--style-editor-outline-h5)")}; }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h6"] > span:first-child::after { content: "❻"; color: ${stringValue(config.values.h6Color, "var(--style-editor-outline-h6)")}; }`.trim(),
     controls: [
       {
         key: "h1Color",
@@ -565,12 +565,12 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     ],
     defaults: createDefaultConfig({
       fontSize: 10,
-      h1Color: "rgba(221, 136, 134, 1)",
-      h2Color: "rgba(171, 155, 199, 1)",
-      h3Color: "rgba(137, 180, 202, 1)",
-      h4Color: "rgba(125, 165, 151, 1)",
-      h5Color: "rgba(215, 192, 111, 1)",
-      h6Color: "rgba(212, 165, 155, 1)",
+      h1Color: "var(--style-editor-outline-h1)",
+      h2Color: "var(--style-editor-outline-h2)",
+      h3Color: "var(--style-editor-outline-h3)",
+      h4Color: "var(--style-editor-outline-h4)",
+      h5Color: "var(--style-editor-outline-h5)",
+      h6Color: "var(--style-editor-outline-h6)",
     }),
     hint: "在大纲标题前显示彩色数字标志。",
     label: "大纲数字标志",
@@ -585,11 +585,11 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   transition: top ${numberValue(config.values.transitionMs, 150)}ms ease-out;
 }
 .protyle-gutters button svg {
-  color: ${stringValue(config.values.iconColor, "rgba(143, 163, 199, 0.7)")};
+  color: ${stringValue(config.values.iconColor, "var(--style-editor-list-marker)")};
   border-radius: ${px(config.values.iconRadius, 4)};
 }
 .protyle-gutters button:hover svg {
-  background-color: ${stringValue(config.values.hoverBg, "oklch(60% 0.02 270 / 0.2)")};
+  background-color: ${stringValue(config.values.hoverBg, "var(--style-editor-toolbar-hover-bg)")};
 }`.trim(),
     controls: [
       {
@@ -613,8 +613,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      hoverBg: "oklch(60% 0.02 270 / 0.2)",
-      iconColor: "rgba(143, 163, 199, 0.7)",
+      hoverBg: "var(--style-editor-toolbar-hover-bg)",
+      iconColor: "var(--style-editor-list-marker)",
       iconRadius: 4,
       transitionMs: 150,
     }),
@@ -636,10 +636,10 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   border-radius: ${px(config.values.buttonRadius, 4)};
 }
 .protyle-toolbar .protyle-toolbar__item:hover {
-  background-color: ${stringValue(config.values.hoverBg, "oklch(65% 0.12 250 / 0.2)")};
+  background-color: ${stringValue(config.values.hoverBg, "var(--style-editor-toolbar-hover-bg)")};
 }
 .protyle-toolbar .protyle-toolbar__item--current {
-  color: ${stringValue(config.values.currentColor, "oklch(90% 0.18 90)")};
+  color: ${stringValue(config.values.currentColor, "var(--style-editor-toolbar-current)")};
 }`.trim(),
     controls: [
       {
@@ -665,8 +665,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     defaults: createDefaultConfig({
       buttonRadius: 4,
       buttonSize: 28,
-      currentColor: "oklch(90% 0.18 90)",
-      hoverBg: "oklch(65% 0.12 250 / 0.2)",
+      currentColor: "var(--style-editor-toolbar-current)",
+      hoverBg: "var(--style-editor-toolbar-hover-bg)",
       padding: 2,
     }),
     hint: "调整文字工具条的按钮尺寸、悬停背景和选中项颜色。",
@@ -1052,14 +1052,14 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     defaults: createDefaultConfig({
       width: 6,
       trackColor: "transparent",
-      thumbColor: "rgba(111, 142, 207, 0.25)",
+      thumbColor: "var(--style-editor-scrollbar-thumb)",
       thumbRadius: 4,
       hideMode: "always",
     }),
     buildCss: (config) => {
       const width = px(config.values.width, 6)
       const trackColor = stringValue(config.values.trackColor, "transparent")
-      const thumbColor = stringValue(config.values.thumbColor, "rgba(111, 142, 207, 0.25)")
+      const thumbColor = stringValue(config.values.thumbColor, "var(--style-editor-scrollbar-thumb)")
       const thumbRadius = px(config.values.thumbRadius, 4)
       const hideMode = stringValue(config.values.hideMode, "always")
 
@@ -1120,14 +1120,14 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      color: "#1a1a2e",
-      backgroundColor: "#fff3bf",
+      color: "var(--style-editor-mark-color)",
+      backgroundColor: "var(--style-editor-mark-bg)",
       borderRadius: 3,
       fontWeight: 700,
     }),
     buildCss: (config) => {
-      const color = stringValue(config.values.color, "#1a1a2e")
-      const bg = stringValue(config.values.backgroundColor, "#fff3bf")
+      const color = stringValue(config.values.color, "var(--style-editor-mark-color)")
+      const bg = stringValue(config.values.backgroundColor, "var(--style-editor-mark-bg)")
       const radius = px(config.values.borderRadius, 3)
       const weight = numberValue(config.values.fontWeight, 700)
 
@@ -1201,14 +1201,14 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
       height: 32,
       fontSize: 13,
       activeIndicator: "border",
-      indicatorColor: "#4C8BF5",
+      indicatorColor: "var(--style-editor-link-color)",
       backgroundColor: "transparent",
     }),
     buildCss: (config) => {
       const height = px(config.values.height, 32)
       const fontSize = px(config.values.fontSize, 13)
       const indicator = stringValue(config.values.activeIndicator, "border")
-      const indicatorColor = stringValue(config.values.indicatorColor, "#4C8BF5")
+      const indicatorColor = stringValue(config.values.indicatorColor, "var(--style-editor-link-color)")
       const bgColor = stringValue(config.values.backgroundColor, "transparent")
 
       let indicatorCss = ""
@@ -1264,15 +1264,15 @@ ${indicatorCss}`
       },
     ],
     defaults: createDefaultConfig({
-      textColor: "#666666",
+      textColor: "var(--style-editor-list-color)",
       backgroundColor: "transparent",
-      separatorColor: "#999999",
+      separatorColor: "var(--style-editor-list-marker)",
       fontSize: 12,
     }),
     buildCss: (config) => {
-      const textColor = stringValue(config.values.textColor, "#666666")
+      const textColor = stringValue(config.values.textColor, "var(--style-editor-list-color)")
       const bgColor = stringValue(config.values.backgroundColor, "transparent")
-      const sepColor = stringValue(config.values.separatorColor, "#999999")
+      const sepColor = stringValue(config.values.separatorColor, "var(--style-editor-list-marker)")
       const fontSize = px(config.values.fontSize, 12)
 
       return `.protyle-breadcrumb {
@@ -1328,13 +1328,13 @@ ${indicatorCss}`
     defaults: createDefaultConfig({
       iconSize: 20,
       backgroundColor: "transparent",
-      hoverColor: "#e8e8e8",
+      hoverColor: "var(--style-editor-card-bg-soft)",
       width: 40,
     }),
     buildCss: (config) => {
       const iconSize = px(config.values.iconSize, 20)
       const bgColor = stringValue(config.values.backgroundColor, "transparent")
-      const hoverColor = stringValue(config.values.hoverColor, "#e8e8e8")
+      const hoverColor = stringValue(config.values.hoverColor, "var(--style-editor-card-bg-soft)")
       const width = px(config.values.width, 40)
 
       return `.dock {
@@ -1381,13 +1381,13 @@ ${indicatorCss}`
       },
     ],
     defaults: createDefaultConfig({
-      matchColor: "#fff3a8",
-      currentMatchColor: "#ff9632",
+      matchColor: "var(--style-editor-search-match-bg)",
+      currentMatchColor: "var(--style-editor-search-current-bg)",
       matchBorderRadius: 2,
     }),
     buildCss: (config) => {
-      const matchColor = stringValue(config.values.matchColor, "#fff3a8")
-      const currentColor = stringValue(config.values.currentMatchColor, "#ff9632")
+      const matchColor = stringValue(config.values.matchColor, "var(--style-editor-search-match-bg)")
+      const currentColor = stringValue(config.values.currentMatchColor, "var(--style-editor-search-current-bg)")
       const radius = px(config.values.matchBorderRadius, 2)
 
       return `.protyle-wysiwyg mark[data-type="search-mark"] {

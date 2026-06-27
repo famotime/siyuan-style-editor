@@ -52,6 +52,23 @@ describe("style editor runtime", () => {
     expect(styleElement?.textContent).toContain("color: rgb(200, 40, 40) !important;")
   })
 
+  it("injects global theme variables before default target styles", async () => {
+    const plugin = createPluginStub({
+      profile: {
+        heading1: {
+          enabled: true,
+        },
+      },
+    })
+
+    await initializeRuntime(plugin as never)
+
+    const styleElement = document.getElementById("siyuan-style-editor-style")
+    expect(styleElement?.textContent).toContain("--style-editor-heading1-color: #31465f;")
+    expect(styleElement?.textContent).toContain("--style-editor-heading1-color: #9fb7d7;")
+    expect(styleElement?.textContent).toContain("color: var(--style-editor-heading1-color) !important;")
+  })
+
   it("applies palette colors, persists them, and resets back to defaults", async () => {
     const plugin = createPluginStub()
     await initializeRuntime(plugin as never)
@@ -76,9 +93,10 @@ describe("style editor runtime", () => {
 
     await resetAllStyles()
 
-    expect(runtimeState.profile.mark.backgroundColor).toBe("rgba(240, 218, 168, 0.65)")
+    expect(runtimeState.profile.mark.backgroundColor).toBe("var(--style-editor-mark-bg)")
     expect(plugin.saveData).toHaveBeenCalledTimes(2)
-    expect(styleElement?.textContent).toBe("")
+    expect(styleElement?.textContent).toContain("--style-editor-heading1-color")
+    expect(styleElement?.textContent).not.toContain("background-color: #f6d365 !important;")
   })
 
   it("previews palette colors without persisting until they are explicitly applied", async () => {
@@ -122,7 +140,7 @@ describe("style editor runtime", () => {
     expect(runtimeState.profile.heading1.color).toBe("#224488")
     expect(runtimeState.profile.heading2.color).toBe("#5b8def")
     expect(runtimeState.profile.heading3.color).toBe("#f6d365")
-    expect(runtimeState.profile.heading4.color).toBe("#6a3d6a")
+    expect(runtimeState.profile.heading4.color).toBe("var(--style-editor-heading4-color)")
     expect(plugin.saveData).toHaveBeenCalledOnce()
     expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
@@ -138,7 +156,7 @@ describe("style editor runtime", () => {
           color: "#f6d365",
         }),
         heading4: expect.objectContaining({
-          color: "#6a3d6a",
+          color: "var(--style-editor-heading4-color)",
         }),
       }),
     }))
@@ -225,7 +243,8 @@ describe("style editor runtime", () => {
     await resetAllStyles()
 
     expect(runtimeState.featureProfile.imageRadius.enabled).toBe(false)
-    expect(styleElement?.textContent).toBe("")
+    expect(styleElement?.textContent).toContain("--style-editor-heading1-color")
+    expect(styleElement?.textContent).not.toContain(".protyle-wysiwyg img")
   })
 
   it("returns normalized feature config snapshots and resets feature styles without clearing target styles", async () => {
@@ -263,7 +282,7 @@ describe("style editor runtime", () => {
 
     expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8")
     expect(runtimeState.featureProfile.blockquoteFrame.enabled).toBe(false)
-    expect(runtimeState.featureProfile.blockquoteFrame.values.backgroundColor).toBe("#FFFAFA")
+    expect(runtimeState.featureProfile.blockquoteFrame.values.backgroundColor).toBe("var(--style-editor-blockquote-bg)")
     expect(plugin.saveData).toHaveBeenCalledOnce()
     expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
       featureProfile: expect.objectContaining({
@@ -435,12 +454,12 @@ describe("style editor runtime", () => {
           value: "#3355aa",
         },
         {
-          label: "rgba(111, 142, 207, 0.15)",
-          value: "rgba(111, 142, 207, 0.15)",
+          label: "var(--style-editor-heading-bg)",
+          value: "var(--style-editor-heading-bg)",
         },
         {
-          label: "#2d3748",
-          value: "#2d3748",
+          label: "var(--style-editor-mark-color)",
+          value: "var(--style-editor-mark-color)",
         },
         {
           label: "#fff2a8",
@@ -511,7 +530,7 @@ describe("style editor runtime", () => {
     expect(runtimeState.ready).toBe(false)
     expect(runtimeState.selectedTarget).toBe("heading1")
     expect(runtimeState.selectedChannel).toBe("color")
-    expect(runtimeState.profile.heading1.color).toBe("#2b3a4a")
+    expect(runtimeState.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
     expect(document.getElementById("siyuan-style-editor-style")).toBeNull()
   })
 })

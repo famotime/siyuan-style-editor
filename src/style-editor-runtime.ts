@@ -36,6 +36,7 @@ import {
 } from "@/lib/style-editor-state"
 import { createStyleEditorStylesheetController } from "@/lib/style-editor-stylesheet"
 import { extractStyleProfileFromDocument } from "@/lib/style-extractor"
+import { createStyleEditorThemeCss } from "@/lib/panel-theme"
 import {
   buildFeatureStyleCss,
   createDefaultFeatureProfile,
@@ -137,6 +138,7 @@ function commitState(
 
 function applyInjectedStyles() {
   const css = [
+    createStyleEditorThemeCss(),
     buildStyleCss(runtimeState.profile),
     buildFeatureStyleCss(runtimeState.featureProfile),
   ].filter(Boolean).join("\n\n")

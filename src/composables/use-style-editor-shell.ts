@@ -15,7 +15,10 @@ import {
 } from "@/style-editor-runtime"
 
 export function useStyleEditorShell() {
-  const { panelThemeVars } = usePanelThemeVars()
+  const {
+    panelThemeVars,
+    themeAppearance,
+  } = usePanelThemeVars()
   const inlinePaletteSession = useInlinePaletteSession()
   const {
     actionMessage,
@@ -63,6 +66,7 @@ export function useStyleEditorShell() {
     importedStyleSignature,
     importFileInputRef,
     panelThemeVars,
+    themeAppearance,
     runtimeState,
     selectedTargetMeta,
     openImportStylesPicker,

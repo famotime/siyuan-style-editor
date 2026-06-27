@@ -1,5 +1,8 @@
 <template>
-  <section class="feature-section">
+  <section
+    ref="featureSectionRef"
+    class="feature-section"
+  >
     <div class="feature-section__header">
       <div>
         <h2 class="section-heading__title" :data-tooltip="`${kicker} — ${enabledCount}/${totalCount} 已启用`">
@@ -180,6 +183,9 @@
 
 <script setup lang="ts">
 import type {
+  PanelThemeAppearance,
+} from "@/lib/panel-theme"
+import type {
   FeatureStyleId,
   FeatureStyleOption,
   FeatureStyleProfile,
@@ -188,13 +194,17 @@ import { resolveColorPickerValue } from "@/lib/custom-color"
 
 import {
   computed,
+  onMounted,
+  nextTick,
   ref,
+  watch,
 } from "vue"
 
 const props = defineProps<{
   featureProfile: FeatureStyleProfile
   featureStyleOptions: FeatureStyleOption[]
   kicker: string
+  themeAppearance?: PanelThemeAppearance
   title: string
 }>()
 const emit = defineEmits<{
@@ -207,7 +217,19 @@ const emit = defineEmits<{
   ]
 }>()
 const collapsed = ref(true)
+const featureSectionRef = ref<HTMLElement | null>(null)
+const colorControlRenderTick = ref(0)
 const searchQuery = ref("")
+
+onMounted(() => {
+  void nextTick(() => {
+    colorControlRenderTick.value += 1
+  })
+})
+
+watch(() => props.themeAppearance, () => {
+  colorControlRenderTick.value += 1
+})
 
 const filteredOptions = computed(() => {
   if (!searchQuery.value.trim()) {
@@ -262,11 +284,12 @@ function handleControlInput(featureId: FeatureStyleId, key: string, event: Event
 }
 
 function getColorControlValue(featureId: FeatureStyleId, key: string) {
+  void colorControlRenderTick.value
   const value = props.featureProfile[featureId].values[key]
   const channel = key.toLowerCase().includes("bg") || key.toLowerCase().includes("background")
     ? "backgroundColor"
     : "color"
-  return typeof value === "string" ? resolveColorPickerValue(value, channel) : "#888888"
+  return typeof value === "string" ? resolveColorPickerValue(value, channel, featureSectionRef.value) : "#888888"
 }
 </script>
 

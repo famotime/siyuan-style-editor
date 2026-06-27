@@ -1,14 +1,221 @@
 export type PanelThemeAppearance = "light" | "dark"
 
+const THEME_SIGNAL_ATTRIBUTES = [
+  "data-theme-mode",
+  "data-theme",
+  "theme-mode",
+  "class",
+]
+
+export const SIYUAN_THEME_SIGNAL_ATTRIBUTES = THEME_SIGNAL_ATTRIBUTES
+
+declare global {
+  interface Window {
+    siyuan?: {
+      config?: {
+        appearance?: {
+          mode?: number | string
+        }
+      }
+    }
+  }
+}
+
 export function resolvePanelThemeAppearance(
   themeMode: string | null | undefined,
   prefersDark: boolean,
 ): PanelThemeAppearance {
-  if (themeMode === "dark" || themeMode === "light") {
-    return themeMode
+  const normalizedThemeMode = themeMode?.toLowerCase()
+  if (normalizedThemeMode?.includes("dark")) {
+    return "dark"
+  }
+  if (normalizedThemeMode?.includes("light")) {
+    return "light"
   }
 
   return prefersDark ? "dark" : "light"
+}
+
+function resolveSiyuanAppearanceMode(mode: number | string | null | undefined): PanelThemeAppearance | null {
+  if (mode === 1 || mode === "1") {
+    return "dark"
+  }
+  if (mode === 0 || mode === "0") {
+    return "light"
+  }
+  if (typeof mode === "string" && (mode.toLowerCase().includes("dark") || mode.toLowerCase().includes("light"))) {
+    return resolvePanelThemeAppearance(mode, false)
+  }
+  return null
+}
+
+export function detectSiyuanThemeAppearance(prefersDark: boolean): PanelThemeAppearance {
+  if (typeof document === "undefined") {
+    return resolvePanelThemeAppearance(undefined, prefersDark)
+  }
+
+  const runtimeAppearance = typeof window === "undefined"
+    ? null
+    : resolveSiyuanAppearanceMode(window.siyuan?.config?.appearance?.mode)
+  if (runtimeAppearance) {
+    return runtimeAppearance
+  }
+
+  const roots = [document.documentElement, document.body].filter(Boolean)
+  for (const root of roots) {
+    for (const attribute of THEME_SIGNAL_ATTRIBUTES) {
+      const appearance = root.getAttribute(attribute)
+      if (appearance?.toLowerCase().includes("dark") || appearance?.toLowerCase().includes("light")) {
+        return resolvePanelThemeAppearance(appearance, prefersDark)
+      }
+    }
+  }
+
+  return resolvePanelThemeAppearance(undefined, prefersDark)
+}
+
+export function createStyleEditorThemeVars(appearance: PanelThemeAppearance): Record<string, string> {
+  if (appearance === "dark") {
+    return {
+      "--style-editor-heading1-color": "#9fb7d7",
+      "--style-editor-heading2-color": "#d5b27a",
+      "--style-editor-heading3-color": "#9fc7ad",
+      "--style-editor-heading4-color": "#c4a7d8",
+      "--style-editor-heading5-color": "#d9a2a0",
+      "--style-editor-heading6-color": "#9db4c4",
+      "--style-editor-heading-bg": "rgba(117, 151, 191, 0.18)",
+      "--style-editor-strong-color": "#ddb58d",
+      "--style-editor-strong-bg": "rgba(221, 181, 141, 0.15)",
+      "--style-editor-blockquote-color": "#c7d2e2",
+      "--style-editor-blockquote-bg": "rgba(117, 151, 191, 0.12)",
+      "--style-editor-blockquote-line": "#8fb8a2",
+      "--style-editor-inline-code-color": "#e4b184",
+      "--style-editor-inline-code-bg": "rgba(228, 177, 132, 0.15)",
+      "--style-editor-mark-color": "#f6edd8",
+      "--style-editor-mark-bg": "rgba(214, 174, 88, 0.34)",
+      "--style-editor-mark-line": "rgba(255, 204, 102, 0.78)",
+      "--style-editor-code-block-color": "#c4cedd",
+      "--style-editor-code-block-bg": "#1d2430",
+      "--style-editor-code-block-header-bg": "#273141",
+      "--style-editor-list-color": "#a9bed8",
+      "--style-editor-list-marker": "#8bb7d6",
+      "--style-editor-list-line": "#76a7d7",
+      "--style-editor-link-color": "#8bb7e8",
+      "--style-editor-link-hover": "#8dd8c8",
+      "--style-editor-link-bg": "rgba(139, 183, 232, 0.16)",
+      "--style-editor-link-line": "rgba(139, 183, 232, 0.48)",
+      "--style-editor-card-bg-soft": "rgba(117, 151, 191, 0.18)",
+      "--style-editor-card-border": "rgba(151, 174, 205, 0.42)",
+      "--style-editor-card-shadow": "rgba(0, 0, 0, 0.28)",
+      "--style-editor-table-header-bg": "#334052",
+      "--style-editor-table-header-color": "#f0f4f8",
+      "--style-editor-table-border": "rgba(145, 166, 196, 0.32)",
+      "--style-editor-table-row-odd": "rgba(145, 166, 196, 0.08)",
+      "--style-editor-table-row-even": "rgba(145, 166, 196, 0.04)",
+      "--style-editor-tag-bg": "rgba(139, 183, 232, 0.18)",
+      "--style-editor-tag-color": "#9fc6ef",
+      "--style-editor-tree-block-1": "rgba(146, 108, 86, 0.68)",
+      "--style-editor-tree-block-2": "rgba(150, 133, 88, 0.68)",
+      "--style-editor-tree-block-3": "rgba(96, 128, 105, 0.68)",
+      "--style-editor-tree-block-4": "rgba(88, 113, 132, 0.68)",
+      "--style-editor-tree-block-5": "rgba(102, 92, 124, 0.68)",
+      "--style-editor-outline-h1": "rgba(226, 139, 137, 1)",
+      "--style-editor-outline-h2": "rgba(184, 163, 213, 1)",
+      "--style-editor-outline-h3": "rgba(142, 188, 214, 1)",
+      "--style-editor-outline-h4": "rgba(134, 183, 164, 1)",
+      "--style-editor-outline-h5": "rgba(221, 194, 111, 1)",
+      "--style-editor-outline-h6": "rgba(218, 169, 158, 1)",
+      "--style-editor-toolbar-hover-bg": "rgba(139, 183, 232, 0.18)",
+      "--style-editor-toolbar-current": "#f2cf80",
+      "--style-editor-scrollbar-thumb": "rgba(139, 183, 232, 0.36)",
+      "--style-editor-search-match-bg": "#6b5b2f",
+      "--style-editor-search-current-bg": "#ffb15c",
+      "--style-editor-editor-bg": "var(--b3-theme-background)",
+    }
+  }
+
+  return {
+    "--style-editor-heading1-color": "#31465f",
+    "--style-editor-heading2-color": "#7c5b35",
+    "--style-editor-heading3-color": "#3e6348",
+    "--style-editor-heading4-color": "#675075",
+    "--style-editor-heading5-color": "#8a4c4a",
+    "--style-editor-heading6-color": "#526777",
+    "--style-editor-heading-bg": "rgba(82, 113, 155, 0.1)",
+    "--style-editor-strong-color": "#9a6239",
+    "--style-editor-strong-bg": "rgba(185, 134, 83, 0.12)",
+    "--style-editor-blockquote-color": "#3a4754",
+    "--style-editor-blockquote-bg": "#f7f3ed",
+    "--style-editor-blockquote-line": "#5f9368",
+    "--style-editor-inline-code-color": "#b56e3f",
+    "--style-editor-inline-code-bg": "rgba(181, 110, 63, 0.11)",
+    "--style-editor-mark-color": "#2d3748",
+    "--style-editor-mark-bg": "rgba(232, 196, 95, 0.48)",
+    "--style-editor-mark-line": "rgba(201, 146, 43, 0.76)",
+    "--style-editor-code-block-color": "#a6b2c9",
+    "--style-editor-code-block-bg": "#202430",
+    "--style-editor-code-block-header-bg": "#2a3040",
+    "--style-editor-list-color": "#4d6178",
+    "--style-editor-list-marker": "#587fa3",
+    "--style-editor-list-line": "#466eb0",
+    "--style-editor-link-color": "#386fa8",
+    "--style-editor-link-hover": "#2c8f7d",
+    "--style-editor-link-bg": "rgba(82, 113, 155, 0.12)",
+    "--style-editor-link-line": "rgba(82, 113, 155, 0.36)",
+    "--style-editor-card-bg-soft": "rgba(82, 113, 155, 0.1)",
+    "--style-editor-card-border": "rgba(82, 113, 155, 0.32)",
+    "--style-editor-card-shadow": "rgba(56, 43, 28, 0.16)",
+    "--style-editor-table-header-bg": "#3f4a5a",
+    "--style-editor-table-header-color": "#f4f0e8",
+    "--style-editor-table-border": "rgba(63, 74, 90, 0.2)",
+    "--style-editor-table-row-odd": "rgba(82, 113, 155, 0.05)",
+    "--style-editor-table-row-even": "rgba(185, 134, 83, 0.04)",
+    "--style-editor-tag-bg": "rgba(82, 113, 155, 0.12)",
+    "--style-editor-tag-color": "#4f719a",
+    "--style-editor-tree-block-1": "rgba(137, 101, 79, 0.78)",
+    "--style-editor-tree-block-2": "rgba(142, 123, 77, 0.78)",
+    "--style-editor-tree-block-3": "rgba(89, 119, 94, 0.78)",
+    "--style-editor-tree-block-4": "rgba(77, 103, 122, 0.78)",
+    "--style-editor-tree-block-5": "rgba(92, 82, 113, 0.78)",
+    "--style-editor-outline-h1": "rgba(199, 95, 91, 1)",
+    "--style-editor-outline-h2": "rgba(143, 120, 176, 1)",
+    "--style-editor-outline-h3": "rgba(91, 142, 170, 1)",
+    "--style-editor-outline-h4": "rgba(87, 136, 118, 1)",
+    "--style-editor-outline-h5": "rgba(178, 143, 58, 1)",
+    "--style-editor-outline-h6": "rgba(178, 116, 105, 1)",
+    "--style-editor-toolbar-hover-bg": "rgba(82, 113, 155, 0.14)",
+    "--style-editor-toolbar-current": "#8b631e",
+    "--style-editor-scrollbar-thumb": "rgba(82, 113, 155, 0.28)",
+    "--style-editor-search-match-bg": "#f2df91",
+    "--style-editor-search-current-bg": "#d97828",
+    "--style-editor-editor-bg": "var(--b3-theme-background)",
+  }
+}
+
+function varsToCssDeclarations(vars: Record<string, string>): string {
+  return Object.entries(vars)
+    .map(([name, value]) => `  ${name}: ${value};`)
+    .join("\n")
+}
+
+export function createStyleEditorThemeCss(): string {
+  return [
+    `:root {
+${varsToCssDeclarations(createStyleEditorThemeVars("light"))}
+}`,
+    `:root[data-theme-mode="dark"],
+:root[data-theme="dark"],
+:root[data-style-editor-theme-mode="dark"],
+:root.theme-dark,
+:root.b3-theme-dark,
+body[data-theme-mode="dark"],
+body[data-theme="dark"],
+body[data-style-editor-theme-mode="dark"],
+body.theme-dark,
+body.b3-theme-dark {
+${varsToCssDeclarations(createStyleEditorThemeVars("dark"))}
+}`,
+  ].join("\n\n")
 }
 
 export function createPanelThemeVars(appearance: PanelThemeAppearance): Record<string, string> {

@@ -12,7 +12,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
   {
     buildCss: (config) => `
 .protyle-wysiwyg [data-type]:hover:not(.protyle-wysiwyg [data-type="NodeList"]):not(.protyle-wysiwyg [data-type="NodeListItem"]):not(.protyle-wysiwyg [data-type="img"]) {
-  background-color: ${stringValue(config.values.backgroundColor, "rgba(111, 142, 207, 0.04)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-card-bg-soft)")} !important;
   box-shadow: 0 0 ${px(config.values.shadowSize, 3)} 0 hsla(0, 0%, 77%, ${numberValue(config.values.shadowStrength, 0.05)}) !important;
 }
 
@@ -45,7 +45,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      backgroundColor: "rgba(111, 142, 207, 0.04)",
+      backgroundColor: "var(--style-editor-card-bg-soft)",
       shadowSize: 3,
       shadowStrength: 0.05,
       transitionMs: 350,
@@ -69,13 +69,13 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     rgba(111, 142, 207, 0.08) 12px
   );
   border-radius: ${px(config.values.radius, 5)};
-  border: ${px(config.values.borderWidth, 1)} solid ${stringValue(config.values.borderColor, "#8fa3c7")};
+  border: ${px(config.values.borderWidth, 1)} solid ${stringValue(config.values.borderColor, "var(--style-editor-card-border)")};
   opacity: ${numberValue(config.values.opacity, 0.85)};
 }
 
 .protyle-wysiwyg [fold="1"]:hover {
   opacity: ${numberValue(config.values.hoverOpacity, 1)};
-  box-shadow: 0 0 ${px(config.values.shadowSize, 6)} ${stringValue(config.values.shadowColor, "rgba(0, 0, 0, 0.2)")};
+  box-shadow: 0 0 ${px(config.values.shadowSize, 6)} ${stringValue(config.values.shadowColor, "var(--style-editor-card-shadow)")};
 }`.trim(),
     controls: [
       {
@@ -133,12 +133,12 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      borderColor: "#8fa3c7",
+      borderColor: "var(--style-editor-card-border)",
       borderWidth: 1,
       hoverOpacity: 1,
       opacity: 0.85,
       radius: 5,
-      shadowColor: "rgba(0, 0, 0, 0.2)",
+      shadowColor: "var(--style-editor-card-shadow)",
       shadowSize: 6,
     }),
     hint: "为折叠块增加条纹背景和悬停反馈。",
@@ -155,9 +155,9 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
 .protyle-wysiwyg blockquote,
 .protyle-wysiwyg .bq {
   padding: ${px(config.values.padding, 4)};
-  color: ${stringValue(config.values.color, "#4D4D4D")} !important;
-  border-left: 0.25em solid ${stringValue(config.values.lineColor, "#3D9140")} !important;
-  background-color: ${stringValue(config.values.backgroundColor, "#FFFAFA")} !important;
+  color: ${stringValue(config.values.color, "var(--style-editor-blockquote-color)")} !important;
+  border-left: 0.25em solid ${stringValue(config.values.lineColor, "var(--style-editor-blockquote-line)")} !important;
+  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-blockquote-bg)")} !important;
   margin: ${px(config.values.marginY, 4)} 0;
   border-radius: ${px(config.values.radius, 0)};
 }
@@ -215,10 +215,10 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      backgroundColor: "#FFFAFA",
+      backgroundColor: "var(--style-editor-blockquote-bg)",
       borderColor: "transparent",
-      color: "#4D4D4D",
-      lineColor: "#3D9140",
+      color: "var(--style-editor-blockquote-color)",
+      lineColor: "var(--style-editor-blockquote-line)",
       marginY: 4,
       padding: 4,
       radius: 0,
@@ -329,7 +329,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       shadow: "none",
       hoverZoom: "none",
       maxWidth: "auto",
-      borderColor: "#cbd5e1",
+      borderColor: "var(--style-editor-card-border)",
       borderWidth: 0,
     }),
     buildCss: (config) => {
@@ -337,7 +337,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       const shadow = stringValue(config.values.shadow, "none")
       const hoverZoom = stringValue(config.values.hoverZoom, "none")
       const maxWidth = stringValue(config.values.maxWidth, "auto")
-      const borderColor = stringValue(config.values.borderColor, "#cbd5e1")
+      const borderColor = stringValue(config.values.borderColor, "var(--style-editor-card-border)")
       const borderWidth = numberValue(config.values.borderWidth, 0)
 
       const SHADOW_MAP: Record<string, string> = {
@@ -374,9 +374,9 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
   },
   {
     buildCss: (config) => {
-      const headerBg = stringValue(config.values.headerBackgroundColor, "#3a4454")
-      const headerFg = stringValue(config.values.headerColor, "#eceff4")
-      const borderCol = stringValue(config.values.borderColor, "rgba(58, 68, 84, 0.2)")
+      const headerBg = stringValue(config.values.headerBackgroundColor, "var(--style-editor-table-header-bg)")
+      const headerFg = stringValue(config.values.headerColor, "var(--style-editor-table-header-color)")
+      const borderCol = stringValue(config.values.borderColor, "var(--style-editor-table-border)")
       const borderW = numberValue(config.values.borderWidth, 1.5)
       const padY = px(config.values.cellPaddingY, 6)
       const padX = px(config.values.cellPaddingX, 10)
@@ -472,12 +472,12 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
-      borderColor: "rgba(58, 68, 84, 0.2)",
+      borderColor: "var(--style-editor-table-border)",
       borderWidth: 1.5,
       cellPaddingX: 10,
       cellPaddingY: 6,
-      headerBackgroundColor: "#3a4454",
-      headerColor: "#eceff4",
+      headerBackgroundColor: "var(--style-editor-table-header-bg)",
+      headerColor: "var(--style-editor-table-header-color)",
       textColor: "",
       oddRowBackground: "",
       evenRowBackground: "",
@@ -614,17 +614,17 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     ],
     defaults: createDefaultConfig({
       borderRadius: 6,
-      backgroundColor: "#1e1e1e",
-      headerBgColor: "#2d2d2d",
+      backgroundColor: "var(--style-editor-code-block-bg)",
+      headerBgColor: "var(--style-editor-code-block-header-bg)",
       maxHeight: "none",
-      lineNumberColor: "#858585",
+      lineNumberColor: "var(--style-editor-code-block-color)",
     }),
     buildCss: (config) => {
       const borderRadius = px(config.values.borderRadius, 6)
-      const backgroundColor = stringValue(config.values.backgroundColor, "#1e1e1e")
-      const headerBgColor = stringValue(config.values.headerBgColor, "#2d2d2d")
+      const backgroundColor = stringValue(config.values.backgroundColor, "var(--style-editor-code-block-bg)")
+      const headerBgColor = stringValue(config.values.headerBgColor, "var(--style-editor-code-block-header-bg)")
       const maxHeight = stringValue(config.values.maxHeight, "none")
-      const lineNumberColor = stringValue(config.values.lineNumberColor, "#858585")
+      const lineNumberColor = stringValue(config.values.lineNumberColor, "var(--style-editor-code-block-color)")
 
       const maxH = maxHeight === "none" ? "" : `max-height: ${maxHeight} !important;`
 

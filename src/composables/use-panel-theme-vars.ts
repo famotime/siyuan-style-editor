@@ -7,24 +7,26 @@ import {
 
 import {
   createPanelThemeVars,
-  resolvePanelThemeAppearance,
+  detectSiyuanThemeAppearance,
+  SIYUAN_THEME_SIGNAL_ATTRIBUTES,
 } from "@/lib/panel-theme"
 
 export function usePanelThemeVars() {
-  const themeAppearance = ref(resolvePanelThemeAppearance(undefined, false))
+  const themeAppearance = ref(detectSiyuanThemeAppearance(false))
 
   function syncThemeAppearance() {
     if (typeof document === "undefined" || typeof window === "undefined") {
       return
     }
 
-    const root = document.documentElement
     const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false
-    themeAppearance.value = resolvePanelThemeAppearance(root?.getAttribute("data-theme-mode"), prefersDark)
+    themeAppearance.value = detectSiyuanThemeAppearance(prefersDark)
+    document.documentElement.dataset.styleEditorThemeMode = themeAppearance.value
   }
 
   let themeObserver: MutationObserver | null = null
   let mediaQuery: MediaQueryList | null = null
+  let themePoller: number | null = null
 
   onMounted(() => {
     syncThemeAppearance()
@@ -33,13 +35,21 @@ export function usePanelThemeVars() {
       themeObserver = new MutationObserver(syncThemeAppearance)
       themeObserver.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ["data-theme-mode"],
+        attributeFilter: SIYUAN_THEME_SIGNAL_ATTRIBUTES,
+      })
+      themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: SIYUAN_THEME_SIGNAL_ATTRIBUTES,
       })
     }
 
     if (typeof window !== "undefined" && window.matchMedia) {
       mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
       mediaQuery.addEventListener?.("change", syncThemeAppearance)
+    }
+
+    if (typeof window !== "undefined") {
+      themePoller = window.setInterval(syncThemeAppearance, 800)
     }
   })
 
@@ -49,6 +59,15 @@ export function usePanelThemeVars() {
 
     mediaQuery?.removeEventListener?.("change", syncThemeAppearance)
     mediaQuery = null
+
+    if (themePoller !== null && typeof window !== "undefined") {
+      window.clearInterval(themePoller)
+      themePoller = null
+    }
+
+    if (typeof document !== "undefined") {
+      delete document.documentElement.dataset.styleEditorThemeMode
+    }
   })
 
   const panelThemeVars = computed(() => {
@@ -57,5 +76,6 @@ export function usePanelThemeVars() {
 
   return {
     panelThemeVars,
+    themeAppearance,
   }
 }

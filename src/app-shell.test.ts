@@ -343,6 +343,7 @@ function createShellState(options: {
     }),
     selectPreviewTarget: vi.fn(),
     statusCopy: ref("当前正在编辑标题颜色"),
+    themeAppearance: ref("light"),
     togglePresetPaletteSection: vi.fn(),
   }
 }

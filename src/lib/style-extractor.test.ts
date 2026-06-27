@@ -28,8 +28,8 @@ describe("style extractor", () => {
 
     expect(result.matchedTargetCount).toBe(0)
     expect(result.extractedTargetCount).toBe(0)
-    expect(result.profile.heading1.color).toBe("#2b3a4a")
-    expect(result.profile.mark.backgroundColor).toBe("rgba(240, 218, 168, 0.65)")
+    expect(result.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
+    expect(result.profile.mark.backgroundColor).toBe("var(--style-editor-mark-bg)")
   })
 
   it("extracts list colors from SiYuan NodeList containers", () => {

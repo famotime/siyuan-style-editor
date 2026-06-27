@@ -1,5 +1,7 @@
 import {
   createPanelThemeVars,
+  createStyleEditorThemeCss,
+  detectSiyuanThemeAppearance,
   resolvePanelThemeAppearance,
 } from "@/lib/panel-theme"
 
@@ -11,6 +13,42 @@ describe("panel theme", () => {
   it("falls back to the system preference when the root mode is unavailable", () => {
     expect(resolvePanelThemeAppearance(null, true)).toBe("dark")
     expect(resolvePanelThemeAppearance(undefined, false)).toBe("light")
+  })
+
+  it("detects SiYuan theme appearance from common root and body signals", () => {
+    document.documentElement.setAttribute("data-theme-mode", "dark")
+    expect(detectSiyuanThemeAppearance(false)).toBe("dark")
+
+    document.documentElement.removeAttribute("data-theme-mode")
+    document.body.setAttribute("data-theme", "light")
+    expect(detectSiyuanThemeAppearance(true)).toBe("light")
+
+    document.body.removeAttribute("data-theme")
+    document.documentElement.className = "b3-theme-dark"
+    expect(detectSiyuanThemeAppearance(false)).toBe("dark")
+
+    document.documentElement.className = ""
+    expect(detectSiyuanThemeAppearance(true)).toBe("dark")
+  })
+
+  it("detects SiYuan theme appearance from the runtime appearance config", () => {
+    vi.stubGlobal("siyuan", {
+      config: {
+        appearance: {
+          mode: 1,
+        },
+      },
+    })
+    expect(detectSiyuanThemeAppearance(false)).toBe("dark")
+
+    vi.stubGlobal("siyuan", {
+      config: {
+        appearance: {
+          mode: 0,
+        },
+      },
+    })
+    expect(detectSiyuanThemeAppearance(true)).toBe("light")
   })
 
   it("returns refined dark theme tokens for the panel", () => {
@@ -30,6 +68,7 @@ describe("panel theme", () => {
     expect(vars["--panel-control-bg"]).toBe("linear-gradient(180deg, rgba(18, 27, 38, 0.96), rgba(13, 20, 30, 0.92))")
     expect(vars["--panel-control-border"]).toBe("rgba(132, 170, 204, 0.34)")
     expect(vars["--panel-floating-outline"]).toBe("rgba(176, 206, 231, 0.18)")
+    expect(vars["--style-editor-heading1-color"]).toBeUndefined()
   })
 
   it("returns warm light theme tokens for the panel", () => {
@@ -50,5 +89,15 @@ describe("panel theme", () => {
     expect(vars["--panel-control-bg"]).toBe("linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(246, 238, 227, 0.94))")
     expect(vars["--panel-control-border"]).toBe("rgba(106, 80, 48, 0.22)")
     expect(vars["--panel-floating-outline"]).toBe("rgba(120, 93, 61, 0.12)")
+    expect(vars["--style-editor-heading1-color"]).toBeUndefined()
+  })
+
+  it("builds global theme variable css for injected document styles", () => {
+    const css = createStyleEditorThemeCss()
+
+    expect(css).toContain(":root {")
+    expect(css).toContain("--style-editor-heading1-color: #31465f;")
+    expect(css).toContain(':root[data-theme-mode="dark"]')
+    expect(css).toContain("--style-editor-heading1-color: #9fb7d7;")
   })
 })

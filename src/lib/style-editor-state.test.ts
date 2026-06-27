@@ -13,10 +13,10 @@ describe("style editor state", () => {
     const state = createDefaultEditorState()
 
     expect(state.customPresetPalettes).toEqual([])
-    expect(state.profile.heading1.color).toBe("#2b3a4a")
-    expect(state.profile.strong.color).toBe("#b27a53")
-    expect(state.profile.mark.backgroundColor).toBe("rgba(240, 218, 168, 0.65)")
-    expect(state.profile.codeBlock.backgroundColor).toBe("#202430")
+    expect(state.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
+    expect(state.profile.strong.color).toBe("var(--style-editor-strong-color)")
+    expect(state.profile.mark.backgroundColor).toBe("var(--style-editor-mark-bg)")
+    expect(state.profile.codeBlock.backgroundColor).toBe("var(--style-editor-code-block-bg)")
     expect(state.featureProfile.paragraphHover.enabled).toBe(false)
     expect(state.featureProfile.imageRadius.values.radius).toBe(6)
   })
@@ -55,9 +55,9 @@ describe("style editor state", () => {
       },
     ])
     expect(state.profile.strong.color).toBe("rgb(1, 2, 3)")
-    expect(state.profile.heading3.color).toBe("#2f5233")
-    expect(state.profile.inlineCode.backgroundColor).toBe("rgba(209, 154, 102, 0.09)")
-    expect(state.profile.taskList.color).toBe("#4a5f7c")
+    expect(state.profile.heading3.color).toBe("var(--style-editor-heading3-color)")
+    expect(state.profile.inlineCode.backgroundColor).toBe("var(--style-editor-inline-code-bg)")
+    expect(state.profile.taskList.color).toBe("var(--style-editor-list-color)")
     expect(state.featureProfile.imageRadius.enabled).toBe(true)
     expect(state.featureProfile.imageRadius.values.radius).toBe(14)
     expect(state.featureProfile.linkStyle.enabled).toBe(false)
@@ -75,7 +75,7 @@ describe("style editor state", () => {
     expect(nextState.featureProfile.paragraphHover.values.backgroundColor).toBe("#eeeeee")
     expect(nextState.featureProfile.paragraphHover.values.transitionMs).toBe(350)
     expect(nextState.featureProfile.imageRadius.enabled).toBe(false)
-    expect(nextState.profile.heading1.color).toBe("#2b3a4a")
+    expect(nextState.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
   })
 
   it("updates only the chosen target color", () => {
@@ -100,16 +100,16 @@ describe("style editor state", () => {
       label: "Saved",
     }])
     expect(nextState.profile.heading2.color).toBe("var(--b3-font-color4)")
-    expect(nextState.profile.heading1.color).toBe("#2b3a4a")
-    expect(nextState.profile.strong.color).toBe("#b27a53")
+    expect(nextState.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
+    expect(nextState.profile.strong.color).toBe("var(--style-editor-strong-color)")
   })
 
   it("updates only the chosen target background color", () => {
     const nextState = updateTargetBackgroundColor(createDefaultEditorState(), "mark", "var(--b3-font-background8)")
 
     expect(nextState.profile.mark.backgroundColor).toBe("var(--b3-font-background8)")
-    expect(nextState.profile.heading2.backgroundColor).toBe("rgba(222, 184, 135, 0.1)")
-    expect(nextState.profile.blockquote.backgroundColor).toBe("rgba(111, 142, 207, 0.06)")
+    expect(nextState.profile.heading2.backgroundColor).toBe("var(--style-editor-heading-bg)")
+    expect(nextState.profile.blockquote.backgroundColor).toBe("var(--style-editor-blockquote-bg)")
   })
 
   it("resets all configured styles back to the default state", () => {
@@ -131,10 +131,10 @@ describe("style editor state", () => {
     const resetState = resetEditorStyles(stateWithStyles)
 
     expect(resetState.customPresetPalettes).toEqual([])
-    expect(resetState.profile.heading2.color).toBe("#8c6239")
-    expect(resetState.profile.mark.backgroundColor).toBe("rgba(240, 218, 168, 0.65)")
-    expect(resetState.profile.heading1.color).toBe("#2b3a4a")
-    expect(resetState.profile.codeBlock.backgroundColor).toBe("#202430")
+    expect(resetState.profile.heading2.color).toBe("var(--style-editor-heading2-color)")
+    expect(resetState.profile.mark.backgroundColor).toBe("var(--style-editor-mark-bg)")
+    expect(resetState.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
+    expect(resetState.profile.codeBlock.backgroundColor).toBe("var(--style-editor-code-block-bg)")
     expect(resetState.featureProfile.imageRadius.enabled).toBe(false)
     expect(resetState.featureProfile.imageRadius.values.radius).toBe(6)
   })

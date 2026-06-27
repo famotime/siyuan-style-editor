@@ -2,6 +2,7 @@
   <div
     class="style-editor-shell"
     :style="panelThemeVars"
+    :data-theme-mode="themeAppearance"
   >
     <section class="style-card style-card--workspace">
       <WorkspaceHero
@@ -36,6 +37,7 @@
         title="高级定制"
         :feature-style-options="bodySafeFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
+        :theme-appearance="themeAppearance"
         @update-feature-style="handleUpdateFeatureStyle"
       />
 
@@ -44,6 +46,7 @@
         title="全屋改造"
         :feature-style-options="editorUiFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
+        :theme-appearance="themeAppearance"
         @update-feature-style="handleUpdateFeatureStyle"
       />
     </section>
@@ -134,6 +137,7 @@ const {
   runtimeState,
   selectPresetPaletteTab,
   togglePresetPaletteSection,
+  themeAppearance,
   selectedChannelLabel,
   selectedSwatch,
   selectedTargetMeta,

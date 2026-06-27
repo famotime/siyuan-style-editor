@@ -24,20 +24,20 @@ export type StyleProfile = Record<StyleTarget, StyleRule>
 type PartialStyleProfile = Partial<Record<StyleTarget, Partial<StyleRule>>>
 
 const DEFAULT_TARGET_COLORS: Record<string, { color: string; backgroundColor: string }> = {
-  heading1: { color: "#2b3a4a", backgroundColor: "rgba(111, 142, 207, 0.15)" },
-  heading2: { color: "#8c6239", backgroundColor: "rgba(222, 184, 135, 0.1)" },
-  heading3: { color: "#2f5233", backgroundColor: "rgba(167, 184, 168, 0.12)" },
-  heading4: { color: "#6a3d6a", backgroundColor: "" },
-  heading5: { color: "#8c3a3a", backgroundColor: "" },
-  heading6: { color: "#4a5d6c", backgroundColor: "" },
-  strong: { color: "#b27a53", backgroundColor: "rgba(222, 184, 135, 0.12)" },
-  blockquote: { color: "#2b3a4a", backgroundColor: "rgba(111, 142, 207, 0.06)" },
-  inlineCode: { color: "#d19a66", backgroundColor: "rgba(209, 154, 102, 0.09)" },
-  mark: { color: "#2d3748", backgroundColor: "rgba(240, 218, 168, 0.65)" },
-  codeBlock: { color: "#a6b2c9", backgroundColor: "#202430" },
-  bulletList: { color: "#4a5f7c", backgroundColor: "" },
-  orderedList: { color: "#4a5f7c", backgroundColor: "" },
-  taskList: { color: "#4a5f7c", backgroundColor: "" },
+  heading1: { color: "var(--style-editor-heading1-color)", backgroundColor: "var(--style-editor-heading-bg)" },
+  heading2: { color: "var(--style-editor-heading2-color)", backgroundColor: "var(--style-editor-heading-bg)" },
+  heading3: { color: "var(--style-editor-heading3-color)", backgroundColor: "var(--style-editor-heading-bg)" },
+  heading4: { color: "var(--style-editor-heading4-color)", backgroundColor: "" },
+  heading5: { color: "var(--style-editor-heading5-color)", backgroundColor: "" },
+  heading6: { color: "var(--style-editor-heading6-color)", backgroundColor: "" },
+  strong: { color: "var(--style-editor-strong-color)", backgroundColor: "var(--style-editor-strong-bg)" },
+  blockquote: { color: "var(--style-editor-blockquote-color)", backgroundColor: "var(--style-editor-blockquote-bg)" },
+  inlineCode: { color: "var(--style-editor-inline-code-color)", backgroundColor: "var(--style-editor-inline-code-bg)" },
+  mark: { color: "var(--style-editor-mark-color)", backgroundColor: "var(--style-editor-mark-bg)" },
+  codeBlock: { color: "var(--style-editor-code-block-color)", backgroundColor: "var(--style-editor-code-block-bg)" },
+  bulletList: { color: "var(--style-editor-list-color)", backgroundColor: "" },
+  orderedList: { color: "var(--style-editor-list-color)", backgroundColor: "" },
+  taskList: { color: "var(--style-editor-list-color)", backgroundColor: "" },
 }
 
 export function createDefaultRuleForTarget(target: StyleTarget): StyleRule {
