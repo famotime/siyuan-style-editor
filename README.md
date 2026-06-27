@@ -22,7 +22,7 @@
 - `src/composables/use-style-editor-shell.ts`：面板交互编排。
 - `src/style-editor-runtime.ts`：运行时公开接口。
 - `src/lib/style-target-catalog.ts`：样式目标目录与 selector 单一来源。
-- `src/lib/style-feature-catalog.ts`：功能样式目录导出（归一化与 API），内部拆分为类型（`feature-style-types.ts`）与定义（`feature-style-definitions.ts`）。
+- `src/lib/style-feature-catalog.ts`：功能样式目录导出，内部拆分为类型（`feature-style-types.ts`）与定义（`feature-style-definitions.ts`），具体样式配置已细化拆分至 `definitions/` 目录下。
 - `docs/project-structure.md`：更完整的模块说明与职责映射。
 
 ## 开发命令

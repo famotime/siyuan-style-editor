@@ -33,7 +33,6 @@ export function useInlinePaletteSession() {
   const inlineColorFieldRef = ref<HTMLElement | null>(null)
   const floatingPaletteRef = ref<HTMLElement | null>(null)
   const floatingPaletteStyle = ref<Record<string, string>>({})
-  let previousWindowKeydownHandler: ((this: Window, ev: KeyboardEvent) => unknown) | null = null
 
   const selectedSwatch = computed(() => {
     return runtimeState.profile[runtimeState.selectedTarget][runtimeState.selectedChannel]
@@ -142,24 +141,20 @@ export function useInlinePaletteSession() {
       return
     }
 
+    event.preventDefault()
+    event.stopPropagation()
     void cancelInlinePalettePanel()
   }
 
   onMounted(() => {
     if (typeof window !== "undefined") {
-      previousWindowKeydownHandler = window.onkeydown as ((this: Window, ev: KeyboardEvent) => unknown) | null
-      window.addEventListener("keydown", handleEscapeKey)
-      window.onkeydown = ((event: KeyboardEvent) => {
-        previousWindowKeydownHandler?.call(window, event)
-        handleEscapeKey(event)
-      }) as typeof window.onkeydown
+      window.addEventListener("keydown", handleEscapeKey, true)
     }
   })
 
   onBeforeUnmount(() => {
     if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleEscapeKey)
-      window.onkeydown = previousWindowKeydownHandler as typeof window.onkeydown
+      window.removeEventListener("keydown", handleEscapeKey, true)
     }
   })
 

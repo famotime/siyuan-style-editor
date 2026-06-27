@@ -469,47 +469,6 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   transform: translateY(0);
 }
 
-.feature-switch {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: flex-start;
-  cursor: pointer;
-}
-
-.feature-switch input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.feature-switch__track {
-  width: 38px;
-  height: 22px;
-  padding: 2px;
-  box-sizing: border-box;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--panel-pill-bg) 74%, transparent 26%);
-  box-shadow: inset 0 0 0 1px var(--panel-card-inner-stroke);
-  transition: background-color 160ms ease;
-}
-
-.feature-switch__thumb {
-  width: 18px;
-  height: 18px;
-  display: block;
-  border-radius: 999px;
-  background: var(--panel-card-bg);
-  box-shadow: 0 4px 10px color-mix(in srgb, var(--panel-text) 18%, transparent);
-  transition: transform 160ms ease;
-}
-
-.feature-switch input:checked + .feature-switch__track {
-  background: var(--panel-chip-active-bg);
-}
-
-.feature-switch input:checked + .feature-switch__track .feature-switch__thumb {
-  transform: translateX(16px);
-}
 
 .feature-card__controls {
   display: grid;

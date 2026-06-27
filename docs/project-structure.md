@@ -19,7 +19,10 @@
 ### 功能样式目录（拆分自原 `style-feature-catalog.ts`）
 
 - `feature-style-types.ts`（~130 行）：功能样式类型定义（`FeatureStyleId`、`FeatureStyleConfig`、`FeatureStyleControl` 等）与辅助函数（`px`、`em`、`stringValue`、`lineStyleValue` 等）。
-- `feature-style-definitions.ts`（~1920 行）：34 个功能定义数组，每项含 `buildCss(config)` CSS 生成函数、控件元数据与默认值。
+- `feature-style-definitions.ts`（~70 行）：聚合子配置文件的总配置项数组 `FEATURE_DEFINITIONS` 并导出，维持原始数组排序以防外部索引不兼容。
+- `definitions/elements.ts`（~420 行）：块级元素与表格、代码块等结构性样式的具体配置定义。
+- `definitions/typography.ts`（~660 行）：排版样式、列表样式、行内元素样式的具体配置定义。
+- `definitions/theme.ts`（~780 行）：文档外观、全局背景色、大纲面板、工具条及系统元素等界面主题样式的具体配置定义。
 - `style-feature-catalog.ts`（~130 行）：归一化、导出 API（`createDefaultFeatureProfile`、`normalizeFeatureProfile`、`buildFeatureStyleCss`、`FEATURE_STYLE_OPTIONS` 等），对外保持原有导入路径不变。
 
 ### 编辑器状态与运行时辅助
