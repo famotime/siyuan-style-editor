@@ -23,6 +23,7 @@ import {
 const mockCreateStylePreviewDocument = vi.hoisted(() => vi.fn())
 const mockPushErrMsg = vi.hoisted(() => vi.fn())
 const mockPushMsg = vi.hoisted(() => vi.fn())
+const mockShowConfirm = vi.hoisted(() => vi.fn().mockResolvedValue(true))
 
 vi.mock("@/lib/style-preview-document", () => ({
   createStylePreviewDocument: mockCreateStylePreviewDocument,
@@ -32,6 +33,7 @@ vi.mock("@/api", () => {
   return {
     pushErrMsg: mockPushErrMsg,
     pushMsg: mockPushMsg,
+    showConfirm: mockShowConfirm,
   }
 })
 
@@ -596,4 +598,55 @@ describe("useStyleEditorShell", () => {
 
     unmount()
   })
+
+  it("resets styles if showConfirm is confirmed", async () => {
+    const plugin = createPluginStub()
+    await initializeRuntime(plugin as never)
+
+    selectTarget("heading1")
+    selectChannel("color")
+    await applyPaletteColor("#aabbcc")
+    expect(runtimeState.profile.heading1.color).toBe("#aabbcc")
+
+    const {
+      shell,
+      unmount,
+    } = await mountShell()
+
+    mockShowConfirm.mockResolvedValueOnce(true)
+
+    await shell.handleResetAllStyles()
+
+    expect(mockShowConfirm).toHaveBeenCalledWith("清除样式", "确定要关闭所有样式开关且恢复各设置项的默认配置吗？")
+    expect(runtimeState.profile.heading1.color).toBe("")
+    expect(shell.statusCopy.value).toBe("已清除全部样式，恢复到初始状态。")
+
+    unmount()
+  })
+
+  it("does not reset styles if showConfirm is rejected", async () => {
+    const plugin = createPluginStub()
+    await initializeRuntime(plugin as never)
+
+    selectTarget("heading1")
+    selectChannel("color")
+    await applyPaletteColor("#aabbcc")
+    expect(runtimeState.profile.heading1.color).toBe("#aabbcc")
+
+    const {
+      shell,
+      unmount,
+    } = await mountShell()
+
+    mockShowConfirm.mockResolvedValueOnce(false)
+
+    await shell.handleResetAllStyles()
+
+    expect(mockShowConfirm).toHaveBeenCalledWith("清除样式", "确定要关闭所有样式开关且恢复各设置项的默认配置吗？")
+    expect(runtimeState.profile.heading1.color).toBe("#aabbcc")
+    expect(shell.statusCopy.value).not.toBe("已清除所有自定义样式，回到思源默认外观。")
+
+    unmount()
+  })
 })
+

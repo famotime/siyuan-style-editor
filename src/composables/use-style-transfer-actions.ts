@@ -4,6 +4,7 @@ import { ref } from "vue"
 import {
   pushErrMsg,
   pushMsg,
+  showConfirm,
 } from "@/api"
 import {
   RESET_ALL_STYLES_MESSAGE,
@@ -57,6 +58,13 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
   async function handleResetAllStyles() {
     await options.cancelInlinePalettePanel()
+    const confirmed = await showConfirm(
+      "清除样式",
+      "确定要关闭所有样式开关且恢复各设置项的默认配置吗？"
+    )
+    if (!confirmed) {
+      return
+    }
     await resetAllStyles()
     importedStyleSignature.value = ""
     actionMessage.value = RESET_ALL_STYLES_MESSAGE

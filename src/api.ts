@@ -4,6 +4,7 @@ import type {
 } from "siyuan"
 
 import {
+  confirm,
   fetchSyncPost,
   openTab,
 } from "siyuan"
@@ -78,5 +79,15 @@ export async function openDocByTab(app: App, docId: DocumentId) {
       id: docId,
       action: ["cb-get-focus"],
     },
+  })
+}
+
+export function showConfirm(title: string, text: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    confirm(title, text, () => {
+      resolve(true)
+    }, () => {
+      resolve(false)
+    })
   })
 }

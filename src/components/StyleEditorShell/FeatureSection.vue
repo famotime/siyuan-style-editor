@@ -184,6 +184,7 @@ import type {
   FeatureStyleOption,
   FeatureStyleProfile,
 } from "@/lib/style-feature-catalog"
+import { resolveColorPickerValue } from "@/lib/custom-color"
 
 import {
   computed,
@@ -262,7 +263,10 @@ function handleControlInput(featureId: FeatureStyleId, key: string, event: Event
 
 function getColorControlValue(featureId: FeatureStyleId, key: string) {
   const value = props.featureProfile[featureId].values[key]
-  return typeof value === "string" && value.startsWith("#") ? value : "#888888"
+  const channel = key.toLowerCase().includes("bg") || key.toLowerCase().includes("background")
+    ? "backgroundColor"
+    : "color"
+  return typeof value === "string" ? resolveColorPickerValue(value, channel) : "#888888"
 }
 </script>
 
