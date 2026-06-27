@@ -20,6 +20,10 @@ function createProps() {
     isInlinePaletteOpenForTarget: () => false,
     selectedChannel: "color",
     selectedTarget: "heading1",
+    profile: {
+      heading1: { enabled: false, color: "", backgroundColor: "", fontWeight: "", fontStyle: "", textDecoration: "" },
+      mark: { enabled: false, color: "", backgroundColor: "", fontWeight: "", fontStyle: "", textDecoration: "" },
+    },
     styleTargetOptions: [
       {
         hint: "用于文章总标题与大章节入口",

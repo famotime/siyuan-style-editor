@@ -76,7 +76,7 @@ describe("style editor runtime", () => {
 
     await resetAllStyles()
 
-    expect(runtimeState.profile.mark.backgroundColor).toBe("")
+    expect(runtimeState.profile.mark.backgroundColor).toBe("rgba(240, 218, 168, 0.65)")
     expect(plugin.saveData).toHaveBeenCalledTimes(2)
     expect(styleElement?.textContent).toBe("")
   })
@@ -122,7 +122,7 @@ describe("style editor runtime", () => {
     expect(runtimeState.profile.heading1.color).toBe("#224488")
     expect(runtimeState.profile.heading2.color).toBe("#5b8def")
     expect(runtimeState.profile.heading3.color).toBe("#f6d365")
-    expect(runtimeState.profile.heading4.color).toBe("")
+    expect(runtimeState.profile.heading4.color).toBe("#6a3d6a")
     expect(plugin.saveData).toHaveBeenCalledOnce()
     expect(plugin.saveData).toHaveBeenCalledWith("style-editor.json", expect.objectContaining({
       customPresetPalettes: [],
@@ -138,7 +138,7 @@ describe("style editor runtime", () => {
           color: "#f6d365",
         }),
         heading4: expect.objectContaining({
-          color: "",
+          color: "#6a3d6a",
         }),
       }),
     }))
@@ -388,7 +388,7 @@ describe("style editor runtime", () => {
         author: "Alice",
         styleName: "Paper Glow",
       },
-      styledTargetCount: 2,
+      styledTargetCount: 14,
     })
     expect(runtimeState.profile.heading2.color).toBe("#3355aa")
     expect(runtimeState.profile.mark.backgroundColor).toBe("#fff2a8")
@@ -421,7 +421,7 @@ describe("style editor runtime", () => {
     const result = await saveCurrentProfileAsPresetPalette("My Favorite")
 
     expect(result).toEqual(expect.objectContaining({
-      colorCount: 2,
+      colorCount: 4,
       label: "My Favorite",
       palette: expect.objectContaining({
         id: expect.stringMatching(/^custom-palette-/),
@@ -433,6 +433,14 @@ describe("style editor runtime", () => {
         {
           label: "#3355aa",
           value: "#3355aa",
+        },
+        {
+          label: "rgba(111, 142, 207, 0.15)",
+          value: "rgba(111, 142, 207, 0.15)",
+        },
+        {
+          label: "#2d3748",
+          value: "#2d3748",
         },
         {
           label: "#fff2a8",
@@ -503,7 +511,7 @@ describe("style editor runtime", () => {
     expect(runtimeState.ready).toBe(false)
     expect(runtimeState.selectedTarget).toBe("heading1")
     expect(runtimeState.selectedChannel).toBe("color")
-    expect(runtimeState.profile.heading1.color).toBe("")
+    expect(runtimeState.profile.heading1.color).toBe("#2b3a4a")
     expect(document.getElementById("siyuan-style-editor-style")).toBeNull()
   })
 })

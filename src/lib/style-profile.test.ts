@@ -8,16 +8,16 @@ describe("style profile utilities", () => {
   it("creates a complete default profile for supported targets", () => {
     const profile = createDefaultStyleProfile()
 
-    expect(profile.heading1.color).toBe("")
-    expect(profile.heading6.color).toBe("")
-    expect(profile.strong.color).toBe("")
-    expect(profile.blockquote.color).toBe("")
-    expect(profile.inlineCode.backgroundColor).toBe("")
-    expect(profile.mark.backgroundColor).toBe("")
-    expect(profile.codeBlock.backgroundColor).toBe("")
-    expect(profile.bulletList.color).toBe("")
-    expect(profile.orderedList.color).toBe("")
-    expect(profile.taskList.color).toBe("")
+    expect(profile.heading1.color).toBe("#2b3a4a")
+    expect(profile.heading6.color).toBe("#4a5d6c")
+    expect(profile.strong.color).toBe("#b27a53")
+    expect(profile.blockquote.color).toBe("#2b3a4a")
+    expect(profile.inlineCode.backgroundColor).toBe("rgba(209, 154, 102, 0.09)")
+    expect(profile.mark.backgroundColor).toBe("rgba(240, 218, 168, 0.65)")
+    expect(profile.codeBlock.backgroundColor).toBe("#202430")
+    expect(profile.bulletList.color).toBe("#4a5f7c")
+    expect(profile.orderedList.color).toBe("#4a5f7c")
+    expect(profile.taskList.color).toBe("#4a5f7c")
   })
 
   it("normalizes partial data onto the default profile", () => {
@@ -26,10 +26,10 @@ describe("style profile utilities", () => {
     })
 
     expect(profile.heading1.color).toBe("rgb(255, 0, 0)")
-    expect(profile.heading2.color).toBe("")
+    expect(profile.heading2.color).toBe("#8c6239")
     expect(profile.strong.fontWeight).toBe("")
-    expect(profile.blockquote.backgroundColor).toBe("")
-    expect(profile.codeBlock.backgroundColor).toBe("")
+    expect(profile.blockquote.backgroundColor).toBe("rgba(111, 142, 207, 0.06)")
+    expect(profile.codeBlock.backgroundColor).toBe("#202430")
   })
 
   it("builds css rules only for targets with defined styles", () => {

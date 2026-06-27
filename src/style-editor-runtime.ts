@@ -159,6 +159,9 @@ function collectActiveProfileColors(): string[] {
 
   for (const target of STYLE_TARGETS) {
     const rule = runtimeState.profile[target]
+    if (rule.enabled === false) {
+      continue
+    }
     if (rule.color) {
       colors.push(rule.color)
     }
@@ -393,4 +396,18 @@ export async function deleteCustomPresetPalette(paletteId: string) {
     id: paletteToDelete.id,
     label: paletteToDelete.label,
   }
+}
+
+export async function updateTargetEnabled(target: StyleTarget, enabled: boolean) {
+  const nextState = {
+    ...snapshotState(),
+    profile: {
+      ...snapshotState().profile,
+      [target]: {
+        ...snapshotState().profile[target],
+        enabled,
+      },
+    },
+  }
+  await commitState(nextState)
 }

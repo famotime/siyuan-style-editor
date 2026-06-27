@@ -94,6 +94,18 @@
         class="target-preview-card"
         :class="{ 'target-preview-card--selected': selectedTarget === target.value }"
       >
+        <div class="target-preview-card__switch-wrapper" @click.stop @mousedown.stop>
+          <label class="feature-switch">
+            <input
+              type="checkbox"
+              :checked="profile ? profile[target.value]?.enabled : false"
+              @change="emit('update-target-enabled', target.value, ($event.target as HTMLInputElement).checked)"
+            >
+            <span class="feature-switch__track">
+              <span class="feature-switch__thumb" />
+            </span>
+          </label>
+        </div>
         <button
           type="button"
           class="target-preview-card__surface"
@@ -174,7 +186,7 @@
 </template>
 
 <script setup lang="ts">
-import type { StyleTarget } from "@/lib/style-profile"
+import type { StyleProfile, StyleTarget } from "@/lib/style-profile"
 import type { PaintChannel } from "@/style-editor-runtime"
 
 import {
@@ -191,6 +203,7 @@ const props = defineProps<{
   selectedChannel: PaintChannel
   selectedTarget: StyleTarget
   styleTargetOptions: StyleTargetOption[]
+  profile: StyleProfile
 }>()
 
 const emit = defineEmits<{
@@ -201,6 +214,7 @@ const emit = defineEmits<{
     source: { channel: PaintChannel, target: StyleTarget },
     target: { channel: PaintChannel, target: StyleTarget },
   ]
+  "update-target-enabled": [target: StyleTarget, enabled: boolean]
 }>()
 
 const collapsed = ref(false)
@@ -542,12 +556,20 @@ function submitSaveForm() {
 }
 
 .target-preview-card {
+  position: relative;
   display: grid;
   gap: 6px;
   padding: 8px;
   border-radius: 14px;
   border: 1px solid var(--panel-divider);
   background: var(--panel-card-strong);
+}
+
+.target-preview-card__switch-wrapper {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
 }
 
 .target-preview-card--selected {

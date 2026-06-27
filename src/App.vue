@@ -23,10 +23,12 @@
         :get-target-preview-style="getTargetPreviewStyle"
         :get-channel-swatch="getChannelSwatch"
         :is-inline-palette-open-for-target="isInlinePaletteOpenForTarget"
+        :profile="runtimeState.profile"
         @save-preset-palette="handleSavePresetPalette"
         @select-target="selectPreviewTarget"
         @swap-channel-value="handleSwapTargetChannelValues"
         @activate-channel="handleTargetChannelActivation"
+        @update-target-enabled="updateTargetEnabled"
       />
 
       <FeatureSection
@@ -138,6 +140,7 @@ const {
   selectPreviewTarget,
   openImportStylesPicker,
   statusCopy,
+  updateTargetEnabled,
   bodySafeFeatureOptions,
   editorUiFeatureOptions,
   STYLE_TARGET_OPTIONS,

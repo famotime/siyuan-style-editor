@@ -94,6 +94,7 @@ export function updateTargetColor(
       [target]: {
         ...state.profile[target],
         color,
+        enabled: true,
       },
     },
   }
@@ -111,6 +112,7 @@ export function updateTargetBackgroundColor(
       [target]: {
         ...state.profile[target],
         backgroundColor,
+        enabled: true,
       },
     },
   }
@@ -135,10 +137,12 @@ export function swapTargetChannelValues(
       [source.target]: {
         ...state.profile[source.target],
         [source.channel]: targetValue,
+        enabled: true,
       },
       [target.target]: {
         ...state.profile[target.target],
         [target.channel]: sourceValue,
+        enabled: true,
       },
     },
   }

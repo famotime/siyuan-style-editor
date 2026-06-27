@@ -372,7 +372,7 @@ describe("useStyleEditorShell", () => {
 
     const nextTarget = STYLE_TARGET_OPTIONS[paletteColors.length]?.value
     if (nextTarget) {
-      expect(runtimeState.profile[nextTarget].color).toBe("")
+      expect(runtimeState.profile[nextTarget].enabled).toBe(false)
     }
     expect(plugin.saveData).toHaveBeenCalledOnce()
 
@@ -471,6 +471,14 @@ describe("useStyleEditorShell", () => {
       {
         label: "#3355aa",
         value: "#3355aa",
+      },
+      {
+        label: "rgba(111, 142, 207, 0.15)",
+        value: "rgba(111, 142, 207, 0.15)",
+      },
+      {
+        label: "#2d3748",
+        value: "#2d3748",
       },
       {
         label: "#fff2a8",
@@ -618,7 +626,7 @@ describe("useStyleEditorShell", () => {
     await shell.handleResetAllStyles()
 
     expect(mockShowConfirm).toHaveBeenCalledWith("清除样式", "确定要关闭所有样式开关且恢复各设置项的默认配置吗？")
-    expect(runtimeState.profile.heading1.color).toBe("")
+    expect(runtimeState.profile.heading1.color).toBe("#2b3a4a")
     expect(shell.statusCopy.value).toBe("已清除全部样式，恢复到初始状态。")
 
     unmount()
