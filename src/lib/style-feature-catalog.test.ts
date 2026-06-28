@@ -49,6 +49,10 @@ describe("style feature catalog", () => {
     expect(profile.slashMenu.values.columnWidth).toBe(180)
     expect(profile.emojiPanel.values.panelWidth).toBe(366)
     expect(profile.searchPanel.values.lineHeight).toBe(1.3)
+    expect(profile.inlineTagStyle.enabled).toBe(false)
+    expect(profile.inlineTagStyle.values.backgroundColor).toBe("var(--b3-theme-primary-light)")
+    expect(profile.inlineTagStyle.values.color).toBe("var(--b3-theme-primary)")
+    expect(profile.inlineTagStyle.values.radius).toBe(4)
   })
 
   it("normalizes partial and invalid feature profile input", () => {
@@ -1010,6 +1014,59 @@ describe("style feature catalog", () => {
     expect(css).toContain("list-style-type: upper-roman")
     expect(css).toContain("margin-bottom: 6px")
     expect(css).toContain("margin-left: 28px")
+  })
+
+  it("inlineTagStyle — 行内标签外观", () => {
+    const profile = normalizeFeatureProfile({
+      inlineTagStyle: {
+        enabled: true,
+        values: {
+          backgroundColor: "#ff0000",
+          color: "#ffffff",
+          radius: 6,
+          fontSize: 85,
+          showHash: "no",
+          position: "floatEnd",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain('span[data-type~="tag"]')
+    expect(css).toContain("background-color: #ff0000 !important;")
+    expect(css).toContain("color: #ffffff !important;")
+    expect(css).toContain("border-radius: 6px !important;")
+    expect(css).toContain("font-size: 85% !important;")
+    expect(css).toContain("display: none !important;") // hash is hidden
+    expect(css).toContain("float: right !important;") // position is floatEnd
+  })
+
+  it("codeBlockStyle — Mac风格按钮", () => {
+    const profile = normalizeFeatureProfile({
+      codeBlockStyle: {
+        enabled: true,
+        values: {
+          macButtons: "yes",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain("box-shadow: 14px 0 0 #ffbd2e, 28px 0 0 #27c93f !important;")
+    expect(css).toContain("background-color: #ff5f56 !important;")
+  })
+
+  it("blockquoteFrame — 便利贴风格", () => {
+    const profile = normalizeFeatureProfile({
+      blockquoteFrame: {
+        enabled: true,
+        values: {
+          styleMode: "sticky-yellow",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain("border-top: 3px solid #e4c411 !important;")
+    expect(css).toContain("background-color: #fcf4df !important;")
+    expect(css).toContain("background-image: linear-gradient(rgba(131, 111, 86, 0.08)")
   })
 })
 

@@ -1091,4 +1091,137 @@ ${stringValue(config.values.showBackground, "no") === "yes"
       return rules.join("\n")
     },
   },
+  {
+    value: "inlineTagStyle",
+    label: "行内标签外观",
+    hint: "自定义正文内所有标签的形状、底色、字色、隐藏'#'和布局模式等。",
+    group: "行内元素",
+    preview: "#标签",
+    risk: "正文安全",
+    controls: [
+      {
+        key: "backgroundColor",
+        label: "标签底色",
+        type: "color",
+      },
+      {
+        key: "color",
+        label: "标签字色",
+        type: "color",
+      },
+      {
+        key: "radius",
+        label: "圆角半径",
+        type: "number",
+        min: 0,
+        max: 20,
+        step: 1,
+        unit: "px",
+        slider: true,
+      },
+      {
+        key: "fontSize",
+        label: "字号比例",
+        type: "number",
+        min: 70,
+        max: 100,
+        step: 5,
+        unit: "%",
+        slider: true,
+      },
+      {
+        key: "showHash",
+        label: "显示 '#' 符号",
+        type: "select",
+        options: [
+          { label: "显示", value: "yes" },
+          { label: "隐藏", value: "no" },
+        ],
+      },
+      {
+        key: "position",
+        label: "布局对齐",
+        type: "select",
+        options: [
+          { label: "常规行内", value: "inline" },
+          { label: "靠右悬浮", value: "floatEnd" },
+        ],
+      },
+    ],
+    defaults: createDefaultConfig({
+      backgroundColor: "var(--b3-theme-primary-light)",
+      color: "var(--b3-theme-primary)",
+      radius: 4,
+      fontSize: 90,
+      showHash: "yes",
+      position: "inline",
+    }),
+    buildCss: (config) => {
+      const bgColor = stringValue(config.values.backgroundColor, "var(--b3-theme-primary-light)")
+      const color = stringValue(config.values.color, "var(--b3-theme-primary)")
+      const radius = px(config.values.radius, 4)
+      const fontSize = numberValue(config.values.fontSize, 90)
+      const showHash = stringValue(config.values.showHash, "yes")
+      const position = stringValue(config.values.position, "inline")
+
+      const rules: string[] = []
+
+      // 基础样式
+      rules.push(`
+.protyle-wysiwyg span[data-type~="tag"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: ${radius} !important;
+  padding: 1px 8px !important;
+  margin: 0 3px !important;
+  border: none !important;
+  font-size: ${fontSize}% !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  vertical-align: middle !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+  background-color: ${bgColor} !important;
+  color: ${color} !important;
+}
+      `.trim())
+
+      // HASH 隐藏
+      if (showHash === "no") {
+        rules.push(`
+.protyle-wysiwyg span[data-type~="tag"]::before {
+  content: "" !important;
+  display: none !important;
+}
+        `.trim())
+      } else {
+        // 部分主题可能默认隐藏了 #，强制补充
+        rules.push(`
+.protyle-wysiwyg span[data-type~="tag"]::before {
+  content: "#" !important;
+  margin-right: 2px !important;
+  opacity: 0.8 !important;
+  display: inline-block !important;
+}
+        `.trim())
+      }
+
+      // 悬浮靠右对齐
+      if (position === "floatEnd") {
+        rules.push(`
+.protyle-wysiwyg span[data-type~="tag"] {
+  float: right !important;
+  margin-left: 8px !important;
+}
+.protyle-wysiwyg [data-node-id]:has(span[data-type~="tag"])::after {
+  content: "" !important;
+  display: table !important;
+  clear: both !important;
+}
+        `.trim())
+      }
+
+      return rules.join("\n")
+    },
+  },
 ]

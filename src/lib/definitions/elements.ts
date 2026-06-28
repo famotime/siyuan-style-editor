@@ -149,23 +149,83 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     value: "foldedBlockStyle",
   },
   {
-    buildCss: (config) => `
+    buildCss: (config) => {
+      const styleMode = stringValue(config.values.styleMode, "default")
+      const padding = px(config.values.padding, 4)
+      const color = stringValue(config.values.color, "var(--style-editor-blockquote-color)")
+      const lineColor = stringValue(config.values.lineColor, "var(--style-editor-blockquote-line)")
+      const backgroundColor = stringValue(config.values.backgroundColor, "var(--style-editor-blockquote-bg)")
+      const marginY = px(config.values.marginY, 4)
+      const radius = px(config.values.radius, 0)
+      const borderColor = stringValue(config.values.borderColor, "transparent")
+
+      if (styleMode && styleMode.startsWith("sticky-")) {
+        let paperBg = "#fcf4df"
+        let tapeColor = "#e4c411"
+        let textColor = "#525252"
+        if (styleMode === "sticky-red") {
+          paperBg = "#f2dede"
+          tapeColor = "#b94a48"
+          textColor = "#a94442"
+        } else if (styleMode === "sticky-blue") {
+          paperBg = "#d9edf7"
+          tapeColor = "#3a87ad"
+          textColor = "#31708f"
+        } else if (styleMode === "sticky-green") {
+          paperBg = "#dff0d8"
+          tapeColor = "#468847"
+          textColor = "#3c763d"
+        }
+        return `
 .b3-typography blockquote,
 .b3-typography .bq,
 .protyle-wysiwyg blockquote,
 .protyle-wysiwyg .bq {
-  padding: ${px(config.values.padding, 4)};
-  color: ${stringValue(config.values.color, "var(--style-editor-blockquote-color)")} !important;
-  border-left: 0.25em solid ${stringValue(config.values.lineColor, "var(--style-editor-blockquote-line)")} !important;
-  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-blockquote-bg)")} !important;
-  margin: ${px(config.values.marginY, 4)} 0;
-  border-radius: ${px(config.values.radius, 0)};
+  border-left: none !important;
+  border-top: 3px solid ${tapeColor} !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+  background-color: ${paperBg} !important;
+  background-image: linear-gradient(rgba(131, 111, 86, 0.08) 1px, transparent 0),
+                    linear-gradient(90deg, rgba(131, 111, 86, 0.08) 1px, transparent 0) !important;
+  background-size: 16px 16px !important;
+  border-radius: 6px !important;
+  padding: 16px 12px !important;
+  color: ${textColor} !important;
+  margin: ${marginY} 0;
+}
+        `.trim()
+      }
+
+      return `
+.b3-typography blockquote,
+.b3-typography .bq,
+.protyle-wysiwyg blockquote,
+.protyle-wysiwyg .bq {
+  padding: ${padding};
+  color: ${color} !important;
+  border-left: 0.25em solid ${lineColor} !important;
+  background-color: ${backgroundColor} !important;
+  margin: ${marginY} 0;
+  border-radius: ${radius};
 }
 
 .protyle-wysiwyg .bq:not(.bq .bq) {
-  box-shadow: 0 0 0 1px ${stringValue(config.values.borderColor, "transparent")} inset !important;
-}`.trim(),
+  box-shadow: 0 0 0 1px ${borderColor} inset !important;
+}`.trim()
+    },
     controls: [
+      {
+        key: "styleMode",
+        label: "块风格",
+        options: [
+          { label: "默认竖线", value: "default" },
+          { label: "便利贴(黄)", value: "sticky-yellow" },
+          { label: "便利贴(红)", value: "sticky-red" },
+          { label: "便利贴(蓝)", value: "sticky-blue" },
+          { label: "便利贴(绿)", value: "sticky-green" },
+        ],
+        type: "select",
+      },
       {
         key: "backgroundColor",
         label: "底色",
@@ -215,6 +275,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       },
     ],
     defaults: createDefaultConfig({
+      styleMode: "default",
       backgroundColor: "var(--style-editor-blockquote-bg)",
       borderColor: "transparent",
       color: "var(--style-editor-blockquote-color)",
@@ -224,7 +285,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       radius: 0,
     }),
     hint: "按参考样式配置引述块的竖线、颜色和间距。",
-    label: "引述块边框竖线",
+    label: "引述块",
     group: "块级元素",
     preview: "引述",
     risk: "正文安全",
@@ -584,6 +645,15 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
         type: "color",
       },
       {
+        key: "macButtons",
+        label: "Mac风格按钮",
+        type: "select",
+        options: [
+          { label: "显示", value: "yes" },
+          { label: "隐藏", value: "no" },
+        ],
+      },
+      {
         key: "maxHeight",
         label: "最大高度",
         type: "select",
@@ -616,6 +686,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       borderRadius: 6,
       backgroundColor: "var(--style-editor-code-block-bg)",
       headerBgColor: "var(--style-editor-code-block-header-bg)",
+      macButtons: "no",
       maxHeight: "none",
       lineNumberColor: "var(--style-editor-code-block-color)",
     }),
@@ -623,29 +694,60 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       const borderRadius = px(config.values.borderRadius, 6)
       const backgroundColor = stringValue(config.values.backgroundColor, "var(--style-editor-code-block-bg)")
       const headerBgColor = stringValue(config.values.headerBgColor, "var(--style-editor-code-block-header-bg)")
+      const macButtons = stringValue(config.values.macButtons, "no")
       const maxHeight = stringValue(config.values.maxHeight, "none")
       const lineNumberColor = stringValue(config.values.lineNumberColor, "var(--style-editor-code-block-color)")
 
       const maxH = maxHeight === "none" ? "" : `max-height: ${maxHeight} !important;`
 
-      return `.protyle-wysiwyg .code-block {
+      const rules: string[] = []
+
+      rules.push(`.protyle-wysiwyg .code-block {
   border-radius: ${borderRadius} !important;
   background: ${backgroundColor} !important;
+}`)
+
+      if (macButtons === "yes") {
+        rules.push(`.protyle-wysiwyg .code-block {
+  position: relative !important;
 }
 
 .protyle-wysiwyg .code-block .protyle-action {
   background: ${headerBgColor} !important;
   border-radius: ${borderRadius} ${borderRadius} 0 0 !important;
+  display: flex !important;
+  padding-left: 14px !important;
 }
 
-.protyle-wysiwyg .code-block .hljs {
+.protyle-wysiwyg .code-block .protyle-action::before {
+  content: "" !important;
+  display: block !important;
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 50% !important;
+  background-color: #ff5f56 !important;
+  box-shadow: 14px 0 0 #ffbd2e, 28px 0 0 #27c93f !important;
+  margin-right: 36px !important;
+  align-self: center !important;
+  flex-shrink: 0 !important;
+}`)
+      } else {
+        rules.push(`.protyle-wysiwyg .code-block .protyle-action {
+  background: ${headerBgColor} !important;
+  border-radius: ${borderRadius} ${borderRadius} 0 0 !important;
+}`)
+      }
+
+      rules.push(`.protyle-wysiwyg .code-block .hljs {
   ${maxH}
   overflow: auto !important;
-}
+}`)
 
-.protyle-wysiwyg .protyle-linenumber {
+      rules.push(`.protyle-wysiwyg .protyle-linenumber {
   color: ${lineNumberColor} !important;
-}`
+}`)
+
+      return rules.join("\n")
     },
   },
 ]

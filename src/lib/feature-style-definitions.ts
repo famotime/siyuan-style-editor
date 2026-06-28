@@ -64,6 +64,7 @@ const DEFINITION_KEYS = [
   "listMarkerStyle",
   "customThemePrimary",
   "layoutCompactMode",
+  "inlineTagStyle",
 ] as const
 
 export const FEATURE_DEFINITIONS: FeatureDefinition[] = DEFINITION_KEYS.map((key) => {
