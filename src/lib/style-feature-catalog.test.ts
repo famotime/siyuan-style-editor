@@ -1010,8 +1010,8 @@ describe("style feature catalog", () => {
       },
     } as Partial<FeatureStyleProfile>)
     const css = buildFeatureStyleCss(profile)
-    expect(css).toContain("list-style-type: circle")
-    expect(css).toContain("list-style-type: upper-roman")
+    expect(css).toContain('content: "○"')
+    expect(css).toContain("counter(o1, upper-roman)")
     expect(css).toContain("margin-bottom: 6px")
     expect(css).toContain("margin-left: 28px")
   })

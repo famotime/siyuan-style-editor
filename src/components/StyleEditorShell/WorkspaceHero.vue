@@ -14,7 +14,7 @@
         {{ importedStyleSignature }}
       </p>
       <p class="workspace-hero__summary">
-        拾色、调配、粉刷，定义你的阅读空间。
+        拾色、调配、粉刷，装扮你的笔记空间。
       </p>
       <div class="workspace-hero__actions">
         <button

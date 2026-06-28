@@ -442,9 +442,9 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       const padY = px(config.values.cellPaddingY, 6)
       const padX = px(config.values.cellPaddingX, 10)
       const radius = px(config.values.borderRadius, 0)
-      const textCol = stringValue(config.values.textColor, "")
-      const oddBg = stringValue(config.values.oddRowBackground, "")
-      const evenBg = stringValue(config.values.evenRowBackground, "")
+      const textCol = stringValue(config.values.textColor, "var(--style-editor-table-text)")
+      const oddBg = stringValue(config.values.oddRowBackground, "var(--style-editor-table-row-odd)")
+      const evenBg = stringValue(config.values.evenRowBackground, "var(--style-editor-table-row-even)")
 
       let rules = `
 .b3-typography table,
@@ -539,9 +539,9 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       cellPaddingY: 6,
       headerBackgroundColor: "var(--style-editor-table-header-bg)",
       headerColor: "var(--style-editor-table-header-color)",
-      textColor: "",
-      oddRowBackground: "",
-      evenRowBackground: "",
+      textColor: "var(--style-editor-table-text)",
+      oddRowBackground: "var(--style-editor-table-row-odd)",
+      evenRowBackground: "var(--style-editor-table-row-even)",
       borderRadius: 0,
     }),
     hint: "增强表头、单元格圆角底色、边框和奇偶行阅读密度。",

@@ -307,7 +307,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   },
   {
     buildCss: (config) => `
-div[data-subtype="o"].list {
+.protyle-wysiwyg div[data-subtype="o"].list {
   --o1-style: counter(o1, decimal)".";
   --o2-style: counter(o2, lower-latin)".";
   --o3-style: counter(o3, lower-roman)".";
@@ -319,47 +319,51 @@ div[data-subtype="o"].list {
   margin: -12px 0 0 -12px !important;
   line-height: 20px;
 }
-.list[data-subtype="o"] {
+.protyle-wysiwyg .list[data-subtype="o"] {
   counter-reset: o1 0 o2 0 o3 0 o4 0 o5 0 o6 0;
 }
-.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action {
+  color: transparent !important;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
   counter-increment: o2;
   content: var(--o2-style);
   position: absolute;
 }
-.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
   counter-increment: o3;
   content: var(--o3-style);
   position: absolute;
 }
-.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
   counter-increment: o4;
   content: var(--o4-style);
   position: absolute;
 }
-.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
   counter-increment: o5;
   content: var(--o5-style);
   position: absolute;
 }
-.list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
   counter-increment: o6;
   content: var(--o6-style);
   position: absolute;
 }
-.li[data-subtype="o"] > .protyle-action::after {
+.protyle-wysiwyg .li[data-subtype="o"] .li[data-subtype="o"] .protyle-action::after {
+  mix-blend-mode: unset !important;
+  color: var(--b3-theme-on-surface) !important;
+}
+.protyle-wysiwyg .li[data-subtype="o"] > .protyle-action::after {
   padding: ${px(config.values.paddingX, 2)} ${px(config.values.paddingY, 3)};
   width: ${px(config.values.width, 24)};
   display: flex;
   justify-content: center;
 }
-${stringValue(config.values.showBackground, "no") === "yes"
-  ? `
-.protyle-wysiwyg [data-node-id].li[fold="1"]:not([data-subtype="o"].en_item_bullet_actived) > .protyle-action:after,
-.protyle-wysiwyg [data-node-id].li > .protyle-action:hover:after {
-  background-color: ${stringValue(config.values.hoverBgColor, "oklch(55% 0.05 250 / 0.3)")} !important;
-}`
-  : ""}`.trim(),
+.protyle-wysiwyg [data-node-id].li[fold="1"]:not([data-subtype="o"].en_item_bullet_actived) > .protyle-action::after,
+.protyle-wysiwyg [data-node-id].li > .protyle-action:hover::after {
+  background-color: ${stringValue(config.values.showBackground, "no") === "yes" ? stringValue(config.values.hoverBgColor, "oklch(55% 0.05 250 / 0.3)") : "transparent"} !important;
+}`.trim(),
     controls: [
       {
         key: "showBackground",
@@ -752,18 +756,25 @@ ${stringValue(config.values.showBackground, "no") === "yes"
     value: "strikethroughStyle",
   },
   {
-    buildCss: (config) => `
-.protyle-wysiwyg [data-type="NodeList"][data-subtype="t"] .protyle-task--done {
-  opacity: ${numberValue(config.values.doneOpacity, 0.62)} !important;
-}
+    buildCss: (config) => {
+      const doneCol = stringValue(config.values.doneColor, "var(--b3-theme-on-surface)")
+      const hoverBorder = stringValue(config.values.hoverBorderColor, "var(--style-editor-link-hover)")
+      const opacity = numberValue(config.values.doneOpacity, 0.62)
 
-.protyle-wysiwyg .protyle-task:hover {
-  border-color: ${stringValue(config.values.hoverBorderColor, "var(--style-editor-link-hover)")} !important;
-}
-
+      return `
 .protyle-wysiwyg .protyle-task--done {
-  color: ${stringValue(config.values.doneColor, "var(--b3-theme-on-surface)")} !important;
-}`.trim(),
+  opacity: ${opacity} !important;
+}
+.protyle-wysiwyg .protyle-task--done > [contenteditable="true"],
+.protyle-wysiwyg .protyle-task--done > .p,
+.protyle-wysiwyg .protyle-task--done > div {
+  color: ${doneCol} !important;
+}
+.protyle-wysiwyg .protyle-task:hover > .protyle-action--task svg {
+  color: ${hoverBorder} !important;
+}
+`.trim()
+    },
     controls: [
       {
         key: "doneColor",
@@ -1074,17 +1085,45 @@ ${stringValue(config.values.showBackground, "no") === "yes"
 
       const rules: string[] = []
 
+      // 1. 无序列表标记处理 (disc / circle / square)
       if (unordered !== "default") {
-        rules.push(`.protyle-wysiwyg .li > [data-type="NodeList"] > .li { list-style-type: ${unordered} !important; }`)
+        const charMap: Record<string, string> = {
+          disc: "●",
+          circle: "○",
+          square: "■",
+        }
+        const bulletChar = charMap[unordered] || "●"
+        rules.push(`.protyle-wysiwyg .li[data-subtype="u"] > .protyle-action::before { content: "${bulletChar}" !important; }`)
       }
 
-      if (ordered === "upper-roman") {
-        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: upper-roman !important; }')
-      }
-      else if (ordered === "cjk") {
-        rules.push('.protyle-wysiwyg [data-subtype="o"] > .li { list-style-type: cjk-ideographic !important; }')
+      // 2. 有序列表标记处理 (upper-roman / cjk)
+      if (ordered !== "default") {
+        const counterStyle = ordered === "cjk" ? "cjk-ideographic" : "upper-roman"
+        const suffix = ordered === "cjk" ? "、" : "."
+        rules.push(`
+.protyle-wysiwyg .list[data-subtype="o"] {
+  counter-reset: o1 0;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] > .protyle-action {
+  color: transparent !important;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o1;
+  content: counter(o1, ${counterStyle})"${suffix}";
+  position: absolute;
+  color: var(--b3-theme-on-surface) !important;
+  padding: 3px 2px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  mix-blend-mode: unset !important;
+  margin: -12px 0 0 -12px !important;
+  line-height: 20px;
+}
+        `.trim())
       }
 
+      // 3. 间距与缩进
       rules.push(`.protyle-wysiwyg .li { margin-bottom: ${spacing} !important; }`)
       rules.push(`.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: ${indent} !important; }`)
 
