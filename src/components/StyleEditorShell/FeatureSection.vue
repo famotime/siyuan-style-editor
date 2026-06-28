@@ -403,7 +403,7 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   align-items: center;
   gap: 8px;
   margin: 0 0 12px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--panel-text);
   letter-spacing: 0.04em;
@@ -518,7 +518,7 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
 
 .feature-control {
   display: grid;
-  grid-template-columns: minmax(70px, 1fr) minmax(0, 120px);
+  grid-template-columns: minmax(70px, 1fr) minmax(0, 105px);
   align-items: center;
   gap: 8px;
 }

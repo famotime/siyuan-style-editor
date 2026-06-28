@@ -2,7 +2,7 @@
   <header class="workspace-hero">
     <div class="workspace-hero__copy">
       <p class="style-editor-shell__eyebrow">
-        Live Document Styling
+        Live Style Editor
       </p>
       <h1 class="style-editor-shell__title">
         粉刷匠
