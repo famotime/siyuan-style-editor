@@ -392,12 +392,30 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
   gap: 12px;
 }
 
+.feature-group:not(:first-of-type) {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--panel-divider);
+}
+
 .feature-group__title {
-  margin: 8px 0 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--panel-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--panel-text);
   letter-spacing: 0.04em;
+}
+
+.feature-group__title::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 12px;
+  border-radius: 1.5px;
+  background-color: var(--panel-accent);
 }
 
 .feature-search {
@@ -500,7 +518,7 @@ function getColorControlValue(featureId: FeatureStyleId, key: string) {
 
 .feature-control {
   display: grid;
-  grid-template-columns: minmax(70px, 1fr) minmax(0, 96px);
+  grid-template-columns: minmax(70px, 1fr) minmax(0, 120px);
   align-items: center;
   gap: 8px;
 }
