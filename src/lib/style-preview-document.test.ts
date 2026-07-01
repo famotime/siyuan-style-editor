@@ -84,7 +84,7 @@ describe("style preview document", () => {
     expect(mockCreateDocWithMd).toHaveBeenCalledWith(
       "box-current",
       "/日记/2026/03/样式效果预览 2026-03-28",
-      expect.stringContaining("# 样式效果预览文档"),
+      expect.stringContaining("# 思源笔记样式效果测试预览"),
     )
     expect(mockOpenDocByTab).toHaveBeenCalledWith(mockApp, "20260328123456-preview")
     expect(result).toEqual({

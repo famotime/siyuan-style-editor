@@ -1,4 +1,4 @@
-import { Plugin } from "siyuan"
+import { Plugin, showMessage } from "siyuan"
 
 import PluginInfoString from "@/../plugin.json"
 import {
@@ -46,5 +46,14 @@ export default class SiyuanStyleEditorPlugin extends Plugin {
 
   onunload() {
     destroy()
+  }
+
+  async uninstall() {
+    try {
+      await this.removeData("style-editor.json")
+    }
+    catch (e) {
+      showMessage(this.t("uninstallDataRemoveFailed", { error: String(e) }))
+    }
   }
 }

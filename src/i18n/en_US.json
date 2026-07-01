@@ -1,3 +1,4 @@
 {
-  "addTopBarIcon": "PluginSampleViteVue"
+  "addTopBarIcon": "PluginSampleViteVue",
+  "uninstallDataRemoveFailed": "Failed to clean up data during plugin uninstallation: {error}"
 }
