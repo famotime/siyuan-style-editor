@@ -1,19 +1,21 @@
 {
   "name": "siyuan-style-editor",
-  "author": "OpenAI Codex",
-  "url": "",
+  "author": "Quincy Zou",
+  "url": "https://github.com/famotime/siyuan-style-editor",
   "version": "0.5.0",
   "minAppVersion": "2.10.14",
-  "disabledInPublish": false,
+  "disabledInPublish": true,
   "backends": [
-    "all"
+    "windows"
   ],
   "frontends": [
-    "all"
+    "desktop",
+    "browser-desktop",
+    "desktop-window"
   ],
   "displayName": {
-    "default": "siyuan-style-editor",
-    "en_US": "SiYuan Style Editor",
+    "default": "Style Editor",
+    "en_US": "Style Editor",
     "zh_CN": "粉刷匠"
   },
   "description": {
@@ -25,9 +27,6 @@
     "default": "README.md",
     "en_US": "README.md",
     "zh_CN": "README.md"
-  },
-  "funding": {
-    "custom": []
   },
   "keywords": [
     "style",
