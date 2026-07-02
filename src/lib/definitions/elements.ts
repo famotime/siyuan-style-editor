@@ -750,4 +750,170 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       return rules.join("\n")
     },
   },
+  {
+    value: "blockFullWidth",
+    label: "特定块全宽显示",
+    hint: "使特定类型的块（图片、视频挂件、表格、数据库等）全宽显示以展示更多内容。也可以对单个块加属性 'custom-afwd=\"on\"' 单独启用。",
+    group: "块级元素",
+    preview: "↔️",
+    risk: "正文安全",
+    controls: [
+      {
+        key: "fullWidthImg",
+        label: "图片全宽",
+        type: "select",
+        options: [
+          { label: "是", value: "yes" },
+          { label: "否", value: "no" },
+        ],
+      },
+      {
+        key: "fullWidthTable",
+        label: "表格全宽",
+        type: "select",
+        options: [
+          { label: "是", value: "yes" },
+          { label: "否", value: "no" },
+        ],
+      },
+      {
+        key: "fullWidthDb",
+        label: "数据库全宽",
+        type: "select",
+        options: [
+          { label: "是", value: "yes" },
+          { label: "否", value: "no" },
+        ],
+      },
+    ],
+    defaults: createDefaultConfig({
+      fullWidthImg: "no",
+      fullWidthTable: "no",
+      fullWidthDb: "no",
+    }),
+    buildCss: (config) => {
+      const rules: string[] = []
+      const imgVal = stringValue(config.values.fullWidthImg, "no")
+      const tableVal = stringValue(config.values.fullWidthTable, "no")
+      const dbVal = stringValue(config.values.fullWidthDb, "no")
+
+      if (imgVal === "yes") {
+        rules.push(`.protyle-wysiwyg [data-type="NodeParagraph"]:has(img) { width: 100vw !important; max-width: 100vw !important; margin-left: calc(50% - 50vw) !important; }`)
+      }
+      if (tableVal === "yes") {
+        rules.push(`.protyle-wysiwyg [data-type="NodeTable"] { width: 100vw !important; max-width: 100vw !important; margin-left: calc(50% - 50vw) !important; }`)
+      }
+      if (dbVal === "yes") {
+        rules.push(`.protyle-wysiwyg [data-type="NodeAttributeView"] { width: 100vw !important; max-width: 100vw !important; margin-left: calc(50% - 50vw) !important; }`)
+      }
+      rules.push(`.protyle-wysiwyg [data-node-id][custom-afwd="on"] { width: 100vw !important; max-width: 100vw !important; margin-left: calc(50% - 50vw) !important; }`)
+      return rules.join("\n")
+    },
+  },
+  {
+    value: "memoStyle",
+    label: "备注美化与动画",
+    hint: "美化行内备注 (Memo) 样式，将原隐蔽的虚线下划线转为精致的高亮药丸背景或卡片气泡。",
+    group: "行内元素",
+    preview: "💬",
+    risk: "正文安全",
+    controls: [
+      {
+        key: "styleMode",
+        label: "备注风格",
+        type: "select",
+        options: [
+          { label: "精致卡片", value: "card" },
+          { label: "气泡胶囊", value: "bubble" },
+        ],
+      },
+      {
+        key: "memoColor",
+        label: "备注底色",
+        type: "color",
+      },
+    ],
+    defaults: createDefaultConfig({
+      styleMode: "card",
+      memoColor: "var(--b3-theme-primary-lighter, #ffbd2e)",
+    }),
+    buildCss: (config) => {
+      const mode = stringValue(config.values.styleMode, "card")
+      const color = stringValue(config.values.memoColor, "var(--b3-theme-primary-lighter, #ffbd2e)")
+
+      if (mode === "bubble") {
+        return `
+.protyle-wysiwyg span[data-type~="memo"] {
+  background: ${color}22 !important;
+  border: 1px solid ${color} !important;
+  border-radius: 12px !important;
+  padding: 2px 8px !important;
+  font-size: 0.95em !important;
+  transition: all 200ms ease !important;
+}
+.protyle-wysiwyg span[data-type~="memo"]:hover {
+  background: ${color}44 !important;
+  box-shadow: 0 2px 6px ${color}33 !important;
+}
+        `.trim()
+      }
+
+      return `
+.protyle-wysiwyg span[data-type~="memo"] {
+  background-color: ${color}33 !important;
+  border-bottom: 2px solid ${color} !important;
+  border-radius: 3px !important;
+  padding: 0 4px !important;
+  transition: all 200ms ease-in-out !important;
+}
+.protyle-wysiwyg span[data-type~="memo"]:hover {
+  background-color: ${color}66 !important;
+  transform: scale(1.02) !important;
+}
+      `.trim()
+    },
+  },
+  {
+    value: "linkIcons",
+    label: "智能链接图标",
+    hint: "自动为内链（块引用）和外部超链接头部增加区分 Emoji 图标。",
+    group: "行内元素",
+    preview: "🔗",
+    risk: "正文安全",
+    controls: [
+      {
+        key: "internalIcon",
+        label: "内链前缀",
+        type: "text",
+        placeholder: "如 🔗",
+      },
+      {
+        key: "externalIcon",
+        label: "外链前缀",
+        type: "text",
+        placeholder: "如 🌐",
+      },
+    ],
+    defaults: createDefaultConfig({
+      internalIcon: "🔗",
+      externalIcon: "🌐",
+    }),
+    buildCss: (config) => {
+      const intIcon = stringValue(config.values.internalIcon, "🔗")
+      const extIcon = stringValue(config.values.externalIcon, "🌐")
+
+      return `
+.protyle-wysiwyg span[data-type~="block-ref"]::before {
+  content: "${intIcon} " !important;
+  font-size: 0.9em !important;
+  margin-right: 2px !important;
+}
+.protyle-wysiwyg span[data-type~="a"]:not([href^="siyuan://"])::before {
+  content: "${extIcon} " !important;
+  font-size: 0.9em !important;
+  margin-right: 2px !important;
+}
+      `.trim()
+    },
+  },
 ]

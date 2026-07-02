@@ -921,6 +921,10 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
             label: "毛玻璃",
             value: "glass",
           },
+          {
+            label: "沉浸亚克力",
+            value: "acrylic",
+          },
         ],
       },
       {
@@ -981,6 +985,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
         rules.push("#toolbar { background: transparent !important; }")
       } else if (mode === "glass") {
         rules.push(`#toolbar { background: ${backgroundColor}cc !important; backdrop-filter: blur(${blurRadius}) !important; -webkit-backdrop-filter: blur(${blurRadius}) !important; }`)
+      } else if (mode === "acrylic") {
+        rules.push(`#toolbar { background: ${backgroundColor}a0 !important; backdrop-filter: blur(24px) saturate(200%) !important; -webkit-backdrop-filter: blur(24px) saturate(200%) !important; }`)
       } else {
         rules.push(`#toolbar { background: ${backgroundColor} !important; }`)
       }

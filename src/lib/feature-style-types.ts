@@ -48,6 +48,10 @@ export type FeatureStyleId =
   | "searchHighlight"
   | "customThemePrimary"
   | "layoutCompactMode"
+  | "inlineTagStyle"
+  | "blockFullWidth"
+  | "memoStyle"
+  | "linkIcons"
 
 type FeatureValueType = "color" | "number" | "select" | "text"
 

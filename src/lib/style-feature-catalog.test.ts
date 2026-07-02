@@ -53,6 +53,9 @@ describe("style feature catalog", () => {
     expect(profile.inlineTagStyle.values.backgroundColor).toBe("var(--b3-theme-primary-light)")
     expect(profile.inlineTagStyle.values.color).toBe("var(--b3-theme-primary)")
     expect(profile.inlineTagStyle.values.radius).toBe(4)
+    expect(profile.blockFullWidth.values.fullWidthImg).toBe("no")
+    expect(profile.memoStyle.values.styleMode).toBe("card")
+    expect(profile.linkIcons.values.internalIcon).toBe("🔗")
   })
 
   it("normalizes partial and invalid feature profile input", () => {
@@ -1067,6 +1070,100 @@ describe("style feature catalog", () => {
     expect(css).toContain("border-top: 3px solid #e4c411 !important;")
     expect(css).toContain("background-color: #fcf4df !important;")
     expect(css).toContain("background-image: linear-gradient(rgba(131, 111, 86, 0.08)")
+  })
+
+  it("blockFullWidth — 特定块全宽显示", () => {
+    const profile = normalizeFeatureProfile({
+      blockFullWidth: {
+        enabled: true,
+        values: {
+          fullWidthImg: "yes",
+          fullWidthTable: "yes",
+          fullWidthDb: "yes",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain('[data-type="NodeParagraph"]:has(img)')
+    expect(css).toContain('[data-type="NodeTable"]')
+    expect(css).toContain('[data-type="NodeAttributeView"]')
+    expect(css).toContain('[custom-afwd="on"]')
+    expect(css).toContain("width: 100vw !important")
+  })
+
+  it("memoStyle — 备注美化与动画", () => {
+    const profile = normalizeFeatureProfile({
+      memoStyle: {
+        enabled: true,
+        values: {
+          styleMode: "bubble",
+          memoColor: "#00ff00",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain('span[data-type~="memo"]')
+    expect(css).toContain("background: #00ff0022")
+  })
+
+  it("linkIcons — 智能链接图标", () => {
+    const profile = normalizeFeatureProfile({
+      linkIcons: {
+        enabled: true,
+        values: {
+          internalIcon: "📌",
+          externalIcon: "🌍",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain('content: "📌 " !important;')
+    expect(css).toContain('content: "🌍 " !important;')
+  })
+
+  it("topBarStyle — 沉浸亚克力模式", () => {
+    const profile = normalizeFeatureProfile({
+      topBarStyle: {
+        enabled: true,
+        values: {
+          mode: "acrylic",
+          backgroundColor: "#121212",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain("backdrop-filter: blur(24px) saturate(200%)")
+    expect(css).toContain("background: #121212a0")
+  })
+
+  it("headingDecoration — 层级几何指示点模式", () => {
+    const profile = normalizeFeatureProfile({
+      headingDecoration: {
+        enabled: true,
+        values: {
+          mode: "levelDots",
+          barColor: "#0000ff",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain(".h1>[spellcheck]:not(:empty)::after")
+    expect(css).toContain("box-shadow: 0.25em 0 0 0 #0000ff")
+  })
+
+  it("listMarkerStyle — 多级自动循环模式", () => {
+    const profile = normalizeFeatureProfile({
+      listMarkerStyle: {
+        enabled: true,
+        values: {
+          unorderedStyle: "cycle",
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain('content: "●" !important;')
+    expect(css).toContain('content: "○" !important;')
+    expect(css).toContain('content: "■" !important;')
   })
 })
 

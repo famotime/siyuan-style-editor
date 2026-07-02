@@ -123,6 +123,93 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   background-color: ${stringValue(config.values.barColor, "var(--b3-theme-primary)")};
 }`.trim()
       }
+
+      if (mode === "levelDots") {
+        const barColor = stringValue(config.values.barColor, "var(--b3-theme-primary)")
+        const weight = numberValue(config.values.fontWeight, 600)
+        return `
+.protyle-wysiwyg [data-node-id].h1,
+.protyle-wysiwyg [data-node-id].h2,
+.protyle-wysiwyg [data-node-id].h3,
+.protyle-wysiwyg [data-node-id].h4,
+.protyle-wysiwyg [data-node-id].h5,
+.protyle-wysiwyg [data-node-id].h6 {
+  font-weight: ${weight} !important;
+  position: relative !important;
+}
+.protyle-wysiwyg .h1>[spellcheck]:not(:empty)::after {
+  content: "" !important;
+  position: absolute !important;
+  margin-left: 8px !important;
+  height: 0.45em !important;
+  width: 0.15em !important;
+  bottom: 30% !important;
+  border-radius: 3px !important;
+  background-color: ${barColor} !important;
+  opacity: 0.6 !important;
+}
+.protyle-wysiwyg .h2>[spellcheck]:not(:empty)::after {
+  content: "" !important;
+  position: absolute !important;
+  margin-left: 8px !important;
+  height: 0.16em !important;
+  width: 0.16em !important;
+  bottom: 35% !important;
+  border-radius: 3px !important;
+  background-color: ${barColor} !important;
+  opacity: 0.6 !important;
+  box-shadow: 0.25em 0 0 0 ${barColor} !important;
+}
+.protyle-wysiwyg .h3>[spellcheck]:not(:empty)::after {
+  content: "" !important;
+  position: absolute !important;
+  margin-left: 8px !important;
+  height: 0.16em !important;
+  width: 0.16em !important;
+  bottom: 35% !important;
+  border-radius: 3px !important;
+  background-color: ${barColor} !important;
+  opacity: 0.6 !important;
+  box-shadow: 0.25em 0 0 0 ${barColor}, 0.5em 0 0 0 ${barColor} !important;
+}
+.protyle-wysiwyg .h4>[spellcheck]:not(:empty)::after {
+  content: "" !important;
+  position: absolute !important;
+  margin-left: 8px !important;
+  height: 0.15em !important;
+  width: 0.15em !important;
+  bottom: 35% !important;
+  border-radius: 3px !important;
+  background-color: ${barColor} !important;
+  opacity: 0.6 !important;
+  box-shadow: 0.25em 0 0 0 ${barColor}, 0.5em 0 0 0 ${barColor}, 0.75em 0 0 0 ${barColor} !important;
+}
+.protyle-wysiwyg .h5>[spellcheck]:not(:empty)::after {
+  content: "" !important;
+  position: absolute !important;
+  margin-left: 8px !important;
+  height: 0.15em !important;
+  width: 0.15em !important;
+  bottom: 35% !important;
+  border-radius: 3px !important;
+  background-color: ${barColor} !important;
+  opacity: 0.6 !important;
+  box-shadow: 0.25em 0 0 0 ${barColor}, 0.5em 0 0 0 ${barColor}, 0.75em 0 0 0 ${barColor}, 1em 0 0 0 ${barColor} !important;
+}
+.protyle-wysiwyg .h6>[spellcheck]:not(:empty)::after {
+  content: "" !important;
+  position: absolute !important;
+  margin-left: 8px !important;
+  height: 0.15em !important;
+  width: 0.15em !important;
+  bottom: 35% !important;
+  border-radius: 3px !important;
+  background-color: ${barColor} !important;
+  opacity: 0.6 !important;
+  box-shadow: 0.25em 0 0 0 ${barColor}, 0.5em 0 0 0 ${barColor}, 0.75em 0 0 0 ${barColor}, 1em 0 0 0 ${barColor}, 1.25em 0 0 0 ${barColor} !important;
+}`.trim()
+      }
+
       return `
 .protyle-wysiwyg [data-node-id].h1,
 .protyle-wysiwyg [data-node-id].h2,
@@ -161,6 +248,10 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
           {
             label: "下划线",
             value: "underline",
+          },
+          {
+            label: "层级几何指示点",
+            value: "levelDots",
           },
         ],
         type: "select",
@@ -1030,6 +1121,10 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
             label: "方块",
             value: "square",
           },
+          {
+            label: "多级自动循环",
+            value: "cycle",
+          },
         ],
       },
       {
@@ -1085,15 +1180,32 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
 
       const rules: string[] = []
 
-      // 1. 无序列表标记处理 (disc / circle / square)
+      // 1. 无序列表标记处理 (disc / circle / square / cycle)
       if (unordered !== "default") {
-        const charMap: Record<string, string> = {
-          disc: "●",
-          circle: "○",
-          square: "■",
+        if (unordered === "cycle") {
+          rules.push(`
+.protyle-wysiwyg .li[data-subtype="u"] > .protyle-action::before {
+  content: "●" !important;
+}
+.protyle-wysiwyg .li[data-subtype="u"] .li[data-subtype="u"] > .protyle-action::before {
+  content: "○" !important;
+}
+.protyle-wysiwyg .li[data-subtype="u"] .li[data-subtype="u"] .li[data-subtype="u"] > .protyle-action::before {
+  content: "■" !important;
+}
+.protyle-wysiwyg .li[data-subtype="u"] .li[data-subtype="u"] .li[data-subtype="u"] .li[data-subtype="u"] > .protyle-action::before {
+  content: "●" !important;
+}
+          `.trim())
+        } else {
+          const charMap: Record<string, string> = {
+            disc: "●",
+            circle: "○",
+            square: "■",
+          }
+          const bulletChar = charMap[unordered] || "●"
+          rules.push(`.protyle-wysiwyg .li[data-subtype="u"] > .protyle-action::before { content: "${bulletChar}" !important; }`)
         }
-        const bulletChar = charMap[unordered] || "●"
-        rules.push(`.protyle-wysiwyg .li[data-subtype="u"] > .protyle-action::before { content: "${bulletChar}" !important; }`)
       }
 
       // 2. 有序列表标记处理 (upper-roman / cjk)
