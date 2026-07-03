@@ -40,8 +40,20 @@ export function useStyleEditorShell() {
     return STYLE_TARGET_OPTIONS.find((target) => target.value === runtimeState.selectedTarget) ?? STYLE_TARGET_OPTIONS[0]
   })
 
+  const activeStatsCopy = computed(() => {
+    const activeTargets = Object.values(runtimeState.profile).filter((p) => p.enabled).length
+    const activeAdvanced = BODY_SAFE_FEATURE_OPTIONS.filter(
+      (option) => runtimeState.featureProfile[option.value]?.enabled,
+    ).length
+    const activeUi = EDITOR_UI_FEATURE_OPTIONS.filter(
+      (option) => runtimeState.featureProfile[option.value]?.enabled,
+    ).length
+
+    return `已生效配置：基础粉刷 ${activeTargets} 个 | 高级定制 ${activeAdvanced} 个 | 全屋改造 ${activeUi} 个`
+  })
+
   const statusCopy = computed(() => {
-    return actionMessage.value || selectedTargetMeta.value.hint
+    return actionMessage.value || activeStatsCopy.value
   })
 
   async function handleSavePresetPalette(name: string) {

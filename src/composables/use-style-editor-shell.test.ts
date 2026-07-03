@@ -679,5 +679,42 @@ describe("useStyleEditorShell", () => {
 
     unmount()
   })
-})
 
+  it("provides active configuration statistics in statusCopy by default", async () => {
+    const plugin = createPluginStub()
+    await initializeRuntime(plugin as never)
+
+    const {
+      shell,
+      unmount,
+    } = await mountShell()
+
+    // 初始状态下应该为 0
+    expect(shell.statusCopy.value).toBe("已生效配置：基础粉刷 0 个 | 高级定制 0 个 | 全屋改造 0 个")
+
+    // 修改并启用一个基础粉刷样式
+    runtimeState.profile.heading1.enabled = true
+    await flushShellUpdates()
+    expect(shell.statusCopy.value).toBe("已生效配置：基础粉刷 1 个 | 高级定制 0 个 | 全屋改造 0 个")
+
+    // 启用一个高级定制样式
+    const advancedOption = BODY_SAFE_FEATURE_OPTIONS[0]
+    runtimeState.featureProfile[advancedOption.value] = {
+      enabled: true,
+      values: {},
+    }
+    await flushShellUpdates()
+    expect(shell.statusCopy.value).toBe("已生效配置：基础粉刷 1 个 | 高级定制 1 个 | 全屋改造 0 个")
+
+    // 启用一个全屋改造样式
+    const uiOption = EDITOR_UI_FEATURE_OPTIONS[0]
+    runtimeState.featureProfile[uiOption.value] = {
+      enabled: true,
+      values: {},
+    }
+    await flushShellUpdates()
+    expect(shell.statusCopy.value).toBe("已生效配置：基础粉刷 1 个 | 高级定制 1 个 | 全屋改造 1 个")
+
+    unmount()
+  })
+})
