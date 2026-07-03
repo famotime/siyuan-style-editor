@@ -713,7 +713,16 @@ describe("useStyleEditorShell", () => {
       values: {},
     }
     await flushShellUpdates()
-    expect(shell.statusCopy.value).toBe("已生效配置：基础粉刷 1 个 | 高级定制 1 个 | 全屋改造 1 个")
+    // 点击清除样式（系统操作），修改状态并显示反馈消息
+    mockShowConfirm.mockResolvedValueOnce(true)
+    await shell.handleResetAllStyles()
+    expect(shell.statusCopy.value).toBe("已清除全部样式，恢复到初始状态。")
+
+    // 在显示反馈消息之后，若用户重新启用设置（非系统操作，如重新启用一个样式目标）
+    runtimeState.profile.heading1.enabled = true
+    await flushShellUpdates()
+    // 反馈消息应该被清空，重新显示统计信息
+    expect(shell.statusCopy.value).toBe("已生效配置：基础粉刷 1 个 | 高级定制 0 个 | 全屋改造 0 个")
 
     unmount()
   })

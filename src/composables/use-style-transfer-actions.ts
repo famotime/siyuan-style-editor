@@ -1,6 +1,6 @@
 import type { StyleTransferMetadata } from "@/lib/style-transfer"
 
-import { ref } from "vue"
+import { ref, watch, nextTick } from "vue"
 import {
   pushErrMsg,
   pushMsg,
@@ -39,6 +39,19 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
   const actionMessage = ref("")
   const importedStyleSignature = ref("")
 
+  let isSystemOperation = false
+
+  watch(
+    () => [runtimeState.profile, runtimeState.featureProfile],
+    () => {
+      if (isSystemOperation) {
+        return
+      }
+      actionMessage.value = ""
+    },
+    { deep: true },
+  )
+
   function resolveExportMetadata(authorValue?: string, styleNameValue?: string): StyleTransferMetadata {
     const author = authorValue?.trim() || DEFAULT_STYLE_TRANSFER_AUTHOR
     const styleName = styleNameValue?.trim() || DEFAULT_STYLE_TRANSFER_NAME
@@ -50,10 +63,13 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
   }
 
   async function handleExtractStyles() {
+    isSystemOperation = true
     await options.cancelInlinePalettePanel()
     const result = await extractCurrentStyles()
     importedStyleSignature.value = ""
     actionMessage.value = resolveExtractStylesMessage(result)
+    await nextTick()
+    isSystemOperation = false
   }
 
   async function handleResetAllStyles() {
@@ -65,9 +81,12 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     if (!confirmed) {
       return
     }
+    isSystemOperation = true
     await resetAllStyles()
     importedStyleSignature.value = ""
     actionMessage.value = RESET_ALL_STYLES_MESSAGE
+    await nextTick()
+    isSystemOperation = false
   }
 
   async function handleExportStyles(authorValue?: string, styleNameValue?: string) {
@@ -137,6 +156,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
     try {
       const importedContent = await file.text()
+      isSystemOperation = true
       const result = await importStyles(importedContent)
       importedStyleSignature.value = `${result.metadata.styleName} from ${result.metadata.author}`
       actionMessage.value = resolveImportStylesMessage(result)
@@ -150,6 +170,8 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
       if (input) {
         input.value = ""
       }
+      await nextTick()
+      isSystemOperation = false
     }
   }
 
