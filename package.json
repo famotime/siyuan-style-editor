@@ -1,12 +1,12 @@
 {
   "name": "siyuan-style-editor",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "A template-driven style editor plugin for SiYuan documents",
-  "author": "OpenAI Codex",
+  "author": "Quincy Zou",
   "license": "MIT",
-  "homepage": "",
-  "repository": "",
+  "homepage": "https://github.com/famotime/siyuan-style-editor",
+  "repository": "https://github.com/famotime/siyuan-style-editor",
   "scripts": {
     "dev": "vite build --watch",
     "release": "node ./release.js",

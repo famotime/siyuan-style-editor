@@ -2,7 +2,7 @@
   "name": "siyuan-style-editor",
   "author": "Quincy Zou",
   "url": "https://github.com/famotime/siyuan-style-editor",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "minAppVersion": "2.10.14",
   "disabledInPublish": true,
   "backends": [
@@ -19,9 +19,9 @@
     "zh_CN": "粉刷匠"
   },
   "description": {
-    "default": "Template-driven style editor for headings and bold text",
-    "en_US": "Template-driven style editor for headings and bold text",
-    "zh_CN": "基于模板文档读取与编辑标题、加粗等显示样式"
+    "default": "我是一个粉刷匠——拾色、调配、粉刷，装扮你的笔记空间。",
+    "en_US": "I am a painter - pick colors, mix them, and paint to decorate your note space.",
+    "zh_CN": "我是一个粉刷匠——拾色、调配、粉刷，装扮你的笔记空间。"
   },
   "readme": {
     "default": "README.md",
