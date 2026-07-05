@@ -26,6 +26,7 @@ import {
   selectChannel,
   selectTarget,
   swapTargetChannelValues,
+  t,
 } from "@/style-editor-runtime"
 
 export function useInlinePaletteSession() {
@@ -39,7 +40,7 @@ export function useInlinePaletteSession() {
   })
 
   const selectedChannelLabel = computed(() => {
-    return runtimeState.selectedChannel === "backgroundColor" ? "背景色" : "文字颜色"
+    return runtimeState.selectedChannel === "backgroundColor" ? t("bgColorLabel") : t("colorLabel")
   })
 
   const isInlinePaletteVisible = computed(() => {

@@ -5,7 +5,7 @@
         Live Style Editor
       </p>
       <h1 class="style-editor-shell__title">
-        粉刷匠
+        {{ t("dockTitle") }}
       </h1>
       <p
         v-if="importedStyleSignature"
@@ -14,7 +14,7 @@
         {{ importedStyleSignature }}
       </p>
       <p class="workspace-hero__summary">
-        拾色、调配、粉刷，装扮你的笔记空间。
+        {{ t("slogan") }}
       </p>
       <div class="workspace-hero__actions">
         <button
@@ -22,35 +22,35 @@
           class="extract-styles-button"
           @click="emit('extract')"
         >
-          提取样式
+          {{ t("extractStyles") }}
         </button>
         <button
           type="button"
           class="reset-styles-button"
           @click="emit('reset')"
         >
-          清除样式
+          {{ t("clearStyles") }}
         </button>
         <button
           type="button"
           class="import-styles-button"
           @click="emit('open-import')"
         >
-          导入样式
+          {{ t("importStyles") }}
         </button>
         <button
           type="button"
           class="export-styles-button"
           @click="openExportForm"
         >
-          导出样式
+          {{ t("exportStyles") }}
         </button>
         <button
           type="button"
           class="preview-document-button workspace-hero__preview-button"
           @click="emit('create-preview-document')"
         >
-          生成样式效果预览文档
+          {{ t("generatePreviewDoc") }}
         </button>
       </div>
       <form
@@ -63,30 +63,30 @@
             Export Signature
           </p>
           <p class="workspace-hero__export-title">
-            为导出样式填写署名信息
+            {{ t("fillExportSignature") }}
           </p>
         </div>
         <div class="workspace-hero__export-fields">
           <label class="workspace-hero__export-field">
-            <span class="workspace-hero__export-label">作者</span>
+            <span class="workspace-hero__export-label">{{ t("author") }}</span>
             <input
               ref="exportAuthorInputRef"
               v-model="exportAuthor"
               type="text"
               class="workspace-hero__export-input workspace-hero__export-input--author"
               maxlength="40"
-              placeholder="输入作者名称"
+              :placeholder="t('enterAuthor')"
               @keydown.esc.prevent="closeExportForm"
             >
           </label>
           <label class="workspace-hero__export-field">
-            <span class="workspace-hero__export-label">样式名称</span>
+            <span class="workspace-hero__export-label">{{ t("styleName") }}</span>
             <input
               v-model="exportStyleName"
               type="text"
               class="workspace-hero__export-input workspace-hero__export-input--style"
               maxlength="60"
-              placeholder="输入样式名称"
+              :placeholder="t('enterStyleName')"
               @keydown.esc.prevent="closeExportForm"
             >
           </label>
@@ -96,14 +96,14 @@
             type="submit"
             class="workspace-hero__export-confirm"
           >
-            确认
+            {{ t("confirm") }}
           </button>
           <button
             type="button"
             class="workspace-hero__export-cancel"
             @click="closeExportForm"
           >
-            取消
+            {{ t("cancel") }}
           </button>
         </div>
       </form>
@@ -126,6 +126,7 @@ import {
   nextTick,
   ref,
 } from "vue"
+import { t } from "@/style-editor-runtime"
 
 import {
   DEFAULT_STYLE_TRANSFER_AUTHOR,

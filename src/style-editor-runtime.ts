@@ -58,8 +58,29 @@ import {
 
 } from "@/lib/style-transfer"
 
-const STORAGE_KEY = "style-editor.json"
+import zhCN from "@/i18n/zh_CN.json"
+
+export const STORAGE_KEY = "style-editor.json"
 const STYLE_ELEMENT_ID = "siyuan-style-editor-style"
+
+export function t(key: string, replacements?: Record<string, any>, fallback?: string): string {
+  let text = fallback || key
+  if (pluginInstance && pluginInstance.i18n && typeof pluginInstance.i18n === "object") {
+    text = (pluginInstance.i18n as Record<string, string>)[key] || fallback || key
+  }
+  else {
+    text = (zhCN as Record<string, string>)[key] || fallback || key
+  }
+
+  if (replacements) {
+    for (const [k, v] of Object.entries(replacements)) {
+      const rawVal = (v && typeof v === "object" && "value" in v) ? (v as any).value : v
+      const valStr = String(rawVal === undefined || rawVal === null ? "" : rawVal).trim()
+      text = text.replace(new RegExp(`\\{${k}\\}`, "g"), valStr)
+    }
+  }
+  return text
+}
 
 export type PaintChannel = "color" | "backgroundColor"
 
@@ -348,12 +369,12 @@ export async function importStyles(raw: string) {
 export async function saveCurrentProfileAsPresetPalette(name: string) {
   const trimmedName = name.trim()
   if (!trimmedName) {
-    throw new Error("预置色卡名称不能为空。")
+    throw new Error(t("emptyPaletteNameErr"))
   }
 
   const colors = createPresetPaletteColors(collectActiveProfileColors())
   if (colors.length === 0) {
-    throw new Error("当前还没有可保存的颜色。")
+    throw new Error(t("noColorsErr"))
   }
 
   const nextPalette: PresetPaletteCollection = {
@@ -382,7 +403,7 @@ export async function saveCurrentProfileAsPresetPalette(name: string) {
 export async function deleteCustomPresetPalette(paletteId: string) {
   const paletteToDelete = runtimeState.customPresetPalettes.find((palette) => palette.id === paletteId)
   if (!paletteToDelete) {
-    throw new Error("未找到要删除的自定义色卡。")
+    throw new Error(t("paletteNotFoundErr"))
   }
 
   await commitState({

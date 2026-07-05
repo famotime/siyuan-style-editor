@@ -1,5 +1,6 @@
 import type { StyleTransferSummary } from "@/lib/style-transfer"
 import { normalizeHexColor } from "@/lib/custom-color"
+import { t } from "@/style-editor-runtime"
 
 export interface ExtractStylesResult {
   extractedTargetCount: number
@@ -16,26 +17,26 @@ interface ClearPaletteSelectionDeps {
   closeInlinePalette: () => void
 }
 
-export const RESET_ALL_STYLES_MESSAGE = "已清除全部样式，恢复到初始状态。"
+export const RESET_ALL_STYLES_MESSAGE = t("resetStylesSuccess")
 
 export function resolveExtractStylesMessage(result: ExtractStylesResult): string {
   if (result.matchedTargetCount === 0) {
-    return "未找到可提取的文档对象，请先打开包含标题或文本内容的文档。"
+    return t("noDocFoundErr")
   }
 
   if (result.extractedTargetCount === 0) {
-    return `已扫描 ${result.matchedTargetCount} 类对象，但没有检测到可回填的显式颜色。`
+    return t("noColorExtractedErr", { count: String(result.matchedTargetCount) })
   }
 
-  return `已提取 ${result.extractedTargetCount} 类对象的当前颜色，并同步到面板预览。`
+  return t("extractSuccess", { count: String(result.extractedTargetCount) })
 }
 
 export function resolveExportStylesMessage(result: StyleTransferSummary): string {
-  return `已导出当前配置，包含 ${result.styledTargetCount} 类对象的显式样式。`
+  return t("exportSuccess", { count: String(result.styledTargetCount) })
 }
 
 export function resolveImportStylesMessage(result: StyleTransferSummary): string {
-  return `已导入本地配置，当前 ${result.styledTargetCount} 类对象带有显式样式。`
+  return t("importSuccess", { count: String(result.styledTargetCount) })
 }
 
 export async function applyCustomColorSelection(

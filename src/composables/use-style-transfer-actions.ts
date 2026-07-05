@@ -7,11 +7,11 @@ import {
   showConfirm,
 } from "@/api"
 import {
-  RESET_ALL_STYLES_MESSAGE,
   resolveExportStylesMessage,
   resolveExtractStylesMessage,
   resolveImportStylesMessage,
 } from "@/lib/style-editor-shell-actions"
+import { t } from "@/style-editor-runtime"
 import { createStylePreviewDocument } from "@/lib/style-preview-document"
 import {
   countStyledTargets,
@@ -75,8 +75,8 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
   async function handleResetAllStyles() {
     await options.cancelInlinePalettePanel()
     const confirmed = await showConfirm(
-      "清除样式",
-      "确定要关闭所有样式开关且恢复各设置项的默认配置吗？"
+      t("confirmClearStylesTitle"),
+      t("confirmClearStylesMsg")
     )
     if (!confirmed) {
       return
@@ -84,7 +84,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     isSystemOperation = true
     await resetAllStyles()
     importedStyleSignature.value = ""
-    actionMessage.value = RESET_ALL_STYLES_MESSAGE
+    actionMessage.value = t("resetStylesSuccess")
     await nextTick()
     isSystemOperation = false
   }
@@ -110,7 +110,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
     try {
       const result = await createStylePreviewDocument()
-      const message = `已生成预览文档「${result.title}」，保存于 ${result.path}。`
+      const message = t("previewDocSuccess", { title: result.title, path: result.path })
       actionMessage.value = message
       await pushMsg(message, 5000)
       return result
@@ -118,7 +118,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     catch (error) {
       const message = error instanceof Error
         ? error.message
-        : "生成样式效果预览文档失败，请稍后重试。"
+        : t("previewDocFailed")
       actionMessage.value = message
       await pushErrMsg(message, 5000)
       return null
@@ -130,13 +130,13 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
     try {
       const result = await saveCurrentProfileAsPresetPalette(name)
-      actionMessage.value = `当前颜色配置已经保存为色卡「${result.label}」，供后续选色使用。`
+      actionMessage.value = t("savePaletteSuccess", { label: result.label })
       return result.palette
     }
     catch (error) {
       actionMessage.value = error instanceof Error
         ? error.message
-        : "保存预置色卡失败，请稍后重试。"
+        : t("savePaletteFailed")
       return null
     }
   }
@@ -164,7 +164,7 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
     catch (error) {
       actionMessage.value = error instanceof Error
         ? error.message
-        : "导入样式失败，请检查本地配置文件。"
+        : t("importFailed")
     }
     finally {
       if (input) {
@@ -178,13 +178,13 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
   async function handleDeletePresetPalette(paletteId: string) {
     try {
       const result = await deleteCustomPresetPalette(paletteId)
-      actionMessage.value = `已删除色卡「${result.label}」。`
+      actionMessage.value = t("deletePaletteSuccess", { label: result.label })
       return result
     }
     catch (error) {
       actionMessage.value = error instanceof Error
         ? error.message
-        : "删除色卡失败，请稍后重试。"
+        : t("deletePaletteFailed")
       return null
     }
   }

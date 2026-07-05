@@ -5,7 +5,7 @@
         Custom Color
       </p>
       <p class="custom-color-panel__description">
-        使用调色板或十六进制颜色，即时预览，点击应用颜色后保存。
+        {{ t("customColorDesc") }}
       </p>
     </div>
 
@@ -55,7 +55,7 @@
         :disabled="!isCustomColorDraftValid"
         @click="emit('apply-custom-color')"
       >
-        应用颜色
+        {{ t("applyColor") }}
       </button>
     </div>
   </div>
@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue"
+import { t } from "@/style-editor-runtime"
 
 const props = defineProps<{
   colorPickerValue: string

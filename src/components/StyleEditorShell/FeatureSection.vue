@@ -5,15 +5,15 @@
   >
     <div class="feature-section__header">
       <div>
-        <h2 class="section-heading__title" :data-tooltip="`${kicker} — ${enabledCount}/${totalCount} 已启用`">
+        <h2 class="section-heading__title" :data-tooltip="t('enabledCountTip', { kicker, enabled: String(enabledCount), total: String(totalCount) })">
           {{ title }}
         </h2>
       </div>
       <button
         type="button"
         class="panel-collapse-btn"
-        :aria-label="collapsed ? '展开面板' : '折叠面板'"
-        :title="collapsed ? '展开面板' : '折叠面板'"
+        :aria-label="collapsed ? t('expandPanel') : t('collapsePanel')"
+        :title="collapsed ? t('expandPanel') : t('collapsePanel')"
         @click="collapsed = !collapsed"
       >
         <svg
@@ -45,7 +45,7 @@
           v-model="searchQuery"
           type="text"
           class="feature-search__input"
-          placeholder="搜索特性..."
+          :placeholder="t('searchPlaceholder')"
         >
       </div>
 
@@ -55,7 +55,7 @@
         class="feature-group"
       >
         <h4 class="feature-group__title">
-          {{ groupName }}
+          {{ t(groupName) }}
         </h4>
         <div class="feature-grid">
           <article
@@ -69,9 +69,9 @@
               <div class="feature-card__copy">
                 <h3
                   class="feature-card__title"
-                  :data-tooltip="feature.preview || feature.hint ? [feature.preview, feature.hint].filter(Boolean).join(' — ') : undefined"
+                  :data-tooltip="feature.preview || feature.hint ? [feature.preview ? t(feature.preview) : '', feature.hint ? t(feature.hint) : ''].filter(Boolean).join(' — ') : undefined"
                 >
-                  {{ feature.label }}
+                  {{ t(feature.label) }}
                 </h3>
               </div>
               <label class="feature-switch">
@@ -93,7 +93,7 @@
                 class="feature-control"
               >
                 <span class="feature-control__label">
-                  {{ control.label }}
+                  {{ t(control.label) }}
                 </span>
 
                 <div
@@ -169,7 +169,7 @@
                     :key="option.value"
                     :value="option.value"
                   >
-                    {{ option.label }}
+                    {{ t(option.label) }}
                   </option>
                 </select>
               </label>
@@ -185,6 +185,7 @@
 import type {
   PanelThemeAppearance,
 } from "@/lib/panel-theme"
+import { t } from "@/style-editor-runtime"
 import type {
   FeatureStyleId,
   FeatureStyleOption,

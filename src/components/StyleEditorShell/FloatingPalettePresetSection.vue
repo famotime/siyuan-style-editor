@@ -6,7 +6,7 @@
           Presets
         </p>
         <p class="inline-palette-panel__copy">
-          从 10 组高区隔配色里切换主题，点击色卡即可即时预览。
+          {{ t("presetsDesc") }}
         </p>
       </div>
       <button
@@ -34,7 +34,7 @@
       <div
         class="preset-palette-tabs"
         role="tablist"
-        aria-label="预设配色方案"
+        :aria-label="t('presetsKicker')"
       >
         <div
           v-for="palette in presetPaletteCollections"
@@ -54,7 +54,7 @@
             @dblclick.stop="emit('apply-preset-palette-sequence', palette.id)"
           >
             <span class="preset-palette-tab__name">{{ palette.label }}</span>
-            <span class="preset-palette-tab__count">{{ palette.colors.length }} 色</span>
+            <span class="preset-palette-tab__count">{{ t("presetsColorCount", { count: String(palette.colors.length) }) }}</span>
           </button>
 
           <div
@@ -65,8 +65,8 @@
               v-if="pendingDeletePaletteId !== palette.id"
               type="button"
               class="preset-palette-tab__delete"
-              :aria-label="`删除色卡 ${palette.label}`"
-              title="删除色卡"
+              :aria-label="t('deletePaletteAriaLabel', { label: palette.label })"
+              :title="t('deletePaletteTooltip')"
               @click.stop="requestDeletePalette(palette.id)"
             >
               <span
@@ -86,14 +86,14 @@
                 class="preset-palette-tab__delete-confirm"
                 @click.stop="confirmDeletePalette(palette.id)"
               >
-                确认
+                {{ t("confirm") }}
               </button>
               <button
                 type="button"
                 class="preset-palette-tab__delete-cancel"
                 @click.stop="cancelDeletePalette"
               >
-                取消
+                {{ t("cancel") }}
               </button>
             </div>
           </div>
@@ -121,7 +121,7 @@
         <button
           type="button"
           class="swatch-chip swatch-chip--clear"
-          aria-label="恢复默认颜色"
+          :aria-label="t('restoreDefaultColor')"
           :class="{ 'swatch-chip--active': !selectedSwatch }"
           :style="{ borderWidth: '0' }"
           @click="emit('clear-selected-target-color')"
@@ -145,6 +145,7 @@ import {
   ref,
   watch,
 } from "vue"
+import { t } from "@/style-editor-runtime"
 
 import { buildPresetPaletteCardBackground } from "@/lib/preset-palette-catalog"
 

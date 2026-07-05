@@ -34,7 +34,7 @@
 
       <FeatureSection
         kicker="Advanced Config"
-        title="高级定制"
+        :title="t('advancedConfig')"
         :feature-style-options="bodySafeFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         :theme-appearance="themeAppearance"
@@ -43,7 +43,7 @@
 
       <FeatureSection
         kicker="Editor UI"
-        title="全屋改造"
+        :title="t('editorUi')"
         :feature-style-options="editorUiFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         :theme-appearance="themeAppearance"
@@ -54,7 +54,7 @@
     <FloatingPalettePanel
       v-model:custom-color-draft="customColorDraft"
       :visible="isInlinePaletteVisible"
-      :selected-target-label="selectedTargetMeta.label"
+      :selected-target-label="t(selectedTargetMeta.value)"
       :selected-channel-label="selectedChannelLabel"
       :panel-theme-vars="panelThemeVars"
       :set-floating-palette-ref="setFloatingPaletteRef"
@@ -94,6 +94,7 @@ import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPaletteP
 import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue"
 import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue"
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell"
+import { t } from "@/style-editor-runtime"
 
 const {
   activePresetPalette,

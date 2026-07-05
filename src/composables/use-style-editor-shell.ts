@@ -12,6 +12,7 @@ import {
   runtimeState,
   updateFeatureStyle,
   updateTargetEnabled,
+  t,
 } from "@/style-editor-runtime"
 
 export function useStyleEditorShell() {
@@ -49,7 +50,11 @@ export function useStyleEditorShell() {
       (option) => runtimeState.featureProfile[option.value]?.enabled,
     ).length
 
-    return `已生效配置：基础粉刷 ${activeTargets} 个 | 高级定制 ${activeAdvanced} 个 | 全屋改造 ${activeUi} 个`
+    return t("activeStats", {
+      targets: String(activeTargets),
+      advanced: String(activeAdvanced),
+      ui: String(activeUi),
+    })
   })
 
   const statusCopy = computed(() => {

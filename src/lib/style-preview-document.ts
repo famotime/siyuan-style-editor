@@ -6,7 +6,7 @@ import {
   openDocByTab,
   renderSprig,
 } from "@/api"
-import { getPluginApp } from "@/style-editor-runtime"
+import { getPluginApp, t } from "@/style-editor-runtime"
 
 import stylePreviewDocumentMarkdown from "../../docs/样式效果预览文档.md?raw"
 
@@ -175,7 +175,7 @@ export function buildStylePreviewDocumentPath(dailyNoteSavePath: string | undefi
 export async function createStylePreviewDocument(now = new Date()) {
   const notebookId = await resolveNotebookId()
   if (!notebookId) {
-    throw new Error("未找到可用笔记本，请先打开或创建笔记本。")
+    throw new Error(t("emptyNotebookErr"))
   }
 
   const notebookConf = await getNotebookConf(notebookId)

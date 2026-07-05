@@ -2,8 +2,8 @@
   <section class="target-studio">
     <div class="target-studio__header">
       <div>
-        <h2 class="section-heading__title" data-tooltip="Custom Colors — 为标题、加粗、引用等元素定制颜色与样式">
-          基础粉刷
+        <h2 class="section-heading__title" :data-tooltip="t('customColorsTooltip')">
+          {{ t("headingBasic") }}
         </h2>
       </div>
       <div class="target-studio__header-actions">
@@ -12,9 +12,9 @@
             v-if="!isSaveFormVisible"
             type="button"
             class="target-studio__save"
-            aria-label="保存当前配色为色卡"
-            data-tooltip="保存当前配色"
-            title="保存当前配色为色卡"
+            :aria-label="t('saveCurrentPaletteTooltip')"
+            :data-tooltip="t('saveCurrentPalette')"
+            :title="t('saveCurrentPaletteTooltip')"
             @click="openSaveForm"
           >
             <span
@@ -37,7 +37,7 @@
               type="text"
               class="target-studio__save-input"
               maxlength="40"
-              placeholder="输入色卡名称"
+              :placeholder="t('enterPaletteName')"
               @keydown.esc.prevent="closeSaveForm"
             >
             <button
@@ -45,22 +45,22 @@
               class="target-studio__save-confirm"
               :disabled="!savePaletteName.trim()"
             >
-              确认
+              {{ t("confirm") }}
             </button>
             <button
               type="button"
               class="target-studio__save-cancel"
               @click="closeSaveForm"
             >
-              取消
+              {{ t("cancel") }}
             </button>
           </form>
         </div>
         <button
           type="button"
           class="panel-collapse-btn"
-          :aria-label="collapsed ? '展开面板' : '折叠面板'"
-          :title="collapsed ? '展开面板' : '折叠面板'"
+          :aria-label="collapsed ? t('expandPanel') : t('collapsePanel')"
+          :title="collapsed ? t('expandPanel') : t('collapsePanel')"
           @click="collapsed = !collapsed"
         >
           <svg
@@ -116,7 +116,7 @@
             {{ target.shortLabel }}
           </p>
           <p class="target-preview-card__title">
-            {{ target.label }}
+            {{ t(target.value) }}
           </p>
         </button>
 
@@ -124,8 +124,8 @@
           <button
             type="button"
             class="channel-orb"
-            data-tooltip="字色"
-            aria-label="字色"
+            :data-tooltip="t('colorLabel')"
+            :aria-label="t('colorLabel')"
             :class="{
               'channel-orb--active': selectedTarget === target.value && selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value),
               'channel-orb--drag-source': isDragSourceOrb(target.value, 'color'),
@@ -146,8 +146,8 @@
           <button
             type="button"
             class="channel-orb"
-            data-tooltip="底色"
-            aria-label="底色"
+            :data-tooltip="t('bgColorLabel')"
+            :aria-label="t('bgColorLabel')"
             :class="{
               'channel-orb--active': selectedTarget === target.value && selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value),
               'channel-orb--drag-source': isDragSourceOrb(target.value, 'backgroundColor'),
@@ -188,6 +188,7 @@
 <script setup lang="ts">
 import type { StyleProfile, StyleTarget } from "@/lib/style-profile"
 import type { PaintChannel } from "@/style-editor-runtime"
+import { t } from "@/style-editor-runtime"
 
 import {
   nextTick,

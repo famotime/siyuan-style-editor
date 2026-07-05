@@ -6,6 +6,7 @@ import {
   init,
   mountDock,
 } from "@/main"
+import { STORAGE_KEY, t } from "@/style-editor-runtime"
 import "@/index.scss"
 
 let pluginInfo = {
@@ -33,7 +34,7 @@ export default class SiyuanStyleEditorPlugin extends Plugin {
           height: 0,
         },
         icon: "iconTheme",
-        title: "粉刷匠",
+        title: t("dockTitle"),
         show: true,
       },
       data: {},
@@ -50,10 +51,10 @@ export default class SiyuanStyleEditorPlugin extends Plugin {
 
   async uninstall() {
     try {
-      await this.removeData("style-editor.json")
+      await this.removeData(STORAGE_KEY)
     }
     catch (e) {
-      showMessage(this.t("uninstallDataRemoveFailed", { error: String(e) }))
+      showMessage(t("uninstallDataRemoveFailed", { error: String(e) }))
     }
   }
 }

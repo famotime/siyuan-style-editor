@@ -19,7 +19,7 @@
                 Palette Console
               </p>
               <p class="inline-palette-panel__copy">
-                正在编辑 {{ selectedTargetLabel }} 的{{ selectedChannelLabel }}
+                {{ t("editingTip", { target: selectedTargetLabel, channel: selectedChannelLabel }) }}
               </p>
             </div>
 
@@ -28,7 +28,7 @@
               class="inline-palette-panel__close"
               @click="emit('cancel')"
             >
-              收起
+              {{ t("close") }}
             </button>
           </div>
 
@@ -69,6 +69,7 @@
 import {
   computed,
 } from "vue"
+import { t } from "@/style-editor-runtime"
 
 import FloatingPaletteCustomSection from "@/components/StyleEditorShell/FloatingPaletteCustomSection.vue"
 import FloatingPalettePresetSection from "@/components/StyleEditorShell/FloatingPalettePresetSection.vue"

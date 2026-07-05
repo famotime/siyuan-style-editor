@@ -2,7 +2,7 @@
   "name": "siyuan-style-editor",
   "version": "1.0.0",
   "type": "module",
-  "description": "A template-driven style editor plugin for SiYuan documents",
+  "description": "我是一个粉刷匠——拾色、调配、粉刷，装扮你的笔记空间。",
   "author": "Quincy Zou",
   "license": "MIT",
   "homepage": "https://github.com/famotime/siyuan-style-editor",
