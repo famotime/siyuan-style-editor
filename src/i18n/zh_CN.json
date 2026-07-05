@@ -1,5 +1,4 @@
 {
-  "addTopBarIcon": "粉刷匠",
   "uninstallDataRemoveFailed": "卸载插件时清理数据失败：{error}",
   "dockTitle": "粉刷匠",
   "activeStats": "已生效配置：基础粉刷 {targets} 个 | 高级定制 {advanced} 个 | 全屋改造 {ui} 个",

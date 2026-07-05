@@ -1,7 +1,6 @@
 {
-  "addTopBarIcon": "addTopBarIcon",
-  "uninstallDataRemoveFailed": "uninstallDataRemoveFailed",
-  "dockTitle": "dockTitle",
+  "uninstallDataRemoveFailed": "Failed to remove plugin data during uninstall: {error}",
+  "dockTitle": "Style Editor",
   "activeStats": "activeStats",
   "headingBasic": "headingBasic",
   "presetsKicker": "presetsKicker",
