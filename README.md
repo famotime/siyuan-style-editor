@@ -34,13 +34,13 @@
 
 最新版操作演示：
 
-<video controls="controls" src="assets/粉刷匠-20260704195726-3brv75y.mp4"></video>
+<video controls="controls" src="https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/%E7%B2%89%E5%88%B7%E5%8C%A0-20260704195726-3brv75y.mp4"></video>
 
 ‍
 
 初版操作演示：
 
-<video controls="controls" src="assets/粉刷匠-20260504170903-1d8y2z9.mp4"></video>
+<video controls="controls" src="https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/%E7%B2%89%E5%88%B7%E5%8C%A0-20260504170903-1d8y2z9.mp4"></video>
 
 ‍
 
