@@ -2,7 +2,7 @@
 
 ## 粉刷匠——拾色、调配、粉刷，装扮你的笔记空间
 
-![icon-20260411112350-js5tfu8](https://cdn.jsdelivr.net/gh/famotime/siyuan-style-editor@main/assets/icon-20260411112350-js5tfu8.png)
+![icon-20260411112350-js5tfu8](https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/icon-20260411112350-js5tfu8.png)
 
 思源笔记原生主题不够个性化？想要调整界面外观却不会写 CSS？收集了很多CSS代码却难以管理？喜欢多个主题的特色功能，却无法让它们兼容并存？
 
@@ -28,19 +28,19 @@
 - **高级定制**：共 **28** 项，涉及 **123** 个细节控制控件。主要在正文安全范围内，对正文块元素提供圆角、阴影、缩放、线条等进阶版面改造。
 - **全屋改造**：共 **25** 项，涉及 **80** 个细节控制控件。主要对思源笔记全局界面（大纲、文档树、滚动条、页签栏等）进行深度样式侵入和全局微调。
 
-![image](https://cdn.jsdelivr.net/gh/famotime/siyuan-style-editor@main/assets/image-20260704193556-lly9b03.png)
+![image](https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/image-20260704193556-lly9b03.png)
 
 ‍
 
 最新版操作演示：
 
-<video controls="controls" src="https://cdn.jsdelivr.net/gh/famotime/siyuan-style-editor@main/assets/%E7%B2%89%E5%88%B7%E5%8C%A0-20260704195726-3brv75y.mp4"></video>
+<video controls="controls" src="https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/%E7%B2%89%E5%88%B7%E5%8C%A0-20260704195726-3brv75y.mp4"></video>
 
 ‍
 
 初版操作演示：
 
-<video controls="controls" src="https://cdn.jsdelivr.net/gh/famotime/siyuan-style-editor@main/assets/%E7%B2%89%E5%88%B7%E5%8C%A0-20260504170903-1d8y2z9.mp4"></video>
+<video controls="controls" src="https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/%E7%B2%89%E5%88%B7%E5%8C%A0-20260504170903-1d8y2z9.mp4"></video>
 
 ‍
 
@@ -89,6 +89,6 @@
 
 ‍
 
-![图片合并](https://cdn.jsdelivr.net/gh/famotime/siyuan-style-editor@main/assets/superblock-merge-1783167766964-20260704202247-5v7sltj.webp)
+![图片合并](https://raw.githubusercontent.com/famotime/siyuan-style-editor/main/assets/superblock-merge-1783167766964-20260704202247-5v7sltj.webp)
 
 [为了让思源笔记用起来更顺手，我打算开发 10 个插件，目前进度…… - 链滴](https://ld246.com/article/1775894033664)
