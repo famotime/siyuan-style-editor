@@ -1295,7 +1295,7 @@ ${indicatorCss}`
   {
     value: "dockStyle",
     label: "停靠栏样式",
-    hint: "自定义停靠栏图标大小、背景色和宽度",
+    hint: "自定义停靠栏图标大小、背景色、宽度及侧边栏分离",
     group: "导航与面板",
     preview: "📌",
     risk: "全屋改造",
@@ -1330,18 +1330,33 @@ ${indicatorCss}`
         unit: "px",
         slider: true,
       },
+      {
+        key: "splitSeparate",
+        label: "侧边栏分离",
+        type: "select",
+        options: [
+          { label: "关闭", value: "no" },
+          { label: "开启", value: "yes" },
+        ],
+      },
     ],
     defaults: createDefaultConfig({
       iconSize: 20,
       backgroundColor: "transparent",
       hoverColor: "var(--style-editor-card-bg-soft)",
       width: 40,
+      splitSeparate: "no",
     }),
     buildCss: (config) => {
       const iconSize = px(config.values.iconSize, 20)
       const bgColor = stringValue(config.values.backgroundColor, "transparent")
       const hoverColor = stringValue(config.values.hoverColor, "var(--style-editor-card-bg-soft)")
       const width = px(config.values.width, 40)
+      const splitSeparate = stringValue(config.values.splitSeparate, "no")
+
+      const splitRule = splitSeparate === "yes"
+        ? `\n\n.dock__split {\n  height: stretch !important;\n  opacity: 0 !important;\n}`
+        : ""
 
       return `.dock {
   background: ${bgColor} !important;
@@ -1355,7 +1370,7 @@ ${indicatorCss}`
 
 .dock__item:hover {
   background: ${hoverColor} !important;
-}`
+}${splitRule}`
     },
   },
   {

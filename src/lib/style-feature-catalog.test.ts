@@ -932,6 +932,7 @@ describe("style feature catalog", () => {
           backgroundColor: "#f0f0f0",
           hoverColor: "#e0e0e0",
           width: 44,
+          splitSeparate: "yes",
         },
       },
     } as Partial<FeatureStyleProfile>)
@@ -939,6 +940,9 @@ describe("style feature catalog", () => {
     expect(css).toContain(".dock")
     expect(css).toContain("width: 44px")
     expect(css).toContain(".dock__item")
+    expect(css).toContain(".dock__split")
+    expect(css).toContain("height: stretch")
+    expect(css).toContain("opacity: 0")
   })
 
   it("imageRadius — 扩展：阴影和悬停效果", () => {
