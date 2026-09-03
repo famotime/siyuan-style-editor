@@ -31,6 +31,7 @@ const DEFINITION_KEYS = [
   "backlinkSticky",
   "imageRadius",
   "tableStyle",
+  "tableAddButton",
   "markStyle",
   "inlineCodeStyle",
   "blockRefStyle",

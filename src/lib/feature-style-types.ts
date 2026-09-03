@@ -40,6 +40,7 @@ export type FeatureStyleId =
   | "refSearchMenu"
   | "strikethroughStyle"
   | "tableStyle"
+  | "tableAddButton"
   | "tabBarStyle"
   | "taskListStyle"
   | "underlineStyle"

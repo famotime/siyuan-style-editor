@@ -1,6 +1,7 @@
 import type { FeatureDefinition } from "../feature-style-types"
 import {
   createDefaultConfig,
+  em,
   LINE_STYLE_OPTIONS,
   lineStyleValue,
   numberValue,
@@ -550,6 +551,41 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     preview: "表格",
     risk: "正文安全",
     value: "tableStyle",
+  },
+  {
+    buildCss: (config) => {
+      const paddingVertical = em(numberValue(config.values.paddingVertical, 0.5), 0.5)
+
+      return `
+.protyle-table-control__add {
+  display: none !important;
+}
+
+.protyle-wysiwyg [data-node-id].table {
+  padding: ${paddingVertical} 0 !important;
+}`.trim()
+    },
+    controls: [
+      {
+        key: "paddingVertical",
+        label: "上下边距",
+        max: 4,
+        min: 0,
+        slider: true,
+        step: 0.1,
+        type: "number",
+        unit: "em",
+      },
+    ],
+    defaults: createDefaultConfig({
+      paddingVertical: 0.5,
+    }),
+    hint: "隐藏表格右侧及下方的插入行/列快捷按钮，消除预留边距，使排版更紧凑。",
+    label: "隐藏表格增行列按钮",
+    group: "块级元素",
+    preview: "表格",
+    risk: "正文安全",
+    value: "tableAddButton",
   },
   {
     buildCss: (config) => `

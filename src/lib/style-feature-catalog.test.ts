@@ -1169,6 +1169,33 @@ describe("style feature catalog", () => {
     expect(css).toContain('content: "○" !important;')
     expect(css).toContain('content: "■" !important;')
   })
+
+  it("tableAddButton — 默认配置生成正确的隐藏规则与边距", () => {
+    const profile = normalizeFeatureProfile({
+      tableAddButton: {
+        enabled: true,
+        values: {},
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain(".protyle-table-control__add {")
+    expect(css).toContain("display: none !important;")
+    expect(css).toContain(".protyle-wysiwyg [data-node-id].table {")
+    expect(css).toContain("padding: 0.5em 0 !important;")
+  })
+
+  it("tableAddButton — 自定义上下边距", () => {
+    const profile = normalizeFeatureProfile({
+      tableAddButton: {
+        enabled: true,
+        values: {
+          paddingVertical: 1.2,
+        },
+      },
+    } as Partial<FeatureStyleProfile>)
+    const css = buildFeatureStyleCss(profile)
+    expect(css).toContain("padding: 1.2em 0 !important;")
+  })
 })
 
 describe("feature option filters", () => {
@@ -1183,6 +1210,7 @@ describe("feature option filters", () => {
     expect(values).toContain("paragraphHover")
     expect(values).toContain("imageRadius")
     expect(values).toContain("tableStyle")
+    expect(values).toContain("tableAddButton")
     expect(values).toContain("linkStyle")
   })
 
