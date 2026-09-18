@@ -625,18 +625,103 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
     value: "inlineCodeStyle",
   },
   {
-    buildCss: (config) => `
-.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
-.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) {
-  color: ${stringValue(config.values.color, "var(--style-editor-link-color)")} !important;
-  background-color: ${stringValue(config.values.backgroundColor, "var(--style-editor-link-bg)")} !important;
-  border-bottom: ${numberValue(config.values.lineThickness, 1)}px ${lineStyleValue(config.values.lineStyle, "dashed")} ${stringValue(config.values.lineColor, "var(--style-editor-link-line)")} !important;
+    buildCss: (config) => {
+      const mode = stringValue(config.values.styleMode, "classic")
+      const color = stringValue(config.values.color, "var(--style-editor-link-color)")
+      const bg = stringValue(config.values.backgroundColor, "var(--style-editor-link-bg)")
+      const lineStyle = optionValue(config.values.lineStyle, "solid", LINK_LINE_STYLE_OPTIONS)
+      const lineColor = stringValue(config.values.lineColor, "var(--style-editor-link-line)")
+      const lineThickness = numberValue(config.values.lineThickness, 1)
+      const fontWeight = numberValue(config.values.fontWeight, 600)
+      const radius = numberValue(config.values.radius, 3)
+      const borderLeftColor = stringValue(config.values.borderLeftColor, "var(--b3-theme-primary)")
+      const borderLeftWidth = numberValue(config.values.borderLeftWidth, 2)
+      const hidePluginIcon = stringValue(config.values.hidePluginIcon, "no")
+
+      const baseSelector = `.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext)`
+
+      const rules: string[] = []
+
+      // 彻底清除思源新版官方在块引用上的默认虚线背景图（解决用户吐槽像虚拟引用/补丁的痛点）
+      rules.push(`.protyle-wysiwyg [data-type~="block-ref"] {
+  background-image: none !important;
+}`)
+
+      if (mode === "capsule") {
+        rules.push(`${baseSelector} {
+  color: ${color} !important;
+  background-color: ${bg} !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-radius: ${radius}px !important;
+  padding: 1px 5px !important;
+  margin: 0 1px !important;
+  font-weight: ${fontWeight};
+  transition: background-color 0.15s ease, color 0.15s ease, filter 0.15s ease;
+}
+
+.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext):hover,
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext):hover {
+  filter: brightness(0.92);
+}`)
+      } else if (mode === "leftBar") {
+        rules.push(`${baseSelector} {
+  color: ${color} !important;
+  background-color: ${bg} !important;
+  border-bottom: none !important;
+  border-left: ${borderLeftWidth}px solid ${borderLeftColor} !important;
+  border-radius: ${radius}px !important;
+  padding: 1px 5px 1px ${borderLeftWidth + 4}px !important;
+  margin: 0 1px !important;
+  font-weight: ${fontWeight};
+  transition: background-color 0.15s ease, color 0.15s ease, filter 0.15s ease;
+}
+
+.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext):hover,
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext):hover {
+  filter: brightness(0.92);
+}`)
+      } else {
+        // classic 经典下划线模式：干练底线，支持实线/点线/虚线/无底线
+        const borderBottom = lineStyle === "none" || lineThickness === 0
+          ? "none"
+          : `${lineThickness}px ${lineStyle} ${lineColor}`
+        rules.push(`${baseSelector} {
+  color: ${color} !important;
+  background-color: ${bg} !important;
+  border-bottom: ${borderBottom} !important;
+  border-left: none !important;
+  border-radius: ${radius}px;
   padding: 1px 4px;
   padding-bottom: ${px(config.values.offset, 2)};
-  font-weight: ${numberValue(config.values.fontWeight, 600)};
-  border-radius: 0;
-}`.trim(),
+  font-weight: ${fontWeight};
+  transition: color 0.15s ease, border-color 0.15s ease;
+}`)
+      }
+
+      // 隐藏第三方插件注入的链接图标（如 img.plugin-link-icon）
+      if (hidePluginIcon === "yes") {
+        rules.push(`.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext) img.plugin-link-icon,
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) img.plugin-link-icon,
+img.plugin-link-icon {
+  display: none !important;
+}`)
+      }
+
+      return rules.join("\n\n").trim()
+    },
     controls: [
+      {
+        key: "styleMode",
+        label: "引用风格",
+        options: [
+          { label: "经典下划线", value: "classic" },
+          { label: "高亮胶囊", value: "capsule" },
+          { label: "左侧色条胶囊", value: "leftBar" },
+        ],
+        type: "select",
+      },
       {
         key: "color",
         label: "链接字色",
@@ -655,16 +740,8 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
       {
         key: "lineStyle",
         label: "底线线型",
-        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "wavy"),
+        options: LINK_LINE_STYLE_OPTIONS,
         type: "select",
-      },
-      {
-        key: "fontWeight",
-        label: "字重",
-        max: 900,
-        min: 400,
-        step: 100,
-        type: "number",
       },
       {
         key: "lineThickness",
@@ -675,17 +752,62 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
         type: "number",
         unit: "px",
       },
+      {
+        key: "radius",
+        label: "圆角",
+        max: 16,
+        min: 0,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "borderLeftColor",
+        label: "色条颜色",
+        type: "color",
+      },
+      {
+        key: "borderLeftWidth",
+        label: "色条粗细",
+        max: 6,
+        min: 1,
+        step: 1,
+        type: "number",
+        unit: "px",
+      },
+      {
+        key: "fontWeight",
+        label: "字重",
+        max: 900,
+        min: 400,
+        step: 100,
+        type: "number",
+      },
+      {
+        key: "hidePluginIcon",
+        label: "隐藏插件图标",
+        options: [
+          { label: "否", value: "no" },
+          { label: "是", value: "yes" },
+        ],
+        type: "select",
+      },
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--style-editor-link-bg)",
+      borderLeftColor: "var(--b3-theme-primary)",
+      borderLeftWidth: 2,
       color: "var(--style-editor-link-color)",
       fontWeight: 600,
+      hidePluginIcon: "no",
       lineColor: "var(--style-editor-link-line)",
-      lineStyle: "dashed",
+      lineStyle: "solid",
       lineThickness: 1,
       offset: 2,
+      radius: 3,
+      styleMode: "classic",
     }),
-    hint: "调整块引用链接和文件标注的字色、背景和底线样式。",
+    hint: "调整块引用和文件标注的风格形态（经典下划线/高亮胶囊/左侧色条），彻底清除原生虚线背景，自由定义字色、底线与色条。",
     label: "引用链接样式",
     group: "行内元素",
     preview: "引用",

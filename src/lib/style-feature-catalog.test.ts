@@ -190,7 +190,7 @@ describe("style feature catalog", () => {
     expect(profile.inlineCodeStyle.values.radius).toBe(0)
     expect(profile.blockRefStyle.enabled).toBe(true)
     expect(profile.blockRefStyle.values.fontWeight).toBe(400)
-    expect(profile.blockRefStyle.values.lineStyle).toBe("dashed")
+    expect(profile.blockRefStyle.values.lineStyle).toBe("solid")
     expect(profile.hrStyle.enabled).toBe(true)
     expect(profile.hrStyle.values.mode).toBe("gradient")
     expect(profile.headingDecoration.enabled).toBe(true)
@@ -273,6 +273,46 @@ describe("style feature catalog", () => {
     expect(css).toContain("color: rgb(130, 190, 255) !important;")
     expect(css).toContain("font-weight: 700;")
     expect(css).toContain("border-bottom: 1.5px solid rgba(130, 190, 255, 0.6) !important;")
+    expect(css).toContain("background-image: none !important;")
+  })
+
+  it("builds capsule and leftBar styles for block reference style", () => {
+    const capsuleProfile = normalizeFeatureProfile({
+      blockRefStyle: {
+        enabled: true,
+        values: {
+          color: "#a855f7",
+          backgroundColor: "rgba(168, 85, 247, 0.12)",
+          styleMode: "capsule",
+          radius: 6,
+        },
+      },
+    })
+    const capsuleCss = buildFeatureStyleCss(capsuleProfile)
+    expect(capsuleCss).toContain("background-image: none !important;")
+    expect(capsuleCss).toContain("color: #a855f7 !important;")
+    expect(capsuleCss).toContain("border-bottom: none !important;")
+    expect(capsuleCss).toContain("border-radius: 6px !important;")
+    expect(capsuleCss).toContain(":hover")
+
+    const leftBarProfile = normalizeFeatureProfile({
+      blockRefStyle: {
+        enabled: true,
+        values: {
+          styleMode: "leftBar",
+          borderLeftColor: "rgb(255, 100, 50)",
+          borderLeftWidth: 3,
+          radius: 4,
+          hidePluginIcon: "yes",
+        },
+      },
+    })
+    const leftBarCss = buildFeatureStyleCss(leftBarProfile)
+    expect(leftBarCss).toContain("border-left: 3px solid rgb(255, 100, 50) !important;")
+    expect(leftBarCss).toContain("border-bottom: none !important;")
+    expect(leftBarCss).toContain("border-radius: 4px !important;")
+    expect(leftBarCss).toContain("img.plugin-link-icon")
+    expect(leftBarCss).toContain("display: none !important;")
   })
 
   it("builds configurable css for hr divider style in gradient mode", () => {

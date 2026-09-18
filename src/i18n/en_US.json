@@ -371,5 +371,15 @@
   "#标签": "#标签",
   "圆角半径": "Radius",
   "字号比例": "Font Size",
-  "显示 ": "Show Hash"
+  "显示 ": "Show Hash",
+  "调整块引用和文件标注的风格形态（经典下划线/高亮胶囊/左侧色条），彻底清除原生虚线背景，自由定义字色、底线与色条。": "Customize block reference style (classic underline, capsule, or left bar), clear native dashed background, and customize colors.",
+  "引用风格": "Ref Style",
+  "经典下划线": "Classic Underline",
+  "高亮胶囊": "Highlight Capsule",
+  "左侧色条胶囊": "Left Bar Capsule",
+  "色条颜色": "Bar Color",
+  "色条粗细": "Bar Width",
+  "隐藏插件图标": "Hide Plugin Icons",
+  "点线": "Dotted",
+  "是": "Yes"
 }

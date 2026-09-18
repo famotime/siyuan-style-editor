@@ -113,6 +113,10 @@ export const LINE_STYLE_OPTIONS: FeatureStyleControlOption[] = [
     value: "dashed",
   },
   {
+    label: "点线",
+    value: "dotted",
+  },
+  {
     label: "波浪",
     value: "wavy",
   },
