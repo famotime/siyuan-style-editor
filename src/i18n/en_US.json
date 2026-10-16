@@ -1,6 +1,9 @@
 {
   "uninstallDataRemoveFailed": "Failed to remove plugin data during uninstall: {error}",
   "dockTitle": "Style Editor",
+  "searchConfigPlaceholder": "Search configurations...",
+  "noMatchingConfigs": "No matching configurations found",
+  "clearSearch": "Clear search",
   "activeStats": "activeStats",
   "headingBasic": "headingBasic",
   "presetsKicker": "presetsKicker",

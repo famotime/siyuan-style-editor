@@ -59,13 +59,13 @@
         <button
           type="button"
           class="panel-collapse-btn"
-          :aria-label="collapsed ? t('expandPanel') : t('collapsePanel')"
-          :title="collapsed ? t('expandPanel') : t('collapsePanel')"
-          @click="collapsed = !collapsed"
+          :aria-label="internalCollapsed ? t('expandPanel') : t('collapsePanel')"
+          :title="internalCollapsed ? t('expandPanel') : t('collapsePanel')"
+          @click="toggleCollapse"
         >
           <svg
             class="panel-collapse-btn__icon"
-            :class="{ 'panel-collapse-btn__icon--collapsed': collapsed }"
+            :class="{ 'panel-collapse-btn__icon--collapsed': internalCollapsed }"
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -85,7 +85,7 @@
     </div>
 
     <div
-      v-show="!collapsed"
+      v-show="!internalCollapsed"
       class="target-grid"
     >
       <article
@@ -113,10 +113,16 @@
           @click="emit('select-target', target.value)"
         >
           <p class="target-preview-card__eyebrow">
-            {{ target.shortLabel }}
+            <HighlightText
+              :text="target.shortLabel"
+              :query="searchQuery"
+            />
           </p>
           <p class="target-preview-card__title">
-            {{ t(target.value) }}
+            <HighlightText
+              :text="t(target.value)"
+              :query="searchQuery"
+            />
           </p>
         </button>
 
@@ -193,19 +199,29 @@ import { t } from "@/style-editor-runtime"
 import {
   nextTick,
   ref,
+  watch,
 } from "vue"
 
+import HighlightText from "@/components/StyleEditorShell/HighlightText.vue"
 import { useTargetOrbDragSession } from "@/composables/use-target-orb-drag-session"
 
-const props = defineProps<{
-  getChannelSwatch: (target: StyleTarget, channel: PaintChannel) => ChannelSwatch
-  getTargetPreviewStyle: (target: StyleTarget) => Record<string, string>
-  isInlinePaletteOpenForTarget: (target: StyleTarget) => boolean
-  selectedChannel: PaintChannel
-  selectedTarget: StyleTarget
-  styleTargetOptions: StyleTargetOption[]
-  profile: StyleProfile
-}>()
+const props = withDefaults(
+  defineProps<{
+    collapsed?: boolean
+    getChannelSwatch: (target: StyleTarget, channel: PaintChannel) => ChannelSwatch
+    getTargetPreviewStyle: (target: StyleTarget) => Record<string, string>
+    isInlinePaletteOpenForTarget: (target: StyleTarget) => boolean
+    profile: StyleProfile
+    searchQuery?: string
+    selectedChannel: PaintChannel
+    selectedTarget: StyleTarget
+    styleTargetOptions: StyleTargetOption[]
+  }>(),
+  {
+    collapsed: false,
+    searchQuery: undefined,
+  },
+)
 
 const emit = defineEmits<{
   "activate-channel": [payload: { channel: PaintChannel, event: MouseEvent, target: StyleTarget }]
@@ -215,10 +231,23 @@ const emit = defineEmits<{
     source: { channel: PaintChannel, target: StyleTarget },
     target: { channel: PaintChannel, target: StyleTarget },
   ]
+  "update:collapsed": [value: boolean]
   "update-target-enabled": [target: StyleTarget, enabled: boolean]
 }>()
 
-const collapsed = ref(false)
+const internalCollapsed = ref(props.collapsed)
+
+watch(
+  () => props.collapsed,
+  (val) => {
+    internalCollapsed.value = val
+  },
+)
+
+function toggleCollapse() {
+  internalCollapsed.value = !internalCollapsed.value
+  emit("update:collapsed", internalCollapsed.value)
+}
 
 interface StyleTargetOption {
   hint: string

@@ -1,6 +1,9 @@
 {
   "uninstallDataRemoveFailed": "卸载插件时清理数据失败：{error}",
   "dockTitle": "粉刷匠",
+  "searchConfigPlaceholder": "搜索配置项...",
+  "noMatchingConfigs": "未找到相关配置项",
+  "clearSearch": "清空搜索",
   "activeStats": "已生效配置：基础粉刷 {targets} 个 | 高级定制 {advanced} 个 | 全屋改造 {ui} 个",
   "headingBasic": "基础粉刷",
   "presetsKicker": "Presets",

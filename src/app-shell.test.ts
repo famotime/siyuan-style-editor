@@ -725,4 +725,49 @@ describe("app shell", () => {
 
     unmount()
   })
+
+  it("通过全局搜索输入框搜索配置项并在空结果时显示空状态", async () => {
+    const shellState = createShellState()
+    const { container, unmount } = await mountApp(shellState)
+
+    const searchInput = container.querySelector(".config-search-bar__input") as HTMLInputElement
+    expect(searchInput).not.toBeNull()
+    expect(searchInput.placeholder).toBe("搜索配置项...")
+
+    // 输入“圆角图片”搜索
+    searchInput.value = "圆角图片"
+    searchInput.dispatchEvent(new Event("input", { bubbles: true }))
+    await nextTick()
+
+    // 基础粉刷没有圆角图片，应该被过滤隐藏
+    expect(container.querySelector(".target-studio")).toBeNull()
+    // 高级定制包含“圆角图片”，应该展示
+    expect(container.querySelector(".feature-section")).not.toBeNull()
+    expect(container.textContent).toContain("圆角图片")
+
+    // 输入不存在的内容
+    searchInput.value = "不存在的配置项12345"
+    searchInput.dispatchEvent(new Event("input", { bubbles: true }))
+    await nextTick()
+
+    // 所有分类隐藏，展示空状态
+    expect(container.querySelector(".target-studio")).toBeNull()
+    expect(container.querySelector(".feature-section")).toBeNull()
+    const emptyState = container.querySelector(".config-search-empty")
+    expect(emptyState).not.toBeNull()
+    expect(emptyState?.textContent).toContain("未找到相关配置项")
+
+    // 点击清空按钮
+    const clearBtn = emptyState?.querySelector(".config-search-empty__btn") as HTMLButtonElement
+    expect(clearBtn).not.toBeNull()
+    clearBtn.click()
+    await nextTick()
+
+    // 清空后分类恢复显示
+    expect(container.querySelector(".target-studio")).not.toBeNull()
+    expect(container.querySelector(".config-search-empty")).toBeNull()
+
+    unmount()
+  })
 })
+

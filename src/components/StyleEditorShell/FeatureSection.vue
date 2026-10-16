@@ -12,13 +12,13 @@
       <button
         type="button"
         class="panel-collapse-btn"
-        :aria-label="collapsed ? t('expandPanel') : t('collapsePanel')"
-        :title="collapsed ? t('expandPanel') : t('collapsePanel')"
-        @click="collapsed = !collapsed"
+        :aria-label="internalCollapsed ? t('expandPanel') : t('collapsePanel')"
+        :title="internalCollapsed ? t('expandPanel') : t('collapsePanel')"
+        @click="toggleCollapse"
       >
         <svg
           class="panel-collapse-btn__icon"
-          :class="{ 'panel-collapse-btn__icon--collapsed': collapsed }"
+          :class="{ 'panel-collapse-btn__icon--collapsed': internalCollapsed }"
           width="16"
           height="16"
           viewBox="0 0 16 16"
@@ -37,12 +37,15 @@
     </div>
 
     <div
-      v-show="!collapsed"
+      v-show="!internalCollapsed"
       class="feature-section__body"
     >
-      <div class="feature-search">
+      <div
+        v-if="props.searchQuery === undefined"
+        class="feature-search"
+      >
         <input
-          v-model="searchQuery"
+          v-model="localSearchQuery"
           type="text"
           class="feature-search__input"
           :placeholder="t('searchPlaceholder')"
@@ -55,7 +58,10 @@
         class="feature-group"
       >
         <h4 class="feature-group__title">
-          {{ t(groupName) }}
+          <HighlightText
+            :text="t(groupName)"
+            :query="effectiveSearchQuery"
+          />
         </h4>
         <div class="feature-grid">
           <article
@@ -71,7 +77,10 @@
                   class="feature-card__title"
                   :data-tooltip="feature.preview || feature.hint ? [feature.preview ? t(feature.preview) : '', feature.hint ? t(feature.hint) : ''].filter(Boolean).join(' — ') : undefined"
                 >
-                  {{ t(feature.label) }}
+                  <HighlightText
+                    :text="t(feature.label)"
+                    :query="effectiveSearchQuery"
+                  />
                 </h3>
               </div>
               <label class="feature-switch">
@@ -93,7 +102,10 @@
                 class="feature-control"
               >
                 <span class="feature-control__label">
-                  {{ t(control.label) }}
+                  <HighlightText
+                    :text="t(control.label)"
+                    :query="effectiveSearchQuery"
+                  />
                 </span>
 
                 <div
@@ -192,6 +204,8 @@ import type {
   FeatureStyleProfile,
 } from "@/lib/style-feature-catalog"
 import { resolveColorPickerValue } from "@/lib/custom-color"
+import { matchFeatureOption } from "@/lib/config-search"
+import HighlightText from "@/components/StyleEditorShell/HighlightText.vue"
 
 import {
   computed,
@@ -201,14 +215,24 @@ import {
   watch,
 } from "vue"
 
-const props = defineProps<{
-  featureProfile: FeatureStyleProfile
-  featureStyleOptions: FeatureStyleOption[]
-  kicker: string
-  themeAppearance?: PanelThemeAppearance
-  title: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    collapsed?: boolean
+    featureProfile: FeatureStyleProfile
+    featureStyleOptions: FeatureStyleOption[]
+    kicker: string
+    searchQuery?: string
+    themeAppearance?: PanelThemeAppearance
+    title: string
+  }>(),
+  {
+    collapsed: true,
+    searchQuery: undefined,
+    themeAppearance: undefined,
+  },
+)
 const emit = defineEmits<{
+  "update:collapsed": [value: boolean]
   "update-feature-style": [
     featureId: FeatureStyleId,
     config: {
@@ -217,10 +241,25 @@ const emit = defineEmits<{
     },
   ]
 }>()
-const collapsed = ref(true)
+const internalCollapsed = ref(props.collapsed)
+
+watch(
+  () => props.collapsed,
+  (val) => {
+    internalCollapsed.value = val
+  },
+)
+
+function toggleCollapse() {
+  internalCollapsed.value = !internalCollapsed.value
+  emit("update:collapsed", internalCollapsed.value)
+}
 const featureSectionRef = ref<HTMLElement | null>(null)
 const colorControlRenderTick = ref(0)
-const searchQuery = ref("")
+const localSearchQuery = ref("")
+const effectiveSearchQuery = computed(() => {
+  return props.searchQuery !== undefined ? props.searchQuery : localSearchQuery.value
+})
 
 onMounted(() => {
   void nextTick(() => {
@@ -233,14 +272,12 @@ watch(() => props.themeAppearance, () => {
 })
 
 const filteredOptions = computed(() => {
-  if (!searchQuery.value.trim()) {
+  if (!effectiveSearchQuery.value.trim()) {
     return props.featureStyleOptions
   }
 
-  const query = searchQuery.value.toLowerCase()
   return props.featureStyleOptions.filter((option) =>
-    option.label.toLowerCase().includes(query)
-    || option.hint.toLowerCase().includes(query),
+    matchFeatureOption(option, effectiveSearchQuery.value, t),
   )
 })
 

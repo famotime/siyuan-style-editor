@@ -17,8 +17,18 @@
         @import-change="handleImportStylesChange"
       />
 
+      <ConfigSearchBar v-model="searchQuery" />
+
+      <ConfigSearchEmpty
+        v-if="isSearchActive && !hasAnyMatches"
+        @clear="clearSearch"
+      />
+
       <TargetStudio
-        :style-target-options="STYLE_TARGET_OPTIONS"
+        v-if="!isSearchActive || hasBasicMatches"
+        v-model:collapsed="basicCollapsed"
+        :search-query="searchQuery"
+        :style-target-options="filteredStyleTargetOptions"
         :selected-target="runtimeState.selectedTarget"
         :selected-channel="runtimeState.selectedChannel"
         :get-target-preview-style="getTargetPreviewStyle"
@@ -33,18 +43,24 @@
       />
 
       <FeatureSection
+        v-if="!isSearchActive || hasAdvancedMatches"
+        v-model:collapsed="advancedCollapsed"
         kicker="Advanced Config"
         :title="t('advancedConfig')"
-        :feature-style-options="bodySafeFeatureOptions"
+        :search-query="searchQuery"
+        :feature-style-options="filteredBodySafeFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         :theme-appearance="themeAppearance"
         @update-feature-style="handleUpdateFeatureStyle"
       />
 
       <FeatureSection
+        v-if="!isSearchActive || hasEditorUiMatches"
+        v-model:collapsed="editorUiCollapsed"
         kicker="Editor UI"
         :title="t('editorUi')"
-        :feature-style-options="editorUiFeatureOptions"
+        :search-query="searchQuery"
+        :feature-style-options="filteredEditorUiFeatureOptions"
         :feature-profile="runtimeState.featureProfile"
         :theme-appearance="themeAppearance"
         @update-feature-style="handleUpdateFeatureStyle"
@@ -89,10 +105,13 @@
 import type { StyleTarget } from "@/lib/style-profile"
 import type { PaintChannel } from "@/style-editor-runtime"
 
+import ConfigSearchBar from "@/components/StyleEditorShell/ConfigSearchBar.vue"
+import ConfigSearchEmpty from "@/components/StyleEditorShell/ConfigSearchEmpty.vue"
 import FeatureSection from "@/components/StyleEditorShell/FeatureSection.vue"
 import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue"
 import TargetStudio from "@/components/StyleEditorShell/TargetStudio.vue"
 import WorkspaceHero from "@/components/StyleEditorShell/WorkspaceHero.vue"
+import { useConfigSearch } from "@/composables/use-config-search"
 import { useStyleEditorShell } from "@/composables/use-style-editor-shell"
 import { t } from "@/style-editor-runtime"
 
@@ -150,6 +169,26 @@ const {
   editorUiFeatureOptions,
   STYLE_TARGET_OPTIONS,
 } = useStyleEditorShell()
+
+const {
+  advancedCollapsed,
+  basicCollapsed,
+  clearSearch,
+  editorUiCollapsed,
+  filteredBodySafeFeatureOptions,
+  filteredEditorUiFeatureOptions,
+  filteredStyleTargetOptions,
+  hasAdvancedMatches,
+  hasAnyMatches,
+  hasBasicMatches,
+  hasEditorUiMatches,
+  isSearchActive,
+  searchQuery,
+} = useConfigSearch({
+  bodySafeFeatureOptions,
+  editorUiFeatureOptions,
+  styleTargetOptions: STYLE_TARGET_OPTIONS,
+})
 
 function setImportFileInputRef(element: Element | null) {
   importFileInputRef.value = element as HTMLInputElement | null
