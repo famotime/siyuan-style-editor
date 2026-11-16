@@ -6,6 +6,8 @@ import {
   ref,
 } from "vue"
 
+import { bindWindowListeners } from "@/composables/use-window-listener"
+
 export interface TargetOrbChannelSwatch {
   background: string
   isEmpty: boolean
@@ -42,6 +44,7 @@ export function useTargetOrbDragSession(options: UseTargetOrbDragSessionOptions)
   const dragHoverState = ref<TargetOrbRef | null>(null)
   const floatingOrbPreview = ref<FloatingOrbPreview | null>(null)
   const suppressOrbClickUntil = ref(0)
+  let stopWindowTrackingListeners: (() => void) | null = null
 
   function isSameOrb(left: TargetOrbRef | null, right: TargetOrbRef | null) {
     return left?.target === right?.target && left?.channel === right?.channel
@@ -85,8 +88,8 @@ export function useTargetOrbDragSession(options: UseTargetOrbDragSessionOptions)
   }
 
   function stopWindowTracking() {
-    window.removeEventListener("mousemove", handleWindowMouseMove)
-    window.removeEventListener("mouseup", handleWindowMouseUp)
+    stopWindowTrackingListeners?.()
+    stopWindowTrackingListeners = null
   }
 
   function handleWindowMouseUp() {
@@ -125,8 +128,10 @@ export function useTargetOrbDragSession(options: UseTargetOrbDragSessionOptions)
     }
     dragHoverState.value = null
     floatingOrbPreview.value = null
-    window.addEventListener("mousemove", handleWindowMouseMove)
-    window.addEventListener("mouseup", handleWindowMouseUp)
+    stopWindowTrackingListeners = bindWindowListeners([
+      { handler: handleWindowMouseMove, type: "mousemove" },
+      { handler: handleWindowMouseUp, type: "mouseup" },
+    ])
   }
 
   function handleOrbMouseEnter(target: StyleTarget, channel: PaintChannel) {

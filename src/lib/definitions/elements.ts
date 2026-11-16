@@ -8,6 +8,7 @@ import {
   px,
   stringValue,
 } from "../feature-style-types"
+import { colorControl, numberControl, selectControl, textControl } from "./controls"
 
 export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
   {
@@ -21,29 +22,9 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
   transition: all ${numberValue(config.values.transitionMs, 350)}ms ease-out 0ms;
 }`.trim(),
     controls: [
-      {
-        key: "backgroundColor",
-        label: "悬停底色",
-        type: "color",
-      },
-      {
-        key: "shadowSize",
-        label: "阴影范围",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "transitionMs",
-        label: "过渡时间",
-        max: 800,
-        min: 0,
-        step: 50,
-        type: "number",
-        unit: "ms",
-      },
+      colorControl("backgroundColor", "悬停底色"),
+      numberControl("shadowSize", "阴影范围", { max: 12, min: 0, step: 1, unit: "px" }),
+      numberControl("transitionMs", "过渡时间", { max: 800, min: 0, step: 50, unit: "ms" }),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--style-editor-card-bg-soft)",
@@ -79,59 +60,13 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
   box-shadow: 0 0 ${px(config.values.shadowSize, 6)} ${stringValue(config.values.shadowColor, "var(--style-editor-card-shadow)")};
 }`.trim(),
     controls: [
-      {
-        key: "borderColor",
-        label: "边框色",
-        type: "color",
-      },
-      {
-        key: "borderWidth",
-        label: "边框粗细",
-        max: 4,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "opacity",
-        label: "透明度",
-        max: 1,
-        min: 0.2,
-        step: 0.05,
-        type: "number",
-      },
-      {
-        key: "hoverOpacity",
-        label: "悬停透明度",
-        max: 1,
-        min: 0.2,
-        step: 0.05,
-        type: "number",
-      },
-      {
-        key: "shadowColor",
-        label: "阴影色",
-        type: "color",
-      },
-      {
-        key: "shadowSize",
-        label: "阴影范围",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 18,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("borderColor", "边框色"),
+      numberControl("borderWidth", "边框粗细", { max: 4, min: 0, step: 1, unit: "px" }),
+      numberControl("opacity", "透明度", { max: 1, min: 0.2, step: 0.05 }),
+      numberControl("hoverOpacity", "悬停透明度", { max: 1, min: 0.2, step: 0.05 }),
+      colorControl("shadowColor", "阴影色"),
+      numberControl("shadowSize", "阴影范围", { max: 16, min: 0, step: 1, unit: "px" }),
+      numberControl("radius", "圆角", { max: 18, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       borderColor: "var(--style-editor-card-border)",
@@ -215,65 +150,20 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
 }`.trim()
     },
     controls: [
-      {
-        key: "styleMode",
-        label: "块风格",
-        options: [
-          { label: "默认竖线", value: "default" },
-          { label: "便利贴(黄)", value: "sticky-yellow" },
-          { label: "便利贴(红)", value: "sticky-red" },
-          { label: "便利贴(蓝)", value: "sticky-blue" },
-          { label: "便利贴(绿)", value: "sticky-green" },
-        ],
-        type: "select",
-      },
-      {
-        key: "backgroundColor",
-        label: "底色",
-        type: "color",
-      },
-      {
-        key: "color",
-        label: "字色",
-        type: "color",
-      },
-      {
-        key: "borderColor",
-        label: "外框色",
-        type: "color",
-      },
-      {
-        key: "lineColor",
-        label: "竖线色",
-        type: "color",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 18,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "padding",
-        label: "内边距",
-        max: 24,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "marginY",
-        label: "上下间距",
-        max: 24,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      selectControl("styleMode", "块风格", [
+        { label: "默认竖线", value: "default" },
+        { label: "便利贴(黄)", value: "sticky-yellow" },
+        { label: "便利贴(红)", value: "sticky-red" },
+        { label: "便利贴(蓝)", value: "sticky-blue" },
+        { label: "便利贴(绿)", value: "sticky-green" },
+      ]),
+      colorControl("backgroundColor", "底色"),
+      colorControl("color", "字色"),
+      colorControl("borderColor", "外框色"),
+      colorControl("lineColor", "竖线色"),
+      numberControl("radius", "圆角", { max: 18, min: 0, step: 1, unit: "px" }),
+      numberControl("padding", "内边距", { max: 24, min: 0, step: 1, unit: "px" }),
+      numberControl("marginY", "上下间距", { max: 24, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       styleMode: "default",
@@ -300,91 +190,25 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     preview: "🖼️",
     risk: "正文安全",
     controls: [
-      {
-        key: "radius",
-        label: "圆角",
-        type: "number",
-        min: 0,
-        max: 24,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "shadow",
-        label: "阴影",
-        type: "select",
-        options: [
-          {
-            label: "无",
-            value: "none",
-          },
-          {
-            label: "轻微",
-            value: "light",
-          },
-          {
-            label: "中等",
-            value: "medium",
-          },
-          {
-            label: "强",
-            value: "strong",
-          },
-        ],
-      },
-      {
-        key: "hoverZoom",
-        label: "悬停效果",
-        type: "select",
-        options: [
-          {
-            label: "无",
-            value: "none",
-          },
-          {
-            label: "轻微放大",
-            value: "slight",
-          },
-          {
-            label: "明显放大",
-            value: "obvious",
-          },
-        ],
-      },
-      {
-        key: "maxWidth",
-        label: "最大宽度",
-        type: "select",
-        options: [
-          {
-            label: "自动",
-            value: "auto",
-          },
-          {
-            label: "80%",
-            value: "80%",
-          },
-          {
-            label: "100%",
-            value: "100%",
-          },
-        ],
-      },
-      {
-        key: "borderColor",
-        label: "边框颜色",
-        type: "color",
-      },
-      {
-        key: "borderWidth",
-        label: "边框粗细",
-        type: "number",
-        min: 0,
-        max: 4,
-        step: 1,
-        unit: "px",
-      },
+      numberControl("radius", "圆角", { max: 24, min: 0, slider: true, step: 1, unit: "px" }),
+      selectControl("shadow", "阴影", [
+        { label: "无", value: "none" },
+        { label: "轻微", value: "light" },
+        { label: "中等", value: "medium" },
+        { label: "强", value: "strong" },
+      ]),
+      selectControl("hoverZoom", "悬停效果", [
+        { label: "无", value: "none" },
+        { label: "轻微放大", value: "slight" },
+        { label: "明显放大", value: "obvious" },
+      ]),
+      selectControl("maxWidth", "最大宽度", [
+        { label: "自动", value: "auto" },
+        { label: "80%", value: "80%" },
+        { label: "100%", value: "100%" },
+      ]),
+      colorControl("borderColor", "边框颜色"),
+      numberControl("borderWidth", "边框粗细", { max: 4, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       radius: 6,
@@ -483,55 +307,14 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
       return rules
     },
     controls: [
-      {
-        key: "headerBackgroundColor",
-        label: "表头底色",
-        type: "color",
-      },
-      {
-        key: "headerColor",
-        label: "表头字色",
-        type: "color",
-      },
-      {
-        key: "textColor",
-        label: "单元格字色",
-        type: "color",
-      },
-      {
-        key: "oddRowBackground",
-        label: "奇数行底色",
-        type: "color",
-      },
-      {
-        key: "evenRowBackground",
-        label: "偶数行底色",
-        type: "color",
-      },
-      {
-        key: "borderColor",
-        label: "边框色",
-        type: "color",
-      },
-      {
-        key: "borderWidth",
-        label: "边框粗细",
-        max: 4,
-        min: 0,
-        step: 0.5,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "borderRadius",
-        label: "表格圆角",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-        slider: true,
-      },
+      colorControl("headerBackgroundColor", "表头底色"),
+      colorControl("headerColor", "表头字色"),
+      colorControl("textColor", "单元格字色"),
+      colorControl("oddRowBackground", "奇数行底色"),
+      colorControl("evenRowBackground", "偶数行底色"),
+      colorControl("borderColor", "边框色"),
+      numberControl("borderWidth", "边框粗细", { max: 4, min: 0, step: 0.5, unit: "px" }),
+      numberControl("borderRadius", "表格圆角", { max: 16, min: 0, slider: true, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       borderColor: "var(--style-editor-table-border)",
@@ -566,16 +349,7 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
 }`.trim()
     },
     controls: [
-      {
-        key: "paddingVertical",
-        label: "上下边距",
-        max: 4,
-        min: 0,
-        slider: true,
-        step: 0.1,
-        type: "number",
-        unit: "em",
-      },
+      numberControl("paddingVertical", "上下边距", { max: 4, min: 0, slider: true, step: 0.1, unit: "em" }),
     ],
     defaults: createDefaultConfig({
       paddingVertical: 0.5,
@@ -597,46 +371,14 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
 }
 }`.trim(),
     controls: [
-      {
-        key: "mode",
-        label: "风格",
-        options: [
-          {
-            label: "渐变",
-            value: "gradient",
-          },
-          {
-            label: "线条",
-            value: "line",
-          },
-        ],
-        type: "select",
-      },
-      {
-        key: "colorLeft",
-        label: "左色/线色",
-        type: "color",
-      },
-      {
-        key: "colorRight",
-        label: "右色",
-        type: "color",
-      },
-      {
-        key: "lineStyle",
-        label: "线型",
-        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none" && option.value !== "wavy"),
-        type: "select",
-      },
-      {
-        key: "height",
-        label: "粗细",
-        max: 6,
-        min: 1,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      selectControl("mode", "风格", [
+        { label: "渐变", value: "gradient" },
+        { label: "线条", value: "line" },
+      ]),
+      colorControl("colorLeft", "左色/线色"),
+      colorControl("colorRight", "右色"),
+      selectControl("lineStyle", "线型", LINE_STYLE_OPTIONS.filter((option) => option.value !== "none" && option.value !== "wavy")),
+      numberControl("height", "粗细", { max: 6, min: 1, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       colorLeft: "rgba(255, 110, 196, 0.5)",
@@ -660,63 +402,20 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     preview: "{ }",
     risk: "正文安全",
     controls: [
-      {
-        key: "borderRadius",
-        label: "圆角",
-        type: "number",
-        min: 0,
-        max: 16,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "headerBgColor",
-        label: "信息栏背景",
-        type: "color",
-      },
-      {
-        key: "macButtons",
-        label: "Mac风格按钮",
-        type: "select",
-        options: [
-          { label: "显示", value: "yes" },
-          { label: "隐藏", value: "no" },
-        ],
-      },
-      {
-        key: "maxHeight",
-        label: "最大高度",
-        type: "select",
-        options: [
-          {
-            label: "不限",
-            value: "none",
-          },
-          {
-            label: "300px",
-            value: "300px",
-          },
-          {
-            label: "500px",
-            value: "500px",
-          },
-          {
-            label: "70vh",
-            value: "70vh",
-          },
-        ],
-      },
-      {
-        key: "lineNumberColor",
-        label: "行号颜色",
-        type: "color",
-      },
+      numberControl("borderRadius", "圆角", { max: 16, min: 0, slider: true, step: 1, unit: "px" }),
+      colorControl("backgroundColor", "背景色"),
+      colorControl("headerBgColor", "信息栏背景"),
+      selectControl("macButtons", "Mac风格按钮", [
+        { label: "显示", value: "yes" },
+        { label: "隐藏", value: "no" },
+      ]),
+      selectControl("maxHeight", "最大高度", [
+        { label: "不限", value: "none" },
+        { label: "300px", value: "300px" },
+        { label: "500px", value: "500px" },
+        { label: "70vh", value: "70vh" },
+      ]),
+      colorControl("lineNumberColor", "行号颜色"),
     ],
     defaults: createDefaultConfig({
       borderRadius: 6,
@@ -794,33 +493,18 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     preview: "↔️",
     risk: "正文安全",
     controls: [
-      {
-        key: "fullWidthImg",
-        label: "图片全宽",
-        type: "select",
-        options: [
-          { label: "是", value: "yes" },
-          { label: "否", value: "no" },
-        ],
-      },
-      {
-        key: "fullWidthTable",
-        label: "表格全宽",
-        type: "select",
-        options: [
-          { label: "是", value: "yes" },
-          { label: "否", value: "no" },
-        ],
-      },
-      {
-        key: "fullWidthDb",
-        label: "数据库全宽",
-        type: "select",
-        options: [
-          { label: "是", value: "yes" },
-          { label: "否", value: "no" },
-        ],
-      },
+      selectControl("fullWidthImg", "图片全宽", [
+        { label: "是", value: "yes" },
+        { label: "否", value: "no" },
+      ]),
+      selectControl("fullWidthTable", "表格全宽", [
+        { label: "是", value: "yes" },
+        { label: "否", value: "no" },
+      ]),
+      selectControl("fullWidthDb", "数据库全宽", [
+        { label: "是", value: "yes" },
+        { label: "否", value: "no" },
+      ]),
     ],
     defaults: createDefaultConfig({
       fullWidthImg: "no",
@@ -854,20 +538,11 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     preview: "💬",
     risk: "正文安全",
     controls: [
-      {
-        key: "styleMode",
-        label: "备注风格",
-        type: "select",
-        options: [
-          { label: "精致卡片", value: "card" },
-          { label: "气泡胶囊", value: "bubble" },
-        ],
-      },
-      {
-        key: "memoColor",
-        label: "备注底色",
-        type: "color",
-      },
+      selectControl("styleMode", "备注风格", [
+        { label: "精致卡片", value: "card" },
+        { label: "气泡胶囊", value: "bubble" },
+      ]),
+      colorControl("memoColor", "备注底色"),
     ],
     defaults: createDefaultConfig({
       styleMode: "card",
@@ -917,18 +592,8 @@ export const ELEMENTS_DEFINITIONS: FeatureDefinition[] = [
     preview: "🔗",
     risk: "正文安全",
     controls: [
-      {
-        key: "internalIcon",
-        label: "内链前缀",
-        type: "text",
-        placeholder: "如 🔗",
-      },
-      {
-        key: "externalIcon",
-        label: "外链前缀",
-        type: "text",
-        placeholder: "如 🌐",
-      },
+      textControl("internalIcon", "内链前缀", "如 🔗"),
+      textControl("externalIcon", "外链前缀", "如 🌐"),
     ],
     defaults: createDefaultConfig({
       internalIcon: "🔗",

@@ -10,73 +10,34 @@ import {
   px,
   stringValue,
 } from "../feature-style-types"
+import { colorControl, numberControl, selectControl, textControl } from "./controls"
+
+function headingSelectorList(prefix: string, suffix = ""): string {
+  return [1, 2, 3, 4, 5, 6].map((level) => `${prefix}.h${level}${suffix}`).join(",\n")
+}
 
 export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   {
     buildCss: (config) => `
-.protyle-wysiwyg > .h1,
-.protyle-wysiwyg > .h2,
-.protyle-wysiwyg > .h3,
-.protyle-wysiwyg > .h4,
-.protyle-wysiwyg > .h5,
-.protyle-wysiwyg > .h6 {
+${headingSelectorList(".protyle-wysiwyg > ")} {
   font-weight: 700;
   margin-top: ${em(config.values.headingTopMargin, 0.5)};
   margin-bottom: ${em(config.values.headingBottomMargin, 0.1)};
 }
 
-.protyle-wysiwyg .protyle-wysiwyg__embed > .h1,
-.protyle-wysiwyg .protyle-wysiwyg__embed > .h2,
-.protyle-wysiwyg .protyle-wysiwyg__embed > .h3,
-.protyle-wysiwyg .protyle-wysiwyg__embed > .h4,
-.protyle-wysiwyg .protyle-wysiwyg__embed > .h5,
-.protyle-wysiwyg .protyle-wysiwyg__embed > .h6 {
+${headingSelectorList(".protyle-wysiwyg .protyle-wysiwyg__embed > ")} {
   margin: ${px(config.values.embedVerticalMargin, 2)}px 0;
 }
 
-.bq > .h1,
-.bq > .h2,
-.bq > .h3,
-.bq > .h4,
-.bq > .h5,
-.bq > .h6 {
+${headingSelectorList(".bq > ")} {
   margin-top: 0 !important;
   margin-bottom: ${em(config.values.blockquoteBottomMargin, 0.1)} !important;
 }`.trim(),
     controls: [
-      {
-        key: "headingTopMargin",
-        label: "标题上间距",
-        max: 2,
-        min: 0,
-        step: 0.1,
-        type: "number",
-      },
-      {
-        key: "headingBottomMargin",
-        label: "标题下间距",
-        max: 2,
-        min: 0,
-        step: 0.1,
-        type: "number",
-      },
-      {
-        key: "embedVerticalMargin",
-        label: "嵌入块间距",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "blockquoteBottomMargin",
-        label: "引述块标题下距",
-        max: 2,
-        min: 0,
-        step: 0.1,
-        type: "number",
-      },
+      numberControl("headingTopMargin", "标题上间距", { max: 2, min: 0, step: 0.1 }),
+      numberControl("headingBottomMargin", "标题下间距", { max: 2, min: 0, step: 0.1 }),
+      numberControl("embedVerticalMargin", "嵌入块间距", { max: 12, min: 0, step: 1, unit: "px" }),
+      numberControl("blockquoteBottomMargin", "引述块标题下距", { max: 2, min: 0, step: 0.1 }),
     ],
     defaults: createDefaultConfig({
       blockquoteBottomMargin: 0.1,
@@ -96,22 +57,12 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
       const mode = stringValue(config.values.mode, "leftBar")
       if (mode === "leftBar") {
         return `
-.protyle-wysiwyg [data-node-id].h1,
-.protyle-wysiwyg [data-node-id].h2,
-.protyle-wysiwyg [data-node-id].h3,
-.protyle-wysiwyg [data-node-id].h4,
-.protyle-wysiwyg [data-node-id].h5,
-.protyle-wysiwyg [data-node-id].h6 {
+${headingSelectorList(".protyle-wysiwyg [data-node-id]")} {
   position: relative;
   padding-left: ${px(config.values.barOffset, 12)};
   font-weight: ${numberValue(config.values.fontWeight, 600)};
 }
-.protyle-wysiwyg [data-node-id].h1 > [spellcheck]:not(:empty)::before,
-.protyle-wysiwyg [data-node-id].h2 > [spellcheck]:not(:empty)::before,
-.protyle-wysiwyg [data-node-id].h3 > [spellcheck]:not(:empty)::before,
-.protyle-wysiwyg [data-node-id].h4 > [spellcheck]:not(:empty)::before,
-.protyle-wysiwyg [data-node-id].h5 > [spellcheck]:not(:empty)::before,
-.protyle-wysiwyg [data-node-id].h6 > [spellcheck]:not(:empty)::before {
+${headingSelectorList(".protyle-wysiwyg [data-node-id]", " > [spellcheck]:not(:empty)::before")} {
   content: "";
   position: absolute;
   left: 0;
@@ -128,12 +79,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
         const barColor = stringValue(config.values.barColor, "var(--b3-theme-primary)")
         const weight = numberValue(config.values.fontWeight, 600)
         return `
-.protyle-wysiwyg [data-node-id].h1,
-.protyle-wysiwyg [data-node-id].h2,
-.protyle-wysiwyg [data-node-id].h3,
-.protyle-wysiwyg [data-node-id].h4,
-.protyle-wysiwyg [data-node-id].h5,
-.protyle-wysiwyg [data-node-id].h6 {
+${headingSelectorList(".protyle-wysiwyg [data-node-id]")} {
   font-weight: ${weight} !important;
   position: relative !important;
 }
@@ -211,12 +157,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
       }
 
       return `
-.protyle-wysiwyg [data-node-id].h1,
-.protyle-wysiwyg [data-node-id].h2,
-.protyle-wysiwyg [data-node-id].h3,
-.protyle-wysiwyg [data-node-id].h4,
-.protyle-wysiwyg [data-node-id].h5,
-.protyle-wysiwyg [data-node-id].h6 {
+${headingSelectorList(".protyle-wysiwyg [data-node-id]")} {
   font-weight: ${numberValue(config.values.fontWeight, 600)};
   position: relative;
   padding-bottom: 4px;
@@ -237,47 +178,14 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
 }`.trim()
     },
     controls: [
-      {
-        key: "mode",
-        label: "装饰风格",
-        options: [
-          {
-            label: "左竖线",
-            value: "leftBar",
-          },
-          {
-            label: "下划线",
-            value: "underline",
-          },
-          {
-            label: "层级几何指示点",
-            value: "levelDots",
-          },
-        ],
-        type: "select",
-      },
-      {
-        key: "barColor",
-        label: "装饰颜色",
-        type: "color",
-      },
-      {
-        key: "barWidth",
-        label: "线条粗细",
-        max: 8,
-        min: 1,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "fontWeight",
-        label: "字重",
-        max: 900,
-        min: 400,
-        step: 100,
-        type: "number",
-      },
+      selectControl("mode", "装饰风格", [
+        { label: "左竖线", value: "leftBar" },
+        { label: "下划线", value: "underline" },
+        { label: "层级几何指示点", value: "levelDots" },
+      ]),
+      colorControl("barColor", "装饰颜色"),
+      numberControl("barWidth", "线条粗细", { max: 8, min: 1, step: 1, unit: "px" }),
+      numberControl("fontWeight", "字重", { max: 900, min: 400, step: 100 }),
     ],
     defaults: createDefaultConfig({
       barColor: "var(--b3-theme-primary)",
@@ -329,11 +237,7 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   color: ${stringValue(config.values.markerColor, "var(--style-editor-list-marker)")};
 }`.trim(),
     controls: [
-      {
-        key: "markerColor",
-        label: "圆点颜色",
-        type: "color",
-      },
+      colorControl("markerColor", "圆点颜色"),
     ],
     defaults: createDefaultConfig({
       markerColor: "var(--style-editor-list-marker)",
@@ -359,29 +263,9 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   pointer-events: none;
 }`.trim(),
     controls: [
-      {
-        key: "lineColor",
-        label: "线条颜色",
-        type: "color",
-      },
-      {
-        key: "lineWidth",
-        label: "线条粗细",
-        max: 4,
-        min: 1,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("lineColor", "线条颜色"),
+      numberControl("lineWidth", "线条粗细", { max: 4, min: 1, step: 1, unit: "px" }),
+      numberControl("radius", "圆角", { max: 16, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       leftOffset: -18,
@@ -456,35 +340,12 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   background-color: ${stringValue(config.values.showBackground, "no") === "yes" ? stringValue(config.values.hoverBgColor, "oklch(55% 0.05 250 / 0.3)") : "transparent"} !important;
 }`.trim(),
     controls: [
-      {
-        key: "showBackground",
-        label: "悬停背景",
-        options: [
-          {
-            label: "显示",
-            value: "yes",
-          },
-          {
-            label: "隐藏",
-            value: "no",
-          },
-        ],
-        type: "select",
-      },
-      {
-        key: "hoverBgColor",
-        label: "悬停底色",
-        type: "color",
-      },
-      {
-        key: "width",
-        label: "序号宽度",
-        max: 40,
-        min: 16,
-        step: 2,
-        type: "number",
-        unit: "px",
-      },
+      selectControl("showBackground", "悬停背景", [
+        { label: "显示", value: "yes" },
+        { label: "隐藏", value: "no" },
+      ]),
+      colorControl("hoverBgColor", "悬停底色"),
+      numberControl("width", "序号宽度", { max: 40, min: 16, step: 2, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       hoverBgColor: "oklch(55% 0.05 250 / 0.3)",
@@ -514,36 +375,11 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
 }`.trim()
     },
     controls: [
-      {
-        key: "color",
-        label: "字色",
-        type: "color",
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "emphasisColor",
-        label: "底线颜色",
-        type: "color",
-      },
-      {
-        key: "emphasisThickness",
-        label: "底线粗细",
-        max: 5,
-        min: 0,
-        step: 0.5,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "lineStyle",
-        label: "底线线型",
-        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none"),
-        type: "select",
-      },
+      colorControl("color", "字色"),
+      colorControl("backgroundColor", "背景色"),
+      colorControl("emphasisColor", "底线颜色"),
+      numberControl("emphasisThickness", "底线粗细", { max: 5, min: 0, step: 0.5, unit: "px" }),
+      selectControl("lineStyle", "底线线型", LINE_STYLE_OPTIONS.filter((option) => option.value !== "none")),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--style-editor-mark-bg)",
@@ -572,43 +408,11 @@ export const TYPOGRAPHY_DEFINITIONS: FeatureDefinition[] = [
   border-radius: ${px(config.values.radius, 4)};
 }`.trim(),
     controls: [
-      {
-        key: "color",
-        label: "字色",
-        type: "color",
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "paddingX",
-        label: "水平内边距",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "paddingY",
-        label: "垂直内边距",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("color", "字色"),
+      colorControl("backgroundColor", "背景色"),
+      numberControl("radius", "圆角", { max: 16, min: 0, step: 1, unit: "px" }),
+      numberControl("paddingX", "水平内边距", { max: 16, min: 0, step: 1, unit: "px" }),
+      numberControl("paddingY", "垂直内边距", { max: 12, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--style-editor-inline-code-bg)",
@@ -712,86 +516,24 @@ img.plugin-link-icon {
       return rules.join("\n\n").trim()
     },
     controls: [
-      {
-        key: "styleMode",
-        label: "引用风格",
-        options: [
-          { label: "经典下划线", value: "classic" },
-          { label: "高亮胶囊", value: "capsule" },
-          { label: "左侧色条胶囊", value: "leftBar" },
-        ],
-        type: "select",
-      },
-      {
-        key: "color",
-        label: "链接字色",
-        type: "color",
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "lineColor",
-        label: "底线颜色",
-        type: "color",
-      },
-      {
-        key: "lineStyle",
-        label: "底线线型",
-        options: LINK_LINE_STYLE_OPTIONS,
-        type: "select",
-      },
-      {
-        key: "lineThickness",
-        label: "底线粗细",
-        max: 4,
-        min: 0,
-        step: 0.5,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "borderLeftColor",
-        label: "色条颜色",
-        type: "color",
-      },
-      {
-        key: "borderLeftWidth",
-        label: "色条粗细",
-        max: 6,
-        min: 1,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "fontWeight",
-        label: "字重",
-        max: 900,
-        min: 400,
-        step: 100,
-        type: "number",
-      },
-      {
-        key: "hidePluginIcon",
-        label: "隐藏插件图标",
-        options: [
-          { label: "否", value: "no" },
-          { label: "是", value: "yes" },
-        ],
-        type: "select",
-      },
+      selectControl("styleMode", "引用风格", [
+        { label: "经典下划线", value: "classic" },
+        { label: "高亮胶囊", value: "capsule" },
+        { label: "左侧色条胶囊", value: "leftBar" },
+      ]),
+      colorControl("color", "链接字色"),
+      colorControl("backgroundColor", "背景色"),
+      colorControl("lineColor", "底线颜色"),
+      selectControl("lineStyle", "底线线型", LINK_LINE_STYLE_OPTIONS),
+      numberControl("lineThickness", "底线粗细", { max: 4, min: 0, step: 0.5, unit: "px" }),
+      numberControl("radius", "圆角", { max: 16, min: 0, step: 1, unit: "px" }),
+      colorControl("borderLeftColor", "色条颜色"),
+      numberControl("borderLeftWidth", "色条粗细", { max: 6, min: 1, step: 1, unit: "px" }),
+      numberControl("fontWeight", "字重", { max: 900, min: 400, step: 100 }),
+      selectControl("hidePluginIcon", "隐藏插件图标", [
+        { label: "否", value: "no" },
+        { label: "是", value: "yes" },
+      ]),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--style-editor-link-bg)",
@@ -834,22 +576,9 @@ img.plugin-link-icon {
 }`.trim()
     },
     controls: [
-      {
-        key: "color",
-        label: "链接字色",
-        type: "color",
-      },
-      {
-        key: "hoverColor",
-        label: "悬停字色",
-        type: "color",
-      },
-      {
-        key: "lineStyle",
-        label: "下划线",
-        options: LINK_LINE_STYLE_OPTIONS,
-        type: "select",
-      },
+      colorControl("color", "链接字色"),
+      colorControl("hoverColor", "悬停字色"),
+      selectControl("lineStyle", "下划线", LINK_LINE_STYLE_OPTIONS),
     ],
     defaults: createDefaultConfig({
       color: "var(--style-editor-link-color)",
@@ -889,26 +618,9 @@ img.plugin-link-icon {
 }`.trim()
     },
     controls: [
-      {
-        key: "color",
-        label: "线条颜色",
-        type: "color",
-      },
-      {
-        key: "lineStyle",
-        label: "线型",
-        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none"),
-        type: "select",
-      },
-      {
-        key: "thickness",
-        label: "粗细",
-        max: 5,
-        min: 0.5,
-        step: 0.5,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("color", "线条颜色"),
+      selectControl("lineStyle", "线型", LINE_STYLE_OPTIONS.filter((option) => option.value !== "none")),
+      numberControl("thickness", "粗细", { max: 5, min: 0.5, step: 0.5, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       color: "#cfa87f",
@@ -935,26 +647,9 @@ img.plugin-link-icon {
   text-decoration-color: ${stringValue(config.values.color, "red")} !important;
 }`.trim(),
     controls: [
-      {
-        key: "color",
-        label: "删除线色",
-        type: "color",
-      },
-      {
-        key: "lineStyle",
-        label: "线型",
-        options: LINE_STYLE_OPTIONS.filter((option) => option.value !== "none"),
-        type: "select",
-      },
-      {
-        key: "thickness",
-        label: "粗细",
-        max: 5,
-        min: 0.5,
-        step: 0.5,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("color", "删除线色"),
+      selectControl("lineStyle", "线型", LINE_STYLE_OPTIONS.filter((option) => option.value !== "none")),
+      numberControl("thickness", "粗细", { max: 5, min: 0.5, step: 0.5, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       color: "red",
@@ -989,24 +684,9 @@ img.plugin-link-icon {
 `.trim()
     },
     controls: [
-      {
-        key: "doneColor",
-        label: "完成字色",
-        type: "color",
-      },
-      {
-        key: "hoverBorderColor",
-        label: "悬停框色",
-        type: "color",
-      },
-      {
-        key: "doneOpacity",
-        label: "完成透明度",
-        max: 1,
-        min: 0.2,
-        step: 0.05,
-        type: "number",
-      },
+      colorControl("doneColor", "完成字色"),
+      colorControl("hoverBorderColor", "悬停框色"),
+      numberControl("doneOpacity", "完成透明度", { max: 1, min: 0.2, step: 0.05 }),
     ],
     defaults: createDefaultConfig({
       doneColor: "var(--b3-theme-on-surface)",
@@ -1028,53 +708,11 @@ img.plugin-link-icon {
     preview: "📝",
     risk: "正文安全",
     controls: [
-      {
-        key: "fontSize",
-        label: "字号",
-        type: "number",
-        min: 12,
-        max: 20,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "lineHeight",
-        label: "行高",
-        type: "number",
-        min: 1.2,
-        max: 2.4,
-        step: 0.05,
-        slider: true,
-      },
-      {
-        key: "textIndent",
-        label: "首行缩进",
-        type: "number",
-        min: 0,
-        max: 4,
-        step: 0.5,
-        unit: "em",
-      },
-      {
-        key: "paragraphSpacing",
-        label: "段间距",
-        type: "number",
-        min: 0,
-        max: 24,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "letterSpacing",
-        label: "字间距",
-        type: "number",
-        min: -0.5,
-        max: 2,
-        step: 0.1,
-        unit: "px",
-      },
+      numberControl("fontSize", "字号", { max: 20, min: 12, slider: true, step: 1, unit: "px" }),
+      numberControl("lineHeight", "行高", { max: 2.4, min: 1.2, slider: true, step: 0.05 }),
+      numberControl("textIndent", "首行缩进", { max: 4, min: 0, step: 0.5, unit: "em" }),
+      numberControl("paragraphSpacing", "段间距", { max: 24, min: 0, slider: true, step: 1, unit: "px" }),
+      numberControl("letterSpacing", "字间距", { max: 2, min: -0.5, step: 0.1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       fontSize: 16,
@@ -1110,70 +748,22 @@ img.plugin-link-icon {
     preview: "A",
     risk: "正文安全",
     controls: [
-      {
-        key: "mainFont",
-        label: "正文字体",
-        type: "select",
-        options: [
-          {
-            label: "默认",
-            value: "default",
-          },
-          {
-            label: "思源黑体",
-            value: "sourceHanSans",
-          },
-          {
-            label: "苹方",
-            value: "pingfang",
-          },
-          {
-            label: "微软雅黑",
-            value: "yahei",
-          },
-          {
-            label: "霞鹜文楷",
-            value: "lxgw",
-          },
-          {
-            label: "自定义",
-            value: "custom",
-          },
-        ],
-      },
-      {
-        key: "codeFont",
-        label: "代码字体",
-        type: "select",
-        options: [
-          {
-            label: "默认",
-            value: "default",
-          },
-          {
-            label: "JetBrains Mono",
-            value: "jetbrains",
-          },
-          {
-            label: "Fira Code",
-            value: "firaCode",
-          },
-          {
-            label: "Cascadia Code",
-            value: "cascadia",
-          },
-          {
-            label: "自定义",
-            value: "custom",
-          },
-        ],
-      },
-      {
-        key: "customMainFont",
-        label: "自定义正文字体",
-        type: "text",
-        placeholder: "字体名称",
-      },
+      selectControl("mainFont", "正文字体", [
+        { label: "默认", value: "default" },
+        { label: "思源黑体", value: "sourceHanSans" },
+        { label: "苹方", value: "pingfang" },
+        { label: "微软雅黑", value: "yahei" },
+        { label: "霞鹜文楷", value: "lxgw" },
+        { label: "自定义", value: "custom" },
+      ]),
+      selectControl("codeFont", "代码字体", [
+        { label: "默认", value: "default" },
+        { label: "JetBrains Mono", value: "jetbrains" },
+        { label: "Fira Code", value: "firaCode" },
+        { label: "Cascadia Code", value: "cascadia" },
+        { label: "自定义", value: "custom" },
+      ]),
+      textControl("customMainFont", "自定义正文字体", "字体名称"),
     ],
     defaults: createDefaultConfig({
       mainFont: "default",
@@ -1222,71 +812,20 @@ img.plugin-link-icon {
     risk: "正文安全",
     group: "列表",
     controls: [
-      {
-        key: "unorderedStyle",
-        label: "无序标记",
-        type: "select",
-        options: [
-          {
-            label: "默认",
-            value: "default",
-          },
-          {
-            label: "实心圆",
-            value: "disc",
-          },
-          {
-            label: "空心圆",
-            value: "circle",
-          },
-          {
-            label: "方块",
-            value: "square",
-          },
-          {
-            label: "多级自动循环",
-            value: "cycle",
-          },
-        ],
-      },
-      {
-        key: "orderedStyle",
-        label: "有序编号",
-        type: "select",
-        options: [
-          {
-            label: "默认",
-            value: "default",
-          },
-          {
-            label: "罗马数字",
-            value: "upper-roman",
-          },
-          {
-            label: "中文数字",
-            value: "cjk",
-          },
-        ],
-      },
-      {
-        key: "itemSpacing",
-        label: "列表项间距",
-        type: "number",
-        min: 0,
-        max: 12,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "indentation",
-        label: "嵌套缩进",
-        type: "number",
-        min: 16,
-        max: 40,
-        step: 2,
-        unit: "px",
-      },
+      selectControl("unorderedStyle", "无序标记", [
+        { label: "默认", value: "default" },
+        { label: "实心圆", value: "disc" },
+        { label: "空心圆", value: "circle" },
+        { label: "方块", value: "square" },
+        { label: "多级自动循环", value: "cycle" },
+      ]),
+      selectControl("orderedStyle", "有序编号", [
+        { label: "默认", value: "default" },
+        { label: "罗马数字", value: "upper-roman" },
+        { label: "中文数字", value: "cjk" },
+      ]),
+      numberControl("itemSpacing", "列表项间距", { max: 12, min: 0, slider: true, step: 1, unit: "px" }),
+      numberControl("indentation", "嵌套缩进", { max: 40, min: 16, step: 2, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       unorderedStyle: "default",
@@ -1372,54 +911,18 @@ img.plugin-link-icon {
     preview: "#标签",
     risk: "正文安全",
     controls: [
-      {
-        key: "backgroundColor",
-        label: "标签底色",
-        type: "color",
-      },
-      {
-        key: "color",
-        label: "标签字色",
-        type: "color",
-      },
-      {
-        key: "radius",
-        label: "圆角半径",
-        type: "number",
-        min: 0,
-        max: 20,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "fontSize",
-        label: "字号比例",
-        type: "number",
-        min: 70,
-        max: 100,
-        step: 5,
-        unit: "%",
-        slider: true,
-      },
-      {
-        key: "showHash",
-        label: "显示 '#' 符号",
-        type: "select",
-        options: [
-          { label: "显示", value: "yes" },
-          { label: "隐藏", value: "no" },
-        ],
-      },
-      {
-        key: "position",
-        label: "布局对齐",
-        type: "select",
-        options: [
-          { label: "常规行内", value: "inline" },
-          { label: "靠右悬浮", value: "floatEnd" },
-        ],
-      },
+      colorControl("backgroundColor", "标签底色"),
+      colorControl("color", "标签字色"),
+      numberControl("radius", "圆角半径", { max: 20, min: 0, slider: true, step: 1, unit: "px" }),
+      numberControl("fontSize", "字号比例", { max: 100, min: 70, slider: true, step: 5, unit: "%" }),
+      selectControl("showHash", "显示 '#' 符号", [
+        { label: "显示", value: "yes" },
+        { label: "隐藏", value: "no" },
+      ]),
+      selectControl("position", "布局对齐", [
+        { label: "常规行内", value: "inline" },
+        { label: "靠右悬浮", value: "floatEnd" },
+      ]),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--b3-theme-primary-light)",

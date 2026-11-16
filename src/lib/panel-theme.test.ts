@@ -1,11 +1,38 @@
 import {
   createPanelThemeVars,
   createStyleEditorThemeCss,
+  createStyleEditorThemeVars,
   detectSiyuanThemeAppearance,
   resolvePanelThemeAppearance,
 } from "@/lib/panel-theme"
 
 describe("panel theme", () => {
+  it("keeps dark and light style-editor theme var key sets identical", () => {
+    const lightKeys = Object.keys(createStyleEditorThemeVars("light")).sort()
+    const darkKeys = Object.keys(createStyleEditorThemeVars("dark")).sort()
+
+    expect(darkKeys).toEqual(lightKeys)
+    expect(lightKeys.length).toBeGreaterThan(0)
+  })
+
+  it("keeps dark and light panel theme var key sets identical", () => {
+    const lightKeys = Object.keys(createPanelThemeVars("light")).sort()
+    const darkKeys = Object.keys(createPanelThemeVars("dark")).sort()
+
+    expect(darkKeys).toEqual(lightKeys)
+    expect(lightKeys.length).toBeGreaterThan(0)
+  })
+
+  it("produces stable style-editor theme vars (golden snapshot)", () => {
+    expect(createStyleEditorThemeVars("light")).toMatchSnapshot()
+    expect(createStyleEditorThemeVars("dark")).toMatchSnapshot()
+  })
+
+  it("produces stable panel theme vars (golden snapshot)", () => {
+    expect(createPanelThemeVars("light")).toMatchSnapshot()
+    expect(createPanelThemeVars("dark")).toMatchSnapshot()
+  })
+
   it("prefers the explicit root dark mode", () => {
     expect(resolvePanelThemeAppearance("dark", false)).toBe("dark")
   })

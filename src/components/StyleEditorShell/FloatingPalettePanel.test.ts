@@ -6,6 +6,10 @@ import {
 } from "vue"
 
 import FloatingPalettePanel from "@/components/StyleEditorShell/FloatingPalettePanel.vue"
+import {
+  initializeRuntime,
+  teardownRuntime,
+} from "@/style-editor-runtime"
 
 function createProps() {
   return {
@@ -148,6 +152,7 @@ async function mountFloatingPalettePanel() {
 
 describe("floatingPalettePanel", () => {
   afterEach(() => {
+    teardownRuntime()
     document.body.innerHTML = ""
     vi.clearAllMocks()
   })
@@ -187,5 +192,40 @@ describe("floatingPalettePanel", () => {
     expect(onApplyCustomColor).toHaveBeenCalledOnce()
 
     unmount()
+  })
+
+  it("预设面板折叠按钮的 aria-label 来自 i18n 而非硬编码文案", async () => {
+    await initializeRuntime({
+      loadData: vi.fn().mockResolvedValue(undefined),
+      saveData: vi.fn().mockResolvedValue(undefined),
+      i18n: {
+        presetsToggleCollapse: "自定义折叠文案",
+        presetsToggleExpand: "自定义展开文案",
+      },
+    } as never)
+
+    const isExpanded = ref(true)
+    const container = document.createElement("div")
+    document.body.append(container)
+    const app = createApp({
+      render() {
+        return h(FloatingPalettePanel, {
+          ...createProps(),
+          isPresetPaletteSectionExpanded: isExpanded.value,
+        })
+      },
+    })
+    app.mount(container)
+    await nextTick()
+
+    const toggle = document.body.querySelector(".inline-palette-panel__toggle")
+    expect(toggle?.getAttribute("aria-label")).toBe("自定义折叠文案")
+
+    isExpanded.value = false
+    await nextTick()
+    expect(toggle?.getAttribute("aria-label")).toBe("自定义展开文案")
+
+    app.unmount()
+    container.remove()
   })
 })

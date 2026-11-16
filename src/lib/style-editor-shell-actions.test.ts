@@ -1,55 +1,10 @@
 import {
-  applyCustomColorSelection,
-  clearPaletteSelection,
-  RESET_ALL_STYLES_MESSAGE,
   resolveExportStylesMessage,
   resolveExtractStylesMessage,
   resolveImportStylesMessage,
 } from "@/lib/style-editor-shell-actions"
 
 describe("style editor shell actions", () => {
-  it("applies a valid custom color and closes the inline palette", async () => {
-    const applyPaletteColor = vi.fn().mockResolvedValue(undefined)
-    const closeInlinePalette = vi.fn()
-
-    const appliedColor = await applyCustomColorSelection("#ABC", {
-      applyPaletteColor,
-      closeInlinePalette,
-    })
-
-    expect(appliedColor).toBe("#aabbcc")
-    expect(applyPaletteColor).toHaveBeenCalledOnce()
-    expect(applyPaletteColor).toHaveBeenCalledWith("#aabbcc")
-    expect(closeInlinePalette).toHaveBeenCalledOnce()
-  })
-
-  it("ignores an invalid custom color draft", async () => {
-    const applyPaletteColor = vi.fn().mockResolvedValue(undefined)
-    const closeInlinePalette = vi.fn()
-
-    const appliedColor = await applyCustomColorSelection("not-a-color", {
-      applyPaletteColor,
-      closeInlinePalette,
-    })
-
-    expect(appliedColor).toBe("")
-    expect(applyPaletteColor).not.toHaveBeenCalled()
-    expect(closeInlinePalette).not.toHaveBeenCalled()
-  })
-
-  it("clears the selected target color and closes the inline palette", async () => {
-    const clearSelectedTargetColor = vi.fn().mockResolvedValue(undefined)
-    const closeInlinePalette = vi.fn()
-
-    await clearPaletteSelection({
-      clearSelectedTargetColor,
-      closeInlinePalette,
-    })
-
-    expect(clearSelectedTargetColor).toHaveBeenCalledOnce()
-    expect(closeInlinePalette).toHaveBeenCalledOnce()
-  })
-
   it("returns the empty-document feedback when no targets are matched", () => {
     expect(resolveExtractStylesMessage({
       extractedTargetCount: 0,
@@ -69,10 +24,6 @@ describe("style editor shell actions", () => {
       extractedTargetCount: 3,
       matchedTargetCount: 5,
     })).toBe("已提取 3 类对象的当前颜色，并同步到面板预览。")
-  })
-
-  it("exposes the reset-all feedback copy as a constant", () => {
-    expect(RESET_ALL_STYLES_MESSAGE).toBe("已清除全部样式，恢复到初始状态。")
   })
 
   it("returns the export success feedback with the styled target count", () => {

@@ -64,12 +64,16 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
 
   async function handleExtractStyles() {
     isSystemOperation = true
-    await options.cancelInlinePalettePanel()
-    const result = await extractCurrentStyles()
-    importedStyleSignature.value = ""
-    actionMessage.value = resolveExtractStylesMessage(result)
-    await nextTick()
-    isSystemOperation = false
+    try {
+      await options.cancelInlinePalettePanel()
+      const result = await extractCurrentStyles()
+      importedStyleSignature.value = ""
+      actionMessage.value = resolveExtractStylesMessage(result)
+    }
+    finally {
+      await nextTick()
+      isSystemOperation = false
+    }
   }
 
   async function handleResetAllStyles() {
@@ -82,11 +86,15 @@ export function useStyleTransferActions(options: UseStyleTransferActionsOptions)
       return
     }
     isSystemOperation = true
-    await resetAllStyles()
-    importedStyleSignature.value = ""
-    actionMessage.value = t("resetStylesSuccess")
-    await nextTick()
-    isSystemOperation = false
+    try {
+      await resetAllStyles()
+      importedStyleSignature.value = ""
+      actionMessage.value = t("resetStylesSuccess")
+    }
+    finally {
+      await nextTick()
+      isSystemOperation = false
+    }
   }
 
   async function handleExportStyles(authorValue?: string, styleNameValue?: string) {

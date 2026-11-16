@@ -14,6 +14,10 @@ import {
 } from "vue"
 
 import { resolveFloatingPalettePosition } from "@/lib/floating-palette"
+import { bindWindowListeners } from "@/composables/use-window-listener"
+
+const FALLBACK_PALETTE_HEIGHT = 320
+const FALLBACK_PALETTE_WIDTH = 296
 
 interface UseInlinePaletteLayoutSessionOptions {
   cancelInlinePalettePanel: () => Promise<void>
@@ -49,8 +53,8 @@ export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSes
     const position = resolveFloatingPalettePosition(
       inlinePaletteAnchorRect.value,
       {
-        height: rect.height || 320,
-        width: rect.width || 296,
+        height: rect.height || FALLBACK_PALETTE_HEIGHT,
+        width: rect.width || FALLBACK_PALETTE_WIDTH,
       },
       {
         height: window.innerHeight,
@@ -91,8 +95,8 @@ export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSes
       const initialPosition = resolveFloatingPalettePosition(
         inlinePaletteAnchorRect.value,
         {
-          height: 320,
-          width: 296,
+          height: FALLBACK_PALETTE_HEIGHT,
+          width: FALLBACK_PALETTE_WIDTH,
         },
         {
           height: window.innerHeight,
@@ -129,18 +133,18 @@ export function useInlinePaletteLayoutSession(options: UseInlinePaletteLayoutSes
     void options.cancelInlinePalettePanel()
   }
 
+  let stopViewportListeners: (() => void) | null = null
+
   onMounted(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", handleViewportResize)
-      window.addEventListener("scroll", handleViewportScroll, true)
-    }
+    stopViewportListeners = bindWindowListeners([
+      { handler: handleViewportResize, type: "resize" },
+      { capture: true, handler: handleViewportScroll, type: "scroll" },
+    ])
   })
 
   onBeforeUnmount(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("resize", handleViewportResize)
-      window.removeEventListener("scroll", handleViewportScroll, true)
-    }
+    stopViewportListeners?.()
+    stopViewportListeners = null
   })
 
   watch(

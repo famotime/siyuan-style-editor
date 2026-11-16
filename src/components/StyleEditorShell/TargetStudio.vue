@@ -1,87 +1,67 @@
 <template>
   <section class="target-studio">
     <div class="target-studio__header">
-      <div>
-        <h2 class="section-heading__title" :data-tooltip="t('customColorsTooltip')">
-          {{ t("headingBasic") }}
-        </h2>
-      </div>
-      <div class="target-studio__header-actions">
-        <div class="target-studio__save-wrap">
-          <button
-            v-if="!isSaveFormVisible"
-            type="button"
-            class="target-studio__save"
-            :aria-label="t('saveCurrentPaletteTooltip')"
-            :data-tooltip="t('saveCurrentPalette')"
-            :title="t('saveCurrentPaletteTooltip')"
-            @click="openSaveForm"
-          >
-            <span
-              class="target-studio__save-icon"
-              aria-hidden="true"
-            >
-              <span class="target-studio__save-icon-body" />
-              <span class="target-studio__save-icon-notch" />
-              <span class="target-studio__save-icon-label" />
-            </span>
-          </button>
-          <form
-            v-else
-            class="target-studio__save-form"
-            @submit.prevent="submitSaveForm"
-          >
-            <input
-              ref="saveInputRef"
-              v-model="savePaletteName"
-              type="text"
-              class="target-studio__save-input"
-              maxlength="40"
-              :placeholder="t('enterPaletteName')"
-              @keydown.esc.prevent="closeSaveForm"
-            >
-            <button
-              type="submit"
-              class="target-studio__save-confirm"
-              :disabled="!savePaletteName.trim()"
-            >
-              {{ t("confirm") }}
-            </button>
-            <button
-              type="button"
-              class="target-studio__save-cancel"
-              @click="closeSaveForm"
-            >
-              {{ t("cancel") }}
-            </button>
-          </form>
-        </div>
-        <button
-          type="button"
-          class="panel-collapse-btn"
-          :aria-label="internalCollapsed ? t('expandPanel') : t('collapsePanel')"
-          :title="internalCollapsed ? t('expandPanel') : t('collapsePanel')"
-          @click="toggleCollapse"
-        >
-          <svg
-            class="panel-collapse-btn__icon"
-            :class="{ 'panel-collapse-btn__icon--collapsed': internalCollapsed }"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M4 6l4 4 4-4"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
+      <CollapseHeader
+        :collapsed="internalCollapsed"
+        :title="t('headingBasic')"
+        :title-tooltip="t('customColorsTooltip')"
+        wrap-tooltip
+        @toggle="toggleCollapse"
+      >
+        <template #actions>
+          <div class="target-studio__header-actions">
+            <div class="target-studio__save-wrap">
+              <button
+                v-if="!isSaveFormVisible"
+                type="button"
+                class="target-studio__save"
+                :aria-label="t('saveCurrentPaletteTooltip')"
+                :data-tooltip="t('saveCurrentPalette')"
+                :title="t('saveCurrentPaletteTooltip')"
+                @click="openSaveForm"
+              >
+                <span
+                  class="target-studio__save-icon"
+                  aria-hidden="true"
+                >
+                  <span class="target-studio__save-icon-body" />
+                  <span class="target-studio__save-icon-notch" />
+                  <span class="target-studio__save-icon-label" />
+                </span>
+              </button>
+              <form
+                v-else
+                class="target-studio__save-form"
+                @submit.prevent="submitSaveForm"
+              >
+                <input
+                  ref="saveInputRef"
+                  v-model="savePaletteName"
+                  type="text"
+                  class="target-studio__save-input"
+                  maxlength="40"
+                  :placeholder="t('enterPaletteName')"
+                  @keydown.esc.prevent="closeSaveForm"
+                >
+                <button
+                  type="submit"
+                  class="target-studio__save-confirm"
+                  :disabled="!savePaletteName.trim()"
+                >
+                  {{ t("confirm") }}
+                </button>
+                <button
+                  type="button"
+                  class="target-studio__save-cancel"
+                  @click="closeSaveForm"
+                >
+                  {{ t("cancel") }}
+                </button>
+              </form>
+            </div>
+          </div>
+        </template>
+      </CollapseHeader>
     </div>
 
     <div
@@ -128,46 +108,26 @@
 
         <div class="target-preview-card__actions">
           <button
+            v-for="channel in ORB_CHANNELS"
+            :key="channel"
             type="button"
             class="channel-orb"
-            :data-tooltip="t('colorLabel')"
-            :aria-label="t('colorLabel')"
+            :data-tooltip="channel === 'color' ? t('colorLabel') : t('bgColorLabel')"
+            :aria-label="channel === 'color' ? t('colorLabel') : t('bgColorLabel')"
             :class="{
-              'channel-orb--active': selectedTarget === target.value && selectedChannel === 'color' && isInlinePaletteOpenForTarget(target.value),
-              'channel-orb--drag-source': isDragSourceOrb(target.value, 'color'),
-              'channel-orb--drop-target': isDropTargetOrb(target.value, 'color'),
+              'channel-orb--active': selectedTarget === target.value && selectedChannel === channel && isInlinePaletteOpenForTarget(target.value),
+              'channel-orb--drag-source': isDragSourceOrb(target.value, channel),
+              'channel-orb--drop-target': isDropTargetOrb(target.value, channel),
             }"
-            @mousedown="handleOrbMouseDown(target.value, 'color', $event)"
-            @mouseenter="handleOrbMouseEnter(target.value, 'color')"
-            @mouseleave="handleOrbMouseLeave(target.value, 'color')"
-            @click="handleOrbClick(target.value, 'color', $event)"
+            @mousedown="handleOrbMouseDown(target.value, channel, $event)"
+            @mouseenter="handleOrbMouseEnter(target.value, channel)"
+            @mouseleave="handleOrbMouseLeave(target.value, channel)"
+            @click="handleOrbClick(target.value, channel, $event)"
           >
             <span
               class="channel-orb__swatch"
-              :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'color').isEmpty }"
-              :style="{ '--orb-fill': getChannelSwatch(target.value, 'color').background }"
-            />
-          </button>
-
-          <button
-            type="button"
-            class="channel-orb"
-            :data-tooltip="t('bgColorLabel')"
-            :aria-label="t('bgColorLabel')"
-            :class="{
-              'channel-orb--active': selectedTarget === target.value && selectedChannel === 'backgroundColor' && isInlinePaletteOpenForTarget(target.value),
-              'channel-orb--drag-source': isDragSourceOrb(target.value, 'backgroundColor'),
-              'channel-orb--drop-target': isDropTargetOrb(target.value, 'backgroundColor'),
-            }"
-            @mousedown="handleOrbMouseDown(target.value, 'backgroundColor', $event)"
-            @mouseenter="handleOrbMouseEnter(target.value, 'backgroundColor')"
-            @mouseleave="handleOrbMouseLeave(target.value, 'backgroundColor')"
-            @click="handleOrbClick(target.value, 'backgroundColor', $event)"
-          >
-            <span
-              class="channel-orb__swatch"
-              :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, 'backgroundColor').isEmpty }"
-              :style="{ '--orb-fill': getChannelSwatch(target.value, 'backgroundColor').background }"
+              :class="{ 'channel-orb__swatch--empty': getChannelSwatch(target.value, channel).isEmpty }"
+              :style="{ '--orb-fill': getChannelSwatch(target.value, channel).background }"
             />
           </button>
         </div>
@@ -199,11 +159,14 @@ import { t } from "@/style-editor-runtime"
 import {
   nextTick,
   ref,
-  watch,
 } from "vue"
 
+import CollapseHeader from "@/components/StyleEditorShell/CollapseHeader.vue"
 import HighlightText from "@/components/StyleEditorShell/HighlightText.vue"
+import { useCollapsedModel } from "@/composables/use-collapsed-model"
 import { useTargetOrbDragSession } from "@/composables/use-target-orb-drag-session"
+
+const ORB_CHANNELS: PaintChannel[] = ["color", "backgroundColor"]
 
 const props = withDefaults(
   defineProps<{
@@ -235,19 +198,10 @@ const emit = defineEmits<{
   "update-target-enabled": [target: StyleTarget, enabled: boolean]
 }>()
 
-const internalCollapsed = ref(props.collapsed)
-
-watch(
-  () => props.collapsed,
-  (val) => {
-    internalCollapsed.value = val
-  },
-)
-
-function toggleCollapse() {
-  internalCollapsed.value = !internalCollapsed.value
-  emit("update:collapsed", internalCollapsed.value)
-}
+const { internalCollapsed, toggleCollapse } = useCollapsedModel({
+  collapsed: () => props.collapsed,
+  onUpdateCollapsed: (value) => emit("update:collapsed", value),
+})
 
 interface StyleTargetOption {
   hint: string
@@ -331,73 +285,6 @@ function submitSaveForm() {
 .target-studio__save-wrap {
   display: flex;
   align-items: center;
-}
-
-.section-heading__title {
-  position: relative;
-  margin: 0;
-  font-size: 20px;
-  line-height: 1.1;
-  font-family: "Iowan Old Style", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
-  color: var(--panel-text);
-  cursor: help;
-}
-
-.section-heading__title[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 0;
-  top: calc(100% + 6px);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-2px);
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--panel-text);
-  color: var(--panel-card-bg);
-  font-size: 11px;
-  font-weight: 500;
-  font-family: system-ui, sans-serif;
-  line-height: 1.4;
-  white-space: normal;
-  max-width: 260px;
-  z-index: 100;
-  transition: opacity 140ms ease, transform 140ms ease;
-}
-
-.section-heading__title[data-tooltip]:hover::after {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.panel-collapse-btn {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 1px solid var(--panel-card-inner-stroke);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--panel-pill-bg) 74%, transparent 26%);
-  color: var(--panel-text-muted);
-  cursor: pointer;
-  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
-}
-
-.panel-collapse-btn:hover {
-  color: var(--panel-text);
-  background: var(--panel-chip-active-bg);
-  transform: translateY(-1px);
-}
-
-.panel-collapse-btn__icon {
-  transition: transform 200ms ease;
-}
-
-.panel-collapse-btn__icon--collapsed {
-  transform: rotate(-90deg);
 }
 
 .target-studio__note {

@@ -5,6 +5,7 @@ import {
   px,
   stringValue,
 } from "../feature-style-types"
+import { colorControl, numberControl, selectControl } from "./controls"
 
 function hexToRgb(hex: string): string {
   const h = hex.replace(/^#/, "")
@@ -27,11 +28,7 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   --b3-theme-background: ${stringValue(config.values.backgroundColor, "var(--style-editor-editor-bg)")};
 }`.trim(),
     controls: [
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
+      colorControl("backgroundColor", "背景色"),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--style-editor-editor-bg)",
@@ -81,29 +78,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   display: none;
 }`.trim(),
     controls: [
-      {
-        key: "color",
-        label: "角标颜色",
-        type: "color",
-      },
-      {
-        key: "cornerLength",
-        label: "角标长度",
-        max: 32,
-        min: 4,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "strokeWidth",
-        label: "线条粗细",
-        max: 6,
-        min: 1,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("color", "角标颜色"),
+      numberControl("cornerLength", "角标长度", { max: 32, min: 4, step: 1, unit: "px" }),
+      numberControl("strokeWidth", "线条粗细", { max: 6, min: 1, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       color: "rgba(255, 165, 0, 0.7)",
@@ -138,61 +115,14 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   box-shadow: 0 0 ${px(config.values.glowSize, 10)} ${stringValue(config.values.glowColor, "oklch(70% 0.25 250 / 1)")};
 }`.trim(),
     controls: [
-      {
-        key: "backgroundColor",
-        label: "徽标底色",
-        type: "color",
-      },
-      {
-        key: "color",
-        label: "徽标字色",
-        type: "color",
-      },
-      {
-        key: "hoverBackgroundColor",
-        label: "悬停底色",
-        type: "color",
-      },
-      {
-        key: "glowColor",
-        label: "发光颜色",
-        type: "color",
-      },
-      {
-        key: "size",
-        label: "徽标尺寸",
-        max: 28,
-        min: 12,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "hoverScale",
-        label: "悬停放大",
-        max: 1.8,
-        min: 1,
-        step: 0.05,
-        type: "number",
-      },
-      {
-        key: "glowSize",
-        label: "发光强度",
-        max: 24,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("backgroundColor", "徽标底色"),
+      colorControl("color", "徽标字色"),
+      colorControl("hoverBackgroundColor", "悬停底色"),
+      colorControl("glowColor", "发光颜色"),
+      numberControl("size", "徽标尺寸", { max: 28, min: 12, step: 1, unit: "px" }),
+      numberControl("radius", "圆角", { max: 12, min: 0, step: 1, unit: "px" }),
+      numberControl("hoverScale", "悬停放大", { max: 1.8, min: 1, step: 0.05 }),
+      numberControl("glowSize", "发光强度", { max: 24, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "oklch(50% 0.02 250 / 0.3)",
@@ -230,52 +160,15 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   background-color: ${stringValue(config.values.hoverBgColor, "var(--style-editor-card-bg-soft)")};
 }`.trim(),
     controls: [
-      {
-        key: "hoverBgColor",
-        label: "悬停背景",
-        type: "color",
-      },
-      {
-        key: "radius",
-        label: "容器圆角",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "itemMinHeight",
-        label: "选项最小高度",
-        max: 72,
-        min: 28,
-        step: 4,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "maxHeight",
-        label: "最大高度",
-        options: [
-          {
-            label: "40vh",
-            value: "40vh",
-          },
-          {
-            label: "50vh",
-            value: "50vh",
-          },
-          {
-            label: "60vh",
-            value: "60vh",
-          },
-          {
-            label: "70vh",
-            value: "70vh",
-          },
-        ],
-        type: "select",
-      },
+      colorControl("hoverBgColor", "悬停背景"),
+      numberControl("radius", "容器圆角", { max: 12, min: 0, step: 1, unit: "px" }),
+      numberControl("itemMinHeight", "选项最小高度", { max: 72, min: 28, step: 4, unit: "px" }),
+      selectControl("maxHeight", "最大高度", [
+        { label: "40vh", value: "40vh" },
+        { label: "50vh", value: "50vh" },
+        { label: "60vh", value: "60vh" },
+        { label: "70vh", value: "70vh" },
+      ]),
     ],
     defaults: createDefaultConfig({
       hoverBgColor: "var(--style-editor-card-bg-soft)",
@@ -304,11 +197,7 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   background-color: ${stringValue(config.values.backgroundColor, "var(--b3-list-hover, #363636)")};
 }`.trim(),
     controls: [
-      {
-        key: "backgroundColor",
-        label: "固定背景",
-        type: "color",
-      },
+      colorControl("backgroundColor", "固定背景"),
     ],
     defaults: createDefaultConfig({
       backgroundColor: "var(--b3-list-hover, #363636)",
@@ -329,20 +218,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   color: ${stringValue(config.values.placeholderColor, "oklch(32.89% 0.0107 91.66 / 0.5)")};
 }`.trim(),
     controls: [
-      {
-        key: "fontSize",
-        label: "标题字号",
-        max: 64,
-        min: 20,
-        step: 2,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "placeholderColor",
-        label: "占位提示色",
-        type: "color",
-      },
+      numberControl("fontSize", "标题字号", { max: 64, min: 20, step: 2, unit: "px" }),
+      colorControl("placeholderColor", "占位提示色"),
     ],
     defaults: createDefaultConfig({
       fontSize: 40,
@@ -363,24 +240,8 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   width: calc(100% - ${px(config.values.marginX * 2, 10)});
 }`.trim(),
     controls: [
-      {
-        key: "radius",
-        label: "图片圆角",
-        max: 24,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "marginX",
-        label: "左右边距",
-        max: 24,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      numberControl("radius", "图片圆角", { max: 24, min: 0, step: 1, unit: "px" }),
+      numberControl("marginX", "左右边距", { max: 24, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       marginX: 5,
@@ -409,25 +270,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   color: ${stringValue(config.values.secondaryColor, "var(--style-editor-tag-color)")};
 }`.trim(),
     controls: [
-      {
-        key: "secondaryBg",
-        label: "标签底色",
-        type: "color",
-      },
-      {
-        key: "secondaryColor",
-        label: "标签字色",
-        type: "color",
-      },
-      {
-        key: "radius",
-        label: "标签圆角",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("secondaryBg", "标签底色"),
+      colorControl("secondaryColor", "标签字色"),
+      numberControl("radius", "标签圆角", { max: 16, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       fontSize: 90,
@@ -479,30 +324,10 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   margin: ${px(config.values.gapY, 4)} 0;
 }`.trim(),
     controls: [
-      {
-        key: "color1",
-        label: "分组色 1",
-        type: "color",
-      },
-      {
-        key: "color2",
-        label: "分组色 2",
-        type: "color",
-      },
-      {
-        key: "color3",
-        label: "分组色 3",
-        type: "color",
-      },
-      {
-        key: "radius",
-        label: "圆角",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("color1", "分组色 1"),
+      colorControl("color2", "分组色 2"),
+      colorControl("color3", "分组色 3"),
+      numberControl("radius", "圆角", { max: 12, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       color1: "var(--style-editor-tree-block-1)",
@@ -538,30 +363,10 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
 .sy__outline ul.b3-list.b3-list--background [data-subtype="h5"] > span:first-child::after { content: "❺"; color: ${stringValue(config.values.h5Color, "var(--style-editor-outline-h5)")}; }
 .sy__outline ul.b3-list.b3-list--background [data-subtype="h6"] > span:first-child::after { content: "❻"; color: ${stringValue(config.values.h6Color, "var(--style-editor-outline-h6)")}; }`.trim(),
     controls: [
-      {
-        key: "h1Color",
-        label: "H1 颜色",
-        type: "color",
-      },
-      {
-        key: "h2Color",
-        label: "H2 颜色",
-        type: "color",
-      },
-      {
-        key: "h3Color",
-        label: "H3 颜色",
-        type: "color",
-      },
-      {
-        key: "fontSize",
-        label: "字号",
-        max: 16,
-        min: 8,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("h1Color", "H1 颜色"),
+      colorControl("h2Color", "H2 颜色"),
+      colorControl("h3Color", "H3 颜色"),
+      numberControl("fontSize", "字号", { max: 16, min: 8, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       fontSize: 10,
@@ -592,25 +397,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   background-color: ${stringValue(config.values.hoverBg, "var(--style-editor-toolbar-hover-bg)")};
 }`.trim(),
     controls: [
-      {
-        key: "iconColor",
-        label: "图标颜色",
-        type: "color",
-      },
-      {
-        key: "hoverBg",
-        label: "悬停背景",
-        type: "color",
-      },
-      {
-        key: "transitionMs",
-        label: "过渡时间",
-        max: 400,
-        min: 0,
-        step: 50,
-        type: "number",
-        unit: "ms",
-      },
+      colorControl("iconColor", "图标颜色"),
+      colorControl("hoverBg", "悬停背景"),
+      numberControl("transitionMs", "过渡时间", { max: 400, min: 0, step: 50, unit: "ms" }),
     ],
     defaults: createDefaultConfig({
       hoverBg: "var(--style-editor-toolbar-hover-bg)",
@@ -642,25 +431,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   color: ${stringValue(config.values.currentColor, "var(--style-editor-toolbar-current)")};
 }`.trim(),
     controls: [
-      {
-        key: "hoverBg",
-        label: "悬停背景",
-        type: "color",
-      },
-      {
-        key: "currentColor",
-        label: "选中项颜色",
-        type: "color",
-      },
-      {
-        key: "buttonSize",
-        label: "按钮尺寸",
-        max: 40,
-        min: 20,
-        step: 2,
-        type: "number",
-        unit: "px",
-      },
+      colorControl("hoverBg", "悬停背景"),
+      colorControl("currentColor", "选中项颜色"),
+      numberControl("buttonSize", "按钮尺寸", { max: 40, min: 20, step: 2, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       buttonRadius: 4,
@@ -690,29 +463,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   color: ${stringValue(config.values.textColor, "rgb(240, 240, 240)")};
 }`.trim(),
     controls: [
-      {
-        key: "radius",
-        label: "菜单圆角",
-        max: 16,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "columnWidth",
-        label: "列宽度",
-        max: 280,
-        min: 120,
-        step: 20,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "textColor",
-        label: "文字颜色",
-        type: "color",
-      },
+      numberControl("radius", "菜单圆角", { max: 16, min: 0, step: 1, unit: "px" }),
+      numberControl("columnWidth", "列宽度", { max: 280, min: 120, step: 20, unit: "px" }),
+      colorControl("textColor", "文字颜色"),
     ],
     defaults: createDefaultConfig({
       columnWidth: 180,
@@ -739,33 +492,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   font-size: ${px(config.values.emojiFontSize, 22)};
 }`.trim(),
     controls: [
-      {
-        key: "panelWidth",
-        label: "面板宽度",
-        max: 480,
-        min: 280,
-        step: 10,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "itemSize",
-        label: "表情尺寸",
-        max: 48,
-        min: 24,
-        step: 2,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "emojiFontSize",
-        label: "字号",
-        max: 36,
-        min: 14,
-        step: 2,
-        type: "number",
-        unit: "px",
-      },
+      numberControl("panelWidth", "面板宽度", { max: 480, min: 280, step: 10, unit: "px" }),
+      numberControl("itemSize", "表情尺寸", { max: 48, min: 24, step: 2, unit: "px" }),
+      numberControl("emojiFontSize", "字号", { max: 36, min: 14, step: 2, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       emojiFontSize: 22,
@@ -793,32 +522,9 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
   margin: ${px(config.values.itemMargin, 6)} ${px(config.values.itemMargin, 6)} 0 ${px(config.values.itemMargin, 6)};
 }`.trim(),
     controls: [
-      {
-        key: "itemMargin",
-        label: "条目间距",
-        max: 16,
-        min: 0,
-        step: 2,
-        type: "number",
-        unit: "px",
-      },
-      {
-        key: "lineHeight",
-        label: "行高",
-        max: 2,
-        min: 1,
-        step: 0.1,
-        type: "number",
-      },
-      {
-        key: "groupRadius",
-        label: "分组圆角",
-        max: 12,
-        min: 0,
-        step: 1,
-        type: "number",
-        unit: "px",
-      },
+      numberControl("itemMargin", "条目间距", { max: 16, min: 0, step: 2, unit: "px" }),
+      numberControl("lineHeight", "行高", { max: 2, min: 1, step: 0.1 }),
+      numberControl("groupRadius", "分组圆角", { max: 12, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       groupRadius: 4,
@@ -841,38 +547,12 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     preview: "↔️",
     risk: "全屋改造",
     controls: [
-      {
-        key: "maxWidth",
-        label: "最大宽度",
-        type: "number",
-        min: 600,
-        max: 2000,
-        step: 10,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "fullWidth",
-        label: "全宽模式",
-        type: "select",
-        options: [{
-          label: "否",
-          value: "no",
-        }, {
-          label: "是",
-          value: "yes",
-        }],
-      },
-      {
-        key: "contentPadding",
-        label: "内容边距",
-        type: "number",
-        min: 0,
-        max: 60,
-        step: 2,
-        unit: "px",
-        slider: true,
-      },
+      numberControl("maxWidth", "最大宽度", { max: 2000, min: 600, slider: true, step: 10, unit: "px" }),
+      selectControl("fullWidth", "全宽模式", [
+        { label: "否", value: "no" },
+        { label: "是", value: "yes" },
+      ]),
+      numberControl("contentPadding", "内容边距", { max: 60, min: 0, slider: true, step: 2, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       maxWidth: 900,
@@ -904,66 +584,19 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     preview: "🔧",
     risk: "全屋改造",
     controls: [
-      {
-        key: "mode",
-        label: "风格",
-        type: "select",
-        options: [
-          {
-            label: "默认",
-            value: "default",
-          },
-          {
-            label: "透明",
-            value: "transparent",
-          },
-          {
-            label: "毛玻璃",
-            value: "glass",
-          },
-          {
-            label: "沉浸亚克力",
-            value: "acrylic",
-          },
-        ],
-      },
-      {
-        key: "blurRadius",
-        label: "模糊半径",
-        type: "number",
-        min: 0,
-        max: 20,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "height",
-        label: "高度",
-        type: "number",
-        min: 32,
-        max: 48,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "borderBottom",
-        label: "底边线",
-        type: "select",
-        options: [{
-          label: "显示",
-          value: "show",
-        }, {
-          label: "隐藏",
-          value: "hide",
-        }],
-      },
+      selectControl("mode", "风格", [
+        { label: "默认", value: "default" },
+        { label: "透明", value: "transparent" },
+        { label: "毛玻璃", value: "glass" },
+        { label: "沉浸亚克力", value: "acrylic" },
+      ]),
+      numberControl("blurRadius", "模糊半径", { max: 20, min: 0, slider: true, step: 1, unit: "px" }),
+      colorControl("backgroundColor", "背景色"),
+      numberControl("height", "高度", { max: 48, min: 32, slider: true, step: 1, unit: "px" }),
+      selectControl("borderBottom", "底边线", [
+        { label: "显示", value: "show" },
+        { label: "隐藏", value: "hide" },
+      ]),
     ],
     defaults: createDefaultConfig({
       mode: "default",
@@ -1006,54 +639,15 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     preview: "📏",
     risk: "全屋改造",
     controls: [
-      {
-        key: "width",
-        label: "宽度",
-        type: "number",
-        min: 4,
-        max: 16,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "trackColor",
-        label: "轨道颜色",
-        type: "color",
-      },
-      {
-        key: "thumbColor",
-        label: "滑块颜色",
-        type: "color",
-      },
-      {
-        key: "thumbRadius",
-        label: "滑块圆角",
-        type: "number",
-        min: 0,
-        max: 8,
-        step: 1,
-        unit: "px",
-      },
-      {
-        key: "hideMode",
-        label: "显示模式",
-        type: "select",
-        options: [
-          {
-            label: "始终显示",
-            value: "always",
-          },
-          {
-            label: "悬停显示",
-            value: "hover",
-          },
-          {
-            label: "完全隐藏",
-            value: "hidden",
-          },
-        ],
-      },
+      numberControl("width", "宽度", { max: 16, min: 4, slider: true, step: 1, unit: "px" }),
+      colorControl("trackColor", "轨道颜色"),
+      colorControl("thumbColor", "滑块颜色"),
+      numberControl("thumbRadius", "滑块圆角", { max: 8, min: 0, step: 1, unit: "px" }),
+      selectControl("hideMode", "显示模式", [
+        { label: "始终显示", value: "always" },
+        { label: "悬停显示", value: "hover" },
+        { label: "完全隐藏", value: "hidden" },
+      ]),
     ],
     defaults: createDefaultConfig({
       width: 6,
@@ -1097,33 +691,10 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     preview: "B",
     risk: "正文安全",
     controls: [
-      {
-        key: "color",
-        label: "文字颜色",
-        type: "color",
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "borderRadius",
-        label: "背景圆角",
-        type: "number",
-        min: 0,
-        max: 8,
-        step: 1,
-        unit: "px",
-      },
-      {
-        key: "fontWeight",
-        label: "字重",
-        type: "number",
-        min: 600,
-        max: 900,
-        step: 100,
-      },
+      colorControl("color", "文字颜色"),
+      colorControl("backgroundColor", "背景色"),
+      numberControl("borderRadius", "背景圆角", { max: 8, min: 0, step: 1, unit: "px" }),
+      numberControl("fontWeight", "字重", { max: 900, min: 600, step: 100 }),
     ],
     defaults: createDefaultConfig({
       color: "var(--style-editor-mark-color)",
@@ -1154,54 +725,15 @@ export const THEME_DEFINITIONS: FeatureDefinition[] = [
     preview: "📑",
     risk: "全屋改造",
     controls: [
-      {
-        key: "height",
-        label: "页签高度",
-        type: "number",
-        min: 28,
-        max: 44,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "fontSize",
-        label: "字号",
-        type: "number",
-        min: 11,
-        max: 16,
-        step: 1,
-        unit: "px",
-      },
-      {
-        key: "activeIndicator",
-        label: "活动指示器",
-        type: "select",
-        options: [
-          {
-            label: "底线",
-            value: "border",
-          },
-          {
-            label: "背景",
-            value: "background",
-          },
-          {
-            label: "无",
-            value: "none",
-          },
-        ],
-      },
-      {
-        key: "indicatorColor",
-        label: "指示器颜色",
-        type: "color",
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
+      numberControl("height", "页签高度", { max: 44, min: 28, slider: true, step: 1, unit: "px" }),
+      numberControl("fontSize", "字号", { max: 16, min: 11, step: 1, unit: "px" }),
+      selectControl("activeIndicator", "活动指示器", [
+        { label: "底线", value: "border" },
+        { label: "背景", value: "background" },
+        { label: "无", value: "none" },
+      ]),
+      colorControl("indicatorColor", "指示器颜色"),
+      colorControl("backgroundColor", "背景色"),
     ],
     defaults: createDefaultConfig({
       height: 32,
@@ -1244,30 +776,10 @@ ${indicatorCss}`
     preview: "🧭",
     risk: "全屋改造",
     controls: [
-      {
-        key: "textColor",
-        label: "文字颜色",
-        type: "color",
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "separatorColor",
-        label: "分隔符颜色",
-        type: "color",
-      },
-      {
-        key: "fontSize",
-        label: "字号",
-        type: "number",
-        min: 11,
-        max: 14,
-        step: 1,
-        unit: "px",
-      },
+      colorControl("textColor", "文字颜色"),
+      colorControl("backgroundColor", "背景色"),
+      colorControl("separatorColor", "分隔符颜色"),
+      numberControl("fontSize", "字号", { max: 14, min: 11, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       textColor: "var(--style-editor-list-color)",
@@ -1300,45 +812,14 @@ ${indicatorCss}`
     preview: "📌",
     risk: "全屋改造",
     controls: [
-      {
-        key: "iconSize",
-        label: "图标大小",
-        type: "number",
-        min: 16,
-        max: 28,
-        step: 1,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "backgroundColor",
-        label: "背景色",
-        type: "color",
-      },
-      {
-        key: "hoverColor",
-        label: "悬停颜色",
-        type: "color",
-      },
-      {
-        key: "width",
-        label: "宽度",
-        type: "number",
-        min: 36,
-        max: 56,
-        step: 2,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "splitSeparate",
-        label: "侧边栏分离",
-        type: "select",
-        options: [
-          { label: "关闭", value: "no" },
-          { label: "开启", value: "yes" },
-        ],
-      },
+      numberControl("iconSize", "图标大小", { max: 28, min: 16, slider: true, step: 1, unit: "px" }),
+      colorControl("backgroundColor", "背景色"),
+      colorControl("hoverColor", "悬停颜色"),
+      numberControl("width", "宽度", { max: 56, min: 36, slider: true, step: 2, unit: "px" }),
+      selectControl("splitSeparate", "侧边栏分离", [
+        { label: "关闭", value: "no" },
+        { label: "开启", value: "yes" },
+      ]),
     ],
     defaults: createDefaultConfig({
       iconSize: 20,
@@ -1381,25 +862,9 @@ ${indicatorCss}`
     risk: "全屋改造",
     group: "系统元素",
     controls: [
-      {
-        key: "matchColor",
-        label: "匹配项颜色",
-        type: "color",
-      },
-      {
-        key: "currentMatchColor",
-        label: "当前匹配颜色",
-        type: "color",
-      },
-      {
-        key: "matchBorderRadius",
-        label: "高亮圆角",
-        type: "number",
-        min: 0,
-        max: 4,
-        step: 1,
-        unit: "px",
-      },
+      colorControl("matchColor", "匹配项颜色"),
+      colorControl("currentMatchColor", "当前匹配颜色"),
+      numberControl("matchBorderRadius", "高亮圆角", { max: 4, min: 0, step: 1, unit: "px" }),
     ],
     defaults: createDefaultConfig({
       matchColor: "var(--style-editor-search-match-bg)",
@@ -1429,52 +894,14 @@ ${indicatorCss}`
     risk: "全屋改造",
     group: "系统元素",
     controls: [
-      {
-        key: "borderRadius",
-        label: "圆角",
-        type: "number",
-        min: 0,
-        max: 24,
-        step: 2,
-        unit: "px",
-        slider: true,
-      },
-      {
-        key: "backdropBlur",
-        label: "背景模糊",
-        type: "number",
-        min: 0,
-        max: 20,
-        step: 1,
-        unit: "px",
-      },
-      {
-        key: "backdropOpacity",
-        label: "遮罩透明度",
-        type: "number",
-        min: 0,
-        max: 1,
-        step: 0.05,
-      },
-      {
-        key: "shadowIntensity",
-        label: "阴影",
-        type: "select",
-        options: [
-          {
-            label: "无",
-            value: "none",
-          },
-          {
-            label: "轻",
-            value: "light",
-          },
-          {
-            label: "重",
-            value: "heavy",
-          },
-        ],
-      },
+      numberControl("borderRadius", "圆角", { max: 24, min: 0, slider: true, step: 2, unit: "px" }),
+      numberControl("backdropBlur", "背景模糊", { max: 20, min: 0, step: 1, unit: "px" }),
+      numberControl("backdropOpacity", "遮罩透明度", { max: 1, min: 0, step: 0.05 }),
+      selectControl("shadowIntensity", "阴影", [
+        { label: "无", value: "none" },
+        { label: "轻", value: "light" },
+        { label: "重", value: "heavy" },
+      ]),
     ],
     defaults: createDefaultConfig({
       borderRadius: 12,
@@ -1514,11 +941,7 @@ ${indicatorCss}`
     risk: "全屋改造",
     group: "文档外观",
     controls: [
-      {
-        key: "primaryColor",
-        label: "主题主色",
-        type: "color",
-      },
+      colorControl("primaryColor", "主题主色"),
     ],
     defaults: createDefaultConfig({
       primaryColor: "#0969da",
@@ -1544,75 +967,40 @@ ${indicatorCss}`
     risk: "全屋改造",
     group: "文档外观",
     controls: [
-      {
-        key: "density",
-        label: "紧凑密度",
-        type: "select",
-        options: [
-          { label: "无", value: "none" },
-          { label: "温和", value: "moderate" },
-          { label: "紧凑", value: "compact" },
-          { label: "极致", value: "extreme" },
-        ],
-      },
-      {
-        key: "fontScale",
-        label: "字号缩放",
-        type: "select",
-        options: [
-          { label: "100%", value: "100" },
-          { label: "98%", value: "98" },
-          { label: "96%", value: "96" },
-          { label: "94%", value: "94" },
-          { label: "92%", value: "92" },
-          { label: "90%", value: "90" },
-        ],
-      },
-      {
-        key: "sidebar",
-        label: "侧边栏应用",
-        type: "select",
-        options: [
-          { label: "开启", value: "yes" },
-          { label: "关闭", value: "no" },
-        ],
-      },
-      {
-        key: "editor",
-        label: "编辑区应用",
-        type: "select",
-        options: [
-          { label: "开启", value: "yes" },
-          { label: "关闭", value: "no" },
-        ],
-      },
-      {
-        key: "tabs",
-        label: "页签栏应用",
-        type: "select",
-        options: [
-          { label: "开启", value: "yes" },
-          { label: "关闭", value: "no" },
-        ],
-      },
-      {
-        key: "dialogs",
-        label: "对话框应用",
-        type: "select",
-        options: [
-          { label: "开启", value: "yes" },
-          { label: "关闭", value: "no" },
-        ],
-      },
-      {
-        key: "controls",
-        label: "控制项应用",
-        type: "select",
-        options: [
-          { label: "开启", value: "yes" },
-          { label: "关闭", value: "no" },
-        ],
-      },
+      selectControl("density", "紧凑密度", [
+        { label: "无", value: "none" },
+        { label: "温和", value: "moderate" },
+        { label: "紧凑", value: "compact" },
+        { label: "极致", value: "extreme" },
+      ]),
+      selectControl("fontScale", "字号缩放", [
+        { label: "100%", value: "100" },
+        { label: "98%", value: "98" },
+        { label: "96%", value: "96" },
+        { label: "94%", value: "94" },
+        { label: "92%", value: "92" },
+        { label: "90%", value: "90" },
+      ]),
+      selectControl("sidebar", "侧边栏应用", [
+        { label: "开启", value: "yes" },
+        { label: "关闭", value: "no" },
+      ]),
+      selectControl("editor", "编辑区应用", [
+        { label: "开启", value: "yes" },
+        { label: "关闭", value: "no" },
+      ]),
+      selectControl("tabs", "页签栏应用", [
+        { label: "开启", value: "yes" },
+        { label: "关闭", value: "no" },
+      ]),
+      selectControl("dialogs", "对话框应用", [
+        { label: "开启", value: "yes" },
+        { label: "关闭", value: "no" },
+      ]),
+      selectControl("controls", "控制项应用", [
+        { label: "开启", value: "yes" },
+        { label: "关闭", value: "no" },
+      ]),
     ],
     defaults: createDefaultConfig({
       density: "compact",

@@ -33,6 +33,7 @@ import {
   updateFeatureConfig,
   updateTargetBackgroundColor,
   updateTargetColor,
+  updateTargetEnabled as updateTargetEnabledInState,
 } from "@/lib/style-editor-state"
 import { createStyleEditorStylesheetController } from "@/lib/style-editor-stylesheet"
 import { extractStyleProfileFromDocument } from "@/lib/style-extractor"
@@ -61,7 +62,12 @@ import {
 import zhCN from "@/i18n/zh_CN.json"
 
 export const STORAGE_KEY = "style-editor.json"
+export const CUSTOM_PALETTE_ID_PREFIX = "custom-palette-"
 const STYLE_ELEMENT_ID = "siyuan-style-editor-style"
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
 
 export function t(key: string, replacements?: Record<string, any>, fallback?: string): string {
   let text = fallback || key
@@ -76,7 +82,7 @@ export function t(key: string, replacements?: Record<string, any>, fallback?: st
     for (const [k, v] of Object.entries(replacements)) {
       const rawVal = (v && typeof v === "object" && "value" in v) ? (v as any).value : v
       const valStr = String(rawVal === undefined || rawVal === null ? "" : rawVal).trim()
-      text = text.replace(new RegExp(`\\{${k}\\}`, "g"), valStr)
+      text = text.replace(new RegExp(`\\{${escapeRegExp(k)}\\}`, "g"), valStr)
     }
   }
   return text
@@ -379,7 +385,7 @@ export async function saveCurrentProfileAsPresetPalette(name: string) {
 
   const nextPalette: PresetPaletteCollection = {
     colors,
-    id: `custom-palette-${Date.now().toString(36)}`,
+    id: `${CUSTOM_PALETTE_ID_PREFIX}${Date.now().toString(36)}`,
     label: trimmedName,
   }
 
@@ -422,15 +428,6 @@ export async function deleteCustomPresetPalette(paletteId: string) {
 }
 
 export async function updateTargetEnabled(target: StyleTarget, enabled: boolean) {
-  const nextState = {
-    ...snapshotState(),
-    profile: {
-      ...snapshotState().profile,
-      [target]: {
-        ...snapshotState().profile[target],
-        enabled,
-      },
-    },
-  }
+  const nextState = updateTargetEnabledInState(snapshotState(), target, enabled)
   await commitState(nextState)
 }

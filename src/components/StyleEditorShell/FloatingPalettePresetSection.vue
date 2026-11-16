@@ -145,7 +145,7 @@ import {
   ref,
   watch,
 } from "vue"
-import { t } from "@/style-editor-runtime"
+import { CUSTOM_PALETTE_ID_PREFIX, t } from "@/style-editor-runtime"
 
 import { buildPresetPaletteCardBackground } from "@/lib/preset-palette-catalog"
 
@@ -180,7 +180,7 @@ const emit = defineEmits<{
 const pendingDeletePaletteId = ref("")
 
 const presetPaletteToggleLabel = computed(() => {
-  return props.isPresetPaletteSectionExpanded ? "折叠预设配色" : "展开预设配色"
+  return props.isPresetPaletteSectionExpanded ? t("presetsToggleCollapse") : t("presetsToggleExpand")
 })
 
 function getPresetPaletteTabStyle(palette: PaletteCollection) {
@@ -191,7 +191,7 @@ function getPresetPaletteTabStyle(palette: PaletteCollection) {
 }
 
 function isCustomPresetPalette(palette: PaletteCollection) {
-  return palette.id.startsWith("custom-palette-")
+  return palette.id.startsWith(CUSTOM_PALETTE_ID_PREFIX)
 }
 
 function requestDeletePalette(paletteId: string) {

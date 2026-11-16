@@ -20,9 +20,11 @@ import {
 } from "@/lib/custom-color"
 import {
   buildInlineColorFieldBackground,
+  clamp01,
   hexToHsvColor,
   hsvToHexColor,
 } from "@/lib/inline-color-picker"
+import { bindWindowListeners } from "@/composables/use-window-listener"
 import {
   persistCurrentStyles,
   previewPaletteColor,
@@ -147,8 +149,8 @@ export function useInlinePaletteColorSession(options: UseInlinePaletteColorSessi
       return
     }
 
-    const saturation = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
-    const value = 1 - Math.min(1, Math.max(0, (clientY - rect.top) / rect.height))
+    const saturation = clamp01((clientX - rect.left) / rect.width)
+    const value = 1 - clamp01((clientY - rect.top) / rect.height)
     const nextColor = hsvToHexColor({
       h: inlineHue.value,
       s: saturation,
@@ -179,14 +181,11 @@ export function useInlinePaletteColorSession(options: UseInlinePaletteColorSessi
     }
 
     if (typeof window !== "undefined") {
-      window.addEventListener("pointermove", handlePointerMove)
-      window.addEventListener("pointerup", handlePointerUp, { once: true })
-      window.addEventListener("pointercancel", handlePointerUp, { once: true })
-      stopInlineColorFieldTrackingListener = () => {
-        window.removeEventListener("pointermove", handlePointerMove)
-        window.removeEventListener("pointerup", handlePointerUp)
-        window.removeEventListener("pointercancel", handlePointerUp)
-      }
+      stopInlineColorFieldTrackingListener = bindWindowListeners([
+        { handler: handlePointerMove, type: "pointermove" },
+        { handler: handlePointerUp, once: true, type: "pointerup" },
+        { handler: handlePointerUp, once: true, type: "pointercancel" },
+      ])
     }
   }
 

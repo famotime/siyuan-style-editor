@@ -6,6 +6,7 @@ import {
   updateFeatureConfig,
   updateTargetBackgroundColor,
   updateTargetColor,
+  updateTargetEnabled,
 } from "@/lib/style-editor-state"
 
 describe("style editor state", () => {
@@ -137,6 +138,19 @@ describe("style editor state", () => {
     expect(resetState.profile.codeBlock.backgroundColor).toBe("var(--style-editor-code-block-bg)")
     expect(resetState.featureProfile.imageRadius.enabled).toBe(false)
     expect(resetState.featureProfile.imageRadius.values.radius).toBe(6)
+  })
+
+  it("toggles only the chosen target enabled flag and keeps its other values", () => {
+    const stateWithColor = updateTargetColor(createDefaultEditorState(), "heading2", "#224488")
+
+    const disabledState = updateTargetEnabled(stateWithColor, "heading2", false)
+    expect(disabledState.profile.heading2.enabled).toBe(false)
+    expect(disabledState.profile.heading2.color).toBe("#224488")
+    expect(disabledState.profile.heading1.enabled).toBe(false)
+
+    const enabledState = updateTargetEnabled(createDefaultEditorState(), "mark", true)
+    expect(enabledState.profile.mark.enabled).toBe(true)
+    expect(enabledState.profile.heading2.enabled).toBe(false)
   })
 
   it("swaps colors between any two target channels", () => {

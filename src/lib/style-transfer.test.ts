@@ -1,5 +1,4 @@
 import {
-  parseImportedStyleProfile,
   parseImportedStyleTransfer,
   serializeStyleProfileTransfer,
 } from "@/lib/style-transfer"
@@ -78,13 +77,13 @@ describe("style transfer", () => {
       }),
     }))
 
-    expect(parseImportedStyleProfile(JSON.stringify({
+    expect(parseImportedStyleTransfer(JSON.stringify({
       profile: {
         mark: {
           backgroundColor: "#fff2a8",
         },
       },
-    })).mark.backgroundColor).toBe("#fff2a8")
+    })).profile.mark.backgroundColor).toBe("#fff2a8")
   })
 
   it("keeps legacy imports without featureProfile backwards compatible", () => {
@@ -102,9 +101,9 @@ describe("style transfer", () => {
   })
 
   it("rejects invalid local config payloads", () => {
-    expect(() => parseImportedStyleProfile("{")).toThrow("样式配置文件不是有效的 JSON。")
-    expect(() => parseImportedStyleProfile(JSON.stringify({}))).toThrow("样式配置文件缺少可导入的 profile 字段。")
-    expect(() => parseImportedStyleProfile(JSON.stringify({
+    expect(() => parseImportedStyleTransfer("{")).toThrow("样式配置文件不是有效的 JSON。")
+    expect(() => parseImportedStyleTransfer(JSON.stringify({}))).toThrow("样式配置文件缺少可导入的 profile 字段。")
+    expect(() => parseImportedStyleTransfer(JSON.stringify({
       type: "unknown",
     }))).toThrow("样式配置文件格式不受支持。")
   })

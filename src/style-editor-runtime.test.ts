@@ -16,6 +16,7 @@ import {
   selectChannel,
   selectTarget,
   swapTargetChannelValues,
+  t,
   teardownRuntime,
   updateFeatureStyle,
 } from "@/style-editor-runtime"
@@ -532,5 +533,12 @@ describe("style editor runtime", () => {
     expect(runtimeState.selectedChannel).toBe("color")
     expect(runtimeState.profile.heading1.color).toBe("var(--style-editor-heading1-color)")
     expect(document.getElementById("siyuan-style-editor-style")).toBeNull()
+  })
+
+  it("escapes regex metacharacters in translation replacement keys", () => {
+    expect(t("meta", { "k(": "v" }, "A {k(} B")).toBe("A v B")
+    expect(t("meta", { "k[0]": "v" }, "A {k[0]} B")).toBe("A v B")
+    expect(t("meta", { "k$": "v" }, "A {k$} B")).toBe("A v B")
+    expect(t("meta", { count: "3" }, "共 {count} 项")).toBe("共 3 项")
   })
 })

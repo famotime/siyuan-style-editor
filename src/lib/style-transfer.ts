@@ -127,7 +127,3 @@ export function parseImportedStyleTransfer(raw: string): {
     profile: normalizeStyleProfile(parsed.profile),
   }
 }
-
-export function parseImportedStyleProfile(raw: string): StyleProfile {
-  return parseImportedStyleTransfer(raw).profile
-}

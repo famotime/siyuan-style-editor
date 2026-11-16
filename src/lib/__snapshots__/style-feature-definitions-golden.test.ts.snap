@@ -1,0 +1,4644 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > backlinkSticky / controls 1`] = `
+[
+  {
+    "key": "backgroundColor",
+    "label": "固定背景",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > backlinkSticky / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--b3-list-hover, #363636)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockFullWidth / controls 1`] = `
+[
+  {
+    "key": "fullWidthImg",
+    "label": "图片全宽",
+    "options": [
+      {
+        "label": "是",
+        "value": "yes",
+      },
+      {
+        "label": "否",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "fullWidthTable",
+    "label": "表格全宽",
+    "options": [
+      {
+        "label": "是",
+        "value": "yes",
+      },
+      {
+        "label": "否",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "fullWidthDb",
+    "label": "数据库全宽",
+    "options": [
+      {
+        "label": "是",
+        "value": "yes",
+      },
+      {
+        "label": "否",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockFullWidth / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "fullWidthDb": "no",
+    "fullWidthImg": "no",
+    "fullWidthTable": "no",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockGutterAnim / controls 1`] = `
+[
+  {
+    "key": "iconColor",
+    "label": "图标颜色",
+    "type": "color",
+  },
+  {
+    "key": "hoverBg",
+    "label": "悬停背景",
+    "type": "color",
+  },
+  {
+    "key": "transitionMs",
+    "label": "过渡时间",
+    "max": 400,
+    "min": 0,
+    "step": 50,
+    "type": "number",
+    "unit": "ms",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockGutterAnim / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "hoverBg": "var(--style-editor-toolbar-hover-bg)",
+    "iconColor": "var(--style-editor-list-marker)",
+    "iconRadius": 4,
+    "transitionMs": 150,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockRefStyle / controls 1`] = `
+[
+  {
+    "key": "styleMode",
+    "label": "引用风格",
+    "options": [
+      {
+        "label": "经典下划线",
+        "value": "classic",
+      },
+      {
+        "label": "高亮胶囊",
+        "value": "capsule",
+      },
+      {
+        "label": "左侧色条胶囊",
+        "value": "leftBar",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "color",
+    "label": "链接字色",
+    "type": "color",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "lineColor",
+    "label": "底线颜色",
+    "type": "color",
+  },
+  {
+    "key": "lineStyle",
+    "label": "底线线型",
+    "options": [
+      {
+        "label": "实线",
+        "value": "solid",
+      },
+      {
+        "label": "虚线",
+        "value": "dashed",
+      },
+      {
+        "label": "点线",
+        "value": "dotted",
+      },
+      {
+        "label": "无",
+        "value": "none",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "lineThickness",
+    "label": "底线粗细",
+    "max": 4,
+    "min": 0,
+    "step": 0.5,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "borderLeftColor",
+    "label": "色条颜色",
+    "type": "color",
+  },
+  {
+    "key": "borderLeftWidth",
+    "label": "色条粗细",
+    "max": 6,
+    "min": 1,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "fontWeight",
+    "label": "字重",
+    "max": 900,
+    "min": 400,
+    "step": 100,
+    "type": "number",
+  },
+  {
+    "key": "hidePluginIcon",
+    "label": "隐藏插件图标",
+    "options": [
+      {
+        "label": "否",
+        "value": "no",
+      },
+      {
+        "label": "是",
+        "value": "yes",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockRefStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-link-bg)",
+    "borderLeftColor": "var(--b3-theme-primary)",
+    "borderLeftWidth": 2,
+    "color": "var(--style-editor-link-color)",
+    "fontWeight": 600,
+    "hidePluginIcon": "no",
+    "lineColor": "var(--style-editor-link-line)",
+    "lineStyle": "solid",
+    "lineThickness": 1,
+    "offset": 2,
+    "radius": 3,
+    "styleMode": "classic",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockquoteFrame / controls 1`] = `
+[
+  {
+    "key": "styleMode",
+    "label": "块风格",
+    "options": [
+      {
+        "label": "默认竖线",
+        "value": "default",
+      },
+      {
+        "label": "便利贴(黄)",
+        "value": "sticky-yellow",
+      },
+      {
+        "label": "便利贴(红)",
+        "value": "sticky-red",
+      },
+      {
+        "label": "便利贴(蓝)",
+        "value": "sticky-blue",
+      },
+      {
+        "label": "便利贴(绿)",
+        "value": "sticky-green",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "底色",
+    "type": "color",
+  },
+  {
+    "key": "color",
+    "label": "字色",
+    "type": "color",
+  },
+  {
+    "key": "borderColor",
+    "label": "外框色",
+    "type": "color",
+  },
+  {
+    "key": "lineColor",
+    "label": "竖线色",
+    "type": "color",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 18,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "padding",
+    "label": "内边距",
+    "max": 24,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "marginY",
+    "label": "上下间距",
+    "max": 24,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > blockquoteFrame / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-blockquote-bg)",
+    "borderColor": "transparent",
+    "color": "var(--style-editor-blockquote-color)",
+    "lineColor": "var(--style-editor-blockquote-line)",
+    "marginY": 4,
+    "padding": 4,
+    "radius": 0,
+    "styleMode": "default",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > boldTextStyle / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "文字颜色",
+    "type": "color",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "borderRadius",
+    "label": "背景圆角",
+    "max": 8,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "fontWeight",
+    "label": "字重",
+    "max": 900,
+    "min": 600,
+    "step": 100,
+    "type": "number",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > boldTextStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-mark-bg)",
+    "borderRadius": 3,
+    "color": "var(--style-editor-mark-color)",
+    "fontWeight": 700,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > breadcrumbStyle / controls 1`] = `
+[
+  {
+    "key": "textColor",
+    "label": "文字颜色",
+    "type": "color",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "separatorColor",
+    "label": "分隔符颜色",
+    "type": "color",
+  },
+  {
+    "key": "fontSize",
+    "label": "字号",
+    "max": 14,
+    "min": 11,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > breadcrumbStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "transparent",
+    "fontSize": 12,
+    "separatorColor": "var(--style-editor-list-marker)",
+    "textColor": "var(--style-editor-list-color)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > codeBlockStyle / controls 1`] = `
+[
+  {
+    "key": "borderRadius",
+    "label": "圆角",
+    "max": 16,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "headerBgColor",
+    "label": "信息栏背景",
+    "type": "color",
+  },
+  {
+    "key": "macButtons",
+    "label": "Mac风格按钮",
+    "options": [
+      {
+        "label": "显示",
+        "value": "yes",
+      },
+      {
+        "label": "隐藏",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "maxHeight",
+    "label": "最大高度",
+    "options": [
+      {
+        "label": "不限",
+        "value": "none",
+      },
+      {
+        "label": "300px",
+        "value": "300px",
+      },
+      {
+        "label": "500px",
+        "value": "500px",
+      },
+      {
+        "label": "70vh",
+        "value": "70vh",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "lineNumberColor",
+    "label": "行号颜色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > codeBlockStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-code-block-bg)",
+    "borderRadius": 6,
+    "headerBgColor": "var(--style-editor-code-block-header-bg)",
+    "lineNumberColor": "var(--style-editor-code-block-color)",
+    "macButtons": "no",
+    "maxHeight": "none",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > customThemePrimary / controls 1`] = `
+[
+  {
+    "key": "primaryColor",
+    "label": "主题主色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > customThemePrimary / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "primaryColor": "#0969da",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > dialogStyle / controls 1`] = `
+[
+  {
+    "key": "borderRadius",
+    "label": "圆角",
+    "max": 24,
+    "min": 0,
+    "slider": true,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "backdropBlur",
+    "label": "背景模糊",
+    "max": 20,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "backdropOpacity",
+    "label": "遮罩透明度",
+    "max": 1,
+    "min": 0,
+    "step": 0.05,
+    "type": "number",
+  },
+  {
+    "key": "shadowIntensity",
+    "label": "阴影",
+    "options": [
+      {
+        "label": "无",
+        "value": "none",
+      },
+      {
+        "label": "轻",
+        "value": "light",
+      },
+      {
+        "label": "重",
+        "value": "heavy",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > dialogStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backdropBlur": 8,
+    "backdropOpacity": 0.5,
+    "borderRadius": 12,
+    "shadowIntensity": "light",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > docTag / controls 1`] = `
+[
+  {
+    "key": "secondaryBg",
+    "label": "标签底色",
+    "type": "color",
+  },
+  {
+    "key": "secondaryColor",
+    "label": "标签字色",
+    "type": "color",
+  },
+  {
+    "key": "radius",
+    "label": "标签圆角",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > docTag / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "fontSize": 90,
+    "fontWeight": 600,
+    "paddingX": 8,
+    "radius": 6,
+    "secondaryBg": "var(--style-editor-tag-bg)",
+    "secondaryColor": "var(--style-editor-tag-color)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > docTreeColorBlocks / controls 1`] = `
+[
+  {
+    "key": "color1",
+    "label": "分组色 1",
+    "type": "color",
+  },
+  {
+    "key": "color2",
+    "label": "分组色 2",
+    "type": "color",
+  },
+  {
+    "key": "color3",
+    "label": "分组色 3",
+    "type": "color",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > docTreeColorBlocks / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "color1": "var(--style-editor-tree-block-1)",
+    "color2": "var(--style-editor-tree-block-2)",
+    "color3": "var(--style-editor-tree-block-3)",
+    "color4": "var(--style-editor-tree-block-4)",
+    "color5": "var(--style-editor-tree-block-5)",
+    "gapY": 4,
+    "radius": 6,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > dockStyle / controls 1`] = `
+[
+  {
+    "key": "iconSize",
+    "label": "图标大小",
+    "max": 28,
+    "min": 16,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "hoverColor",
+    "label": "悬停颜色",
+    "type": "color",
+  },
+  {
+    "key": "width",
+    "label": "宽度",
+    "max": 56,
+    "min": 36,
+    "slider": true,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "splitSeparate",
+    "label": "侧边栏分离",
+    "options": [
+      {
+        "label": "关闭",
+        "value": "no",
+      },
+      {
+        "label": "开启",
+        "value": "yes",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > dockStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "transparent",
+    "hoverColor": "var(--style-editor-card-bg-soft)",
+    "iconSize": 20,
+    "splitSeparate": "no",
+    "width": 40,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > documentTitle / controls 1`] = `
+[
+  {
+    "key": "fontSize",
+    "label": "标题字号",
+    "max": 64,
+    "min": 20,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "placeholderColor",
+    "label": "占位提示色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > documentTitle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "fontSize": 40,
+    "placeholderColor": "oklch(32.89% 0.0107 91.66 / 0.5)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > editorBackground / controls 1`] = `
+[
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > editorBackground / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-editor-bg)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > editorWidth / controls 1`] = `
+[
+  {
+    "key": "maxWidth",
+    "label": "最大宽度",
+    "max": 2000,
+    "min": 600,
+    "slider": true,
+    "step": 10,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "fullWidth",
+    "label": "全宽模式",
+    "options": [
+      {
+        "label": "否",
+        "value": "no",
+      },
+      {
+        "label": "是",
+        "value": "yes",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "contentPadding",
+    "label": "内容边距",
+    "max": 60,
+    "min": 0,
+    "slider": true,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > editorWidth / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "contentPadding": 16,
+    "fullWidth": "no",
+    "maxWidth": 900,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > emojiPanel / controls 1`] = `
+[
+  {
+    "key": "panelWidth",
+    "label": "面板宽度",
+    "max": 480,
+    "min": 280,
+    "step": 10,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "itemSize",
+    "label": "表情尺寸",
+    "max": 48,
+    "min": 24,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "emojiFontSize",
+    "label": "字号",
+    "max": 36,
+    "min": 14,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > emojiPanel / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "emojiFontSize": 22,
+    "itemSize": 32,
+    "panelWidth": 366,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > foldedBlockStyle / controls 1`] = `
+[
+  {
+    "key": "borderColor",
+    "label": "边框色",
+    "type": "color",
+  },
+  {
+    "key": "borderWidth",
+    "label": "边框粗细",
+    "max": 4,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "opacity",
+    "label": "透明度",
+    "max": 1,
+    "min": 0.2,
+    "step": 0.05,
+    "type": "number",
+  },
+  {
+    "key": "hoverOpacity",
+    "label": "悬停透明度",
+    "max": 1,
+    "min": 0.2,
+    "step": 0.05,
+    "type": "number",
+  },
+  {
+    "key": "shadowColor",
+    "label": "阴影色",
+    "type": "color",
+  },
+  {
+    "key": "shadowSize",
+    "label": "阴影范围",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 18,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > foldedBlockStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "borderColor": "var(--style-editor-card-border)",
+    "borderWidth": 1,
+    "hoverOpacity": 1,
+    "opacity": 0.85,
+    "radius": 5,
+    "shadowColor": "var(--style-editor-card-shadow)",
+    "shadowSize": 6,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > fontFamily / controls 1`] = `
+[
+  {
+    "key": "mainFont",
+    "label": "正文字体",
+    "options": [
+      {
+        "label": "默认",
+        "value": "default",
+      },
+      {
+        "label": "思源黑体",
+        "value": "sourceHanSans",
+      },
+      {
+        "label": "苹方",
+        "value": "pingfang",
+      },
+      {
+        "label": "微软雅黑",
+        "value": "yahei",
+      },
+      {
+        "label": "霞鹜文楷",
+        "value": "lxgw",
+      },
+      {
+        "label": "自定义",
+        "value": "custom",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "codeFont",
+    "label": "代码字体",
+    "options": [
+      {
+        "label": "默认",
+        "value": "default",
+      },
+      {
+        "label": "JetBrains Mono",
+        "value": "jetbrains",
+      },
+      {
+        "label": "Fira Code",
+        "value": "firaCode",
+      },
+      {
+        "label": "Cascadia Code",
+        "value": "cascadia",
+      },
+      {
+        "label": "自定义",
+        "value": "custom",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "customMainFont",
+    "label": "自定义正文字体",
+    "placeholder": "字体名称",
+    "type": "text",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > fontFamily / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "codeFont": "default",
+    "customMainFont": "",
+    "mainFont": "default",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headImage / controls 1`] = `
+[
+  {
+    "key": "radius",
+    "label": "图片圆角",
+    "max": 24,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "marginX",
+    "label": "左右边距",
+    "max": 24,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headImage / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "marginX": 5,
+    "radius": 6,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headingDecoration / controls 1`] = `
+[
+  {
+    "key": "mode",
+    "label": "装饰风格",
+    "options": [
+      {
+        "label": "左竖线",
+        "value": "leftBar",
+      },
+      {
+        "label": "下划线",
+        "value": "underline",
+      },
+      {
+        "label": "层级几何指示点",
+        "value": "levelDots",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "barColor",
+    "label": "装饰颜色",
+    "type": "color",
+  },
+  {
+    "key": "barWidth",
+    "label": "线条粗细",
+    "max": 8,
+    "min": 1,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "fontWeight",
+    "label": "字重",
+    "max": 900,
+    "min": 400,
+    "step": 100,
+    "type": "number",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headingDecoration / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "barColor": "var(--b3-theme-primary)",
+    "barOffset": 12,
+    "barRadius": 2,
+    "barWidth": 3,
+    "fontWeight": 600,
+    "mode": "leftBar",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headingNumbering / controls 1`] = `[]`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headingNumbering / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {},
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headingSpacing / controls 1`] = `
+[
+  {
+    "key": "headingTopMargin",
+    "label": "标题上间距",
+    "max": 2,
+    "min": 0,
+    "step": 0.1,
+    "type": "number",
+  },
+  {
+    "key": "headingBottomMargin",
+    "label": "标题下间距",
+    "max": 2,
+    "min": 0,
+    "step": 0.1,
+    "type": "number",
+  },
+  {
+    "key": "embedVerticalMargin",
+    "label": "嵌入块间距",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "blockquoteBottomMargin",
+    "label": "引述块标题下距",
+    "max": 2,
+    "min": 0,
+    "step": 0.1,
+    "type": "number",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > headingSpacing / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "blockquoteBottomMargin": 0.1,
+    "embedVerticalMargin": 2,
+    "headingBottomMargin": 0.1,
+    "headingTopMargin": 0.5,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > hrStyle / controls 1`] = `
+[
+  {
+    "key": "mode",
+    "label": "风格",
+    "options": [
+      {
+        "label": "渐变",
+        "value": "gradient",
+      },
+      {
+        "label": "线条",
+        "value": "line",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "colorLeft",
+    "label": "左色/线色",
+    "type": "color",
+  },
+  {
+    "key": "colorRight",
+    "label": "右色",
+    "type": "color",
+  },
+  {
+    "key": "lineStyle",
+    "label": "线型",
+    "options": [
+      {
+        "label": "实线",
+        "value": "solid",
+      },
+      {
+        "label": "虚线",
+        "value": "dashed",
+      },
+      {
+        "label": "点线",
+        "value": "dotted",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "height",
+    "label": "粗细",
+    "max": 6,
+    "min": 1,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > hrStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "colorLeft": "rgba(255, 110, 196, 0.5)",
+    "colorRight": "rgba(120, 115, 245, 0.5)",
+    "height": 2,
+    "lineStyle": "dashed",
+    "mode": "gradient",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > imageRadius / controls 1`] = `
+[
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 24,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "shadow",
+    "label": "阴影",
+    "options": [
+      {
+        "label": "无",
+        "value": "none",
+      },
+      {
+        "label": "轻微",
+        "value": "light",
+      },
+      {
+        "label": "中等",
+        "value": "medium",
+      },
+      {
+        "label": "强",
+        "value": "strong",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "hoverZoom",
+    "label": "悬停效果",
+    "options": [
+      {
+        "label": "无",
+        "value": "none",
+      },
+      {
+        "label": "轻微放大",
+        "value": "slight",
+      },
+      {
+        "label": "明显放大",
+        "value": "obvious",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "maxWidth",
+    "label": "最大宽度",
+    "options": [
+      {
+        "label": "自动",
+        "value": "auto",
+      },
+      {
+        "label": "80%",
+        "value": "80%",
+      },
+      {
+        "label": "100%",
+        "value": "100%",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "borderColor",
+    "label": "边框颜色",
+    "type": "color",
+  },
+  {
+    "key": "borderWidth",
+    "label": "边框粗细",
+    "max": 4,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > imageRadius / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "borderColor": "var(--style-editor-card-border)",
+    "borderWidth": 0,
+    "hoverZoom": "none",
+    "maxWidth": "auto",
+    "radius": 6,
+    "shadow": "none",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > inlineCodeStyle / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "字色",
+    "type": "color",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "paddingX",
+    "label": "水平内边距",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "paddingY",
+    "label": "垂直内边距",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > inlineCodeStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-inline-code-bg)",
+    "color": "var(--style-editor-inline-code-color)",
+    "paddingX": 4,
+    "paddingY": 2,
+    "radius": 4,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > inlineTagStyle / controls 1`] = `
+[
+  {
+    "key": "backgroundColor",
+    "label": "标签底色",
+    "type": "color",
+  },
+  {
+    "key": "color",
+    "label": "标签字色",
+    "type": "color",
+  },
+  {
+    "key": "radius",
+    "label": "圆角半径",
+    "max": 20,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "fontSize",
+    "label": "字号比例",
+    "max": 100,
+    "min": 70,
+    "slider": true,
+    "step": 5,
+    "type": "number",
+    "unit": "%",
+  },
+  {
+    "key": "showHash",
+    "label": "显示 '#' 符号",
+    "options": [
+      {
+        "label": "显示",
+        "value": "yes",
+      },
+      {
+        "label": "隐藏",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "position",
+    "label": "布局对齐",
+    "options": [
+      {
+        "label": "常规行内",
+        "value": "inline",
+      },
+      {
+        "label": "靠右悬浮",
+        "value": "floatEnd",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > inlineTagStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--b3-theme-primary-light)",
+    "color": "var(--b3-theme-primary)",
+    "fontSize": 90,
+    "position": "inline",
+    "radius": 4,
+    "showHash": "yes",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > layoutCompactMode / controls 1`] = `
+[
+  {
+    "key": "density",
+    "label": "紧凑密度",
+    "options": [
+      {
+        "label": "无",
+        "value": "none",
+      },
+      {
+        "label": "温和",
+        "value": "moderate",
+      },
+      {
+        "label": "紧凑",
+        "value": "compact",
+      },
+      {
+        "label": "极致",
+        "value": "extreme",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "fontScale",
+    "label": "字号缩放",
+    "options": [
+      {
+        "label": "100%",
+        "value": "100",
+      },
+      {
+        "label": "98%",
+        "value": "98",
+      },
+      {
+        "label": "96%",
+        "value": "96",
+      },
+      {
+        "label": "94%",
+        "value": "94",
+      },
+      {
+        "label": "92%",
+        "value": "92",
+      },
+      {
+        "label": "90%",
+        "value": "90",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "sidebar",
+    "label": "侧边栏应用",
+    "options": [
+      {
+        "label": "开启",
+        "value": "yes",
+      },
+      {
+        "label": "关闭",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "editor",
+    "label": "编辑区应用",
+    "options": [
+      {
+        "label": "开启",
+        "value": "yes",
+      },
+      {
+        "label": "关闭",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "tabs",
+    "label": "页签栏应用",
+    "options": [
+      {
+        "label": "开启",
+        "value": "yes",
+      },
+      {
+        "label": "关闭",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "dialogs",
+    "label": "对话框应用",
+    "options": [
+      {
+        "label": "开启",
+        "value": "yes",
+      },
+      {
+        "label": "关闭",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "controls",
+    "label": "控制项应用",
+    "options": [
+      {
+        "label": "开启",
+        "value": "yes",
+      },
+      {
+        "label": "关闭",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > layoutCompactMode / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "controls": "yes",
+    "density": "compact",
+    "dialogs": "yes",
+    "editor": "yes",
+    "fontScale": "96",
+    "sidebar": "yes",
+    "tabs": "yes",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > linkIcons / controls 1`] = `
+[
+  {
+    "key": "internalIcon",
+    "label": "内链前缀",
+    "placeholder": "如 🔗",
+    "type": "text",
+  },
+  {
+    "key": "externalIcon",
+    "label": "外链前缀",
+    "placeholder": "如 🌐",
+    "type": "text",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > linkIcons / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "externalIcon": "🌐",
+    "internalIcon": "🔗",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > linkStyle / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "链接字色",
+    "type": "color",
+  },
+  {
+    "key": "hoverColor",
+    "label": "悬停字色",
+    "type": "color",
+  },
+  {
+    "key": "lineStyle",
+    "label": "下划线",
+    "options": [
+      {
+        "label": "实线",
+        "value": "solid",
+      },
+      {
+        "label": "虚线",
+        "value": "dashed",
+      },
+      {
+        "label": "点线",
+        "value": "dotted",
+      },
+      {
+        "label": "无",
+        "value": "none",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > linkStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "color": "var(--style-editor-link-color)",
+    "hoverColor": "var(--style-editor-link-hover)",
+    "lineStyle": "dashed",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > listBulletLine / controls 1`] = `
+[
+  {
+    "key": "lineColor",
+    "label": "线条颜色",
+    "type": "color",
+  },
+  {
+    "key": "lineWidth",
+    "label": "线条粗细",
+    "max": 4,
+    "min": 1,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > listBulletLine / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "leftOffset": -18,
+    "lineColor": "var(--style-editor-list-line)",
+    "lineWidth": 2,
+    "radius": 8,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > listMarkerStyle / controls 1`] = `
+[
+  {
+    "key": "unorderedStyle",
+    "label": "无序标记",
+    "options": [
+      {
+        "label": "默认",
+        "value": "default",
+      },
+      {
+        "label": "实心圆",
+        "value": "disc",
+      },
+      {
+        "label": "空心圆",
+        "value": "circle",
+      },
+      {
+        "label": "方块",
+        "value": "square",
+      },
+      {
+        "label": "多级自动循环",
+        "value": "cycle",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "orderedStyle",
+    "label": "有序编号",
+    "options": [
+      {
+        "label": "默认",
+        "value": "default",
+      },
+      {
+        "label": "罗马数字",
+        "value": "upper-roman",
+      },
+      {
+        "label": "中文数字",
+        "value": "cjk",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "itemSpacing",
+    "label": "列表项间距",
+    "max": 12,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "indentation",
+    "label": "嵌套缩进",
+    "max": 40,
+    "min": 16,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > listMarkerStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "indentation": 24,
+    "itemSpacing": 4,
+    "orderedStyle": "default",
+    "unorderedStyle": "default",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > markStyle / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "字色",
+    "type": "color",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "emphasisColor",
+    "label": "底线颜色",
+    "type": "color",
+  },
+  {
+    "key": "emphasisThickness",
+    "label": "底线粗细",
+    "max": 5,
+    "min": 0,
+    "step": 0.5,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "lineStyle",
+    "label": "底线线型",
+    "options": [
+      {
+        "label": "实线",
+        "value": "solid",
+      },
+      {
+        "label": "虚线",
+        "value": "dashed",
+      },
+      {
+        "label": "点线",
+        "value": "dotted",
+      },
+      {
+        "label": "波浪",
+        "value": "wavy",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > markStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-mark-bg)",
+    "color": "var(--b3-theme-on-background)",
+    "emphasisColor": "var(--style-editor-mark-line)",
+    "emphasisThickness": 2,
+    "lineStyle": "solid",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > memoStyle / controls 1`] = `
+[
+  {
+    "key": "styleMode",
+    "label": "备注风格",
+    "options": [
+      {
+        "label": "精致卡片",
+        "value": "card",
+      },
+      {
+        "label": "气泡胶囊",
+        "value": "bubble",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "memoColor",
+    "label": "备注底色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > memoStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "memoColor": "var(--b3-theme-primary-lighter, #ffbd2e)",
+    "styleMode": "card",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > orderedListStyle / controls 1`] = `
+[
+  {
+    "key": "showBackground",
+    "label": "悬停背景",
+    "options": [
+      {
+        "label": "显示",
+        "value": "yes",
+      },
+      {
+        "label": "隐藏",
+        "value": "no",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "hoverBgColor",
+    "label": "悬停底色",
+    "type": "color",
+  },
+  {
+    "key": "width",
+    "label": "序号宽度",
+    "max": 40,
+    "min": 16,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > orderedListStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "hoverBgColor": "oklch(55% 0.05 250 / 0.3)",
+    "paddingX": 2,
+    "paddingY": 3,
+    "showBackground": "no",
+    "width": 24,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > outlineNumber / controls 1`] = `
+[
+  {
+    "key": "h1Color",
+    "label": "H1 颜色",
+    "type": "color",
+  },
+  {
+    "key": "h2Color",
+    "label": "H2 颜色",
+    "type": "color",
+  },
+  {
+    "key": "h3Color",
+    "label": "H3 颜色",
+    "type": "color",
+  },
+  {
+    "key": "fontSize",
+    "label": "字号",
+    "max": 16,
+    "min": 8,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > outlineNumber / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "fontSize": 10,
+    "h1Color": "var(--style-editor-outline-h1)",
+    "h2Color": "var(--style-editor-outline-h2)",
+    "h3Color": "var(--style-editor-outline-h3)",
+    "h4Color": "var(--style-editor-outline-h4)",
+    "h5Color": "var(--style-editor-outline-h5)",
+    "h6Color": "var(--style-editor-outline-h6)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > paragraphHover / controls 1`] = `
+[
+  {
+    "key": "backgroundColor",
+    "label": "悬停底色",
+    "type": "color",
+  },
+  {
+    "key": "shadowSize",
+    "label": "阴影范围",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "transitionMs",
+    "label": "过渡时间",
+    "max": 800,
+    "min": 0,
+    "step": 50,
+    "type": "number",
+    "unit": "ms",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > paragraphHover / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "var(--style-editor-card-bg-soft)",
+    "shadowSize": 3,
+    "shadowStrength": 0.05,
+    "transitionMs": 350,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > refSearchMenu / controls 1`] = `
+[
+  {
+    "key": "hoverBgColor",
+    "label": "悬停背景",
+    "type": "color",
+  },
+  {
+    "key": "radius",
+    "label": "容器圆角",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "itemMinHeight",
+    "label": "选项最小高度",
+    "max": 72,
+    "min": 28,
+    "step": 4,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "maxHeight",
+    "label": "最大高度",
+    "options": [
+      {
+        "label": "40vh",
+        "value": "40vh",
+      },
+      {
+        "label": "50vh",
+        "value": "50vh",
+      },
+      {
+        "label": "60vh",
+        "value": "60vh",
+      },
+      {
+        "label": "70vh",
+        "value": "70vh",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > refSearchMenu / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "hoverBgColor": "var(--style-editor-card-bg-soft)",
+    "itemMarginY": 5,
+    "itemMinHeight": 45,
+    "itemRadius": 6,
+    "maxHeight": "50vh",
+    "paddingX": 5,
+    "paddingY": 2,
+    "radius": 6,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > refcountBadge / controls 1`] = `
+[
+  {
+    "key": "backgroundColor",
+    "label": "徽标底色",
+    "type": "color",
+  },
+  {
+    "key": "color",
+    "label": "徽标字色",
+    "type": "color",
+  },
+  {
+    "key": "hoverBackgroundColor",
+    "label": "悬停底色",
+    "type": "color",
+  },
+  {
+    "key": "glowColor",
+    "label": "发光颜色",
+    "type": "color",
+  },
+  {
+    "key": "size",
+    "label": "徽标尺寸",
+    "max": 28,
+    "min": 12,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "radius",
+    "label": "圆角",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "hoverScale",
+    "label": "悬停放大",
+    "max": 1.8,
+    "min": 1,
+    "step": 0.05,
+    "type": "number",
+  },
+  {
+    "key": "glowSize",
+    "label": "发光强度",
+    "max": 24,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > refcountBadge / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "oklch(50% 0.02 250 / 0.3)",
+    "color": "oklch(75% 0 0)",
+    "glowColor": "oklch(70% 0.25 250 / 1)",
+    "glowSize": 10,
+    "hoverBackgroundColor": "oklch(60% 0.15 250 / 0.95)",
+    "hoverColor": "white",
+    "hoverScale": 1.15,
+    "radius": 3,
+    "size": 16,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > referencedBlockCorners / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "角标颜色",
+    "type": "color",
+  },
+  {
+    "key": "cornerLength",
+    "label": "角标长度",
+    "max": 32,
+    "min": 4,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "strokeWidth",
+    "label": "线条粗细",
+    "max": 6,
+    "min": 1,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > referencedBlockCorners / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "color": "rgba(255, 165, 0, 0.7)",
+    "cornerLength": 12,
+    "strokeWidth": 2,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > scrollbarStyle / controls 1`] = `
+[
+  {
+    "key": "width",
+    "label": "宽度",
+    "max": 16,
+    "min": 4,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "trackColor",
+    "label": "轨道颜色",
+    "type": "color",
+  },
+  {
+    "key": "thumbColor",
+    "label": "滑块颜色",
+    "type": "color",
+  },
+  {
+    "key": "thumbRadius",
+    "label": "滑块圆角",
+    "max": 8,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "hideMode",
+    "label": "显示模式",
+    "options": [
+      {
+        "label": "始终显示",
+        "value": "always",
+      },
+      {
+        "label": "悬停显示",
+        "value": "hover",
+      },
+      {
+        "label": "完全隐藏",
+        "value": "hidden",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > scrollbarStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "hideMode": "always",
+    "thumbColor": "var(--style-editor-scrollbar-thumb)",
+    "thumbRadius": 4,
+    "trackColor": "transparent",
+    "width": 6,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > searchHighlight / controls 1`] = `
+[
+  {
+    "key": "matchColor",
+    "label": "匹配项颜色",
+    "type": "color",
+  },
+  {
+    "key": "currentMatchColor",
+    "label": "当前匹配颜色",
+    "type": "color",
+  },
+  {
+    "key": "matchBorderRadius",
+    "label": "高亮圆角",
+    "max": 4,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > searchHighlight / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "currentMatchColor": "var(--style-editor-search-current-bg)",
+    "matchBorderRadius": 2,
+    "matchColor": "var(--style-editor-search-match-bg)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > searchPanel / controls 1`] = `
+[
+  {
+    "key": "itemMargin",
+    "label": "条目间距",
+    "max": 16,
+    "min": 0,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "lineHeight",
+    "label": "行高",
+    "max": 2,
+    "min": 1,
+    "step": 0.1,
+    "type": "number",
+  },
+  {
+    "key": "groupRadius",
+    "label": "分组圆角",
+    "max": 12,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > searchPanel / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "groupRadius": 4,
+    "itemMargin": 6,
+    "itemPaddingBottom": 20,
+    "lineHeight": 1.3,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > slashMenu / controls 1`] = `
+[
+  {
+    "key": "radius",
+    "label": "菜单圆角",
+    "max": 16,
+    "min": 0,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "columnWidth",
+    "label": "列宽度",
+    "max": 280,
+    "min": 120,
+    "step": 20,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "textColor",
+    "label": "文字颜色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > slashMenu / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "columnWidth": 180,
+    "minWidth": "50vw",
+    "padding": 5,
+    "radius": 6,
+    "textColor": "rgb(240, 240, 240)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > strikethroughStyle / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "删除线色",
+    "type": "color",
+  },
+  {
+    "key": "lineStyle",
+    "label": "线型",
+    "options": [
+      {
+        "label": "实线",
+        "value": "solid",
+      },
+      {
+        "label": "虚线",
+        "value": "dashed",
+      },
+      {
+        "label": "点线",
+        "value": "dotted",
+      },
+      {
+        "label": "波浪",
+        "value": "wavy",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "thickness",
+    "label": "粗细",
+    "max": 5,
+    "min": 0.5,
+    "step": 0.5,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > strikethroughStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "color": "red",
+    "lineStyle": "solid",
+    "thickness": 1,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > tabBarStyle / controls 1`] = `
+[
+  {
+    "key": "height",
+    "label": "页签高度",
+    "max": 44,
+    "min": 28,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "fontSize",
+    "label": "字号",
+    "max": 16,
+    "min": 11,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "activeIndicator",
+    "label": "活动指示器",
+    "options": [
+      {
+        "label": "底线",
+        "value": "border",
+      },
+      {
+        "label": "背景",
+        "value": "background",
+      },
+      {
+        "label": "无",
+        "value": "none",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "indicatorColor",
+    "label": "指示器颜色",
+    "type": "color",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > tabBarStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "activeIndicator": "border",
+    "backgroundColor": "transparent",
+    "fontSize": 13,
+    "height": 32,
+    "indicatorColor": "var(--style-editor-link-color)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > tableAddButton / controls 1`] = `
+[
+  {
+    "key": "paddingVertical",
+    "label": "上下边距",
+    "max": 4,
+    "min": 0,
+    "slider": true,
+    "step": 0.1,
+    "type": "number",
+    "unit": "em",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > tableAddButton / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "paddingVertical": 0.5,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > tableStyle / controls 1`] = `
+[
+  {
+    "key": "headerBackgroundColor",
+    "label": "表头底色",
+    "type": "color",
+  },
+  {
+    "key": "headerColor",
+    "label": "表头字色",
+    "type": "color",
+  },
+  {
+    "key": "textColor",
+    "label": "单元格字色",
+    "type": "color",
+  },
+  {
+    "key": "oddRowBackground",
+    "label": "奇数行底色",
+    "type": "color",
+  },
+  {
+    "key": "evenRowBackground",
+    "label": "偶数行底色",
+    "type": "color",
+  },
+  {
+    "key": "borderColor",
+    "label": "边框色",
+    "type": "color",
+  },
+  {
+    "key": "borderWidth",
+    "label": "边框粗细",
+    "max": 4,
+    "min": 0,
+    "step": 0.5,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "borderRadius",
+    "label": "表格圆角",
+    "max": 16,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > tableStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "borderColor": "var(--style-editor-table-border)",
+    "borderRadius": 0,
+    "borderWidth": 1.5,
+    "cellPaddingX": 10,
+    "cellPaddingY": 6,
+    "evenRowBackground": "var(--style-editor-table-row-even)",
+    "headerBackgroundColor": "var(--style-editor-table-header-bg)",
+    "headerColor": "var(--style-editor-table-header-color)",
+    "oddRowBackground": "var(--style-editor-table-row-odd)",
+    "textColor": "var(--style-editor-table-text)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > taskListStyle / controls 1`] = `
+[
+  {
+    "key": "doneColor",
+    "label": "完成字色",
+    "type": "color",
+  },
+  {
+    "key": "hoverBorderColor",
+    "label": "悬停框色",
+    "type": "color",
+  },
+  {
+    "key": "doneOpacity",
+    "label": "完成透明度",
+    "max": 1,
+    "min": 0.2,
+    "step": 0.05,
+    "type": "number",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > taskListStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "doneColor": "var(--b3-theme-on-surface)",
+    "doneOpacity": 0.62,
+    "hoverBorderColor": "var(--style-editor-link-hover)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > toolbarStyle / controls 1`] = `
+[
+  {
+    "key": "hoverBg",
+    "label": "悬停背景",
+    "type": "color",
+  },
+  {
+    "key": "currentColor",
+    "label": "选中项颜色",
+    "type": "color",
+  },
+  {
+    "key": "buttonSize",
+    "label": "按钮尺寸",
+    "max": 40,
+    "min": 20,
+    "step": 2,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > toolbarStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "buttonRadius": 4,
+    "buttonSize": 28,
+    "currentColor": "var(--style-editor-toolbar-current)",
+    "hoverBg": "var(--style-editor-toolbar-hover-bg)",
+    "padding": 2,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > topBarStyle / controls 1`] = `
+[
+  {
+    "key": "mode",
+    "label": "风格",
+    "options": [
+      {
+        "label": "默认",
+        "value": "default",
+      },
+      {
+        "label": "透明",
+        "value": "transparent",
+      },
+      {
+        "label": "毛玻璃",
+        "value": "glass",
+      },
+      {
+        "label": "沉浸亚克力",
+        "value": "acrylic",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "blurRadius",
+    "label": "模糊半径",
+    "max": 20,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "backgroundColor",
+    "label": "背景色",
+    "type": "color",
+  },
+  {
+    "key": "height",
+    "label": "高度",
+    "max": 48,
+    "min": 32,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "borderBottom",
+    "label": "底边线",
+    "options": [
+      {
+        "label": "显示",
+        "value": "show",
+      },
+      {
+        "label": "隐藏",
+        "value": "hide",
+      },
+    ],
+    "type": "select",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > topBarStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "backgroundColor": "#ffffff",
+    "blurRadius": 12,
+    "borderBottom": "show",
+    "height": 36,
+    "mode": "default",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > typographyBase / controls 1`] = `
+[
+  {
+    "key": "fontSize",
+    "label": "字号",
+    "max": 20,
+    "min": 12,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "lineHeight",
+    "label": "行高",
+    "max": 2.4,
+    "min": 1.2,
+    "slider": true,
+    "step": 0.05,
+    "type": "number",
+  },
+  {
+    "key": "textIndent",
+    "label": "首行缩进",
+    "max": 4,
+    "min": 0,
+    "step": 0.5,
+    "type": "number",
+    "unit": "em",
+  },
+  {
+    "key": "paragraphSpacing",
+    "label": "段间距",
+    "max": 24,
+    "min": 0,
+    "slider": true,
+    "step": 1,
+    "type": "number",
+    "unit": "px",
+  },
+  {
+    "key": "letterSpacing",
+    "label": "字间距",
+    "max": 2,
+    "min": -0.5,
+    "step": 0.1,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > typographyBase / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "fontSize": 16,
+    "letterSpacing": 0,
+    "lineHeight": 1.625,
+    "paragraphSpacing": 8,
+    "textIndent": 0,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > underlineStyle / controls 1`] = `
+[
+  {
+    "key": "color",
+    "label": "线条颜色",
+    "type": "color",
+  },
+  {
+    "key": "lineStyle",
+    "label": "线型",
+    "options": [
+      {
+        "label": "实线",
+        "value": "solid",
+      },
+      {
+        "label": "虚线",
+        "value": "dashed",
+      },
+      {
+        "label": "点线",
+        "value": "dotted",
+      },
+      {
+        "label": "波浪",
+        "value": "wavy",
+      },
+    ],
+    "type": "select",
+  },
+  {
+    "key": "thickness",
+    "label": "粗细",
+    "max": 5,
+    "min": 0.5,
+    "step": 0.5,
+    "type": "number",
+    "unit": "px",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > underlineStyle / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "color": "#cfa87f",
+    "lineStyle": "solid",
+    "offset": 1,
+    "thickness": 1.5,
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > unorderedListMarkerColor / controls 1`] = `
+[
+  {
+    "key": "markerColor",
+    "label": "圆点颜色",
+    "type": "color",
+  },
+]
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's controls and defaults structurally identical > unorderedListMarkerColor / defaults 1`] = `
+{
+  "enabled": false,
+  "values": {
+    "markerColor": "var(--style-editor-list-marker)",
+  },
+}
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > backlinkSticky / default 1`] = `
+".backlinkMList .b3-list-item,
+.backlinkList .b3-list-item {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--b3-list-hover, #363636);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > blockFullWidth / default 1`] = `".protyle-wysiwyg [data-node-id][custom-afwd="on"] { width: 100vw !important; max-width: 100vw !important; margin-left: calc(50% - 50vw) !important; }"`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > blockGutterAnim / default 1`] = `
+".protyle-gutters {
+  transition: top 150ms ease-out;
+}
+.protyle-gutters button svg {
+  color: var(--style-editor-list-marker);
+  border-radius: 4px;
+}
+.protyle-gutters button:hover svg {
+  background-color: var(--style-editor-toolbar-hover-bg);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > blockRefStyle / default 1`] = `
+".protyle-wysiwyg [data-type~="block-ref"] {
+  background-image: none !important;
+}
+
+.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) {
+  color: var(--style-editor-link-color) !important;
+  background-color: var(--style-editor-link-bg) !important;
+  border-bottom: 1px solid var(--style-editor-link-line) !important;
+  border-left: none !important;
+  border-radius: 3px;
+  padding: 1px 4px;
+  padding-bottom: 2px;
+  font-weight: 600;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > blockquoteFrame / default 1`] = `
+".b3-typography blockquote,
+.b3-typography .bq,
+.protyle-wysiwyg blockquote,
+.protyle-wysiwyg .bq {
+  padding: 4px;
+  color: var(--style-editor-blockquote-color) !important;
+  border-left: 0.25em solid var(--style-editor-blockquote-line) !important;
+  background-color: var(--style-editor-blockquote-bg) !important;
+  margin: 4px 0;
+  border-radius: 0px;
+}
+
+.protyle-wysiwyg .bq:not(.bq .bq) {
+  box-shadow: 0 0 0 1px transparent inset !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > boldTextStyle / default 1`] = `
+"strong, b, span[data-type~="strong"] {
+  color: var(--style-editor-mark-color) !important;
+  background-color: var(--style-editor-mark-bg) !important;
+  border-radius: 3px !important;
+  font-weight: 700 !important;
+  padding: 0 2px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > breadcrumbStyle / default 1`] = `
+".protyle-breadcrumb {
+  color: var(--style-editor-list-color) !important;
+  background-color: transparent !important;
+  font-size: 12px !important;
+}
+
+.protyle-breadcrumb__separator {
+  color: var(--style-editor-list-marker) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > codeBlockStyle / default 1`] = `
+".protyle-wysiwyg .code-block {
+  border-radius: 6px !important;
+  background: var(--style-editor-code-block-bg) !important;
+}
+.protyle-wysiwyg .code-block .protyle-action {
+  background: var(--style-editor-code-block-header-bg) !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+.protyle-wysiwyg .code-block .hljs {
+  
+  overflow: auto !important;
+}
+.protyle-wysiwyg .protyle-linenumber {
+  color: var(--style-editor-code-block-color) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > customThemePrimary / default 1`] = `
+":root {
+  --b3-theme-primary: #0969da !important;
+  --b3-theme-primary-rgb: 9, 105, 218 !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > dialogStyle / default 1`] = `
+".b3-dialog__container {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+}
+
+.b3-dialog__scrim {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > docTag / default 1`] = `
+".b3-chips__doctag .b3-chip {
+  border-radius: 6px;
+  padding: 0 0 1px 8px;
+  font-size: 90%;
+  font-weight: 600;
+}
+.b3-chips__doctag .b3-chip::before {
+  content: "#";
+}
+.b3-chips__doctag .b3-chip.b3-chip--secondary {
+  background-color: var(--style-editor-tag-bg);
+  color: var(--style-editor-tag-color);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > docTreeColorBlocks / default 1`] = `
+".sy__file .b3-list--background:nth-child(5n-4) {
+  background-color: var(--style-editor-tree-block-1) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-1) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-3) {
+  background-color: var(--style-editor-tree-block-2) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-2) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-2) {
+  background-color: var(--style-editor-tree-block-3) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-3) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-1) {
+  background-color: var(--style-editor-tree-block-4) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-4) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n) {
+  background-color: var(--style-editor-tree-block-5) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-5) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-4),
+.sy__file .b3-list--background:nth-child(5n-3),
+.sy__file .b3-list--background:nth-child(5n-2),
+.sy__file .b3-list--background:nth-child(5n-1),
+.sy__file .b3-list--background:nth-child(5n) {
+  margin: 4px 0;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > dockStyle / default 1`] = `
+".dock {
+  background: transparent !important;
+  width: 40px !important;
+}
+
+.dock__item {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.dock__item:hover {
+  background: var(--style-editor-card-bg-soft) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > documentTitle / default 1`] = `
+".protyle-title__input {
+  font-size: 40px;
+}
+.protyle-title__input:empty:after {
+  color: oklch(32.89% 0.0107 91.66 / 0.5);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > editorBackground / default 1`] = `
+":root {
+  --b3-theme-background: var(--style-editor-editor-bg);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > editorWidth / default 1`] = `
+".protyle-content { max-width: 900px !important; }
+
+.protyle-content {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > emojiPanel / default 1`] = `
+".emojis {
+  width: 366px !important;
+}
+.emojis__item {
+  height: 32px;
+  width: 32px;
+  font-size: 22px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > foldedBlockStyle / default 1`] = `
+".protyle-wysiwyg div[fold="1"]:not(div[data-type="NodeListItem"]),
+.protyle-wysiwyg [data-node-id][fold="1"]:not(.li):not([data-type="NodeHeading"]) {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(111, 142, 207, 0.04),
+    rgba(111, 142, 207, 0.04) 6px,
+    rgba(111, 142, 207, 0.08) 0,
+    rgba(111, 142, 207, 0.08) 12px
+  );
+  border-radius: 5px;
+  border: 1px solid var(--style-editor-card-border);
+  opacity: 0.85;
+}
+
+.protyle-wysiwyg [fold="1"]:hover {
+  opacity: 1;
+  box-shadow: 0 0 6px var(--style-editor-card-shadow);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > fontFamily / default 1`] = `""`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > headImage / default 1`] = `
+".protyle-background .protyle-background__img img {
+  margin: 0 5px;
+  border-radius: 6px;
+  width: calc(100% - 10px);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > headingDecoration / default 1`] = `
+".protyle-wysiwyg [data-node-id].h1,
+.protyle-wysiwyg [data-node-id].h2,
+.protyle-wysiwyg [data-node-id].h3,
+.protyle-wysiwyg [data-node-id].h4,
+.protyle-wysiwyg [data-node-id].h5,
+.protyle-wysiwyg [data-node-id].h6 {
+  position: relative;
+  padding-left: 12px;
+  font-weight: 600;
+}
+.protyle-wysiwyg [data-node-id].h1 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h2 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h3 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h4 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h5 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h6 > [spellcheck]:not(:empty)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 1.2em;
+  border-radius: 2px;
+  background-color: var(--b3-theme-primary);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > headingNumbering / default 1`] = `
+".protyle-wysiwyg > [data-node-id].h1::before,
+.protyle-wysiwyg > [data-node-id].h2::before,
+.protyle-wysiwyg > [data-node-id].h3::before,
+.protyle-wysiwyg > [data-node-id].h4::before,
+.protyle-wysiwyg > [data-node-id].h5::before,
+.protyle-wysiwyg > [data-node-id].h6::before,
+.b3-typography > h1::before,
+.b3-typography > h2::before,
+.b3-typography > h3::before,
+.b3-typography > h4::before,
+.b3-typography > h5::before,
+.b3-typography > h6::before {
+  content: none !important;
+  display: none !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > headingSpacing / default 1`] = `
+".protyle-wysiwyg > .h1,
+.protyle-wysiwyg > .h2,
+.protyle-wysiwyg > .h3,
+.protyle-wysiwyg > .h4,
+.protyle-wysiwyg > .h5,
+.protyle-wysiwyg > .h6 {
+  font-weight: 700;
+  margin-top: 0.5em;
+  margin-bottom: 0.1em;
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h1,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h2,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h3,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h4,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h5,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h6 {
+  margin: 2pxpx 0;
+}
+
+.bq > .h1,
+.bq > .h2,
+.bq > .h3,
+.bq > .h4,
+.bq > .h5,
+.bq > .h6 {
+  margin-top: 0 !important;
+  margin-bottom: 0.1em !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > hrStyle / default 1`] = `
+".protyle-wysiwyg [data-node-id].hr > div:after {
+  height: 2px;
+  background: linear-gradient(to right, rgba(255, 110, 196, 0.5), rgba(120, 115, 245, 0.5));
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > imageRadius / default 1`] = `
+".protyle-wysiwyg img {
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  
+  
+  transition: transform 200ms ease, box-shadow 200ms ease !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > inlineCodeStyle / default 1`] = `
+".fn__code,
+.b3-typography code:not(.hljs),
+.b3-typography span[data-type~=code],
+.protyle-wysiwyg code:not(.hljs),
+.protyle-wysiwyg span[data-type~=code] {
+  color: var(--style-editor-inline-code-color) !important;
+  background-color: var(--style-editor-inline-code-bg) !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > inlineTagStyle / default 1`] = `
+".protyle-wysiwyg span[data-type~="tag"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  padding: 1px 8px !important;
+  margin: 0 3px !important;
+  border: none !important;
+  font-size: 90% !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  vertical-align: middle !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+  background-color: var(--b3-theme-primary-light) !important;
+  color: var(--b3-theme-primary) !important;
+}
+.protyle-wysiwyg span[data-type~="tag"]::before {
+  content: "#" !important;
+  margin-right: 2px !important;
+  opacity: 0.8 !important;
+  display: inline-block !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > layoutCompactMode / default 1`] = `
+"
+          /* 侧边栏图标间距 */
+          .dock__item { padding: 3.5999999999999996px !important; }
+          /* 文件树列表项 */
+          .b3-list-item {
+            padding: 2.4px 4.8px !important;
+            min-height: 16.799999999999997px !important;
+            line-height: 16.799999999999997px !important;
+          }
+          .b3-list-item--hide-action { line-height: 16.799999999999997px !important; }
+          .b3-list-item__text { line-height: 15.6px !important; }
+          /* 文件树字体缩放 */
+          .file-tree { font-size: 11.52px !important; }
+          .sidebar { font-size: 12.48px !important; }
+        
+
+          /* 工具栏间距 */
+          .toolbar {
+            gap: 2.4px !important;
+            padding: 2.4px 4.8px !important;
+          }
+          /* 编辑区容器 Padding */
+          .protyle-content { padding: 4.8px !important; }
+          /* 正文元素紧凑排版 */
+          .protyle-wysiwyg .bq, .protyle-wysiwyg .li, .protyle-wysiwyg .p {
+            line-height: 1.4 !important;
+          }
+          /* 标题 margin 紧凑化 */
+          .protyle-wysiwyg h1, .protyle-wysiwyg h2, .protyle-wysiwyg h3,
+          .protyle-wysiwyg h4, .protyle-wysiwyg h5, .protyle-wysiwyg h6 {
+            margin: 2.4px 0 !important;
+            padding: 2.4px 0 !important;
+          }
+          /* 代码块 Padding 缩放 */
+          .protyle-wysiwyg .code-block .hljs { padding: 3.5999999999999996px !important; }
+        
+
+          /* 页签项 Padding 与行高 */
+          .layout-tab-bar .item {
+            padding: 2.4px 7.199999999999999px !important;
+            line-height: 17.6px !important;
+            font-size: 11.52px !important;
+          }
+          .tab {
+            padding: 3.5999999999999996px 7.199999999999999px !important;
+            font-size: 11.52px !important;
+          }
+        
+
+          /* 对话框容器及内部 Padding */
+          .b3-dialog { padding: 7.199999999999999px !important; }
+          .b3-dialog__header {
+            padding: 4.8px 7.199999999999999px !important;
+            font-size: 13.44px !important;
+          }
+          .b3-dialog__body {
+            padding: 4.8px !important;
+            font-size: 12.48px !important;
+          }
+        
+
+          /* 按钮紧凑 Padding */
+          .b3-button {
+            padding: 3.5999999999999996px 7.199999999999999px !important;
+            font-size: 11.52px !important;
+          }
+          /* 输入框和下拉框 */
+          .b3-text-field, .b3-input, .b3-select {
+            padding: 3.5999999999999996px 4.8px !important;
+            font-size: 11.52px !important;
+          }
+          /* 菜单列表项 */
+          .b3-menu__item {
+            padding: 3.5999999999999996px 7.199999999999999px !important;
+            min-height: 16.799999999999997px !important;
+            line-height: 13.6px !important;
+            font-size: 11.52px !important;
+          }
+          .b3-menu { padding: 2.4px 0 !important; }
+        "
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > linkIcons / default 1`] = `
+".protyle-wysiwyg span[data-type~="block-ref"]::before {
+  content: "🔗 " !important;
+  font-size: 0.9em !important;
+  margin-right: 2px !important;
+}
+.protyle-wysiwyg span[data-type~="a"]:not([href^="siyuan://"])::before {
+  content: "🌐 " !important;
+  font-size: 0.9em !important;
+  margin-right: 2px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > linkStyle / default 1`] = `
+".protyle-wysiwyg [data-node-id] span[data-type~=a] {
+  color: var(--style-editor-link-color) !important;
+  text-decoration: none !important;
+  border-bottom: 1px dashed currentColor !important;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.protyle-wysiwyg [data-node-id] span[data-type~=a]:hover {
+  color: var(--style-editor-link-hover) !important;
+  border-bottom-color: var(--style-editor-link-hover) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > listBulletLine / default 1`] = `
+".protyle-wysiwyg [data-node-id].li:has(.block-focus) > .list:has(.block-focus) > .li::after {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  border-left: 2px solid var(--style-editor-list-line);
+  border-bottom: 2px solid var(--style-editor-list-line);
+  border-bottom-left-radius: 8px;
+  position: absolute;
+  left: -18px;
+  pointer-events: none;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > listMarkerStyle / default 1`] = `
+".protyle-wysiwyg .li { margin-bottom: 4px !important; }
+.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: 24px !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > markStyle / default 1`] = `
+".b3-typography mark,
+.b3-typography span[data-type~=mark],
+.protyle-wysiwyg mark,
+.protyle-wysiwyg span[data-type~=mark] {
+  color: var(--b3-theme-on-background) !important;
+  background-color: var(--style-editor-mark-bg) !important;
+  border-bottom: 2px solid var(--style-editor-mark-line) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > memoStyle / default 1`] = `
+".protyle-wysiwyg span[data-type~="memo"] {
+  background-color: var(--b3-theme-primary-lighter, #ffbd2e)33 !important;
+  border-bottom: 2px solid var(--b3-theme-primary-lighter, #ffbd2e) !important;
+  border-radius: 3px !important;
+  padding: 0 4px !important;
+  transition: all 200ms ease-in-out !important;
+}
+.protyle-wysiwyg span[data-type~="memo"]:hover {
+  background-color: var(--b3-theme-primary-lighter, #ffbd2e)66 !important;
+  transform: scale(1.02) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > orderedListStyle / default 1`] = `
+".protyle-wysiwyg div[data-subtype="o"].list {
+  --o1-style: counter(o1, decimal)".";
+  --o2-style: counter(o2, lower-latin)".";
+  --o3-style: counter(o3, lower-roman)".";
+  --o4-style: counter(o4, upper-latin)".";
+  --o5-style: counter(o5, upper-roman)".";
+  --o6-style: counter(o6, lower-greek)".";
+}
+.protyle-wysiwyg [data-subtype="o"].li > .protyle-action:after {
+  margin: -12px 0 0 -12px !important;
+  line-height: 20px;
+}
+.protyle-wysiwyg .list[data-subtype="o"] {
+  counter-reset: o1 0 o2 0 o3 0 o4 0 o5 0 o6 0;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action {
+  color: transparent !important;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o2;
+  content: var(--o2-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o3;
+  content: var(--o3-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o4;
+  content: var(--o4-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o5;
+  content: var(--o5-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o6;
+  content: var(--o6-style);
+  position: absolute;
+}
+.protyle-wysiwyg .li[data-subtype="o"] .li[data-subtype="o"] .protyle-action::after {
+  mix-blend-mode: unset !important;
+  color: var(--b3-theme-on-surface) !important;
+}
+.protyle-wysiwyg .li[data-subtype="o"] > .protyle-action::after {
+  padding: 2px 3px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+}
+.protyle-wysiwyg [data-node-id].li[fold="1"]:not([data-subtype="o"].en_item_bullet_actived) > .protyle-action::after,
+.protyle-wysiwyg [data-node-id].li > .protyle-action:hover::after {
+  background-color: transparent !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > outlineNumber / default 1`] = `
+".sy__outline ul.b3-list.b3-list--background [data-subtype*="h"] > span:first-child::after {
+  visibility: visible !important;
+  position: relative;
+  left: 8px;
+  border-radius: 4px;
+  opacity: 1;
+  font-size: 10px;
+  pointer-events: none;
+}
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h1"] > span:first-child::after { content: "❶"; color: var(--style-editor-outline-h1); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h2"] > span:first-child::after { content: "❷"; color: var(--style-editor-outline-h2); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h3"] > span:first-child::after { content: "❸"; color: var(--style-editor-outline-h3); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h4"] > span:first-child::after { content: "❹"; color: var(--style-editor-outline-h4); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h5"] > span:first-child::after { content: "❺"; color: var(--style-editor-outline-h5); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h6"] > span:first-child::after { content: "❻"; color: var(--style-editor-outline-h6); }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > paragraphHover / default 1`] = `
+".protyle-wysiwyg [data-type]:hover:not(.protyle-wysiwyg [data-type="NodeList"]):not(.protyle-wysiwyg [data-type="NodeListItem"]):not(.protyle-wysiwyg [data-type="img"]) {
+  background-color: var(--style-editor-card-bg-soft) !important;
+  box-shadow: 0 0 3px 0 hsla(0, 0%, 77%, 0.05) !important;
+}
+
+.protyle-wysiwyg [data-type]:not(.protyle-wysiwyg [data-type="img"]) {
+  transition: all 350ms ease-out 0ms;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > refSearchMenu / default 1`] = `
+".protyle-hint {
+  padding: 2px 5px;
+  border-radius: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.protyle-hint .b3-list-item {
+  margin: 5px 0;
+  min-height: 45px;
+  border-radius: 6px;
+}
+.b3-list--background .b3-list-item:hover:not(.b3-list-item--focus):not(.dragover),
+.b3-list--background .b3-list-item--focus:not(.dragover) {
+  background-color: var(--style-editor-card-bg-soft);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > refcountBadge / default 1`] = `
+".protyle-attr--refcount {
+  height: 16px;
+  width: 16px;
+  padding: 0;
+  line-height: 16px;
+  text-align: center;
+  background-color: oklch(50% 0.02 250 / 0.3);
+  color: oklch(75% 0 0);
+  border-radius: 3px;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.protyle-attr--refcount:hover {
+  background-color: oklch(60% 0.15 250 / 0.95);
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 10px oklch(70% 0.25 250 / 1);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > referencedBlockCorners / default 1`] = `
+".protyle-wysiwyg [data-node-id][refcount] {
+  position: relative;
+  outline: none;
+}
+
+.protyle-wysiwyg [data-node-id][refcount]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid rgba(255, 165, 0, 0.7);
+  border-left: 2px solid rgba(255, 165, 0, 0.7);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.protyle-wysiwyg [data-node-id][refcount]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgba(255, 165, 0, 0.7);
+  border-bottom: 2px solid rgba(255, 165, 0, 0.7);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+[data-type="NodeBlockQueryEmbed"] [data-node-id][refcount]::before,
+[data-type="NodeBlockQueryEmbed"] [data-node-id][refcount]::after {
+  display: none;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > scrollbarStyle / default 1`] = `
+"::-webkit-scrollbar { width: 6px !important; }
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--style-editor-scrollbar-thumb) !important;
+  border-radius: 4px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > searchHighlight / default 1`] = `
+".protyle-wysiwyg mark[data-type="search-mark"] {
+  background-color: var(--style-editor-search-match-bg) !important;
+  border-radius: 2px !important;
+}
+
+.protyle-wysiwyg mark[data-type="search-mark"].search-mark--current {
+  background-color: var(--style-editor-search-current-bg) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > searchPanel / default 1`] = `
+".fn__flex-column #searchList > .b3-list-item[data-type='search-item'] {
+  padding-bottom: 20px;
+  margin: 6px;
+}
+.fn__flex-column #searchList .b3-list-item[data-type='search-item'] > .b3-list-item__text {
+  line-height: 1.3;
+}
+.fn__flex-column #searchList > .b3-list-item:not([data-type='search-item']):not([data-type="search-new"]) {
+  border-radius: 4px 4px 0 0;
+  margin: 6px 6px 0 6px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > slashMenu / default 1`] = `
+".hint--menu {
+  border-radius: 6px;
+  padding: 5px;
+}
+.hint--menu > div {
+  min-width: 50vw;
+  column-width: 180px;
+}
+.hint--menu .b3-list-item__text {
+  color: rgb(240, 240, 240);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > strikethroughStyle / default 1`] = `
+".b3-typography s,
+.b3-typography span[data-type~="s"],
+.protyle-wysiwyg s,
+.protyle-wysiwyg span[data-type~="s"] {
+  text-decoration-line: line-through !important;
+  text-decoration-thickness: 1px !important;
+  text-decoration-style: solid !important;
+  text-decoration-color: red !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > tabBarStyle / default 1`] = `
+".layout-tab-bar {
+  height: 32px !important;
+  background: transparent !important;
+}
+
+.layout-tab-bar .item {
+  font-size: 13px !important;
+}
+
+.layout-tab-bar .item--focus { border-bottom: 2px solid var(--style-editor-link-color) !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > tableAddButton / default 1`] = `
+".protyle-table-control__add {
+  display: none !important;
+}
+
+.protyle-wysiwyg [data-node-id].table {
+  padding: 0.5em 0 !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > tableStyle / default 1`] = `
+".b3-typography table,
+.protyle-wysiwyg table {
+  font-weight: 500;
+  border-collapse: collapse;
+  border-radius: 0px !important;
+  overflow: hidden !important;
+}
+
+.b3-typography table thead,
+.protyle-wysiwyg table thead {
+  background-color: var(--style-editor-table-header-bg) !important;
+  color: var(--style-editor-table-header-color) !important;
+}
+
+.b3-typography table td,
+.b3-typography table th,
+.protyle-wysiwyg table td,
+.protyle-wysiwyg table th {
+  border: 1.5px solid var(--style-editor-table-border) !important;
+  padding: 6px 10px;
+}
+.b3-typography table td, .protyle-wysiwyg table td { color: var(--style-editor-table-text) !important; }
+.b3-typography table tr:nth-child(odd), .protyle-wysiwyg table tr:nth-child(odd) { background-color: var(--style-editor-table-row-odd) !important; }
+.b3-typography table tr:nth-child(even), .protyle-wysiwyg table tr:nth-child(even) { background-color: var(--style-editor-table-row-even) !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > taskListStyle / default 1`] = `
+".protyle-wysiwyg .protyle-task--done {
+  opacity: 0.62 !important;
+}
+.protyle-wysiwyg .protyle-task--done > [contenteditable="true"],
+.protyle-wysiwyg .protyle-task--done > .p,
+.protyle-wysiwyg .protyle-task--done > div {
+  color: var(--b3-theme-on-surface) !important;
+}
+.protyle-wysiwyg .protyle-task:hover > .protyle-action--task svg {
+  color: var(--style-editor-link-hover) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > toolbarStyle / default 1`] = `
+".protyle-toolbar {
+  padding: 2px;
+}
+.protyle-toolbar .protyle-toolbar__item {
+  height: 28px;
+  width: 28px;
+  border-radius: 4px;
+}
+.protyle-toolbar .protyle-toolbar__item:hover {
+  background-color: var(--style-editor-toolbar-hover-bg);
+}
+.protyle-toolbar .protyle-toolbar__item--current {
+  color: var(--style-editor-toolbar-current);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > topBarStyle / default 1`] = `
+"#toolbar { height: 36px !important; }
+#toolbar { background: #ffffff !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > typographyBase / default 1`] = `
+":root {
+  --b3-font-size: 16px !important;
+  --b3-font-line-height: 1.625 !important;
+  letter-spacing: 0px !important;
+}
+
+.protyle-wysiwyg [data-type="NodeParagraph"] {
+  text-indent: 0em !important;
+  margin-bottom: 8px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > underlineStyle / default 1`] = `
+".b3-typography u,
+.b3-typography span[data-type~=u],
+.protyle-wysiwyg u,
+.protyle-wysiwyg span[data-type~=u] {
+  border-bottom: 1.5px solid #cfa87f !important;
+  text-decoration: none !important;
+  padding-bottom: 1px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's default-config css byte-identical > unorderedListMarkerColor / default 1`] = `
+".protyle-wysiwyg [data-node-id].li[data-subtype="u"] > .protyle-action {
+  color: var(--style-editor-list-marker);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > backlinkSticky / empty 1`] = `
+".backlinkMList .b3-list-item,
+.backlinkList .b3-list-item {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--b3-list-hover, #363636);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > blockFullWidth / empty 1`] = `".protyle-wysiwyg [data-node-id][custom-afwd="on"] { width: 100vw !important; max-width: 100vw !important; margin-left: calc(50% - 50vw) !important; }"`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > blockGutterAnim / empty 1`] = `
+".protyle-gutters {
+  transition: top 150ms ease-out;
+}
+.protyle-gutters button svg {
+  color: var(--style-editor-list-marker);
+  border-radius: 4px;
+}
+.protyle-gutters button:hover svg {
+  background-color: var(--style-editor-toolbar-hover-bg);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > blockRefStyle / empty 1`] = `
+".protyle-wysiwyg [data-type~="block-ref"] {
+  background-image: none !important;
+}
+
+.protyle-wysiwyg [data-node-id] span[data-type~="block-ref"]:not(.av__celltext),
+.protyle-wysiwyg [data-node-id] span[data-type~="file-annotation-ref"]:not(.av__celltext) {
+  color: var(--style-editor-link-color) !important;
+  background-color: var(--style-editor-link-bg) !important;
+  border-bottom: 1px solid var(--style-editor-link-line) !important;
+  border-left: none !important;
+  border-radius: 3px;
+  padding: 1px 4px;
+  padding-bottom: 2px;
+  font-weight: 600;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > blockquoteFrame / empty 1`] = `
+".b3-typography blockquote,
+.b3-typography .bq,
+.protyle-wysiwyg blockquote,
+.protyle-wysiwyg .bq {
+  padding: 4px;
+  color: var(--style-editor-blockquote-color) !important;
+  border-left: 0.25em solid var(--style-editor-blockquote-line) !important;
+  background-color: var(--style-editor-blockquote-bg) !important;
+  margin: 4px 0;
+  border-radius: 0px;
+}
+
+.protyle-wysiwyg .bq:not(.bq .bq) {
+  box-shadow: 0 0 0 1px transparent inset !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > boldTextStyle / empty 1`] = `
+"strong, b, span[data-type~="strong"] {
+  color: var(--style-editor-mark-color) !important;
+  background-color: var(--style-editor-mark-bg) !important;
+  border-radius: 3px !important;
+  font-weight: 700 !important;
+  padding: 0 2px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > breadcrumbStyle / empty 1`] = `
+".protyle-breadcrumb {
+  color: var(--style-editor-list-color) !important;
+  background-color: transparent !important;
+  font-size: 12px !important;
+}
+
+.protyle-breadcrumb__separator {
+  color: var(--style-editor-list-marker) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > codeBlockStyle / empty 1`] = `
+".protyle-wysiwyg .code-block {
+  border-radius: 6px !important;
+  background: var(--style-editor-code-block-bg) !important;
+}
+.protyle-wysiwyg .code-block .protyle-action {
+  background: var(--style-editor-code-block-header-bg) !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+.protyle-wysiwyg .code-block .hljs {
+  
+  overflow: auto !important;
+}
+.protyle-wysiwyg .protyle-linenumber {
+  color: var(--style-editor-code-block-color) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > customThemePrimary / empty 1`] = `""`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > dialogStyle / empty 1`] = `
+".b3-dialog__container {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+}
+
+.b3-dialog__scrim {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > docTag / empty 1`] = `
+".b3-chips__doctag .b3-chip {
+  border-radius: 6px;
+  padding: 0 0 1px 8px;
+  font-size: 90%;
+  font-weight: 600;
+}
+.b3-chips__doctag .b3-chip::before {
+  content: "#";
+}
+.b3-chips__doctag .b3-chip.b3-chip--secondary {
+  background-color: var(--style-editor-tag-bg);
+  color: var(--style-editor-tag-color);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > docTreeColorBlocks / empty 1`] = `
+".sy__file .b3-list--background:nth-child(5n-4) {
+  background-color: var(--style-editor-tree-block-1) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-1) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-3) {
+  background-color: var(--style-editor-tree-block-2) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-2) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-2) {
+  background-color: var(--style-editor-tree-block-3) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-3) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-1) {
+  background-color: var(--style-editor-tree-block-4) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-4) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n) {
+  background-color: var(--style-editor-tree-block-5) !important;
+  box-shadow: 0 0 0 1px var(--style-editor-tree-block-5) inset;
+  border-radius: 6px;
+}
+.sy__file .b3-list--background:nth-child(5n-4),
+.sy__file .b3-list--background:nth-child(5n-3),
+.sy__file .b3-list--background:nth-child(5n-2),
+.sy__file .b3-list--background:nth-child(5n-1),
+.sy__file .b3-list--background:nth-child(5n) {
+  margin: 4px 0;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > dockStyle / empty 1`] = `
+".dock {
+  background: transparent !important;
+  width: 40px !important;
+}
+
+.dock__item {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.dock__item:hover {
+  background: var(--style-editor-card-bg-soft) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > documentTitle / empty 1`] = `
+".protyle-title__input {
+  font-size: 40px;
+}
+.protyle-title__input:empty:after {
+  color: oklch(32.89% 0.0107 91.66 / 0.5);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > editorBackground / empty 1`] = `
+":root {
+  --b3-theme-background: var(--style-editor-editor-bg);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > editorWidth / empty 1`] = `
+".protyle-content { max-width: 900px !important; }
+
+.protyle-content {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > emojiPanel / empty 1`] = `
+".emojis {
+  width: 366px !important;
+}
+.emojis__item {
+  height: 32px;
+  width: 32px;
+  font-size: 22px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > foldedBlockStyle / empty 1`] = `
+".protyle-wysiwyg div[fold="1"]:not(div[data-type="NodeListItem"]),
+.protyle-wysiwyg [data-node-id][fold="1"]:not(.li):not([data-type="NodeHeading"]) {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(111, 142, 207, 0.04),
+    rgba(111, 142, 207, 0.04) 6px,
+    rgba(111, 142, 207, 0.08) 0,
+    rgba(111, 142, 207, 0.08) 12px
+  );
+  border-radius: 5px;
+  border: 1px solid var(--style-editor-card-border);
+  opacity: 0.85;
+}
+
+.protyle-wysiwyg [fold="1"]:hover {
+  opacity: 1;
+  box-shadow: 0 0 6px var(--style-editor-card-shadow);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > fontFamily / empty 1`] = `""`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > headImage / empty 1`] = `
+".protyle-background .protyle-background__img img {
+  margin: 0 5px;
+  border-radius: 6px;
+  width: calc(100% - 0px);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > headingDecoration / empty 1`] = `
+".protyle-wysiwyg [data-node-id].h1,
+.protyle-wysiwyg [data-node-id].h2,
+.protyle-wysiwyg [data-node-id].h3,
+.protyle-wysiwyg [data-node-id].h4,
+.protyle-wysiwyg [data-node-id].h5,
+.protyle-wysiwyg [data-node-id].h6 {
+  position: relative;
+  padding-left: 12px;
+  font-weight: 600;
+}
+.protyle-wysiwyg [data-node-id].h1 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h2 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h3 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h4 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h5 > [spellcheck]:not(:empty)::before,
+.protyle-wysiwyg [data-node-id].h6 > [spellcheck]:not(:empty)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 1.2em;
+  border-radius: 2px;
+  background-color: var(--b3-theme-primary);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > headingNumbering / empty 1`] = `
+".protyle-wysiwyg > [data-node-id].h1::before,
+.protyle-wysiwyg > [data-node-id].h2::before,
+.protyle-wysiwyg > [data-node-id].h3::before,
+.protyle-wysiwyg > [data-node-id].h4::before,
+.protyle-wysiwyg > [data-node-id].h5::before,
+.protyle-wysiwyg > [data-node-id].h6::before,
+.b3-typography > h1::before,
+.b3-typography > h2::before,
+.b3-typography > h3::before,
+.b3-typography > h4::before,
+.b3-typography > h5::before,
+.b3-typography > h6::before {
+  content: none !important;
+  display: none !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > headingSpacing / empty 1`] = `
+".protyle-wysiwyg > .h1,
+.protyle-wysiwyg > .h2,
+.protyle-wysiwyg > .h3,
+.protyle-wysiwyg > .h4,
+.protyle-wysiwyg > .h5,
+.protyle-wysiwyg > .h6 {
+  font-weight: 700;
+  margin-top: 0.5em;
+  margin-bottom: 0.1em;
+}
+
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h1,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h2,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h3,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h4,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h5,
+.protyle-wysiwyg .protyle-wysiwyg__embed > .h6 {
+  margin: 2pxpx 0;
+}
+
+.bq > .h1,
+.bq > .h2,
+.bq > .h3,
+.bq > .h4,
+.bq > .h5,
+.bq > .h6 {
+  margin-top: 0 !important;
+  margin-bottom: 0.1em !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > hrStyle / empty 1`] = `
+".protyle-wysiwyg [data-node-id].hr > div:after {
+  height: 2px;
+  background: linear-gradient(to right, rgba(255, 110, 196, 0.5), rgba(120, 115, 245, 0.5));
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > imageRadius / empty 1`] = `
+".protyle-wysiwyg img {
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  
+  
+  transition: transform 200ms ease, box-shadow 200ms ease !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > inlineCodeStyle / empty 1`] = `
+".fn__code,
+.b3-typography code:not(.hljs),
+.b3-typography span[data-type~=code],
+.protyle-wysiwyg code:not(.hljs),
+.protyle-wysiwyg span[data-type~=code] {
+  color: var(--style-editor-inline-code-color) !important;
+  background-color: var(--style-editor-inline-code-bg) !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > inlineTagStyle / empty 1`] = `
+".protyle-wysiwyg span[data-type~="tag"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  padding: 1px 8px !important;
+  margin: 0 3px !important;
+  border: none !important;
+  font-size: 90% !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  vertical-align: middle !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+  background-color: var(--b3-theme-primary-light) !important;
+  color: var(--b3-theme-primary) !important;
+}
+.protyle-wysiwyg span[data-type~="tag"]::before {
+  content: "#" !important;
+  margin-right: 2px !important;
+  opacity: 0.8 !important;
+  display: inline-block !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > layoutCompactMode / empty 1`] = `""`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > linkIcons / empty 1`] = `
+".protyle-wysiwyg span[data-type~="block-ref"]::before {
+  content: "🔗 " !important;
+  font-size: 0.9em !important;
+  margin-right: 2px !important;
+}
+.protyle-wysiwyg span[data-type~="a"]:not([href^="siyuan://"])::before {
+  content: "🌐 " !important;
+  font-size: 0.9em !important;
+  margin-right: 2px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > linkStyle / empty 1`] = `
+".protyle-wysiwyg [data-node-id] span[data-type~=a] {
+  color: var(--style-editor-link-color) !important;
+  text-decoration: none !important;
+  border-bottom: 1px dashed currentColor !important;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.protyle-wysiwyg [data-node-id] span[data-type~=a]:hover {
+  color: var(--style-editor-link-hover) !important;
+  border-bottom-color: var(--style-editor-link-hover) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > listBulletLine / empty 1`] = `
+".protyle-wysiwyg [data-node-id].li:has(.block-focus) > .list:has(.block-focus) > .li::after {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  border-left: 2px solid var(--style-editor-list-line);
+  border-bottom: 2px solid var(--style-editor-list-line);
+  border-bottom-left-radius: 8px;
+  position: absolute;
+  left: -18px;
+  pointer-events: none;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > listMarkerStyle / empty 1`] = `
+".protyle-wysiwyg .li { margin-bottom: 4px !important; }
+.protyle-wysiwyg [data-node-id].li > [data-node-id] { margin-left: 24px !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > markStyle / empty 1`] = `
+".b3-typography mark,
+.b3-typography span[data-type~=mark],
+.protyle-wysiwyg mark,
+.protyle-wysiwyg span[data-type~=mark] {
+  color: var(--b3-theme-on-background) !important;
+  background-color: var(--style-editor-mark-bg) !important;
+  border-bottom: 2px solid var(--style-editor-mark-line) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > memoStyle / empty 1`] = `
+".protyle-wysiwyg span[data-type~="memo"] {
+  background-color: var(--b3-theme-primary-lighter, #ffbd2e)33 !important;
+  border-bottom: 2px solid var(--b3-theme-primary-lighter, #ffbd2e) !important;
+  border-radius: 3px !important;
+  padding: 0 4px !important;
+  transition: all 200ms ease-in-out !important;
+}
+.protyle-wysiwyg span[data-type~="memo"]:hover {
+  background-color: var(--b3-theme-primary-lighter, #ffbd2e)66 !important;
+  transform: scale(1.02) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > orderedListStyle / empty 1`] = `
+".protyle-wysiwyg div[data-subtype="o"].list {
+  --o1-style: counter(o1, decimal)".";
+  --o2-style: counter(o2, lower-latin)".";
+  --o3-style: counter(o3, lower-roman)".";
+  --o4-style: counter(o4, upper-latin)".";
+  --o5-style: counter(o5, upper-roman)".";
+  --o6-style: counter(o6, lower-greek)".";
+}
+.protyle-wysiwyg [data-subtype="o"].li > .protyle-action:after {
+  margin: -12px 0 0 -12px !important;
+  line-height: 20px;
+}
+.protyle-wysiwyg .list[data-subtype="o"] {
+  counter-reset: o1 0 o2 0 o3 0 o4 0 o5 0 o6 0;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action {
+  color: transparent !important;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o2;
+  content: var(--o2-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o3;
+  content: var(--o3-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o4;
+  content: var(--o4-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o5;
+  content: var(--o5-style);
+  position: absolute;
+}
+.protyle-wysiwyg .list[data-subtype="o"] > .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] .li[data-subtype="o"] > .protyle-action::after {
+  counter-increment: o6;
+  content: var(--o6-style);
+  position: absolute;
+}
+.protyle-wysiwyg .li[data-subtype="o"] .li[data-subtype="o"] .protyle-action::after {
+  mix-blend-mode: unset !important;
+  color: var(--b3-theme-on-surface) !important;
+}
+.protyle-wysiwyg .li[data-subtype="o"] > .protyle-action::after {
+  padding: 2px 3px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+}
+.protyle-wysiwyg [data-node-id].li[fold="1"]:not([data-subtype="o"].en_item_bullet_actived) > .protyle-action::after,
+.protyle-wysiwyg [data-node-id].li > .protyle-action:hover::after {
+  background-color: transparent !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > outlineNumber / empty 1`] = `
+".sy__outline ul.b3-list.b3-list--background [data-subtype*="h"] > span:first-child::after {
+  visibility: visible !important;
+  position: relative;
+  left: 8px;
+  border-radius: 4px;
+  opacity: 1;
+  font-size: 10px;
+  pointer-events: none;
+}
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h1"] > span:first-child::after { content: "❶"; color: var(--style-editor-outline-h1); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h2"] > span:first-child::after { content: "❷"; color: var(--style-editor-outline-h2); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h3"] > span:first-child::after { content: "❸"; color: var(--style-editor-outline-h3); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h4"] > span:first-child::after { content: "❹"; color: var(--style-editor-outline-h4); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h5"] > span:first-child::after { content: "❺"; color: var(--style-editor-outline-h5); }
+.sy__outline ul.b3-list.b3-list--background [data-subtype="h6"] > span:first-child::after { content: "❻"; color: var(--style-editor-outline-h6); }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > paragraphHover / empty 1`] = `
+".protyle-wysiwyg [data-type]:hover:not(.protyle-wysiwyg [data-type="NodeList"]):not(.protyle-wysiwyg [data-type="NodeListItem"]):not(.protyle-wysiwyg [data-type="img"]) {
+  background-color: var(--style-editor-card-bg-soft) !important;
+  box-shadow: 0 0 3px 0 hsla(0, 0%, 77%, 0.05) !important;
+}
+
+.protyle-wysiwyg [data-type]:not(.protyle-wysiwyg [data-type="img"]) {
+  transition: all 350ms ease-out 0ms;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > refSearchMenu / empty 1`] = `
+".protyle-hint {
+  padding: 2px 5px;
+  border-radius: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.protyle-hint .b3-list-item {
+  margin: 5px 0;
+  min-height: 45px;
+  border-radius: 6px;
+}
+.b3-list--background .b3-list-item:hover:not(.b3-list-item--focus):not(.dragover),
+.b3-list--background .b3-list-item--focus:not(.dragover) {
+  background-color: var(--style-editor-card-bg-soft);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > refcountBadge / empty 1`] = `
+".protyle-attr--refcount {
+  height: 16px;
+  width: 16px;
+  padding: 0;
+  line-height: 16px;
+  text-align: center;
+  background-color: oklch(50% 0.02 250 / 0.3);
+  color: oklch(75% 0 0);
+  border-radius: 3px;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.protyle-attr--refcount:hover {
+  background-color: oklch(60% 0.15 250 / 0.95);
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 10px oklch(70% 0.25 250 / 1);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > referencedBlockCorners / empty 1`] = `
+".protyle-wysiwyg [data-node-id][refcount] {
+  position: relative;
+  outline: none;
+}
+
+.protyle-wysiwyg [data-node-id][refcount]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid rgba(255, 165, 0, 0.7);
+  border-left: 2px solid rgba(255, 165, 0, 0.7);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.protyle-wysiwyg [data-node-id][refcount]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgba(255, 165, 0, 0.7);
+  border-bottom: 2px solid rgba(255, 165, 0, 0.7);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+[data-type="NodeBlockQueryEmbed"] [data-node-id][refcount]::before,
+[data-type="NodeBlockQueryEmbed"] [data-node-id][refcount]::after {
+  display: none;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > scrollbarStyle / empty 1`] = `
+"::-webkit-scrollbar { width: 6px !important; }
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--style-editor-scrollbar-thumb) !important;
+  border-radius: 4px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > searchHighlight / empty 1`] = `
+".protyle-wysiwyg mark[data-type="search-mark"] {
+  background-color: var(--style-editor-search-match-bg) !important;
+  border-radius: 2px !important;
+}
+
+.protyle-wysiwyg mark[data-type="search-mark"].search-mark--current {
+  background-color: var(--style-editor-search-current-bg) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > searchPanel / empty 1`] = `
+".fn__flex-column #searchList > .b3-list-item[data-type='search-item'] {
+  padding-bottom: 20px;
+  margin: 6px;
+}
+.fn__flex-column #searchList .b3-list-item[data-type='search-item'] > .b3-list-item__text {
+  line-height: 1.3;
+}
+.fn__flex-column #searchList > .b3-list-item:not([data-type='search-item']):not([data-type="search-new"]) {
+  border-radius: 4px 4px 0 0;
+  margin: 6px 6px 0 6px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > slashMenu / empty 1`] = `
+".hint--menu {
+  border-radius: 6px;
+  padding: 5px;
+}
+.hint--menu > div {
+  min-width: 50vw;
+  column-width: 180px;
+}
+.hint--menu .b3-list-item__text {
+  color: rgb(240, 240, 240);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > strikethroughStyle / empty 1`] = `
+".b3-typography s,
+.b3-typography span[data-type~="s"],
+.protyle-wysiwyg s,
+.protyle-wysiwyg span[data-type~="s"] {
+  text-decoration-line: line-through !important;
+  text-decoration-thickness: 1px !important;
+  text-decoration-style: solid !important;
+  text-decoration-color: red !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > tabBarStyle / empty 1`] = `
+".layout-tab-bar {
+  height: 32px !important;
+  background: transparent !important;
+}
+
+.layout-tab-bar .item {
+  font-size: 13px !important;
+}
+
+.layout-tab-bar .item--focus { border-bottom: 2px solid var(--style-editor-link-color) !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > tableAddButton / empty 1`] = `
+".protyle-table-control__add {
+  display: none !important;
+}
+
+.protyle-wysiwyg [data-node-id].table {
+  padding: 0.5em 0 !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > tableStyle / empty 1`] = `
+".b3-typography table,
+.protyle-wysiwyg table {
+  font-weight: 500;
+  border-collapse: collapse;
+  border-radius: 0px !important;
+  overflow: hidden !important;
+}
+
+.b3-typography table thead,
+.protyle-wysiwyg table thead {
+  background-color: var(--style-editor-table-header-bg) !important;
+  color: var(--style-editor-table-header-color) !important;
+}
+
+.b3-typography table td,
+.b3-typography table th,
+.protyle-wysiwyg table td,
+.protyle-wysiwyg table th {
+  border: 1.5px solid var(--style-editor-table-border) !important;
+  padding: 6px 10px;
+}
+.b3-typography table td, .protyle-wysiwyg table td { color: var(--style-editor-table-text) !important; }
+.b3-typography table tr:nth-child(odd), .protyle-wysiwyg table tr:nth-child(odd) { background-color: var(--style-editor-table-row-odd) !important; }
+.b3-typography table tr:nth-child(even), .protyle-wysiwyg table tr:nth-child(even) { background-color: var(--style-editor-table-row-even) !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > taskListStyle / empty 1`] = `
+".protyle-wysiwyg .protyle-task--done {
+  opacity: 0.62 !important;
+}
+.protyle-wysiwyg .protyle-task--done > [contenteditable="true"],
+.protyle-wysiwyg .protyle-task--done > .p,
+.protyle-wysiwyg .protyle-task--done > div {
+  color: var(--b3-theme-on-surface) !important;
+}
+.protyle-wysiwyg .protyle-task:hover > .protyle-action--task svg {
+  color: var(--style-editor-link-hover) !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > toolbarStyle / empty 1`] = `
+".protyle-toolbar {
+  padding: 2px;
+}
+.protyle-toolbar .protyle-toolbar__item {
+  height: 28px;
+  width: 28px;
+  border-radius: 4px;
+}
+.protyle-toolbar .protyle-toolbar__item:hover {
+  background-color: var(--style-editor-toolbar-hover-bg);
+}
+.protyle-toolbar .protyle-toolbar__item--current {
+  color: var(--style-editor-toolbar-current);
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > topBarStyle / empty 1`] = `
+"#toolbar { height: 36px !important; }
+#toolbar { background: #ffffff !important; }"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > typographyBase / empty 1`] = `
+":root {
+  --b3-font-size: 16px !important;
+  --b3-font-line-height: 1.625 !important;
+  letter-spacing: 0px !important;
+}
+
+.protyle-wysiwyg [data-type="NodeParagraph"] {
+  text-indent: 0em !important;
+  margin-bottom: 8px !important;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > underlineStyle / empty 1`] = `
+".b3-typography u,
+.b3-typography span[data-type~=u],
+.protyle-wysiwyg u,
+.protyle-wysiwyg span[data-type~=u] {
+  border-bottom: 1.5px solid #cfa87f !important;
+  text-decoration: none !important;
+  padding-bottom: 1px;
+}"
+`;
+
+exports[`feature style definitions golden snapshot > keeps every definition's fallback css byte-identical for empty values > unorderedListMarkerColor / empty 1`] = `
+".protyle-wysiwyg [data-node-id].li[data-subtype="u"] > .protyle-action {
+  color: var(--style-editor-list-marker);
+}"
+`;

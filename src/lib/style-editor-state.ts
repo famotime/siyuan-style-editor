@@ -118,6 +118,23 @@ export function updateTargetBackgroundColor(
   }
 }
 
+export function updateTargetEnabled(
+  state: StyleEditorState,
+  target: StyleTarget,
+  enabled: boolean,
+): StyleEditorState {
+  return {
+    ...state,
+    profile: {
+      ...state.profile,
+      [target]: {
+        ...state.profile[target],
+        enabled,
+      },
+    },
+  }
+}
+
 export function swapTargetChannelValues(
   state: StyleEditorState,
   source: StyleTargetChannelRef,
